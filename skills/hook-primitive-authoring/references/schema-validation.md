@@ -1,11 +1,11 @@
 # Schema Validation
 
-Use this reference for Concordance-backed hook validation.
+Use this reference for repo-local hook validation.
 
-## Concordance Dependency
+## Schema Dependency
 
-This repository uses the local `concordance` symlink as schema reference
-material. The manifest validator loads schemas from:
+This repository owns the schema reference material used by hook validation. The
+manifest validator loads schemas from:
 
 ```text
 schemas/core/
@@ -33,7 +33,7 @@ owning schema before treating the artifact as accepted.
 ## Validation Checklist
 
 - `hooks/<name>.hook.json` parses as JSON.
-- The hook metadata validates against Concordance `hook.schema.json`.
+- The hook metadata validates against `schemas/core/hook.schema.json`.
 - Adapter projections validate against their adapter schema, such as
   `schemas/adapters/codex/hooks.schema.json` for `hooks/codex/*.json`.
 - Every local `path` exists.

@@ -1,6 +1,6 @@
 ---
 name: hook-primitive-authoring
-description: Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.
+description: Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and repo-local schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.
 ---
 
 # Hook Primitive Authoring
@@ -17,7 +17,7 @@ repo-owned primitive before any plugin composes it.
   `hooks/codex/`.
 - Reference related skills, agents, hooks, or concepts through metadata instead
   of copying their guidance into hook files.
-- Validate hook metadata against the Concordance schemas through
+- Validate hook metadata against the repo-local schemas through
   `node scripts/validate-manifests.mjs`.
 - Treat every hook metadata file and runtime adapter as structured data with a
   mandatory schema-backed validation path.
@@ -35,7 +35,7 @@ repo-owned primitive before any plugin composes it.
    hook root, and adapter config under `hooks/<adapter>/`.
 
 3. Identify schemas.
-   For neutral metadata, use the local Concordance `hook.schema.json` path
+   For neutral metadata, use the local `schemas/core/hook.schema.json` path
    through `node scripts/validate-manifests.mjs`. For runtime adapters, use the
    adapter schema when one exists and still parse JSON locally.
 
@@ -64,14 +64,14 @@ repo-owned primitive before any plugin composes it.
 - Load [codex-adapters.md](references/codex-adapters.md) when writing
   `hooks/codex/*.hooks.json`.
 - Load [schema-validation.md](references/schema-validation.md) when checking
-  Concordance schema coverage, local references, and validation commands.
+  repo-local schema coverage, local references, and validation commands.
 - Load [implementation-guidance.md](references/implementation-guidance.md)
   when writing or reviewing hook scripts.
 
 ## Completion Criteria
 
 - Neutral metadata, runtime adapter, and implementation ownership are clear.
-- Metadata validates through the Concordance-backed manifest validator.
+- Metadata validates through the repo-local manifest validator.
 - Hook dependencies point at canonical primitives.
 - Executable syntax or representative local execution has been checked.
 - Plugins compose the hook by reference rather than copying hook payloads.

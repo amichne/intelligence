@@ -659,7 +659,7 @@
   "firstPartyDigestMatches": [],
   "firstPartyNameCollisions": [],
   "inventory": "garden/manifests/discovered-primitives.json",
-  "inventoryGeneratedAt": "2026-05-24T17:25:32.090553+00:00",
+  "inventoryGeneratedAt": "2026-05-24T19:32:51.700675+00:00",
   "nameReviewQueue": [
     {
       "action": "SYNTHESIZE",
@@ -1872,7 +1872,7 @@
           "name": "hook-primitive-authoring",
           "path": "hook-primitive-authoring",
           "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-          "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+          "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
           "sourceRoot": "apollo-skills",
           "type": "SKILL"
         },
@@ -1881,7 +1881,7 @@
           "name": "hook-primitive-authoring",
           "path": "skills/hook-primitive-authoring",
           "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-          "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+          "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
           "sourceRoot": "intelligence",
           "type": "SKILL"
         }
@@ -2197,7 +2197,7 @@
           "name": "plugin-composition-authoring",
           "path": "plugin-composition-authoring",
           "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-          "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+          "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
           "sourceRoot": "apollo-skills",
           "type": "SKILL"
         },
@@ -2206,7 +2206,7 @@
           "name": "plugin-composition-authoring",
           "path": "skills/plugin-composition-authoring",
           "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-          "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+          "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
           "sourceRoot": "intelligence",
           "type": "SKILL"
         }
@@ -3451,7 +3451,7 @@
       "name": "intelligence-agents-instructions",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:f36d687a9a19267c9cff8c8535be3dfaac7ccd35c024edac3d463dca2895713e",
+      "sha256": "sha256:9778af6a8b476f41413c8fe42acec3b8e92173e115fde92f459fe4ed557abf3a",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3481,7 +3481,7 @@
       "name": "schemas-agents-instructions",
       "path": "schemas/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/schemas/AGENTS.md",
-      "sha256": "sha256:66847da0478869c7ab0403a344ac3c5c282e85fa22b527b7add78f7988ef743a",
+      "sha256": "sha256:47e382336ef0fe927a6a3a9b7164d2105e0b04876f39f4f64106551b85574549",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3741,7 +3741,7 @@
       "name": "hook-primitive-authoring",
       "path": "hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
       "sourceRoot": "apollo-skills",
       "type": "SKILL"
     },
@@ -3751,7 +3751,7 @@
       "name": "hook-primitive-authoring",
       "path": "skills/hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
       "sourceRoot": "intelligence",
       "type": "SKILL"
     },
@@ -3911,7 +3911,7 @@
       "name": "plugin-composition-authoring",
       "path": "plugin-composition-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-      "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
       "sourceRoot": "apollo-skills",
       "type": "SKILL"
     },
@@ -3921,7 +3921,7 @@
       "name": "plugin-composition-authoring",
       "path": "skills/plugin-composition-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-      "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
       "sourceRoot": "intelligence",
       "type": "SKILL"
     },

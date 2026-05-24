@@ -108,6 +108,7 @@ skills, agents, hooks, instructions, and referential plugins.
 Refresh and validate with:
 
 ```sh
+npm ci
 python3 garden/scripts/check-source-graph.py --refresh
 python3 garden/scripts/check-source-graph.py
 ```
@@ -147,7 +148,8 @@ Python syntax checks, hook shell syntax checks, and `git diff --check`.
 `node scripts/validate-manifests.mjs` is the structured-data gate:
 `schemas/core/` covers marketplace/plugin/hook primitives,
 `schemas/adapters/` covers adapter output, and `garden/schemas/intelligence/`
-covers garden manifests.
+covers garden manifests. The Ajv dependencies are pinned in the root
+`package-lock.json`.
 
 ## Publish Marketplace
 
@@ -157,6 +159,7 @@ published from hydrated output with one orphan commit.
 Preview the branch output locally:
 
 ```sh
+npm ci
 python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
 node scripts/validate-manifests.mjs --hydrated /tmp/intelligence-marketplace
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push

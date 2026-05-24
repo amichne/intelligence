@@ -12,18 +12,12 @@ const gardenSchemaDir = path.join(gardenRoot, "schemas", "intelligence");
 const coreSchemaDir = path.join(repoRoot, "schemas", "core");
 const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
-const concordancePackage = path.join(repoRoot, "concordance", "package.json");
 const hydratedRoot = parseArguments(process.argv.slice(2));
 
-if (!fs.existsSync(concordancePackage)) {
-  console.error("Missing concordance schema reference at ./concordance");
-  process.exit(1);
-}
-
-const requireFromConcordance = createRequire(concordancePackage);
-const Ajv2020Module = requireFromConcordance("ajv/dist/2020.js");
-const AjvDraft7Module = requireFromConcordance("ajv");
-const addFormatsModule = requireFromConcordance("ajv-formats");
+const requireFromRepo = createRequire(import.meta.url);
+const Ajv2020Module = loadDependency("ajv/dist/2020.js");
+const AjvDraft7Module = loadDependency("ajv");
+const addFormatsModule = loadDependency("ajv-formats");
 const Ajv2020 = Ajv2020Module.default ?? Ajv2020Module;
 const AjvDraft7 = AjvDraft7Module.default ?? AjvDraft7Module;
 const addFormats = addFormatsModule.default ?? addFormatsModule;
@@ -111,6 +105,8 @@ for (const [schemaId, filePath] of checks) {
 for (const [validator, schemaId, filePath] of adapterHookChecks) {
   failures += validateDataFile(validator, schemaId, filePath);
 }
+
+failures += validateNodeDependencyManifests();
 
 for (const manifest of listJsonFiles(gardenManifestDir)) {
   const data = readJson(manifest);
@@ -237,6 +233,87 @@ function listJsonFiles(directory) {
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function validateNodeDependencyManifests() {
+  const packagePath = path.join(repoRoot, "package.json");
+  const lockPath = path.join(repoRoot, "package-lock.json");
+  let failures = 0;
+
+  if (!fs.existsSync(packagePath)) {
+    console.error("FAIL package.json: missing Node dependency manifest");
+    failures += 1;
+  } else {
+    const packageJson = readJson(packagePath);
+    markValidated(packagePath);
+    console.log("OK package.json");
+    failures += requireJsonValue(packagePath, "name", packageJson.name, "intelligence");
+    failures += requireJsonValue(packagePath, "private", packageJson.private, true);
+    failures += requireJsonValue(
+      packagePath,
+      "scripts.validate:manifests",
+      packageJson.scripts?.["validate:manifests"],
+      "node scripts/validate-manifests.mjs"
+    );
+    failures += requireStringField(packagePath, "devDependencies.ajv", packageJson.devDependencies?.ajv);
+    failures += requireStringField(packagePath, "devDependencies.ajv-formats", packageJson.devDependencies?.["ajv-formats"]);
+  }
+
+  if (!fs.existsSync(lockPath)) {
+    console.error("FAIL package-lock.json: missing npm lockfile");
+    failures += 1;
+  } else {
+    const lock = readJson(lockPath);
+    markValidated(lockPath);
+    console.log("OK package-lock.json");
+    failures += requireJsonValue(lockPath, "name", lock.name, "intelligence");
+    failures += requireJsonValue(lockPath, "lockfileVersion", lock.lockfileVersion, 3);
+    failures += requireJsonValue(lockPath, "requires", lock.requires, true);
+    failures += requireStringField(lockPath, "packages.\"\".devDependencies.ajv", lock.packages?.[""]?.devDependencies?.ajv);
+    failures += requireStringField(
+      lockPath,
+      "packages.\"\".devDependencies.ajv-formats",
+      lock.packages?.[""]?.devDependencies?.["ajv-formats"]
+    );
+    failures += requireStringField(lockPath, "packages.node_modules/ajv.integrity", lock.packages?.["node_modules/ajv"]?.integrity);
+    failures += requireStringField(
+      lockPath,
+      "packages.node_modules/ajv-formats.integrity",
+      lock.packages?.["node_modules/ajv-formats"]?.integrity
+    );
+  }
+
+  return failures;
+}
+
+function requireJsonValue(filePath, field, actual, expected) {
+  if (actual === expected) {
+    return 0;
+  }
+  console.error(
+    `FAIL ${path.relative(repoRoot, filePath)}: ${field} must be ${JSON.stringify(expected)}, found ${JSON.stringify(actual)}`
+  );
+  return 1;
+}
+
+function requireStringField(filePath, field, value) {
+  if (typeof value === "string" && value.length > 0) {
+    return 0;
+  }
+  console.error(`FAIL ${path.relative(repoRoot, filePath)}: ${field} must be a non-empty string`);
+  return 1;
+}
+
+function loadDependency(specifier) {
+  try {
+    return requireFromRepo(specifier);
+  } catch (error) {
+    if (error?.code === "MODULE_NOT_FOUND") {
+      console.error(`Missing Node validation dependency: ${specifier}. Run npm ci from the repository root.`);
+      process.exit(1);
+    }
+    throw error;
+  }
 }
 
 function validateLocalReferences(filePath, data) {
@@ -2624,7 +2701,7 @@ function validateJsonCoverage() {
 
 function listJsonFilesRecursive(directory) {
   const results = [];
-  const skippedDirectories = new Set([".git", ".idea", ".agent-turn", ".migration-backups", "concordance", "node_modules"]);
+  const skippedDirectories = new Set([".git", ".idea", ".agent-turn", ".migration-backups", "node_modules"]);
 
   function visit(current) {
     if (!fs.existsSync(current)) {

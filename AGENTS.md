@@ -32,8 +32,8 @@ not justified.
 - `schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
 - `scripts/` contains root validation and marketplace publication tooling.
-- `concordance` is a local schema-reference symlink, not owned source for this
-  repository.
+- `package.json` and `package-lock.json` pin the local validator dependencies
+  used by source and marketplace publication checks.
 
 ## Source Graph Rules
 

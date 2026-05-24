@@ -40,9 +40,9 @@ These entries are review records only. They do not authorize deletion or symlink
 |---|---|---|---|
 | `apollo-skills` | `agent-profile-authoring` | `skills/agent-profile-authoring` | `sha256:1082a610e1b83155187bb9d1538a7b12631e93329fc95d95094f74f579bd72ad` |
 | `apollo-skills` | `github-ci-operations` | `skills/github-ci-operations` | `sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603` |
-| `apollo-skills` | `hook-primitive-authoring` | `skills/hook-primitive-authoring` | `sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d` |
+| `apollo-skills` | `hook-primitive-authoring` | `skills/hook-primitive-authoring` | `sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100` |
 | `apollo-skills` | `local-repository-navigation` | `skills/local-repository-navigation` | `sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8` |
-| `apollo-skills` | `plugin-composition-authoring` | `skills/plugin-composition-authoring` | `sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591` |
+| `apollo-skills` | `plugin-composition-authoring` | `skills/plugin-composition-authoring` | `sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3` |
 | `apollo-skills` | `primitive-quality-audit` | `skills/primitive-quality-audit` | `sha256:7047d5b9cc667230d64172f73819df89c44037ea298302a17f52ed47d6e082f4` |
 | `apollo-skills` | `primitive-routing-evaluation` | `skills/primitive-routing-evaluation` | `sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a` |
 | `apollo-skills` | `repository-signature-indexing` | `skills/repository-signature-indexing` | `sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73` |

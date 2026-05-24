@@ -598,7 +598,7 @@
         "manifest": "garden/manifests/source-review-decisions.json",
         "targetPrimitiveType": "SKILL",
         "targetName": "hook-primitive-authoring",
-        "sourceSha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+        "sourceSha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
         "decision": "COVERED_BY_CANONICAL"
       },
       "decision": "REPLACE_WITH_SYMLINK",
@@ -638,7 +638,7 @@
         "manifest": "garden/manifests/source-review-decisions.json",
         "targetPrimitiveType": "SKILL",
         "targetName": "plugin-composition-authoring",
-        "sourceSha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+        "sourceSha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
         "decision": "COVERED_BY_CANONICAL"
       },
       "decision": "REPLACE_WITH_SYMLINK",

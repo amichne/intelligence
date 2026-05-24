@@ -77,7 +77,9 @@
         "sourceTurnoffReadiness",
         "runtimeActivationApprovals",
         "cleanupLedger",
-        "concordancePackage",
+        "nodePackage",
+        "coreSchemaDirectory",
+        "adapterSchemaDirectory",
         "localSchemaDirectory"
       ],
       "properties": {
@@ -108,7 +110,13 @@
         "cleanupLedger": {
           "$ref": "#/$defs/path"
         },
-        "concordancePackage": {
+        "nodePackage": {
+          "$ref": "#/$defs/path"
+        },
+        "coreSchemaDirectory": {
+          "$ref": "#/$defs/path"
+        },
+        "adapterSchemaDirectory": {
           "$ref": "#/$defs/path"
         },
         "localSchemaDirectory": {

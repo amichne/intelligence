@@ -16,7 +16,7 @@ the primitive remains usable without the plugin.
   and `concepts/*`.
 - Keep plugin manifests small and declarative.
 - Treat plugin manifests and marketplace catalogs as structured data governed by
-  Concordance schemas. Shape changes require schema changes or validation
+  repo-local schemas. Shape changes require schema changes or validation
   evidence, not prose-only agreement.
 - Add marketplace entries only after the plugin manifest exists.
 - Record promoted source primitives in `garden/manifests/promotions.json`; the plugin

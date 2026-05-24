@@ -377,26 +377,26 @@
           "notes": "Used as local executable hook implementation example."
         },
         {
-          "sourceRoot": "concordance",
-          "sourcePath": "concordance/schemas/core/hook.schema.json",
-          "sourceResolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/hook.schema.json",
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/core/hook.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/schemas/core/hook.schema.json",
           "notes": "Owns the provider-neutral hook metadata schema used by validation."
         },
         {
-          "sourceRoot": "concordance",
-          "sourcePath": "concordance/schemas/core/plugin.schema.json",
-          "sourceResolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/plugin.schema.json",
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/core/plugin.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/schemas/core/plugin.schema.json",
           "notes": "Owns plugin hook-reference schema validation."
         },
         {
-          "sourceRoot": "concordance",
-          "sourcePath": "concordance/schemas/core/marketplace.schema.json",
-          "sourceResolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/marketplace.schema.json",
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/core/marketplace.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/schemas/core/marketplace.schema.json",
           "notes": "Owns marketplace hook and skill catalog schema validation."
         }
       ],
       "status": "PROMOTED",
-      "notes": "Synthesized the local hooks layout and Concordance schema dependency into a reusable hook primitive authoring workflow."
+      "notes": "Synthesized the local hooks layout and repo-local schema dependency into a reusable hook primitive authoring workflow."
     },
     {
       "type": "SKILL",

@@ -1,8 +1,10 @@
 {
   "generatedFrom": {
+    "adapterSchemaDirectory": "schemas/adapters",
     "cleanupLedger": "garden/manifests/cleanup-ledger.json",
-    "concordancePackage": "concordance/package.json",
+    "coreSchemaDirectory": "schemas/core",
     "localSchemaDirectory": "garden/schemas/intelligence",
+    "nodePackage": "package.json",
     "pluginCoverage": "garden/manifests/plugin-coverage.json",
     "primitiveDecisionCoverage": "garden/manifests/primitive-decision-coverage.json",
     "reviewCompleteness": "garden/manifests/review-completeness.json",
@@ -69,13 +71,15 @@
     },
     {
       "evidence": [
-        "Concordance schema package present: true.",
-        "Repository manifest schema directory present: false.",
+        "Node validation package present: true.",
+        "Core schema directory present: true.",
+        "Adapter schema directory present: true.",
+        "Repository manifest schema directory present: true.",
         "validate-manifests.mjs rejects JSON files without a schema validation path."
       ],
       "id": "schema-driven-structured-data",
-      "nextAction": "Restore the Concordance schema reference and local manifest schemas.",
-      "status": "INCOMPLETE",
+      "nextAction": "Keep every persisted structured-data change on a schema-backed validation path.",
+      "status": "SATISFIED",
       "type": "TOOLBOX_READINESS_REQUIREMENT"
     },
     {
@@ -107,12 +111,12 @@
   "schemaVersion": 1,
   "summary": {
     "completionStatus": "INCOMPLETE",
-    "incomplete": 3,
+    "incomplete": 2,
     "needsApproval": 0,
     "needsReview": 1,
     "nextAction": "Keep adding primitive audits before treating any new canonical primitive as ready.",
     "readyForCompletion": false,
-    "satisfied": 4,
+    "satisfied": 5,
     "totalRequirements": 8,
     "type": "TOOLBOX_READINESS_SUMMARY"
   },

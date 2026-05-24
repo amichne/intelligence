@@ -119,7 +119,9 @@ def build_report(inputs: dict[str, dict[str, Any]], repo_root: Path, args: argpa
             "sourceTurnoffReadiness": args.source_turnoff_readiness,
             "runtimeActivationApprovals": args.runtime_activation_approvals,
             "cleanupLedger": args.cleanup_ledger,
-            "concordancePackage": "concordance/package.json",
+            "nodePackage": "package.json",
+            "coreSchemaDirectory": "schemas/core",
+            "adapterSchemaDirectory": "schemas/adapters",
             "localSchemaDirectory": "garden/schemas/intelligence",
         },
         "summary": {
@@ -239,18 +241,26 @@ def comprehensive_review_requirement(inputs: dict[str, dict[str, Any]]) -> dict[
 
 
 def schema_governance_requirement(repo_root: Path) -> dict[str, Any]:
-    concordance_package = repo_root / "concordance" / "package.json"
-    local_schema_dir = repo_root / "schemas" / "intelligence"
-    status = "SATISFIED" if concordance_package.exists() and local_schema_dir.is_dir() else "INCOMPLETE"
+    node_package = repo_root / "package.json"
+    core_schema_dir = repo_root / "schemas" / "core"
+    adapter_schema_dir = repo_root / "schemas" / "adapters"
+    local_schema_dir = repo_root / "garden" / "schemas" / "intelligence"
+    status = (
+        "SATISFIED"
+        if node_package.exists() and core_schema_dir.is_dir() and adapter_schema_dir.is_dir() and local_schema_dir.is_dir()
+        else "INCOMPLETE"
+    )
     return requirement(
         "schema-driven-structured-data",
         status,
         [
-            f"Concordance schema package present: {str(concordance_package.exists()).lower()}.",
+            f"Node validation package present: {str(node_package.exists()).lower()}.",
+            f"Core schema directory present: {str(core_schema_dir.is_dir()).lower()}.",
+            f"Adapter schema directory present: {str(adapter_schema_dir.is_dir()).lower()}.",
             f"Repository manifest schema directory present: {str(local_schema_dir.is_dir()).lower()}.",
             "validate-manifests.mjs rejects JSON files without a schema validation path.",
         ],
-        "Restore the Concordance schema reference and local manifest schemas."
+        "Restore repo-local validation dependencies and schema directories."
         if status != "SATISFIED"
         else "Keep every persisted structured-data change on a schema-backed validation path.",
     )

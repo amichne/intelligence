@@ -6741,7 +6741,7 @@
       "observedPath": "/Users/amichne/code/intelligence/AGENTS.md",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:f36d687a9a19267c9cff8c8535be3dfaac7ccd35c024edac3d463dca2895713e",
+      "sha256": "sha256:9778af6a8b476f41413c8fe42acec3b8e92173e115fde92f459fe4ed557abf3a",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -6784,7 +6784,7 @@
       "observedPath": "/Users/amichne/code/intelligence/schemas/AGENTS.md",
       "path": "schemas/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/schemas/AGENTS.md",
-      "sha256": "sha256:66847da0478869c7ab0403a344ac3c5c282e85fa22b527b7add78f7988ef743a",
+      "sha256": "sha256:47e382336ef0fe927a6a3a9b7164d2105e0b04876f39f4f64106551b85574549",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -11337,7 +11337,7 @@
       "type": "SKILL"
     },
     {
-      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and repo-local schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
       "entryFile": "hook-primitive-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -11350,7 +11350,7 @@
       "observedPath": "/Users/amichne/code/apollo/skills/hook-primitive-authoring/SKILL.md",
       "path": "hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
       "sourceRoot": "apollo-skills",
       "sourceRootPath": "../apollo/skills",
       "sourceRootRole": "local-repo-source",
@@ -11359,7 +11359,7 @@
       "type": "SKILL"
     },
     {
-      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and repo-local schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
       "entryFile": "hook-primitive-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -11372,7 +11372,7 @@
       "observedPath": "/Users/amichne/.agents/skills/hook-primitive-authoring/SKILL.md",
       "path": "hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
       "sourceRoot": "global-agent-skills",
       "sourceRootPath": "~/.agents/skills",
       "sourceRootRole": "runtime-source",
@@ -11381,7 +11381,7 @@
       "type": "SKILL"
     },
     {
-      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and repo-local schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
       "entryFile": "hook-primitive-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -11394,7 +11394,7 @@
       "observedPath": "/Users/amichne/.codex/skills/hook-primitive-authoring/SKILL.md",
       "path": "hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
       "sourceRoot": "global-codex-skills",
       "sourceRootPath": "~/.codex/skills",
       "sourceRootRole": "runtime-source",
@@ -11403,7 +11403,7 @@
       "type": "SKILL"
     },
     {
-      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and repo-local schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
       "entryFile": "skills/hook-primitive-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -11416,7 +11416,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
       "path": "skills/hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sha256": "sha256:467af02e05c8421bbdc9761ff1731aaff72d5e489389e5b866fafd025cf84100",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -13396,7 +13396,7 @@
       "observedPath": "/Users/amichne/code/apollo/skills/plugin-composition-authoring/SKILL.md",
       "path": "plugin-composition-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-      "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
       "sourceRoot": "apollo-skills",
       "sourceRootPath": "../apollo/skills",
       "sourceRootRole": "local-repo-source",
@@ -13416,7 +13416,7 @@
       "observedPath": "/Users/amichne/.agents/skills/plugin-composition-authoring/SKILL.md",
       "path": "plugin-composition-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-      "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
       "sourceRoot": "global-agent-skills",
       "sourceRootPath": "~/.agents/skills",
       "sourceRootRole": "runtime-source",
@@ -13436,7 +13436,7 @@
       "observedPath": "/Users/amichne/.codex/skills/plugin-composition-authoring/SKILL.md",
       "path": "plugin-composition-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-      "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
       "sourceRoot": "global-codex-skills",
       "sourceRootPath": "~/.codex/skills",
       "sourceRootRole": "runtime-source",
@@ -13456,7 +13456,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
       "path": "skills/plugin-composition-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
-      "sha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sha256": "sha256:6a8090018485921007cdbd34d892a1b7d2c842e58c2f911ed3ba299c24f8c7c3",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -16656,7 +16656,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T17:25:32.090553+00:00",
+  "generatedAt": "2026-05-24T19:32:51.700675+00:00",
   "generator": "garden/scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [

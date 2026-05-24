@@ -29,3 +29,4 @@ replay_pid*
 # Local agent hook state and editor state
 .agent-turn/
 .idea/
+node_modules/

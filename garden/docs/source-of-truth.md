@@ -66,7 +66,7 @@ and rollback path.
 - `garden/manifests/runtime-links.json` records planned runtime symlink and marketplace
   activation targets. It is a plan, not permission to write runtime paths.
 - `garden/schemas/intelligence/` contains repository-owned JSON Schema contracts for
-  manifests, ledgers, and generated reports that are not Concordance-owned.
+  manifests, ledgers, and generated reports that are repository-specific.
 - `garden/docs/inventory-summary.md` summarizes the current generated inventory.
 - `garden/docs/consolidation-queue.md` summarizes the promotion, duplicate, and broken
   symlink queues.
@@ -93,9 +93,10 @@ and rollback path.
   `PROPOSED` entries are review records only; they do not authorize deletion or
   symlink writes.
 
-The local `concordance` symlink supplies the provider-neutral schemas used to
-validate marketplace, plugin, and hook primitive files. It is reference material,
-not owned source for this repository.
+The repo-local `schemas/` tree supplies the provider-neutral and adapter
+schemas used to validate marketplace, plugin, hook primitive, and runtime
+adapter files. The root `package-lock.json` pins the Ajv validation
+dependencies used by local checks and marketplace publishing.
 
 ## Structured Data Rule
 
@@ -107,10 +108,10 @@ plugin catalogs, generated reports, fixtures, or examples.
   assertion before editing persisted JSON, YAML, TOML, or other structured data.
 - Add or update the schema path first when the shape changes.
 - Validate the data with the owning command before calling the change complete.
-- Use the local `concordance/schemas/core/` schemas for marketplace, plugin,
-  hook, and primitive-reference manifests.
-- Use `concordance/standards/codex-hooks.schema.json` for Codex adapter files
-  under `hooks/codex/`.
+- Use `schemas/core/` for marketplace, plugin, hook, and primitive-reference
+  manifests.
+- Use `schemas/adapters/codex/hooks.schema.json` for Codex adapter files under
+  `hooks/codex/`.
 - Use `garden/schemas/intelligence/*.schema.json` for repository-owned manifests and
   generated inventory/report files.
 - Use `skills/manage-json-schemas` and `concepts/schema-driven-design/core.md`

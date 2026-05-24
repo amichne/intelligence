@@ -380,7 +380,7 @@
           "type": "AUDIT_EVIDENCE",
           "kind": "SCHEMA_VALIDATION",
           "status": "PASS",
-          "summary": "concordance/schemas/core validates marketplace.json and plugins/*/plugin.json through node scripts/validate-manifests.mjs."
+          "summary": "schemas/core validates marketplace.json and plugins/*/plugin.json through node scripts/validate-manifests.mjs."
         }
       ],
       "sourceCandidates": [
@@ -1320,25 +1320,25 @@
         },
         {
           "type": "SOURCE_CANDIDATE",
-          "sourceRoot": "concordance",
-          "sourcePath": "concordance/schemas/core/hook.schema.json",
-          "resolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/hook.schema.json",
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/core/hook.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/schemas/core/hook.schema.json",
           "relationship": "SUPPORTING_SOURCE",
           "notes": "Supporting source recorded by the promotion ledger."
         },
         {
           "type": "SOURCE_CANDIDATE",
-          "sourceRoot": "concordance",
-          "sourcePath": "concordance/schemas/core/plugin.schema.json",
-          "resolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/plugin.schema.json",
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/core/plugin.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/schemas/core/plugin.schema.json",
           "relationship": "SUPPORTING_SOURCE",
           "notes": "Supporting source recorded by the promotion ledger."
         },
         {
           "type": "SOURCE_CANDIDATE",
-          "sourceRoot": "concordance",
-          "sourcePath": "concordance/schemas/core/marketplace.schema.json",
-          "resolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/marketplace.schema.json",
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/core/marketplace.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/schemas/core/marketplace.schema.json",
           "relationship": "SUPPORTING_SOURCE",
           "notes": "Supporting source recorded by the promotion ledger."
         }
@@ -2338,7 +2338,7 @@
           "type": "AUDIT_CRITERION",
           "name": "schema-driven-hooks",
           "status": "PASS",
-          "evidence": "Hook metadata and provider adapters remain structured-data surfaces validated through Concordance or repo-owned schemas."
+          "evidence": "Hook metadata and provider adapters remain structured-data surfaces validated through repo-owned schemas."
         }
       ],
       "evidence": [
