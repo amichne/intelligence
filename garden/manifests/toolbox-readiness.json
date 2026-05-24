@@ -1,0 +1,120 @@
+{
+  "generatedFrom": {
+    "cleanupLedger": "garden/manifests/cleanup-ledger.json",
+    "concordancePackage": "concordance/package.json",
+    "localSchemaDirectory": "garden/schemas/intelligence",
+    "pluginCoverage": "garden/manifests/plugin-coverage.json",
+    "primitiveDecisionCoverage": "garden/manifests/primitive-decision-coverage.json",
+    "reviewCompleteness": "garden/manifests/review-completeness.json",
+    "runtimeActivationApprovals": "garden/manifests/runtime-activation-approvals.json",
+    "sourceCleanupGaps": "garden/manifests/source-cleanup-gaps.json",
+    "sourceTurnoffReadiness": "garden/manifests/source-turnoff-readiness.json",
+    "type": "TOOLBOX_READINESS_INPUTS"
+  },
+  "requirements": [
+    {
+      "evidence": [
+        "Canonical primitives: 49.",
+        "Audited canonical primitives: 48/49.",
+        "Needs audit: 1."
+      ],
+      "id": "canonical-primitive-set",
+      "nextAction": "Keep adding primitive audits before treating any new canonical primitive as ready.",
+      "status": "INCOMPLETE",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Referential plugins: 11.",
+        "All canonical primitives routed: false.",
+        "Coverage statuses: MARKETPLACE_EXPOSED=11, PLUGIN_COMPOSED=31, SCOPED_INSTRUCTION=6, STANDALONE_ONLY=1."
+      ],
+      "id": "referential-plugins",
+      "nextAction": "Route remaining standalone canonical primitives through plugins, marketplace entries, or scoped instructions.",
+      "status": "INCOMPLETE",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Canonical hook primitives: 4.",
+        "Codex hook adapter packet: ALREADY_ACTIVE."
+      ],
+      "id": "hook-federation",
+      "nextAction": "Keep provider-neutral hook metadata separate from runtime adapter files.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Canonical agent profiles: 5.",
+        "Claude agent runtime packet: ALREADY_ACTIVE."
+      ],
+      "id": "independent-agent-profiles",
+      "nextAction": "Keep agent profiles in agents/ and compose them into plugins by reference.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Discovered primitive entries: 868.",
+        "Unreviewed singleton entries: 0.",
+        "Cleanup proposal gaps: 0.",
+        "Open source review groups: 0.",
+        "Open digest review groups: 0."
+      ],
+      "id": "comprehensive-source-review",
+      "nextAction": "Resolve unreviewed entries, cleanup proposal gaps, or open review groups.",
+      "status": "NEEDS_REVIEW",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Concordance schema package present: true.",
+        "Repository manifest schema directory present: false.",
+        "validate-manifests.mjs rejects JSON files without a schema validation path."
+      ],
+      "id": "schema-driven-structured-data",
+      "nextAction": "Restore the Concordance schema reference and local manifest schemas.",
+      "status": "INCOMPLETE",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Executed source delete entries: 0.",
+        "Executed symlink replacements: 20.",
+        "Missing replacement backups: 0.",
+        "Executed broken symlink removals: 13."
+      ],
+      "id": "preserve-original-sources",
+      "nextAction": "Continue preserving replaced originals under .migration-backups/source-turnoff/.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Already active packets: 18.",
+        "Ready for approval packets: 0.",
+        "Ready for manual import packets: 0.",
+        "Review-required packets: 0.",
+        "Blocked packets: 0."
+      ],
+      "id": "runtime-activation",
+      "nextAction": "No activation approval action is pending.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    }
+  ],
+  "schemaVersion": 1,
+  "summary": {
+    "completionStatus": "INCOMPLETE",
+    "incomplete": 3,
+    "needsApproval": 0,
+    "needsReview": 1,
+    "nextAction": "Keep adding primitive audits before treating any new canonical primitive as ready.",
+    "readyForCompletion": false,
+    "satisfied": 4,
+    "totalRequirements": 8,
+    "type": "TOOLBOX_READINESS_SUMMARY"
+  },
+  "type": "TOOLBOX_READINESS_REPORT"
+}

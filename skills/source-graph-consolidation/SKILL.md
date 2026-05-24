@@ -19,7 +19,7 @@ place until the cleanup ledger proves the replacement and rollback path.
   `concepts/`.
 - Keep plugins referential. They may compose primitives, but they must not own
   the only copy of a primitive.
-- Record every promotion in `manifests/promotions.json` with source paths and
+- Record every promotion in `garden/manifests/promotions.json` with source paths and
   first-party handling when applicable.
 - Treat every persisted JSON edit as schema-driven. `node scripts/validate-manifests.mjs`
   must cover the changed file.
@@ -51,7 +51,7 @@ place until the cleanup ledger proves the replacement and rollback path.
    independent primitive exists. Use direct primitive paths, not payload copies.
 
 6. Record provenance.
-   Update `manifests/promotions.json` for promoted material. If the source is a
+   Update `garden/manifests/promotions.json` for promoted material. If the source is a
    first-party distribution, include `firstPartyHandling` and use a local
    non-colliding canonical name.
 
@@ -60,16 +60,16 @@ place until the cleanup ledger proves the replacement and rollback path.
    inventory changes.
 
 8. Defer cleanup.
-   Only prepare `manifests/cleanup-ledger.json` entries after the canonical
+   Only prepare `garden/manifests/cleanup-ledger.json` entries after the canonical
    replacement is proven and a rollback path exists. Do not perform the cleanup
    unless the user explicitly asks for it.
 
 ## Reference Routing
 
 - Load [review-queue.md](references/review-queue.md) when interpreting
-  `docs/consolidation-queue.md` or generated report priorities.
+  `garden/docs/consolidation-queue.md` or generated report priorities.
 - Load [promotion-records.md](references/promotion-records.md) when editing
-  `manifests/promotions.json` or handling first-party source material.
+  `garden/manifests/promotions.json` or handling first-party source material.
 - Load [cleanup-handoff.md](references/cleanup-handoff.md) before proposing
   symlink replacement, source deletion, or cleanup ledger entries.
 

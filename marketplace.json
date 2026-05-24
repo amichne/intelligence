@@ -522,7 +522,7 @@
     }
   ],
   "metadata": {
-    "inventory": "manifests/discovered-primitives.json",
-    "sources": "manifests/source-roots.json"
+    "inventory": "garden/manifests/discovered-primitives.json",
+    "sources": "garden/manifests/source-roots.json"
   }
 }

@@ -32,4 +32,4 @@ test -e <target>
 ```
 
 For child-link plans, verify every created child and then rerun inventory if the
-target root is part of `manifests/source-roots.json`.
+target root is part of `garden/manifests/source-roots.json`.

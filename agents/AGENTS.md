@@ -15,7 +15,7 @@ This file applies to reusable agent profiles under `agents/`.
 - Do not point an agent at a runtime cache, installed plugin copy, or generated
   bundle as its authority.
 - If an agent came from another local source, record that source in
-  `manifests/promotions.json`.
+  `garden/manifests/promotions.json`.
 
 ## Output Discipline
 
@@ -26,7 +26,7 @@ This file applies to reusable agent profiles under `agents/`.
 
 ## Verify
 
-- Run `python3 scripts/inventory-primitives.py --check` after changing agent
+- Run `python3 garden/scripts/inventory-primitives.py --check` after changing agent
   files.
 - Run `node scripts/validate-manifests.mjs` after adding promoted agents to a
   plugin or marketplace manifest.

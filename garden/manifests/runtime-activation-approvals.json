@@ -1,0 +1,1079 @@
+{
+  "generatedFrom": {
+    "cleanupLedger": "garden/manifests/cleanup-ledger.json",
+    "runtimeActivationPlan": "garden/manifests/runtime-activation-plan.json",
+    "runtimeActivationPreflight": "garden/manifests/runtime-activation-preflight.json",
+    "runtimeLinks": "garden/manifests/runtime-links.json",
+    "sourceTurnoffReadiness": "garden/manifests/source-turnoff-readiness.json",
+    "type": "RUNTIME_ACTIVATION_APPROVAL_INPUTS"
+  },
+  "packets": [
+    {
+      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
+      "approvalState": "ALREADY_ACTIVE",
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "PLANNED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "agent-skill-children",
+      "notes": "Ready for explicit approval to add missing intelligence skill children as symlinks while leaving external runtime skills and non-skill artifacts untouched.",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Runtime target already links every source child to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "MEDIUM",
+      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
+          "description": "Verify source directory exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ls -la /Users/amichne/.agents/skills 2>/dev/null || true",
+          "description": "Review target directory before linking children",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.agents/skills",
+          "description": "Prepare target directory after approval if needed",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "find /Users/amichne/code/intelligence/skills -mindepth 1 -maxdepth 1 -type d -exec sh -c 'test -f \"$1/SKILL.md\" && echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.agents/skills ';'",
+          "description": "Link eligible primitive children only after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "DIRECTORY",
+      "targetPath": "/Users/amichne/.agents/skills",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
+      "approvalState": "ALREADY_ACTIVE",
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "PLANNED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "claude-agent-children",
+      "notes": "Future activation still requires explicit approval before linking agent profiles.",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Runtime target already links every source child to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "primitiveTypes": [
+        "AGENT"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "MEDIUM",
+      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/agents",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/agents",
+          "description": "Verify source directory exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ls -la /Users/amichne/.claude/agents 2>/dev/null || true",
+          "description": "Review target directory before linking children",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.claude/agents",
+          "description": "Prepare target directory after approval if needed",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "find /Users/amichne/code/intelligence/agents -mindepth 1 -maxdepth 1 \\( -type d -o -name '*.agent.md' \\) ! -name AGENTS.md -exec sh -c 'echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.claude/agents ';'",
+          "description": "Link eligible primitive children only after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "DIRECTORY",
+      "targetPath": "/Users/amichne/.claude/agents",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
+      "approvalState": "ALREADY_ACTIVE",
+      "collisionPolicy": "FAIL_IF_EXISTS",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "PLANNED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "codex-hook-adapters",
+      "notes": "The approval packet will create the target directory before linking provider adapter configs. Keep provider-neutral hook metadata in this repository.",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Runtime target already links every source child to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "primitiveTypes": [
+        "HOOK"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "MEDIUM",
+      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/hooks/codex",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/hooks/codex",
+          "description": "Verify source directory exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ls -la /Users/amichne/.codex/hooks 2>/dev/null || true",
+          "description": "Review target directory before linking children",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.codex/hooks",
+          "description": "Prepare target directory after approval if needed",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "find /Users/amichne/code/intelligence/hooks/codex -mindepth 1 -maxdepth 1 -type f -name '*.hooks.json' -exec sh -c 'echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.codex/hooks ';'",
+          "description": "Link eligible primitive children only after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "DIRECTORY",
+      "targetPath": "/Users/amichne/.codex/hooks",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
+      "approvalState": "ALREADY_ACTIVE",
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "PLANNED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "codex-skill-children",
+      "notes": "Ready for explicit approval to add missing canonical intelligence skill children into the Apollo-backed Codex skill home as symlinks; approval remains required because the target is ~/.codex/skills -> /Users/amichne/code/apollo/skills.",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Runtime target already links every source child to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "MEDIUM",
+      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
+          "description": "Verify source directory exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ls -la /Users/amichne/.codex/skills 2>/dev/null || true",
+          "description": "Review target directory before linking children",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.codex/skills",
+          "description": "Prepare target directory after approval if needed",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "find /Users/amichne/code/intelligence/skills -mindepth 1 -maxdepth 1 -type d -exec sh -c 'test -f \"$1/SKILL.md\" && echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.codex/skills ';'",
+          "description": "Link eligible primitive children only after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/.codex/skills",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user action in the Codex app or an explicit instruction to open the import URL; this repo only records the import target.",
+      "approvalState": "ALREADY_ACTIVE",
+      "collisionPolicy": "SKIP_EXISTING",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "READY",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "codex-app-marketplace",
+      "notes": "Primary activation path for referential plugins. User action still controls installation from the Codex app.",
+      "operationType": "IMPORT_MARKETPLACE",
+      "planStatus": "READY_FOR_MANUAL_IMPORT",
+      "preflightReasons": [
+        "Marketplace source is already configured in Codex."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "primitiveTypes": [
+        "PLUGIN",
+        "SKILL",
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "LOW",
+      "rollback": "Remove or disable the imported marketplace/plugin entry through the runtime UI if activation is no longer wanted.",
+      "runtimeLinkStrategy": "MARKETPLACE_IMPORT",
+      "sourceKind": "FILE",
+      "sourcePath": "/Users/amichne/code/intelligence/marketplace.json",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/marketplace.json",
+          "description": "Verify marketplace catalog exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "open 'codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json'",
+          "description": "Open marketplace import URL manually after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "VIRTUAL",
+      "targetPath": "codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/agent-profile-authoring",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:1082a610e1b83155187bb9d1538a7b12631e93329fc95d95094f74f579bd72ad",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-agent-profile-authoring",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/agent-profile-authoring; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/agent-profile-authoring and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/agent-profile-authoring",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/agent-profile-authoring",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/agent-profile-authoring /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/agent-profile-authoring",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/agent-profile-authoring /Users/amichne/code/apollo/skills/agent-profile-authoring",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/agent-profile-authoring",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/agent-profile-authoring",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/github-ci-operations",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-github-ci-operations",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/github-ci-operations; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/github-ci-operations and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/github-ci-operations",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/github-ci-operations",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/github-ci-operations",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/github-ci-operations /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/github-ci-operations",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/github-ci-operations /Users/amichne/code/apollo/skills/github-ci-operations",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/github-ci-operations",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/github-ci-operations",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/hook-primitive-authoring",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-hook-primitive-authoring",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/hook-primitive-authoring; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/hook-primitive-authoring and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/hook-primitive-authoring",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/hook-primitive-authoring",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/hook-primitive-authoring /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/hook-primitive-authoring",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/hook-primitive-authoring /Users/amichne/code/apollo/skills/hook-primitive-authoring",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/hook-primitive-authoring",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/hook-primitive-authoring",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/local-repository-navigation",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-local-repository-navigation",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/local-repository-navigation; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/local-repository-navigation and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/local-repository-navigation",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/local-repository-navigation",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/local-repository-navigation",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/local-repository-navigation /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/local-repository-navigation",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/local-repository-navigation /Users/amichne/code/apollo/skills/local-repository-navigation",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/local-repository-navigation",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/local-repository-navigation",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/plugin-composition-authoring",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-plugin-composition-authoring",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/plugin-composition-authoring; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/plugin-composition-authoring and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/plugin-composition-authoring",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/plugin-composition-authoring",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/plugin-composition-authoring /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/plugin-composition-authoring",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/plugin-composition-authoring /Users/amichne/code/apollo/skills/plugin-composition-authoring",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/plugin-composition-authoring",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/plugin-composition-authoring",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/primitive-quality-audit",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:7047d5b9cc667230d64172f73819df89c44037ea298302a17f52ed47d6e082f4",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-primitive-quality-audit",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/primitive-quality-audit; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/primitive-quality-audit and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/primitive-quality-audit",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/primitive-quality-audit",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/primitive-quality-audit /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/primitive-quality-audit",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/primitive-quality-audit /Users/amichne/code/apollo/skills/primitive-quality-audit",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/primitive-quality-audit",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/primitive-quality-audit",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/primitive-routing-evaluation",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-primitive-routing-evaluation",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/primitive-routing-evaluation; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/primitive-routing-evaluation and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/primitive-routing-evaluation",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/primitive-routing-evaluation",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/primitive-routing-evaluation",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/primitive-routing-evaluation /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/primitive-routing-evaluation",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/primitive-routing-evaluation /Users/amichne/code/apollo/skills/primitive-routing-evaluation",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/primitive-routing-evaluation",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/primitive-routing-evaluation",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/repository-signature-indexing",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-repository-signature-indexing",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/repository-signature-indexing; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/repository-signature-indexing and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/repository-signature-indexing",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/repository-signature-indexing",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/repository-signature-indexing",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/repository-signature-indexing /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/repository-signature-indexing",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/repository-signature-indexing /Users/amichne/code/apollo/skills/repository-signature-indexing",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/repository-signature-indexing",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/repository-signature-indexing",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/runtime-linking",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:3717e49963fb909cd5c4a62a2c21dbfe57939baa26e0ad51a0c89a4c614d1861",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-runtime-linking",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/runtime-linking; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/runtime-linking and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/runtime-linking",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/runtime-linking",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/runtime-linking",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/runtime-linking /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/runtime-linking",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/runtime-linking /Users/amichne/code/apollo/skills/runtime-linking",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/runtime-linking",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/runtime-linking",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/shell-script-safety",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-shell-script-safety",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/shell-script-safety; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/shell-script-safety and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/shell-script-safety",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/shell-script-safety",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/shell-script-safety",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/shell-script-safety /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/shell-script-safety",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/shell-script-safety /Users/amichne/code/apollo/skills/shell-script-safety",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/shell-script-safety",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/shell-script-safety",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/site-docs-authoring",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-site-docs-authoring",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/site-docs-authoring; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/site-docs-authoring and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/site-docs-authoring",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/site-docs-authoring",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/site-docs-authoring",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/site-docs-authoring /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/site-docs-authoring",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/site-docs-authoring /Users/amichne/code/apollo/skills/site-docs-authoring",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/site-docs-authoring",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/site-docs-authoring",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/skill-primitive-authoring",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:e24ce9f217d02e7c5daf989e097d2c4188cea686fdbee2639bb8afc11c29e905",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-skill-primitive-authoring",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/skill-primitive-authoring; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/skill-primitive-authoring and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/skill-primitive-authoring",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/skill-primitive-authoring",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/skill-primitive-authoring /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/skill-primitive-authoring",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/skill-primitive-authoring /Users/amichne/code/apollo/skills/skill-primitive-authoring",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/skill-primitive-authoring",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/skill-primitive-authoring",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires an explicit user approval naming this replacement or approving its cleanup-ledger entry; PROPOSED status alone never authorizes writes.",
+      "approvalState": "ALREADY_ACTIVE",
+      "backupKind": "MISSING",
+      "backupPath": "/Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/source-graph-consolidation",
+      "evidence": {
+        "manifest": "garden/manifests/cleanup-ledger.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "reviewEvidenceSha256": "sha256:8c274af0389f6267860d1a5450834181babd28701897ae8b400290f2f29a7cbf",
+        "status": "PROPOSED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "replace-apollo-skills-source-graph-consolidation",
+      "notes": "garden/manifests/source-review-decisions.json records this Apollo skill digest as covered by the canonical skill. No runtime filesystem mutation has been performed by this proposal.",
+      "operationType": "REPLACE_SOURCE_WITH_SYMLINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Replacement target already resolves to the canonical source."
+      ],
+      "preflightStatus": "ALREADY_ACTIVE",
+      "requiresApproval": true,
+      "riskLevel": "HIGH",
+      "rollback": "No rollback is needed until execution. Before replacing this path, preserve the original at .migration-backups/source-turnoff/apollo-skills/source-graph-consolidation; after execution, rollback by removing the symlink at /Users/amichne/code/apollo/skills/source-graph-consolidation and moving that backup back to the original path.",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/skills/source-graph-consolidation",
+          "description": "Verify canonical source exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "test -e /Users/amichne/code/apollo/skills/source-graph-consolidation",
+          "description": "Verify current source exists before backup",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills",
+          "description": "Prepare backup directory",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mv /Users/amichne/code/apollo/skills/source-graph-consolidation /Users/amichne/code/intelligence/.migration-backups/source-turnoff/apollo-skills/source-graph-consolidation",
+          "description": "Back up current source path",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/source-graph-consolidation /Users/amichne/code/apollo/skills/source-graph-consolidation",
+          "description": "Link source path to canonical primitive",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "readlink /Users/amichne/code/apollo/skills/source-graph-consolidation",
+          "description": "Verify symlink target",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/code/apollo/skills/source-graph-consolidation",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    }
+  ],
+  "schemaVersion": 1,
+  "summary": {
+    "alreadyActive": 18,
+    "approvalRequired": true,
+    "blocked": 0,
+    "nextAction": "No activation approval action is pending.",
+    "readyForApproval": 0,
+    "readyForManualImport": 0,
+    "reviewRequired": 0,
+    "runtimeMutationAllowed": false,
+    "sourceTurnoffStatus": "NOT_READY",
+    "totalPackets": 18,
+    "type": "RUNTIME_ACTIVATION_APPROVAL_SUMMARY"
+  },
+  "type": "RUNTIME_ACTIVATION_APPROVAL_QUEUE"
+}

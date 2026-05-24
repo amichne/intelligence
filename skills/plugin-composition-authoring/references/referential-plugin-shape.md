@@ -3,7 +3,7 @@
 Use this reference for `plugins/<name>/plugin.json` in this repository.
 
 The manifest shape is governed by
-`concordance/schemas/core/plugin.schema.json`. Validate changes with
+`schemas/core/plugin.schema.json`. Validate changes with
 `node scripts/validate-manifests.mjs`.
 
 ## Manifest Pattern
@@ -21,7 +21,7 @@ The manifest shape is governed by
   "hooks": [],
   "metadata": {
     "composition": "referential",
-    "promotionManifest": "manifests/promotions.json"
+    "promotionManifest": "garden/manifests/promotions.json"
   }
 }
 ```

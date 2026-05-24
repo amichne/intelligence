@@ -19,7 +19,7 @@ the primitive remains usable without the plugin.
   Concordance schemas. Shape changes require schema changes or validation
   evidence, not prose-only agreement.
 - Add marketplace entries only after the plugin manifest exists.
-- Record promoted source primitives in `manifests/promotions.json`; the plugin
+- Record promoted source primitives in `garden/manifests/promotions.json`; the plugin
   itself should not be the only place provenance lives.
 - Validate against the repository schema and local reference checks.
 

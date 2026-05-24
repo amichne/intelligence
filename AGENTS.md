@@ -25,14 +25,13 @@ not justified.
 - `skills/` contains independent reusable skills.
 - `concepts/` contains portable concept primitives meant to be copied, linked,
   or projected into other projects.
-- `hooks/` contains reusable hook assets and provider adapter configs.
+- `hooks/` contains reusable hook assets and runtime adapter configs.
 - `plugins/` is reserved for plugin composition manifests.
-- `manifests/` contains source-root inventory, generated discovery output, and
-  promotion, primitive-audit, runtime-link, and cleanup ledgers.
-- `schemas/` contains repository-owned JSON Schema contracts for structured
-  data that is not owned by Concordance.
-- `scripts/` contains local validation and inventory tooling.
-- `docs/` contains current-state source graph documentation.
+- `garden/` contains isolated spring-cleaning inventory, generated reports,
+  review ledgers, runtime activation plans, and the scripts that produce them.
+- `schemas/` contains public-facing JSON Schema contracts for primitive,
+  plugin, marketplace, hook, and adapter surfaces.
+- `scripts/` contains root validation and marketplace publication tooling.
 - `concordance` is a local schema-reference symlink, not owned source for this
   repository.
 
@@ -40,15 +39,14 @@ not justified.
 
 - Keep primitives useful outside plugins. Plugins compose existing primitives;
   they do not own the only copy of a primitive.
-- Do not delete or replace scattered originals until `manifests/cleanup-ledger.json`
+- Do not delete or replace scattered originals until `garden/manifests/cleanup-ledger.json`
   records the canonical replacement and verification evidence.
 - Record durable quality and readiness decisions in
-  `manifests/primitive-audits.json` before using them to justify runtime
+  `garden/manifests/primitive-audits.json` before using them to justify runtime
   activation or cleanup.
-- Treat `manifests/source-roots.json` as the hand-authored scan boundary and
-  `manifests/discovered-primitives.json` as generated evidence.
-- Keep root marketplace and plugin manifests aligned with the Concordance core
-  schemas when the `concordance` symlink is present.
+- Treat `garden/manifests/source-roots.json` as the hand-authored scan boundary and
+  `garden/manifests/discovered-primitives.json` as generated evidence.
+- Keep root marketplace and plugin manifests aligned with `schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `node scripts/validate-manifests.mjs` is the coverage gate and must reject
@@ -57,10 +55,9 @@ not justified.
 ## Hook Rules
 
 - Keep provider-neutral hook primitive metadata aligned with
-  `concordance/schemas/core/hook.schema.json` when that local schema reference is
-  present.
-- Keep provider event names and matcher syntax in adapter configs such as
-  `hooks/codex/*.json`; do not put provider-specific behavior into the hook
+  `schemas/core/hook.schema.json`.
+- Keep runtime event names and matcher syntax in adapter configs such as
+  `hooks/codex/*.json`; do not put adapter-specific behavior into the hook
   primitive metadata.
 - Keep hook implementations host-portable. Prefer shell entrypoints with narrow,
   typed JSON parsing delegated to Python when the behavior is stateful.
@@ -71,13 +68,12 @@ not justified.
 
 - Run `bash -n hooks/*.sh` after editing shell hook entrypoints.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
-- Run `python3 scripts/inventory-primitives.py --check` after changing source
+- Run `python3 garden/scripts/inventory-primitives.py --check` after changing source
   roots, primitive locations, or the generated inventory.
-- Run `python3 scripts/analyze-consolidation.py --check` after changing the
+- Run `python3 garden/scripts/analyze-consolidation.py --check` after changing the
   generated inventory or consolidation report.
 - Run `node scripts/validate-manifests.mjs` after changing `marketplace.json`,
   `plugins/*/plugin.json`, hooks, schemas, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
-  `concordance/schemas/core/hook.schema.json` if that schema reference is
-  available.
+  `schemas/core/hook.schema.json`.

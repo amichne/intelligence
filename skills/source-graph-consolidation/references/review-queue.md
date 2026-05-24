@@ -1,7 +1,7 @@
 # Review Queue
 
 Use this reference when deciding what to promote from
-`docs/consolidation-queue.md` or `manifests/consolidation-report.json`.
+`garden/docs/consolidation-queue.md` or `garden/manifests/consolidation-report.json`.
 
 ## Queue Meaning
 
@@ -29,11 +29,11 @@ Use this reference when deciding what to promote from
 ## Evidence Commands
 
 ```sh
-python3 scripts/inventory-primitives.py
-python3 scripts/analyze-consolidation.py
-python3 scripts/inventory-primitives.py --check
-python3 scripts/analyze-consolidation.py --check
+python3 garden/scripts/inventory-primitives.py
+python3 garden/scripts/analyze-consolidation.py
+python3 garden/scripts/inventory-primitives.py --check
+python3 garden/scripts/analyze-consolidation.py --check
 ```
 
-After running these, inspect `docs/consolidation-queue.md` for human-readable
-triage and `manifests/consolidation-report.json` for exact paths and digests.
+After running these, inspect `garden/docs/consolidation-queue.md` for human-readable
+triage and `garden/manifests/consolidation-report.json` for exact paths and digests.

@@ -11,7 +11,7 @@ require explicit user approval and a current manifest.
 
 ## Operating Contract
 
-- Treat `manifests/runtime-links.json` as the activation plan.
+- Treat `garden/manifests/runtime-links.json` as the activation plan.
 - Do not write to runtime paths unless the user explicitly asks for activation.
 - Never replace an existing file or symlink until its content is inspected,
   imported if needed, and backed up according to the manifest collision policy.
@@ -23,7 +23,7 @@ require explicit user approval and a current manifest.
 ## Workflow
 
 1. Read the plan.
-   Inspect `manifests/runtime-links.json` and confirm the relevant entry,
+   Inspect `garden/manifests/runtime-links.json` and confirm the relevant entry,
    source path, target path, strategy, status, and collision policy.
 
 2. Verify source readiness.
@@ -55,7 +55,7 @@ require explicit user approval and a current manifest.
 ## Reference Routing
 
 - Load [manifest.md](references/manifest.md) when editing or interpreting
-  `manifests/runtime-links.json`.
+  `garden/manifests/runtime-links.json`.
 - Load [collision-safety.md](references/collision-safety.md) before proposing
   backup or replacement of any existing runtime path.
 - Load [runtime-targets.md](references/runtime-targets.md) when selecting the

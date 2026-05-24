@@ -1,6 +1,6 @@
 ---
 name: hook-primitive-authoring
-description: Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, provider adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.
+description: Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, runtime adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.
 ---
 
 # Hook Primitive Authoring
@@ -13,16 +13,16 @@ repo-owned primitive before any plugin composes it.
 - Keep provider-neutral hook metadata in `hooks/<name>.hook.json`.
 - Keep executable implementations at `hooks/<name>.*` unless they are
   provider-specific.
-- Keep provider adapter projections under provider-named directories such as
+- Keep runtime adapter projections under adapter-named directories such as
   `hooks/codex/`.
 - Reference related skills, agents, hooks, or concepts through metadata instead
   of copying their guidance into hook files.
 - Validate hook metadata against the Concordance schemas through
   `node scripts/validate-manifests.mjs`.
-- Treat every hook metadata file and provider adapter as structured data with a
+- Treat every hook metadata file and runtime adapter as structured data with a
   mandatory schema-backed validation path.
 - Run syntax checks for every touched executable hook implementation.
-- Record promoted hook source material in `manifests/promotions.json`.
+- Record promoted hook source material in `garden/manifests/promotions.json`.
 
 ## Workflow
 
@@ -32,12 +32,12 @@ repo-owned primitive before any plugin composes it.
 
 2. Choose the local files.
    Add neutral metadata at `hooks/<name>.hook.json`, implementation code at the
-   hook root, and provider adapter config under `hooks/<provider>/`.
+   hook root, and adapter config under `hooks/<adapter>/`.
 
 3. Identify schemas.
    For neutral metadata, use the local Concordance `hook.schema.json` path
-   through `node scripts/validate-manifests.mjs`. For provider adapters, use the
-   provider schema when one exists and still parse JSON locally.
+   through `node scripts/validate-manifests.mjs`. For runtime adapters, use the
+   adapter schema when one exists and still parse JSON locally.
 
 4. Declare dependencies.
    Use `dependsOn` in neutral metadata when the hook enforces or references a
@@ -45,7 +45,7 @@ repo-owned primitive before any plugin composes it.
    upstream primitive text.
 
 5. Implement thinly.
-   Keep provider adapters small. They should call the owning script or CLI and
+   Keep runtime adapters small. They should call the owning script or CLI and
    avoid reimplementing business logic in JSON config.
 
 6. Validate locally.
@@ -70,7 +70,7 @@ repo-owned primitive before any plugin composes it.
 
 ## Completion Criteria
 
-- Neutral metadata, provider adapter, and implementation ownership are clear.
+- Neutral metadata, runtime adapter, and implementation ownership are clear.
 - Metadata validates through the Concordance-backed manifest validator.
 - Hook dependencies point at canonical primitives.
 - Executable syntax or representative local execution has been checked.

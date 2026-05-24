@@ -3,7 +3,7 @@
 Use this reference when editing `marketplace.json`.
 
 The catalog shape is governed by
-`concordance/schemas/core/marketplace.schema.json`. Validate changes with
+`schemas/core/marketplace.schema.json`. Validate changes with
 `node scripts/validate-manifests.mjs`.
 
 ## Catalog Duties

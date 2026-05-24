@@ -1,6 +1,6 @@
 # Runtime Link Manifest
 
-Use this reference when editing `manifests/runtime-links.json`.
+Use this reference when editing `garden/manifests/runtime-links.json`.
 
 ## Ownership
 
@@ -30,7 +30,7 @@ Each entry names:
 ## Validation
 
 `runtime-links.json` is governed by
-`schemas/intelligence/runtime-links.schema.json`.
+`garden/schemas/intelligence/runtime-links.schema.json`.
 
 Run:
 

@@ -1,0 +1,198 @@
+{
+  "gates": [
+    {
+      "evidence": "garden/manifests/plugin-coverage.json has STANDALONE_ONLY canonical primitives.",
+      "name": "canonical-plugin-coverage",
+      "nextAction": "Keep plugin coverage generated and checked before source replacement.",
+      "status": "BLOCKED",
+      "type": "SOURCE_TURNOFF_GATE"
+    },
+    {
+      "evidence": "1 canonical primitives still need audit decisions.",
+      "name": "review-completeness",
+      "nextAction": "Close review-completeness gaps before treating the source graph as fully reviewed.",
+      "status": "BLOCKED",
+      "type": "SOURCE_TURNOFF_GATE"
+    },
+    {
+      "evidence": "0 source-review entries remain open.",
+      "name": "source-review-decisions",
+      "nextAction": "Keep every generated name-review group synchronized with source-review decisions.",
+      "status": "PASS",
+      "type": "SOURCE_TURNOFF_GATE"
+    },
+    {
+      "evidence": "0 digest-review entries remain open.",
+      "name": "digest-review-decisions",
+      "nextAction": "Keep every generated duplicate-content group synchronized with digest-review decisions.",
+      "status": "PASS",
+      "type": "SOURCE_TURNOFF_GATE"
+    },
+    {
+      "evidence": "13 proposed replacements and 0 approved replacements are recorded.",
+      "name": "cleanup-ledger-approval",
+      "nextAction": "Treat PROPOSED entries as review records only; execute nothing until explicit approval changes status.",
+      "status": "REVIEW_REQUIRED",
+      "type": "SOURCE_TURNOFF_GATE"
+    },
+    {
+      "evidence": "28 generated review groups are intentionally retained in external owners.",
+      "name": "external-retention",
+      "nextAction": "Do not replace RETAIN_EXTERNAL groups from this repository unless a new canonical promotion is reviewed.",
+      "status": "PASS",
+      "type": "SOURCE_TURNOFF_GATE"
+    },
+    {
+      "evidence": "0 inactive runtime link or marketplace import plans still require explicit approval.",
+      "name": "runtime-activation-approval",
+      "nextAction": "Use runtime-links.json as activation planning evidence, not as permission to write runtime paths.",
+      "status": "PASS",
+      "type": "SOURCE_TURNOFF_GATE"
+    }
+  ],
+  "generatedFrom": {
+    "cleanupLedger": "garden/manifests/cleanup-ledger.json",
+    "digestReviewDecisions": "garden/manifests/digest-review-decisions.json",
+    "pluginCoverage": "garden/manifests/plugin-coverage.json",
+    "reviewCompleteness": "garden/manifests/review-completeness.json",
+    "runtimeLinks": "garden/manifests/runtime-links.json",
+    "sourceReviewDecisions": "garden/manifests/source-review-decisions.json",
+    "type": "SOURCE_TURNOFF_READINESS_INPUTS"
+  },
+  "proposedReplacements": [
+    {
+      "canonicalPath": "skills/agent-profile-authoring",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:1082a610e1b83155187bb9d1538a7b12631e93329fc95d95094f74f579bd72ad",
+      "sourcePath": "agent-profile-authoring",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/github-ci-operations",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+      "sourcePath": "github-ci-operations",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/hook-primitive-authoring",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
+      "sourcePath": "hook-primitive-authoring",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/local-repository-navigation",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8",
+      "sourcePath": "local-repository-navigation",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/plugin-composition-authoring",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591",
+      "sourcePath": "plugin-composition-authoring",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/primitive-quality-audit",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:7047d5b9cc667230d64172f73819df89c44037ea298302a17f52ed47d6e082f4",
+      "sourcePath": "primitive-quality-audit",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/primitive-routing-evaluation",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a",
+      "sourcePath": "primitive-routing-evaluation",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/repository-signature-indexing",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73",
+      "sourcePath": "repository-signature-indexing",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/runtime-linking",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:3717e49963fb909cd5c4a62a2c21dbfe57939baa26e0ad51a0c89a4c614d1861",
+      "sourcePath": "runtime-linking",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/shell-script-safety",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f",
+      "sourcePath": "shell-script-safety",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/site-docs-authoring",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+      "sourcePath": "site-docs-authoring",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/skill-primitive-authoring",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:e24ce9f217d02e7c5daf989e097d2c4188cea686fdbee2639bb8afc11c29e905",
+      "sourcePath": "skill-primitive-authoring",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    },
+    {
+      "canonicalPath": "skills/source-graph-consolidation",
+      "decision": "REPLACE_WITH_SYMLINK",
+      "reviewEvidenceSha256": "sha256:8c274af0389f6267860d1a5450834181babd28701897ae8b400290f2f29a7cbf",
+      "sourcePath": "source-graph-consolidation",
+      "sourceRoot": "apollo-skills",
+      "status": "PROPOSED",
+      "type": "SOURCE_REPLACEMENT_PROPOSAL"
+    }
+  ],
+  "schemaVersion": 1,
+  "summary": {
+    "allCanonicalRouted": false,
+    "approvedReplacements": 0,
+    "canMutateRuntimeWithoutApproval": false,
+    "digestReviewOpen": 0,
+    "executedCleanupEntries": 33,
+    "nextAction": "Resolve blocked coverage, audit-completeness, or review-decision gates before planning runtime changes.",
+    "proposedReplacements": 13,
+    "readinessStatus": "NOT_READY",
+    "retainedExternalGroups": 28,
+    "reviewCompletenessOpen": 1,
+    "runtimeLinksRequiringApproval": 0,
+    "sourceReviewOpen": 0,
+    "type": "SOURCE_TURNOFF_READINESS_SUMMARY"
+  },
+  "type": "SOURCE_TURNOFF_READINESS_REPORT"
+}

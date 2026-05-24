@@ -76,9 +76,9 @@
   "hooks": [],
   "metadata": {
     "composition": "referential",
-    "auditManifest": "manifests/primitive-audits.json",
-    "promotionManifest": "manifests/promotions.json",
-    "runtimeLinks": "manifests/runtime-links.json",
-    "cleanupLedger": "manifests/cleanup-ledger.json"
+    "auditManifest": "garden/manifests/primitive-audits.json",
+    "promotionManifest": "garden/manifests/promotions.json",
+    "runtimeLinks": "garden/manifests/runtime-links.json",
+    "cleanupLedger": "garden/manifests/cleanup-ledger.json"
   }
 }

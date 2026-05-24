@@ -53,10 +53,10 @@ promotion, runtime activation, and later cleanup from evidence.
    composed by reference. Otherwise choose the smallest useful next action.
 
 6. Update manifests when the decision is durable.
-   Use `manifests/primitive-audits.json` for quality decisions,
-   `manifests/promotions.json` for copied canonical primitives,
-   `manifests/runtime-links.json` for activation plans, and
-   `manifests/cleanup-ledger.json` only when cleanup is ready for explicit
+   Use `garden/manifests/primitive-audits.json` for quality decisions,
+   `garden/manifests/promotions.json` for copied canonical primitives,
+   `garden/manifests/runtime-links.json` for activation plans, and
+   `garden/manifests/cleanup-ledger.json` only when cleanup is ready for explicit
    approval.
 
 7. Validate.

@@ -6,7 +6,14 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const gardenRoot = path.join(repoRoot, "garden");
+const gardenManifestDir = path.join(gardenRoot, "manifests");
+const gardenSchemaDir = path.join(gardenRoot, "schemas", "intelligence");
+const coreSchemaDir = path.join(repoRoot, "schemas", "core");
+const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
+const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
 const concordancePackage = path.join(repoRoot, "concordance", "package.json");
+const hydratedRoot = parseArguments(process.argv.slice(2));
 
 if (!fs.existsSync(concordancePackage)) {
   console.error("Missing concordance schema reference at ./concordance");
@@ -35,72 +42,77 @@ const draft7Ajv = new AjvDraft7({
 });
 addFormats(draft7Ajv);
 
+const adapterHookSchemas = [
+  { adapter: "claude", schemaId: "claude-hooks.schema.json", validator: ajv },
+  { adapter: "codex", schemaId: "https://json.schemastore.org/codex-hooks.json", validator: draft7Ajv },
+  { adapter: "github", schemaId: "github-hooks.schema.json", validator: ajv }
+];
+
 const validatedJsonFiles = new Set();
 
-const schemaDir = path.join(repoRoot, "concordance", "schemas", "core");
-for (const schemaPath of listJsonFiles(schemaDir)) {
+for (const schemaPath of listJsonFiles(coreSchemaDir)) {
   ajv.addSchema(readJson(schemaPath));
 }
 
-const localSchemaDir = path.join(repoRoot, "schemas", "intelligence");
-for (const schemaPath of listJsonFiles(localSchemaDir)) {
+for (const schemaPath of listJsonFiles(gardenSchemaDir)) {
   ajv.addSchema(readJson(schemaPath));
 }
 
-const codexHooksSchemaPath = path.join(repoRoot, "concordance", "standards", "codex-hooks.schema.json");
-draft7Ajv.addSchema(readJson(codexHooksSchemaPath));
+for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJsonFiles(hookSchemaDir)]) {
+  const schema = readJson(schemaPath);
+  if (schema.$schema === "http://json-schema.org/draft-07/schema#") {
+    draft7Ajv.addSchema(schema);
+  } else {
+    ajv.addSchema(schema);
+  }
+}
 
 const checks = [
   ["marketplace.schema.json", path.join(repoRoot, "marketplace.json")],
-  ["intelligence-codex-marketplace.schema.json", path.join(repoRoot, ".agents", "plugins", "marketplace.json")],
   ...listPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
-  ...listCodexPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["intelligence-codex-plugin.schema.json", file]),
+  ...listCodexPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["codex-plugin.schema.json", file]),
+  ...hydratedChecks(hydratedRoot),
   ...listFiles(path.join(repoRoot, "hooks"))
     .filter((file) => file.endsWith(".hook.json"))
     .map((file) => ["hook.schema.json", file]),
   ...listFiles(path.join(repoRoot, "hooks"))
     .filter((file) => file.endsWith(".requirements.json"))
-    .map((file) => ["intelligence-hook-skill-requirements.schema.json", file]),
-  ["intelligence-source-roots.schema.json", path.join(repoRoot, "manifests", "source-roots.json")],
-  ["intelligence-promotions.schema.json", path.join(repoRoot, "manifests", "promotions.json")],
-  ["intelligence-primitive-audits.schema.json", path.join(repoRoot, "manifests", "primitive-audits.json")],
-  ["intelligence-source-review-decisions.schema.json", path.join(repoRoot, "manifests", "source-review-decisions.json")],
-  ["intelligence-digest-review-decisions.schema.json", path.join(repoRoot, "manifests", "digest-review-decisions.json")],
-  ["intelligence-source-root-decisions.schema.json", path.join(repoRoot, "manifests", "source-root-decisions.json")],
-  ["intelligence-plugin-coverage.schema.json", path.join(repoRoot, "manifests", "plugin-coverage.json")],
-  ["intelligence-primitive-decision-coverage.schema.json", path.join(repoRoot, "manifests", "primitive-decision-coverage.json")],
-  ["intelligence-toolbox-readiness.schema.json", path.join(repoRoot, "manifests", "toolbox-readiness.json")],
-  ["intelligence-review-completeness.schema.json", path.join(repoRoot, "manifests", "review-completeness.json")],
-  ["intelligence-source-cleanup-gaps.schema.json", path.join(repoRoot, "manifests", "source-cleanup-gaps.json")],
-  ["intelligence-source-root-retirement.schema.json", path.join(repoRoot, "manifests", "source-root-retirement.json")],
-  ["intelligence-source-turnoff-readiness.schema.json", path.join(repoRoot, "manifests", "source-turnoff-readiness.json")],
-  ["intelligence-runtime-activation-plan.schema.json", path.join(repoRoot, "manifests", "runtime-activation-plan.json")],
-  ["intelligence-runtime-activation-preflight.schema.json", path.join(repoRoot, "manifests", "runtime-activation-preflight.json")],
-  ["intelligence-runtime-activation-approvals.schema.json", path.join(repoRoot, "manifests", "runtime-activation-approvals.json")],
-  ["intelligence-runtime-trim-execution.schema.json", path.join(repoRoot, "manifests", "runtime-trim-execution.json")],
-  ["intelligence-runtime-links.schema.json", path.join(repoRoot, "manifests", "runtime-links.json")],
-  ["intelligence-cleanup-ledger.schema.json", path.join(repoRoot, "manifests", "cleanup-ledger.json")],
-  ["intelligence-discovered-primitives.schema.json", path.join(repoRoot, "manifests", "discovered-primitives.json")],
-  ["intelligence-consolidation-report.schema.json", path.join(repoRoot, "manifests", "consolidation-report.json")]
+    .map((file) => ["hook-skill-requirements.schema.json", file]),
+  ["intelligence-source-roots.schema.json", manifestPath("source-roots.json")],
+  ["intelligence-promotions.schema.json", manifestPath("promotions.json")],
+  ["intelligence-primitive-audits.schema.json", manifestPath("primitive-audits.json")],
+  ["intelligence-source-review-decisions.schema.json", manifestPath("source-review-decisions.json")],
+  ["intelligence-digest-review-decisions.schema.json", manifestPath("digest-review-decisions.json")],
+  ["intelligence-source-root-decisions.schema.json", manifestPath("source-root-decisions.json")],
+  ["intelligence-plugin-coverage.schema.json", manifestPath("plugin-coverage.json")],
+  ["intelligence-primitive-decision-coverage.schema.json", manifestPath("primitive-decision-coverage.json")],
+  ["intelligence-toolbox-readiness.schema.json", manifestPath("toolbox-readiness.json")],
+  ["intelligence-review-completeness.schema.json", manifestPath("review-completeness.json")],
+  ["intelligence-source-cleanup-gaps.schema.json", manifestPath("source-cleanup-gaps.json")],
+  ["intelligence-source-root-retirement.schema.json", manifestPath("source-root-retirement.json")],
+  ["intelligence-source-turnoff-readiness.schema.json", manifestPath("source-turnoff-readiness.json")],
+  ["intelligence-runtime-activation-plan.schema.json", manifestPath("runtime-activation-plan.json")],
+  ["intelligence-runtime-activation-preflight.schema.json", manifestPath("runtime-activation-preflight.json")],
+  ["intelligence-runtime-activation-approvals.schema.json", manifestPath("runtime-activation-approvals.json")],
+  ["intelligence-runtime-trim-execution.schema.json", manifestPath("runtime-trim-execution.json")],
+  ["intelligence-runtime-links.schema.json", manifestPath("runtime-links.json")],
+  ["intelligence-cleanup-ledger.schema.json", manifestPath("cleanup-ledger.json")],
+  ["intelligence-discovered-primitives.schema.json", manifestPath("discovered-primitives.json")],
+  ["intelligence-consolidation-report.schema.json", manifestPath("consolidation-report.json")]
 ];
 
-const draft7Checks = [
-  ...listJsonFiles(path.join(repoRoot, "hooks", "codex")).map((file) => [
-    "https://json.schemastore.org/codex-hooks.json",
-    file
-  ])
-];
+const adapterHookChecks = listAdapterHookChecks();
 
 let failures = 0;
 for (const [schemaId, filePath] of checks) {
   failures += validateDataFile(ajv, schemaId, filePath);
 }
 
-for (const [schemaId, filePath] of draft7Checks) {
-  failures += validateDataFile(draft7Ajv, schemaId, filePath);
+for (const [validator, schemaId, filePath] of adapterHookChecks) {
+  failures += validateDataFile(validator, schemaId, filePath);
 }
 
-for (const manifest of listJsonFiles(path.join(repoRoot, "manifests"))) {
+for (const manifest of listJsonFiles(gardenManifestDir)) {
   const data = readJson(manifest);
   failures += validateManifestReferences(manifest, data);
 }
@@ -130,6 +142,55 @@ function validateDataFile(validator, schemaId, filePath) {
   console.error(`FAIL ${path.relative(repoRoot, filePath)}`);
   console.error(JSON.stringify(validate.errors, null, 2));
   return 1;
+}
+
+function parseArguments(args) {
+  let hydrated = null;
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--hydrated") {
+      const value = args[index + 1];
+      if (!value) {
+        console.error("usage: node scripts/validate-manifests.mjs [--hydrated <dir>]");
+        process.exit(2);
+      }
+      hydrated = path.resolve(repoRoot, value);
+      index += 1;
+      continue;
+    }
+    console.error(`unknown argument: ${arg}`);
+    console.error("usage: node scripts/validate-manifests.mjs [--hydrated <dir>]");
+    process.exit(2);
+  }
+  return hydrated;
+}
+
+function hydratedChecks(directory) {
+  if (!directory) {
+    return [];
+  }
+  return [
+    ["codex-marketplace.schema.json", path.join(directory, ".github", "plugin", "marketplace.json")],
+    ["codex-marketplace-lock.schema.json", path.join(directory, "marketplace-lock.json")],
+    ...listCodexPluginManifests(path.join(directory, "plugins")).map((file) => [
+      "codex-plugin.schema.json",
+      file
+    ])
+  ];
+}
+
+function listAdapterHookChecks() {
+  return adapterHookSchemas.flatMap(({ adapter, schemaId, validator }) =>
+    listJsonFiles(path.join(repoRoot, "hooks", adapter)).map((file) => [
+      validator,
+      schemaId,
+      file
+    ])
+  );
+}
+
+function manifestPath(name) {
+  return path.join(gardenManifestDir, name);
 }
 
 function listPluginManifests(directory) {
@@ -321,7 +382,7 @@ function validatePrimitiveAuditReferences(filePath, data) {
 }
 
 function validateSourceReviewDecisionReferences(filePath, data) {
-  const reportPath = path.join(repoRoot, "manifests", "consolidation-report.json");
+  const reportPath = manifestPath("consolidation-report.json");
   if (!fs.existsSync(reportPath)) {
     console.error(
       `FAIL ${path.relative(repoRoot, filePath)}: missing consolidation report for source review decisions`
@@ -376,7 +437,7 @@ function validateSourceReviewDecisionReferences(filePath, data) {
 }
 
 function validateDigestReviewDecisionReferences(filePath, data) {
-  const reportPath = path.join(repoRoot, "manifests", "consolidation-report.json");
+  const reportPath = manifestPath("consolidation-report.json");
   if (!fs.existsSync(reportPath)) {
     console.error(
       `FAIL ${path.relative(repoRoot, filePath)}: missing consolidation report for digest review decisions`
@@ -430,8 +491,8 @@ function validateDigestReviewDecisionReferences(filePath, data) {
 }
 
 function validateSourceRootDecisionReferences(filePath, data) {
-  const sourceRoots = readJson(path.join(repoRoot, "manifests", "source-roots.json"));
-  const discovered = readJson(path.join(repoRoot, "manifests", "discovered-primitives.json"));
+  const sourceRoots = readJson(manifestPath("source-roots.json"));
+  const discovered = readJson(manifestPath("discovered-primitives.json"));
   const roots = new Set((sourceRoots.scanRoots ?? []).map((root) => root.name));
   const entriesByRoot = new Map();
   for (const entry of discovered.entries ?? []) {
@@ -580,10 +641,10 @@ function validateDigestReviewCoverage(filePath, entry) {
 }
 
 function validateCleanupLedgerReferences(filePath, data) {
-  const sourceReviewPath = path.join(repoRoot, "manifests", "source-review-decisions.json");
-  const digestReviewPath = path.join(repoRoot, "manifests", "digest-review-decisions.json");
-  const discoveredPath = path.join(repoRoot, "manifests", "discovered-primitives.json");
-  const reportPath = path.join(repoRoot, "manifests", "consolidation-report.json");
+  const sourceReviewPath = manifestPath("source-review-decisions.json");
+  const digestReviewPath = manifestPath("digest-review-decisions.json");
+  const discoveredPath = manifestPath("discovered-primitives.json");
+  const reportPath = manifestPath("consolidation-report.json");
   const sourceReviews = fs.existsSync(sourceReviewPath)
     ? readJson(sourceReviewPath)
     : { entries: [] };
@@ -969,11 +1030,11 @@ function validatePluginCoverageReferences(filePath, data) {
 }
 
 function validatePrimitiveDecisionCoverageReferences(filePath, data) {
-  const discovered = readJson(path.join(repoRoot, "manifests", "discovered-primitives.json"));
-  const consolidation = readJson(path.join(repoRoot, "manifests", "consolidation-report.json"));
-  const sourceReview = readJson(path.join(repoRoot, "manifests", "source-review-decisions.json"));
-  const digestReview = readJson(path.join(repoRoot, "manifests", "digest-review-decisions.json"));
-  const sourceRootDecisions = readJson(path.join(repoRoot, "manifests", "source-root-decisions.json"));
+  const discovered = readJson(manifestPath("discovered-primitives.json"));
+  const consolidation = readJson(manifestPath("consolidation-report.json"));
+  const sourceReview = readJson(manifestPath("source-review-decisions.json"));
+  const digestReview = readJson(manifestPath("digest-review-decisions.json"));
+  const sourceRootDecisions = readJson(manifestPath("source-root-decisions.json"));
   const sourceReviewKeys = primitiveDecisionSourceReviewKeys(consolidation, sourceReview);
   const digestReviewShas = new Set((digestReview.entries ?? []).map((entry) => entry.target?.sha256));
   const sourceRootDecisionRoots = new Set((sourceRootDecisions.entries ?? []).map((entry) => entry.sourceRoot));
@@ -1097,9 +1158,9 @@ function countCoverageState(entries, state) {
 }
 
 function validateReviewCompletenessReferences(filePath, data) {
-  const pluginCoverage = readJson(path.join(repoRoot, "manifests", "plugin-coverage.json"));
-  const audits = readJson(path.join(repoRoot, "manifests", "primitive-audits.json"));
-  const promotions = readJson(path.join(repoRoot, "manifests", "promotions.json"));
+  const pluginCoverage = readJson(manifestPath("plugin-coverage.json"));
+  const audits = readJson(manifestPath("primitive-audits.json"));
+  const promotions = readJson(manifestPath("promotions.json"));
   const auditKeys = new Set((audits.entries ?? []).map((entry) =>
     primitiveKey(entry.primitive?.primitiveType, entry.primitive?.name)
   ));
@@ -1180,13 +1241,13 @@ function validateReviewCompletenessReferences(filePath, data) {
 }
 
 function validateSourceRootRetirementReferences(filePath, data) {
-  const sourceRoots = readJson(path.join(repoRoot, "manifests", "source-roots.json"));
-  const discovered = readJson(path.join(repoRoot, "manifests", "discovered-primitives.json"));
-  const sourceReview = readJson(path.join(repoRoot, "manifests", "source-review-decisions.json"));
-  const digestReview = readJson(path.join(repoRoot, "manifests", "digest-review-decisions.json"));
-  const sourceRootDecisions = readJson(path.join(repoRoot, "manifests", "source-root-decisions.json"));
-  const cleanupLedger = readJson(path.join(repoRoot, "manifests", "cleanup-ledger.json"));
-  const approvals = readJson(path.join(repoRoot, "manifests", "runtime-activation-approvals.json"));
+  const sourceRoots = readJson(manifestPath("source-roots.json"));
+  const discovered = readJson(manifestPath("discovered-primitives.json"));
+  const sourceReview = readJson(manifestPath("source-review-decisions.json"));
+  const digestReview = readJson(manifestPath("digest-review-decisions.json"));
+  const sourceRootDecisions = readJson(manifestPath("source-root-decisions.json"));
+  const cleanupLedger = readJson(manifestPath("cleanup-ledger.json"));
+  const approvals = readJson(manifestPath("runtime-activation-approvals.json"));
   const discoveredByRoot = countEntriesByRoot(discovered.entries ?? []);
   const sourceDecisions = decisionCountsByRoot(sourceReview);
   const digestDecisions = decisionCountsByRoot(digestReview);
@@ -1442,12 +1503,12 @@ function slug(value) {
 }
 
 function validateSourceTurnoffReadinessReferences(filePath, data) {
-  const pluginCoverage = readJson(path.join(repoRoot, "manifests", "plugin-coverage.json"));
-  const reviewCompleteness = readJson(path.join(repoRoot, "manifests", "review-completeness.json"));
-  const sourceReview = readJson(path.join(repoRoot, "manifests", "source-review-decisions.json"));
-  const digestReview = readJson(path.join(repoRoot, "manifests", "digest-review-decisions.json"));
-  const cleanupLedger = readJson(path.join(repoRoot, "manifests", "cleanup-ledger.json"));
-  const runtimeLinks = readJson(path.join(repoRoot, "manifests", "runtime-links.json"));
+  const pluginCoverage = readJson(manifestPath("plugin-coverage.json"));
+  const reviewCompleteness = readJson(manifestPath("review-completeness.json"));
+  const sourceReview = readJson(manifestPath("source-review-decisions.json"));
+  const digestReview = readJson(manifestPath("digest-review-decisions.json"));
+  const cleanupLedger = readJson(manifestPath("cleanup-ledger.json"));
+  const runtimeLinks = readJson(manifestPath("runtime-links.json"));
   const summary = data.summary ?? {};
   let failures = 0;
 
@@ -1655,7 +1716,7 @@ function validateRuntimeActivationPlanReferences(filePath, data) {
     summary.readyForManualImport
   );
 
-  const readiness = readJson(path.join(repoRoot, "manifests", "source-turnoff-readiness.json"));
+  const readiness = readJson(manifestPath("source-turnoff-readiness.json"));
   if (summary.runtimeMutationAllowed !== readiness.summary?.canMutateRuntimeWithoutApproval) {
     console.error(
       `FAIL ${path.relative(repoRoot, filePath)}: runtimeMutationAllowed is stale; expected ${readiness.summary?.canMutateRuntimeWithoutApproval}, found ${summary.runtimeMutationAllowed}`
@@ -1663,7 +1724,7 @@ function validateRuntimeActivationPlanReferences(filePath, data) {
     failures += 1;
   }
 
-  const runtimeLinks = readJson(path.join(repoRoot, "manifests", "runtime-links.json"));
+  const runtimeLinks = readJson(manifestPath("runtime-links.json"));
   for (const entry of runtimeLinks.entries ?? []) {
     const expected = expectedRuntimeLinkOperation(entry);
     const operation = operationsByName.get(expected.name);
@@ -1681,7 +1742,7 @@ function validateRuntimeActivationPlanReferences(filePath, data) {
     failures += compareRuntimeActivationField(filePath, expected.name, "requiresApproval", expected.requiresApproval, operation.requiresApproval);
     failures += compareRuntimeActivationField(filePath, expected.name, "runtimeLinkStrategy", expected.runtimeLinkStrategy, operation.runtimeLinkStrategy);
     failures += compareRuntimeActivationField(filePath, expected.name, "collisionPolicy", expected.collisionPolicy, operation.collisionPolicy);
-    failures += compareRuntimeActivationField(filePath, expected.name, "evidence.manifest", "manifests/runtime-links.json", operation.evidence?.manifest);
+    failures += compareRuntimeActivationField(filePath, expected.name, "evidence.manifest", "garden/manifests/runtime-links.json", operation.evidence?.manifest);
     failures += compareRuntimeActivationField(filePath, expected.name, "evidence.status", entry.status, operation.evidence?.status);
   }
 
@@ -1820,7 +1881,7 @@ function validateRuntimeActivationPreflightReferences(filePath, data) {
     failures += 1;
   }
 
-  const plan = readJson(path.join(repoRoot, "manifests", "runtime-activation-plan.json"));
+  const plan = readJson(manifestPath("runtime-activation-plan.json"));
   const planOperations = new Set((plan.operations ?? []).map((operation) => operation.name));
   const preflightOperations = new Set(entries.map((entry) => entry.operationName));
   for (const operationName of planOperations) {
@@ -1845,9 +1906,9 @@ function validateRuntimeActivationPreflightReferences(filePath, data) {
 
 function validateRuntimeActivationApprovalReferences(filePath, data) {
   let failures = 0;
-  const readiness = readJson(path.join(repoRoot, "manifests", "source-turnoff-readiness.json"));
-  const plan = readJson(path.join(repoRoot, "manifests", "runtime-activation-plan.json"));
-  const preflight = readJson(path.join(repoRoot, "manifests", "runtime-activation-preflight.json"));
+  const readiness = readJson(manifestPath("source-turnoff-readiness.json"));
+  const plan = readJson(manifestPath("runtime-activation-plan.json"));
+  const preflight = readJson(manifestPath("runtime-activation-preflight.json"));
   const planByName = new Map((plan.operations ?? []).map((operation) => [operation.name, operation]));
   const preflightByName = new Map((preflight.entries ?? []).map((entry) => [entry.operationName, entry]));
   const replacementDependencies = runtimeActivationReplacementDependencyMap(plan);
@@ -2354,8 +2415,8 @@ function validateFirstPartyPromotion(filePath, entry) {
 }
 
 function validatePromotionAuditCoverage() {
-  const promotionsPath = path.join(repoRoot, "manifests", "promotions.json");
-  const auditsPath = path.join(repoRoot, "manifests", "primitive-audits.json");
+  const promotionsPath = manifestPath("promotions.json");
+  const auditsPath = manifestPath("primitive-audits.json");
   if (!fs.existsSync(promotionsPath) || !fs.existsSync(auditsPath)) {
     return 0;
   }
@@ -2370,7 +2431,7 @@ function validatePromotionAuditCoverage() {
     const key = primitiveKey(primitive.primitiveType, primitive.name);
     if (auditKeys.has(key)) {
       console.error(
-        `FAIL manifests/primitive-audits.json: duplicate audit entry for ${primitive.primitiveType} ${primitive.name}`
+        `FAIL garden/manifests/primitive-audits.json: duplicate audit entry for ${primitive.primitiveType} ${primitive.name}`
       );
       failures += 1;
     }
@@ -2381,7 +2442,7 @@ function validatePromotionAuditCoverage() {
     const key = primitiveKey(promotion.type, promotion.name);
     if (!auditKeys.has(key)) {
       console.error(
-        `FAIL manifests/primitive-audits.json: missing audit entry for promoted ${promotion.type} ${promotion.name}`
+        `FAIL garden/manifests/primitive-audits.json: missing audit entry for promoted ${promotion.type} ${promotion.name}`
       );
       failures += 1;
     }
@@ -2414,7 +2475,7 @@ function firstPartySourceLike(source) {
 }
 
 function validateFirstPartyCollisionPolicy() {
-  const inventoryPath = path.join(repoRoot, "manifests", "discovered-primitives.json");
+  const inventoryPath = manifestPath("discovered-primitives.json");
   if (!fs.existsSync(inventoryPath)) {
     return 0;
   }
@@ -2434,7 +2495,7 @@ function validateFirstPartyCollisionPolicy() {
     }
     const [{ type, name }] = entries;
     console.error(
-      `FAIL manifests/discovered-primitives.json: canonical ${type} ${name} collides with first-party installed/system source name`
+      `FAIL garden/manifests/discovered-primitives.json: canonical ${type} ${name} collides with first-party installed/system source name`
     );
     failures += 1;
   }
@@ -2445,7 +2506,7 @@ function validateFirstPartyCollisionPolicy() {
       continue;
     }
     console.error(
-      `FAIL manifests/discovered-primitives.json: canonical primitive content digest matches first-party installed/system source: ${entries[0].sha256}`
+      `FAIL garden/manifests/discovered-primitives.json: canonical primitive content digest matches first-party installed/system source: ${entries[0].sha256}`
     );
     failures += 1;
   }

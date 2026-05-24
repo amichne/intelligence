@@ -1,0 +1,2943 @@
+{
+  "type": "PRIMITIVE_AUDITS",
+  "schemaVersion": 1,
+  "policy": "Durable audit entries record quality, schema, provenance, runtime, and cleanup readiness decisions before old primitive sources are turned off.",
+  "entries": [
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "reference-doc-workflow",
+        "path": "skills/reference-doc-workflow"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill is stored under skills/reference-doc-workflow and is composed by documentation-workflow and planning-and-docs by reference rather than living inside a plugin payload."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "first-party-handling",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records Anthropic doc-coauthoring as a renamed and rewritten source with canonicalName reference-doc-workflow."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "collision-safety",
+          "status": "PASS",
+          "evidence": "garden/manifests/consolidation-report.json reports zero first-party name collisions and zero first-party raw digest matches."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/reference-doc-workflow/SKILL.md exists as the canonical renamed documentation workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates marketplace, plugin, promotion, audit, runtime, and cleanup manifests."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "doc-coauthoring",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Local source retained for provenance; do not delete until runtime activation and cleanup ledger entries are written."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "doc-coauthoring",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Runtime copy resolves to Apollo and remains a later activation cleanup candidate."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "claude-plugins",
+          "sourcePath": "marketplaces/anthropic-agent-skills/skills/doc-coauthoring",
+          "resolvedPath": "/Users/amichne/.claude/plugins/marketplaces/anthropic-agent-skills/skills/doc-coauthoring/SKILL.md",
+          "relationship": "FIRST_PARTY_SOURCE",
+          "notes": "Installed marketplace source is provenance only and should not be rewritten in place."
+        }
+      ],
+      "notes": "Promotion is ready. Cleanup is not yet ready because runtime activation and source-removal ledger entries have not been recorded."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "repo-instruction-topology",
+        "path": "skills/repo-instruction-topology"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill is stored under skills/repo-instruction-topology and is referenced by repository-orientation without plugin-local payload copies."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records segment-codebase-agents-md as the source and the runtime copy as supporting evidence."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "collision-safety",
+          "status": "PASS",
+          "evidence": "The canonical local name avoids the old runtime name while preserving source provenance."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/repo-instruction-topology/SKILL.md exists as the canonical scoped-instruction workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json identifies segment-codebase-agents-md as an identical authored/runtime source pair, not a canonical collision."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "segment-codebase-agents-md",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Authored source retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "segment-codebase-agents-md",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Runtime copy resolves to Apollo and remains a later activation cleanup candidate."
+        }
+      ],
+      "notes": "Promotion is ready. Cleanup should wait for runtime-link activation planning."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "git-change-flow",
+        "path": "skills/git-change-flow"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill is stored under skills/git-change-flow and is composed by version-control by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records Apollo yeet as the source and local agentic-development as supporting process evidence."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "destructive-guardrails",
+          "status": "PASS",
+          "evidence": "The canonical skill is renamed from yeet and carries broader Git-process guardrails rather than a host-specific publish flow."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/git-change-flow/SKILL.md exists as the canonical Git process primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json identifies yeet as an identical authored/runtime pair to reconcile later."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "yeet",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Authored source retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "yeet",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Runtime copy resolves to Apollo and remains a later activation cleanup candidate."
+        }
+      ],
+      "notes": "Promotion is ready. Cleanup is not requested in this audit."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "github-ci-operations",
+        "path": "skills/github-ci-operations"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill is stored under skills/github-ci-operations and is composed by version-control by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "synthesis-boundary",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records gh-fix-ci plus workflow and release-management sources as synthesis inputs under a local name."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "cleanup-boundary",
+          "status": "PASS",
+          "evidence": "No deletion is authorized by this audit; old backup/runtime gh-fix-ci entries remain review candidates."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/github-ci-operations/SKILL.md exists as the canonical CI and workflow operations primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json keeps gh-fix-ci in SYNTHESIZE because old backup and runtime copies differ."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-agent-skills",
+          "sourcePath": "gh-fix-ci",
+          "resolvedPath": "/Users/amichne/.agents/skills/gh-fix-ci/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Runtime source retained while the canonical version-control plugin composes github-ci-operations."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "gh-fix-ci",
+          "resolvedPath": "/Users/amichne/.codex/skills.backup/gh-fix-ci/SKILL.md",
+          "relationship": "LEGACY_SOURCE",
+          "notes": "Backup copy differs from runtime and should not be deleted by digest alone."
+        }
+      ],
+      "notes": "Promotion is ready; cleanup still needs semantic review because old gh-fix-ci copies are not all identical."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "skill-primitive-authoring",
+        "path": "skills/skill-primitive-authoring"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill is stored under skills/skill-primitive-authoring and is composed by primitive-authoring by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "first-party-handling",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records OpenAI skill-creator as renamed and rewritten under skill-primitive-authoring."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "progressive-disclosure",
+          "status": "PASS",
+          "evidence": "The canonical skill routes evaluation, interface adapters, and progressive-disclosure detail into references."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/skill-primitive-authoring/SKILL.md exists and references local one-level guidance files."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs enforces first-party name and raw digest collision checks."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-agent-skills",
+          "sourcePath": "skill-creator",
+          "resolvedPath": "/Users/amichne/code/kast/.agents/skills/skill-creator/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Local authored baseline retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": ".system/skill-creator",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/.system/skill-creator/SKILL.md",
+          "relationship": "FIRST_PARTY_SOURCE",
+          "notes": "OpenAI system source retained as provenance only."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-agent-skills",
+          "sourcePath": "skill-creator",
+          "resolvedPath": "/Users/amichne/.agents/skills/skill-creator/SKILL.md",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Installed runtime copy remains separate from the canonical local rewrite."
+        }
+      ],
+      "notes": "Promotion is ready and first-party collision checks are clean. Do not trim first-party or installed marketplace copies from this audit."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "plugin-composition-authoring",
+        "path": "skills/plugin-composition-authoring"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill is stored under skills/plugin-composition-authoring and is composed by primitive-authoring by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "first-party-handling",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records OpenAI plugin-creator as renamed and rewritten under plugin-composition-authoring."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugins",
+          "status": "PASS",
+          "evidence": "The canonical skill requires plugin manifests to reference skills, agents, hooks, and concepts rather than copying payloads."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/plugin-composition-authoring/SKILL.md exists as the local referential plugin workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "concordance/schemas/core validates marketplace.json and plugins/*/plugin.json through node scripts/validate-manifests.mjs."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": ".system/plugin-creator",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/.system/plugin-creator/SKILL.md",
+          "relationship": "FIRST_PARTY_SOURCE",
+          "notes": "OpenAI system source retained as provenance only."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": ".system/plugin-creator",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/.system/plugin-creator/SKILL.md",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Runtime source resolves to Apollo and should not be deleted in this pass."
+        }
+      ],
+      "notes": "Promotion is ready. Runtime cleanup remains a later activation decision."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "AGENT",
+        "name": "kotlin-review-captain",
+        "path": "agents/kotlin-review/kotlin-review-captain.agent.md"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical agent path exists at agents/kotlin-review/kotlin-review-captain.agent.md."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records kotlin-review-captain sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "agents/kotlin-review/kotlin-review-captain.agent.md exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-agents",
+          "sourcePath": "../examplar/agents/kotlin-review-captain.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        }
+      ],
+      "notes": "Agent promotion is ready as an independent profile. Original source agents remain provenance until cleanup is explicitly ledgered."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "AGENT",
+        "name": "kotlin-type-safety-reviewer",
+        "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical agent path exists at agents/kotlin-review/kotlin-type-safety-reviewer.agent.md."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records kotlin-type-safety-reviewer sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-agents",
+          "sourcePath": "../examplar/agents/kotlin-type-safety-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        }
+      ],
+      "notes": "Agent promotion is ready as an independent profile. Original source agents remain provenance until cleanup is explicitly ledgered."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "AGENT",
+        "name": "kotlin-boundary-contract-reviewer",
+        "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical agent path exists at agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records kotlin-boundary-contract-reviewer sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-agents",
+          "sourcePath": "../examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        }
+      ],
+      "notes": "Agent promotion is ready as an independent profile. Original source agents remain provenance until cleanup is explicitly ledgered."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "AGENT",
+        "name": "kotlin-package-cohesion-reviewer",
+        "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical agent path exists at agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records kotlin-package-cohesion-reviewer sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-agents",
+          "sourcePath": "../examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        }
+      ],
+      "notes": "Agent promotion is ready as an independent profile. Original source agents remain provenance until cleanup is explicitly ledgered."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "AGENT",
+        "name": "schema-type-enforcer",
+        "path": "agents/schema-type-enforcer.agent.md"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical agent path exists at agents/schema-type-enforcer.agent.md."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records schema-type-enforcer sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "agents/schema-type-enforcer.agent.md exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-agents",
+          "sourcePath": "../examplar/agents/schema-type-enforcer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        }
+      ],
+      "notes": "Agent promotion is ready as an independent profile. Original source agents remain provenance until cleanup is explicitly ledgered."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "kotlin-standards",
+        "path": "skills/kotlin-standards"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/kotlin-standards."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records kotlin-standards sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/kotlin-standards exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-skills",
+          "sourcePath": "../examplar/skills/kotlin-standards",
+          "resolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "../apollo/skills/kotlin-standards",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "manage-json-schemas",
+        "path": "skills/manage-json-schemas"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/manage-json-schemas."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records manage-json-schemas sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/manage-json-schemas exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-agent-skills",
+          "sourcePath": "~/.agents/skills/manage-json-schemas",
+          "resolvedPath": "/Users/amichne/.agents/skills/manage-json-schemas",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-skills",
+          "sourcePath": "../examplar/skills/manage-json-schemas",
+          "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "HOOK",
+        "name": "kotlin-horizontalization-check",
+        "path": "hooks/kotlin-horizontalization-check.hook.json"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical hook path exists at hooks/kotlin-horizontalization-check.hook.json."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records kotlin-horizontalization-check sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "hooks/kotlin-horizontalization-check.hook.json exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-hooks",
+          "sourcePath": "../examplar/hooks/copilot/kotlin-horizontalization-check.py",
+          "resolvedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-skills",
+          "sourcePath": "../examplar/skills/kotlin-standards/references/horizontalization-heuristic.md",
+          "resolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards/references/horizontalization-heuristic.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Hook promotion is ready with provider-neutral metadata separated from adapter/runtime details. Runtime activation and cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "tdd",
+        "path": "skills/tdd"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/tdd."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records tdd sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/tdd exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "examplar-skills",
+          "sourcePath": "../examplar/skills/tdd",
+          "resolvedPath": "/Users/amichne/code/examplar/skills/tdd",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-agent-skills",
+          "sourcePath": "~/.agents/skills/tdd",
+          "resolvedPath": "/Users/amichne/.agents/skills/tdd",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "local-plugin-agentic-development",
+          "sourcePath": "../../plugins/agentic-development/skills/agentic-development",
+          "resolvedPath": "/Users/amichne/plugins/agentic-development/skills/agentic-development",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "define-goal",
+        "path": "skills/define-goal"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/define-goal."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records define-goal sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/define-goal exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "../apollo/skills/define-goal",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "~/.codex/skills/define-goal",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "site-docs-authoring",
+        "path": "skills/site-docs-authoring"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/site-docs-authoring."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records site-docs-authoring sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/site-docs-authoring exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "~/.codex/skills.backup/author-zensical-docs",
+          "resolvedPath": "/Users/amichne/.codex/skills.backup/author-zensical-docs",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-docs",
+          "sourcePath": "../kast/zensical.toml",
+          "resolvedPath": "/Users/amichne/code/kast/zensical.toml",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-docs",
+          "sourcePath": "../kast/docs/AGENTS.md",
+          "resolvedPath": "/Users/amichne/code/kast/docs/AGENTS.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "okai-docs",
+          "sourcePath": "../okai/zensical.toml",
+          "resolvedPath": "/Users/amichne/code/okai/zensical.toml",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "okai-docs",
+          "sourcePath": "../okai/docs/AGENTS.md",
+          "resolvedPath": "/Users/amichne/code/okai/docs/AGENTS.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-docs",
+          "sourcePath": "../apollo/mkdocs.yml",
+          "resolvedPath": "/Users/amichne/code/apollo/mkdocs.yml",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "agent-profile-authoring",
+        "path": "skills/agent-profile-authoring"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/agent-profile-authoring."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records agent-profile-authoring sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/agent-profile-authoring exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-agent-skills",
+          "sourcePath": "agent-development",
+          "resolvedPath": "/Users/amichne/code/kast/.agents/skills/agent-development",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "hook-primitive-authoring",
+        "path": "skills/hook-primitive-authoring"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/hook-primitive-authoring."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records hook-primitive-authoring sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/hook-primitive-authoring exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/AGENTS.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/agents-md-turn-refresh.hook.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/agents-md-turn-refresh.hook.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/codex/agents-md-turn-refresh.hooks.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/agents-md-turn-refresh.hooks.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/kotlin-horizontalization-check.py",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "concordance",
+          "sourcePath": "concordance/schemas/core/hook.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/hook.schema.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "concordance",
+          "sourcePath": "concordance/schemas/core/plugin.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/plugin.schema.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "concordance",
+          "sourcePath": "concordance/schemas/core/marketplace.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/marketplace.schema.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "source-graph-consolidation",
+        "path": "skills/source-graph-consolidation"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/source-graph-consolidation."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records source-graph-consolidation sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/source-graph-consolidation exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/docs/source-of-truth.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/docs/source-of-truth.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/docs/consolidation-queue.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/docs/consolidation-queue.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/manifests/promotions.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/manifests/promotions.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/manifests/cleanup-ledger.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/manifests/cleanup-ledger.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/scripts/inventory-primitives.py",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/scripts/inventory-primitives.py",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/scripts/analyze-consolidation.py",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/scripts/analyze-consolidation.py",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "scripts/validate-manifests.mjs",
+          "resolvedPath": "/Users/amichne/code/intelligence/scripts/validate-manifests.mjs",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "runtime-linking",
+        "path": "skills/runtime-linking"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/runtime-linking."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records runtime-linking sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/runtime-linking exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/manifests/runtime-links.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/manifests/runtime-links.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/schemas/intelligence/runtime-links.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/schemas/intelligence/runtime-links.schema.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation/SKILL.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/docs/consolidation-queue.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/docs/consolidation-queue.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "runtime-activation",
+        "path": "plugins/runtime-activation"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical plugin path exists at plugins/runtime-activation."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records runtime-activation sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/runtime-activation exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/manifests/runtime-links.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/manifests/runtime-links.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/runtime-linking",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Plugin promotion is ready as a referential composition surface. It does not authorize deleting or replacing any source primitive."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "primitive-quality-audit",
+        "path": "skills/primitive-quality-audit"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical skill path exists at skills/primitive-quality-audit."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records primitive-quality-audit sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/primitive-quality-audit exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/docs/source-of-truth.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/docs/source-of-truth.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/skill-primitive-authoring/references/evaluation-scaffold.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/references/evaluation-scaffold.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation/SKILL.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/manifests/primitive-audits.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/manifests/primitive-audits.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "garden/schemas/intelligence/primitive-audits.schema.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/garden/schemas/intelligence/primitive-audits.schema.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Promotion is ready as an independent primitive. Runtime activation and source cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "primitive-governance",
+        "path": "plugins/primitive-governance"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The canonical plugin path exists at plugins/primitive-governance."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records primitive-governance sourceRoot, sourcePath, sourceResolvedPath, status, and notes."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-validation",
+          "status": "PASS",
+          "evidence": "node scripts/validate-manifests.mjs validates the promotion ledger, audit ledger, marketplace, plugins, hooks, and repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/primitive-governance exists in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates this audit entry and its source candidate paths."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/consolidation-report.json is generated from the current primitive inventory and currently reports zero broken symlinks, zero first-party name collisions, and zero first-party raw digest matches."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/primitive-quality-audit",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Primary source recorded by the promotion ledger; retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/runtime-linking",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/manage-json-schemas",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Supporting source recorded by the promotion ledger."
+        }
+      ],
+      "notes": "Plugin promotion is ready as a referential composition surface. It does not authorize deleting or replacing any source primitive."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "HOOK",
+        "name": "required-skill-read",
+        "path": "hooks/required-skill-read.hook.json"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The provider-neutral hook metadata exists at hooks/required-skill-read.hook.json and points at a Codex adapter."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "schema-configuration",
+          "status": "PASS",
+          "evidence": "hooks/required-skill-read.requirements.json validates against schemas/hooks/skill-requirements.schema.json."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "activation-safety",
+          "status": "PASS",
+          "evidence": "The canonical configuration defaults to ADVISORY mode; hard denial requires a deliberate structured-data change to DENY."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "hooks/required-skill-read.py implements init, check, and status commands for the hook primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the hook metadata, Codex adapter, and required-skill configuration."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "MANUAL_REVIEW",
+          "status": "PASS",
+          "summary": "The source Kast hook was split from Kast-specific extension shadowing and represented as a generic required skill read policy."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-github-hooks",
+          "sourcePath": "require-skills.sh",
+          "resolvedPath": "/Users/amichne/code/kast/.github/hooks/require-skills.sh",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source behavior retained as provenance; the canonical implementation is provider-neutral and advisory by default."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-github-hooks",
+          "sourcePath": "skill-shadowing.json",
+          "resolvedPath": "/Users/amichne/code/kast/.github/hooks/skill-shadowing.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Source configuration shape used to derive the canonical requirements schema."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-github-hooks",
+          "sourcePath": "hooks.json",
+          "resolvedPath": "/Users/amichne/code/kast/.github/hooks/hooks.json",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Source provider adapter used to derive lifecycle timing."
+        }
+      ],
+      "notes": "Promotion is ready. Cleanup of the original Kast hook files is not authorized by this audit because they still belong to the Kast repository runtime surface."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "primitive-routing-evaluation",
+        "path": "skills/primitive-routing-evaluation"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The canonical skill lives under skills/primitive-routing-evaluation and defines a provider-neutral workflow independent of Kast or any plugin."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-corpus-boundary",
+          "status": "PASS",
+          "evidence": "The skill explicitly requires any persisted routing corpus to use a schema, typed parser, generated model, or equivalent boundary assertion before cases are written."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records the Kast routing-improvement notes as source evidence and keeps repo-local maintenance fixtures in place."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/primitive-routing-evaluation/SKILL.md exists as the canonical provider-neutral routing evaluation workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "MANUAL_REVIEW",
+          "status": "PASS",
+          "summary": "The source files were reviewed and the canonical skill keeps the handoff idea while removing Kast-specific paths and commands from the primary workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates promotion, audit, source-review, marketplace, plugin, and schema coverage for this entry."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-agent-skills",
+          "sourcePath": "kast/references/routing-improvement.md",
+          "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/routing-improvement.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Short repo-specific note retained as provenance for the canonical provider-neutral skill."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "kast-agent-skills",
+          "sourcePath": "kast/fixtures/maintenance/references/routing-improvement.md",
+          "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/fixtures/maintenance/references/routing-improvement.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Detailed repo-local playbook retained in Kast; cleanup is not authorized here."
+        }
+      ],
+      "notes": "Promotion is ready. This audit does not authorize deleting or replacing Kast maintenance fixtures."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "shell-script-safety",
+        "path": "skills/shell-script-safety"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill lives under skills/shell-script-safety and covers shell safety without depending on a plugin."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "first-party-handling",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records bash-defensive-patterns as installed marketplace provenance with a renamed and rewritten canonical name."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "structured-output-boundary",
+          "status": "PASS",
+          "evidence": "The skill requires schema, parser, or validator coverage before shell automation writes persisted structured data."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/shell-script-safety/SKILL.md exists as the canonical shell safety workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "MANUAL_REVIEW",
+          "status": "PASS",
+          "summary": "The source backup and installed marketplace skill were reviewed; the local skill is rewritten around concise operating rules and validation gates."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates promotion, audit, source-review, plugin, and marketplace references for this entry."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "bash-defensive-patterns",
+          "resolvedPath": "/Users/amichne/.codex/skills.backup/bash-defensive-patterns/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Local backup source retained as provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "claude-plugins",
+          "sourcePath": "marketplaces/claude-code-workflows/plugins/shell-scripting/skills/bash-defensive-patterns",
+          "resolvedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/shell-scripting/skills/bash-defensive-patterns/SKILL.md",
+          "relationship": "FIRST_PARTY_SOURCE",
+          "notes": "Installed marketplace source retained as provenance only."
+        }
+      ],
+      "notes": "Promotion is ready. Cleanup of backup or marketplace copies is not authorized by this audit."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "kotlin-gradle-validation",
+        "path": "skills/kotlin-gradle-validation"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill lives under skills/kotlin-gradle-validation and can be used without the kotlin-review plugin."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "evidence-loop",
+          "status": "PASS",
+          "evidence": "The skill requires Gradle command outcomes plus JUnit, JaCoCo, Kotlin build, or Gradle problem reports before behavior claims are accepted."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records the Apollo kotlin-gradle-loop source path."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/kotlin-gradle-validation/SKILL.md exists as the canonical Gradle validation workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "MANUAL_REVIEW",
+          "status": "PASS",
+          "summary": "The Apollo source skill was reviewed and narrowed into a provider-neutral workflow that does not depend on bundled helper scripts."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates promotion, audit, source-review, plugin, and marketplace references for this entry."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "kotlin-gradle-loop",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Authored Apollo source retained for provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "kotlin-gradle-loop",
+          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
+          "relationship": "RUNTIME_COPY",
+          "notes": "Runtime copy resolves to the Apollo source and remains a later activation cleanup candidate."
+        }
+      ],
+      "notes": "Promotion is ready. Runtime activation and cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "repository-signature-indexing",
+        "path": "skills/repository-signature-indexing"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-primitive",
+          "status": "PASS",
+          "evidence": "The skill lives under skills/repository-signature-indexing and defines a repo-neutral generated signature index workflow."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "generated-artifact-boundary",
+          "status": "PASS",
+          "evidence": "The skill requires an explicit output contract, deterministic generation, and drift detection before relying on signature artifacts."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "provenance-recorded",
+          "status": "PASS",
+          "evidence": "garden/manifests/promotions.json records both backup signature-spec source paths as provenance."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/repository-signature-indexing/SKILL.md exists as the canonical signature-index workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "MANUAL_REVIEW",
+          "status": "PASS",
+          "summary": "The backup signature spec was reviewed and rewritten into a workflow that allows text or JSON contracts without importing generated scripts."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates promotion, audit, source-review, plugin, and marketplace references for this entry."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-backups",
+          "sourcePath": "llm-native-signature-spec",
+          "resolvedPath": "/Users/amichne/.codex/backups/llm-native-signature-spec/SKILL.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Backup source retained as provenance."
+        },
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "llm-native-signature-spec",
+          "resolvedPath": "/Users/amichne/.codex/skills.backup/llm-native-signature-spec/SKILL.md",
+          "relationship": "SUPPORTING_SOURCE",
+          "notes": "Second backup copy retained as provenance."
+        }
+      ],
+      "notes": "Promotion is ready. Generated signature scripts from the backup were not imported in this pass."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "HOOK",
+        "name": "agents-md-turn-refresh",
+        "path": "hooks/agents-md-turn-refresh.hook.json"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "canonical-path",
+          "status": "PASS",
+          "evidence": "The provider-neutral hook metadata exists at hooks/agents-md-turn-refresh.hook.json with implementation and Codex adapter files kept outside plugin payloads."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "activation-safety",
+          "status": "PASS",
+          "evidence": "The hook is represented as a canonical primitive and remains subject to runtime-links and activation preflight review before runtime writes."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "hooks/agents-md-turn-refresh.hook.json, hooks/agents-md-turn-refresh.sh, and hooks/codex/agents-md-turn-refresh.hooks.json exist in the canonical source graph."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the hook metadata and Codex adapter."
+        }
+      ],
+      "notes": "Hook review is complete for canonical ownership. Runtime activation and cleanup remain separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "intelligence-agents-instructions",
+        "path": "AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The repository-level instruction file is intentionally scoped at AGENTS.md and is routed as a scoped instruction, not as a plugin payload."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "source-graph-fit",
+          "status": "PASS",
+          "evidence": "The instructions establish evaluation discipline for this repository without depending on a specific plugin."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "AGENTS.md exists as the root scoped instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Root instruction review is complete. It is not a cleanup or runtime activation authority."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "agents-agents-instructions",
+        "path": "agents/AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The agent-profile instruction file is intentionally scoped to agents/ and is routed by file placement."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "plugin-independence",
+          "status": "PASS",
+          "evidence": "Agent profile rules live independently from plugins, while plugins only compose agent profiles by reference."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "agents/AGENTS.md exists as the scoped agent-profile instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Agent instruction review is complete. No external source replacement is authorized by this audit."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "concepts-agents-instructions",
+        "path": "concepts/AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The concepts instruction file is scoped to concept primitives and keeps core guidance separate from language-specific examples."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "markdown-boundary",
+          "status": "PASS",
+          "evidence": "The instruction supports Markdown-only core concept documents with language-specific representations in nested directories."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "concepts/AGENTS.md exists as the scoped concept-authoring instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Concept instruction review is complete. No source cleanup is authorized by this audit."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "hooks-agents-instructions",
+        "path": "hooks/AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The hooks instruction file is scoped to hook metadata, implementations, adapter files, and activation safety."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "schema-driven-hooks",
+          "status": "PASS",
+          "evidence": "Hook metadata and provider adapters remain structured-data surfaces validated through Concordance or repo-owned schemas."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "hooks/AGENTS.md exists as the scoped hook-authoring instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Hook instruction review is complete. Runtime activation remains separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "schemas-agents-instructions",
+        "path": "schemas/AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The schema instruction file is scoped to repo-owned JSON Schema contracts under schemas/."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "schema-policy",
+          "status": "PASS",
+          "evidence": "The instruction reinforces that persisted structured data needs an owning schema and validator path."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "schemas/AGENTS.md exists as the scoped schema-governance instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Schema instruction review is complete. It complements, but does not replace, schema validation."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "skills-agents-instructions",
+        "path": "skills/AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The skill instruction file is scoped to independent skill primitive authoring under skills/."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "plugin-independence",
+          "status": "PASS",
+          "evidence": "It reinforces that skills must be usable outside plugins and that plugins compose skills by reference."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/AGENTS.md exists as the scoped skill-authoring instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Skill instruction review is complete. It is not a runtime activation authority."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "schema-driven-design",
+        "path": "concepts/schema-driven-design/core.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "concept-boundary",
+          "status": "PASS",
+          "evidence": "The core concept lives as Markdown-only guidance with language-specific examples stored under nested language folders."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "schema-driven-workflow",
+          "status": "PASS",
+          "evidence": "The concept aligns persisted structured data work with explicit schemas, validation, examples, and evolution notes."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "concepts/schema-driven-design/core.md exists as the canonical concept instruction."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json shows the concept is composed by a referential plugin."
+        }
+      ],
+      "notes": "Concept review is complete. Structured examples remain schema-validated separately."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
+        "name": "type-safety",
+        "path": "concepts/type-safety/core.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "concept-boundary",
+          "status": "PASS",
+          "evidence": "The core concept is Markdown-only and keeps language-specific examples under the concept directory."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "plugin-composition",
+          "status": "PASS",
+          "evidence": "The concept is reusable outside plugins while schema-governance and TDD plugins can compose it by reference."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "concepts/type-safety/core.md exists as the canonical type-safety concept instruction."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json shows the concept is composed by referential plugins."
+        }
+      ],
+      "notes": "Concept review is complete. It remains independent of any specific language plugin."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "documentation-workflow",
+        "path": "plugins/documentation-workflow"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes documentation skills by reference and does not own copied primitive payloads."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "marketplace-exposed",
+          "status": "PASS",
+          "evidence": "marketplace.json exposes the plugin as a local composition surface."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/documentation-workflow/plugin.json exists and references documentation primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface. It does not authorize source deletion."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "intelligence-core",
+        "path": "plugins/intelligence-core"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes core instruction and hook primitives by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "marketplace-exposed",
+          "status": "PASS",
+          "evidence": "marketplace.json exposes the plugin as the core local bundle."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/intelligence-core/plugin.json exists and references canonical primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface. Runtime activation remains separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "kotlin-review",
+        "path": "plugins/kotlin-review"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes Kotlin skills, agents, and hooks by reference without owning plugin-local copies."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "marketplace-exposed",
+          "status": "PASS",
+          "evidence": "marketplace.json exposes the plugin for Kotlin review workflows."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/kotlin-review/plugin.json exists and references canonical Kotlin primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete. It does not authorize source cleanup for any composed primitive."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "planning-and-docs",
+        "path": "plugins/planning-and-docs"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes planning and reference-document workflows by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "marketplace-exposed",
+          "status": "PASS",
+          "evidence": "marketplace.json exposes the plugin as a local planning and documentation bundle."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/planning-and-docs/plugin.json exists and references canonical planning and documentation skills."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "primitive-authoring",
+        "path": "plugins/primitive-authoring"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes primitive-authoring workflows by reference and leaves primitives independently usable."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "schema-driven-workflow",
+          "status": "PASS",
+          "evidence": "The plugin includes schema and source-graph authoring primitives without bypassing manifest validation."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/primitive-authoring/plugin.json exists and references canonical authoring primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "repository-orientation",
+        "path": "plugins/repository-orientation"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes repository orientation skills by reference without taking ownership of their source files."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "marketplace-exposed",
+          "status": "PASS",
+          "evidence": "marketplace.json exposes the plugin as a local repository-orientation bundle."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/repository-orientation/plugin.json exists and references canonical repository primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "schema-governance",
+        "path": "plugins/schema-governance"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes schema skills, a schema review agent, and schema/type concepts by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "schema-driven-workflow",
+          "status": "PASS",
+          "evidence": "The plugin reinforces schema-first work and still relies on the repo validation gate for structured data."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/schema-governance/plugin.json exists and references canonical schema primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete. It does not replace schema validation."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "tdd-workflow",
+        "path": "plugins/tdd-workflow"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes the TDD skill and type/schema concepts by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "language-agnostic",
+          "status": "PASS",
+          "evidence": "The composed TDD workflow is not coupled to a language-specific runtime or plugin payload."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/tdd-workflow/plugin.json exists and references the canonical TDD primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "PLUGIN",
+        "name": "version-control",
+        "path": "plugins/version-control"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "referential-plugin",
+          "status": "PASS",
+          "evidence": "The plugin composes local Git process and GitHub CI workflow skills by reference."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "workflow-coverage",
+          "status": "PASS",
+          "evidence": "The plugin covers repository change flow and GitHub Actions/CI operations without copying first-party plugin payloads."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "plugins/version-control/plugin.json exists and references canonical version-control primitives."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin manifest and marketplace reference."
+        }
+      ],
+      "notes": "Plugin review is complete as a composition surface. Runtime replacement remains separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "local-repository-navigation",
+        "path": "skills/local-repository-navigation"
+      },
+      "scope": "PROMOTION",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-skill",
+          "status": "PASS",
+          "evidence": "The promoted skill owns the local navigation workflow and does not depend on the repository-orientation plugin for meaning."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "local-artifact-boundary",
+          "status": "PASS",
+          "evidence": "The skill separates durable AGENTS.md instructions from git-excluded AGENTS.local.md navigation summaries."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "source-rewrite",
+          "status": "PASS",
+          "evidence": "The Apollo codebase-navigator behavior was rewritten into host-neutral guidance; source scripts were retained as provenance and not copied."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/local-repository-navigation/SKILL.md and references define the canonical local navigation workflow."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "MANUAL_REVIEW",
+          "status": "PASS",
+          "summary": "Apollo codebase-navigator AGENT.md, chatmode, and prompt files were reviewed as source evidence."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates promotion, audit, plugin, and source-root manifest references."
+        }
+      ],
+      "sourceCandidates": [
+        {
+          "type": "SOURCE_CANDIDATE",
+          "sourceRoot": "apollo-agents",
+          "sourcePath": "../apollo/agents/codebase-navigator/AGENT.md",
+          "resolvedPath": "/Users/amichne/code/apollo/agents/codebase-navigator/AGENT.md",
+          "relationship": "RENAMED_DERIVATIVE",
+          "notes": "Primary source for the local navigation summary workflow."
+        }
+      ],
+      "notes": "Promotion review is complete. Runtime replacement or cleanup for the Apollo source remains separately gated."
+    }
+  ]
+}

@@ -1,1 +1,0 @@
-../../../concepts/schema-driven-design/core.md

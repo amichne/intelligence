@@ -21,7 +21,7 @@ on the plugin to explain its behavior.
   generator, parser, or validation command before persisting the data.
 - Avoid first-party or installed-skill name collisions when synthesizing from
   OpenAI, Anthropic, or other distributed sources.
-- Record provenance in `manifests/promotions.json` when promoting a skill into
+- Record provenance in `garden/manifests/promotions.json` when promoting a skill into
   this repository.
 
 ## Workflow
@@ -52,7 +52,7 @@ on the plugin to explain its behavior.
 
 6. Promote.
    Add the skill to `marketplace.json`, any referential plugin that should
-   compose it, and `manifests/promotions.json`. If promotion changes any JSON
+   compose it, and `garden/manifests/promotions.json`. If promotion changes any JSON
    shape, update the owning schema first. Regenerate inventory and run manifest
    validation.
 

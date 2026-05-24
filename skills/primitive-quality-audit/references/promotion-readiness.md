@@ -29,7 +29,7 @@ Use `PROMOTE_READY` only when all of these are true:
 - The primitive has a clear owner, trigger, and success contract.
 - Long details are routed through references or scripts instead of crowding the
   entry file.
-- `manifests/promotions.json` records source and supporting provenance.
+- `garden/manifests/promotions.json` records source and supporting provenance.
 - Any changed structured data validates through its schema path.
 - First-party source handling is explicit when relevant.
 - A referential plugin can compose the primitive without becoming its source of
@@ -40,7 +40,7 @@ Use `PROMOTE_READY` only when all of these are true:
 Use `ACTIVATE_READY` only when all of these are true:
 
 - The primitive is already canonical or promotion-ready.
-- `manifests/runtime-links.json` records source path, target path, strategy,
+- `garden/manifests/runtime-links.json` records source path, target path, strategy,
   collision policy, and approval requirement.
 - Existing target contents have been reviewed for collisions.
 - The plan can be reversed or skipped without losing source data.
@@ -50,7 +50,7 @@ Use `ACTIVATE_READY` only when all of these are true:
 Use `CLEANUP_READY` only when all of these are true:
 
 - Replacement behavior has been verified against the old source.
-- `manifests/cleanup-ledger.json` names the source path, canonical path,
+- `garden/manifests/cleanup-ledger.json` names the source path, canonical path,
   decision, verification, and rollback path.
 - Duplicate-name and duplicate-digest evidence has been inspected.
 - The user has explicitly asked to perform cleanup, not just plan it.
