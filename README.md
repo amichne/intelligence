@@ -149,7 +149,9 @@ Python syntax checks, hook shell syntax checks, and `git diff --check`.
 `schemas/core/` covers marketplace/plugin/hook primitives,
 `schemas/adapters/` covers adapter output, and `garden/schemas/intelligence/`
 covers garden manifests. The Ajv dependencies are pinned in the root
-`package-lock.json`.
+`package-lock.json`. Marketplace publishing uses `--portable` in CI so host-local
+runtime and sibling-repo references are schema-checked without requiring the
+same filesystem layout as this machine.
 
 ## Publish Marketplace
 
@@ -161,7 +163,7 @@ Preview the branch output locally:
 ```sh
 npm ci
 python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
-node scripts/validate-manifests.mjs --hydrated /tmp/intelligence-marketplace
+node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```
 

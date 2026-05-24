@@ -29,9 +29,9 @@ jobs:
 
       - name: Validate source
         run: |
-          node scripts/validate-manifests.mjs
+          node scripts/validate-manifests.mjs --portable
           python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
-          node scripts/validate-manifests.mjs --hydrated /tmp/intelligence-marketplace
+          node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
 
       - name: Publish marketplace branch
         run: python3 scripts/publish-marketplace.py publish-branch --branch marketplace

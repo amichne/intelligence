@@ -12,7 +12,8 @@ const gardenSchemaDir = path.join(gardenRoot, "schemas", "intelligence");
 const coreSchemaDir = path.join(repoRoot, "schemas", "core");
 const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
-const hydratedRoot = parseArguments(process.argv.slice(2));
+const options = parseArguments(process.argv.slice(2));
+const hydratedRoot = options.hydrated;
 
 const requireFromRepo = createRequire(import.meta.url);
 const Ajv2020Module = loadDependency("ajv/dist/2020.js");
@@ -108,14 +109,19 @@ for (const [validator, schemaId, filePath] of adapterHookChecks) {
 
 failures += validateNodeDependencyManifests();
 
-for (const manifest of listJsonFiles(gardenManifestDir)) {
-  const data = readJson(manifest);
-  failures += validateManifestReferences(manifest, data);
+if (options.portable) {
+  console.log("SKIP host-local manifest reference checks (--portable)");
+} else {
+  for (const manifest of listJsonFiles(gardenManifestDir)) {
+    const data = readJson(manifest);
+    failures += validateManifestReferences(manifest, data);
+  }
+
+  failures += validatePromotionAuditCoverage();
+  failures += validateFirstPartyCollisionPolicy();
 }
 
 failures += validateSchemaDocuments();
-failures += validatePromotionAuditCoverage();
-failures += validateFirstPartyCollisionPolicy();
 failures += validateJsonCoverage();
 
 if (failures > 0) {
@@ -142,12 +148,17 @@ function validateDataFile(validator, schemaId, filePath) {
 
 function parseArguments(args) {
   let hydrated = null;
+  let portable = false;
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
+    if (arg === "--portable") {
+      portable = true;
+      continue;
+    }
     if (arg === "--hydrated") {
       const value = args[index + 1];
       if (!value) {
-        console.error("usage: node scripts/validate-manifests.mjs [--hydrated <dir>]");
+        printUsageAndExit();
         process.exit(2);
       }
       hydrated = path.resolve(repoRoot, value);
@@ -155,10 +166,14 @@ function parseArguments(args) {
       continue;
     }
     console.error(`unknown argument: ${arg}`);
-    console.error("usage: node scripts/validate-manifests.mjs [--hydrated <dir>]");
-    process.exit(2);
+    printUsageAndExit();
   }
-  return hydrated;
+  return { hydrated, portable };
+}
+
+function printUsageAndExit() {
+  console.error("usage: node scripts/validate-manifests.mjs [--portable] [--hydrated <dir>]");
+  process.exit(2);
 }
 
 function hydratedChecks(directory) {
