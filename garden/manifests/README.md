@@ -73,7 +73,8 @@ Schema ownership is explicit:
 
 - `marketplace.json`, `plugins/*/plugin.json`, and provider-neutral
   `hooks/*.hook.json` validate against `schemas/core/`.
-- `hooks/codex/*.json` validates against `schemas/codex/hooks.schema.json`.
+- `hooks/codex/*.json` validates against
+  `schemas/adapters/codex/hooks.schema.json`.
 - `garden/manifests/*.json` validates against `garden/schemas/intelligence/*.schema.json`.
 - `*.schema.json` files must compile as JSON Schema documents.
 

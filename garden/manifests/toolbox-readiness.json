@@ -40,7 +40,7 @@
         "Codex hook adapter packet: ALREADY_ACTIVE."
       ],
       "id": "hook-federation",
-      "nextAction": "Keep provider-neutral hook metadata separate from provider adapter files.",
+      "nextAction": "Keep provider-neutral hook metadata separate from runtime adapter files.",
       "status": "SATISFIED",
       "type": "TOOLBOX_READINESS_REQUIREMENT"
     },

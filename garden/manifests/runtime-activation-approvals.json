@@ -397,7 +397,7 @@
       "evidence": {
         "manifest": "garden/manifests/cleanup-ledger.json",
         "preflightReport": "garden/manifests/runtime-activation-preflight.json",
-        "reviewEvidenceSha256": "sha256:74bcbe66007afde0a24fc162733354983a6237a6e02e33798d0c93d23f3eb104",
+        "reviewEvidenceSha256": "sha256:aeaecd8158c9c8cbccf97dfab9aa547b33142249bd008e5d062bad38c204be2d",
         "status": "PROPOSED",
         "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
       },

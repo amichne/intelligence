@@ -8,8 +8,8 @@ Use this reference for files under `hooks/`.
 hooks/
 ├── <name>.hook.json          # provider-neutral hook primitive metadata
 ├── <name>.sh|.py|.js|...     # provider-neutral implementation
-└── <provider>/
-    └── <name>.hooks.json     # provider adapter projection
+└── <adapter>/
+    └── <name>.hooks.json     # runtime adapter projection
 ```
 
 ## Neutral Metadata
@@ -18,7 +18,7 @@ Neutral metadata is the canonical hook primitive. It should include:
 
 - `type: "HOOK"`;
 - local source reference;
-- `path` pointing at the provider adapter or canonical hook asset;
+- `path` pointing at the runtime adapter or canonical hook asset;
 - stable hook `name`;
 - optional `dependsOn` references to skills, agents, hooks, or concepts.
 
@@ -39,9 +39,9 @@ Keep dependency references local and canonical:
 }
 ```
 
-## Provider Adapters
+## Runtime Adapters
 
-Provider adapters belong under a provider directory such as `hooks/codex/`.
+Runtime adapters belong under an adapter directory such as `hooks/codex/`.
 They should translate the provider's event schema into a command invocation and
 avoid owning reusable hook logic.
 

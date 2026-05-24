@@ -10,7 +10,7 @@ const gardenRoot = path.join(repoRoot, "garden");
 const gardenManifestDir = path.join(gardenRoot, "manifests");
 const gardenSchemaDir = path.join(gardenRoot, "schemas", "intelligence");
 const coreSchemaDir = path.join(repoRoot, "schemas", "core");
-const codexSchemaDir = path.join(repoRoot, "schemas", "codex");
+const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
 const concordancePackage = path.join(repoRoot, "concordance", "package.json");
 const hydratedRoot = parseArguments(process.argv.slice(2));
@@ -42,6 +42,12 @@ const draft7Ajv = new AjvDraft7({
 });
 addFormats(draft7Ajv);
 
+const adapterHookSchemas = [
+  { adapter: "claude", schemaId: "claude-hooks.schema.json", validator: ajv },
+  { adapter: "codex", schemaId: "https://json.schemastore.org/codex-hooks.json", validator: draft7Ajv },
+  { adapter: "github", schemaId: "github-hooks.schema.json", validator: ajv }
+];
+
 const validatedJsonFiles = new Set();
 
 for (const schemaPath of listJsonFiles(coreSchemaDir)) {
@@ -52,7 +58,7 @@ for (const schemaPath of listJsonFiles(gardenSchemaDir)) {
   ajv.addSchema(readJson(schemaPath));
 }
 
-for (const schemaPath of [...listJsonFiles(codexSchemaDir), ...listJsonFiles(hookSchemaDir)]) {
+for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJsonFiles(hookSchemaDir)]) {
   const schema = readJson(schemaPath);
   if (schema.$schema === "http://json-schema.org/draft-07/schema#") {
     draft7Ajv.addSchema(schema);
@@ -95,20 +101,15 @@ const checks = [
   ["intelligence-consolidation-report.schema.json", manifestPath("consolidation-report.json")]
 ];
 
-const draft7Checks = [
-  ...listJsonFiles(path.join(repoRoot, "hooks", "codex")).map((file) => [
-    "https://json.schemastore.org/codex-hooks.json",
-    file
-  ])
-];
+const adapterHookChecks = listAdapterHookChecks();
 
 let failures = 0;
 for (const [schemaId, filePath] of checks) {
   failures += validateDataFile(ajv, schemaId, filePath);
 }
 
-for (const [schemaId, filePath] of draft7Checks) {
-  failures += validateDataFile(draft7Ajv, schemaId, filePath);
+for (const [validator, schemaId, filePath] of adapterHookChecks) {
+  failures += validateDataFile(validator, schemaId, filePath);
 }
 
 for (const manifest of listJsonFiles(gardenManifestDir)) {
@@ -176,6 +177,16 @@ function hydratedChecks(directory) {
       file
     ])
   ];
+}
+
+function listAdapterHookChecks() {
+  return adapterHookSchemas.flatMap(({ adapter, schemaId, validator }) =>
+    listJsonFiles(path.join(repoRoot, "hooks", adapter)).map((file) => [
+      validator,
+      schemaId,
+      file
+    ])
+  );
 }
 
 function manifestPath(name) {

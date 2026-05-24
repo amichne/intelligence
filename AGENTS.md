@@ -25,7 +25,7 @@ not justified.
 - `skills/` contains independent reusable skills.
 - `concepts/` contains portable concept primitives meant to be copied, linked,
   or projected into other projects.
-- `hooks/` contains reusable hook assets and provider adapter configs.
+- `hooks/` contains reusable hook assets and runtime adapter configs.
 - `plugins/` is reserved for plugin composition manifests.
 - `garden/` contains isolated spring-cleaning inventory, generated reports,
   review ledgers, runtime activation plans, and the scripts that produce them.
@@ -56,8 +56,8 @@ not justified.
 
 - Keep provider-neutral hook primitive metadata aligned with
   `schemas/core/hook.schema.json`.
-- Keep provider event names and matcher syntax in adapter configs such as
-  `hooks/codex/*.json`; do not put provider-specific behavior into the hook
+- Keep runtime event names and matcher syntax in adapter configs such as
+  `hooks/codex/*.json`; do not put adapter-specific behavior into the hook
   primitive metadata.
 - Keep hook implementations host-portable. Prefer shell entrypoints with narrow,
   typed JSON parsing delegated to Python when the behavior is stateful.

@@ -189,7 +189,7 @@ def hook_federation_requirement(inputs: dict[str, dict[str, Any]]) -> dict[str, 
         ],
         "Review and activate hook adapter runtime packets before relying on runtime hook federation."
         if status != "SATISFIED"
-        else "Keep provider-neutral hook metadata separate from provider adapter files.",
+        else "Keep provider-neutral hook metadata separate from runtime adapter files.",
     )
 
 

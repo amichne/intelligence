@@ -82,7 +82,8 @@ skills, agents, hooks, instructions, and referential plugins.
   manifests and generated reports.
 - `schemas/core/` vendors the public provider-neutral schemas for skills,
   agents, hooks, instructions, plugins, marketplaces, references, and locks.
-- `schemas/codex/` owns the Codex marketplace, plugin, and hook adapter schemas.
+- `schemas/adapters/` owns adapter-specific marketplace and hook schemas for
+  Codex, Claude, GitHub, and future runtime projections.
 - `schemas/hooks/` owns public hook support schemas such as required skill-read
   configuration.
 - `garden/docs/source-of-truth.md` documents the working source-of-truth rules.
@@ -144,9 +145,9 @@ bash -n hooks/*.sh
 generated-report checks, `node scripts/validate-manifests.mjs`, schema policy,
 Python syntax checks, hook shell syntax checks, and `git diff --check`.
 `node scripts/validate-manifests.mjs` is the structured-data gate:
-`schemas/core/` covers marketplace/plugin/hook primitives, `schemas/codex/`
-covers Codex adapter output, and `garden/schemas/intelligence/` covers garden
-manifests.
+`schemas/core/` covers marketplace/plugin/hook primitives,
+`schemas/adapters/` covers adapter output, and `garden/schemas/intelligence/`
+covers garden manifests.
 
 ## Publish Marketplace
 

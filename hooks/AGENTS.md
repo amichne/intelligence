@@ -8,9 +8,9 @@ This file applies to reusable hook assets under `hooks/`.
 
 - Keep hook implementations usable without installing any plugin.
 - Store provider-neutral hook metadata in `*.hook.json`.
-- Store provider adapter projections under provider-named directories such as
+- Store runtime adapter projections under adapter-named directories such as
   `hooks/codex/`.
-- Keep executable scripts at the hook root unless they are provider-specific.
+- Keep executable scripts at the hook root unless they are adapter-specific.
 - Reference related skills, agents, or concepts through `dependsOn` in the hook
   metadata rather than embedding their full guidance.
 - Do not point hook metadata at runtime caches, installed plugin copies, or
