@@ -154,10 +154,6 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
         }
         if hydrated["skills"]:
             codex_manifest["skills"] = "./skills/"
-        if hydrated["agents"]:
-            codex_manifest["agents"] = "./agents/"
-        if hydrated["hooks"]:
-            codex_manifest["hooks"] = "./hooks/"
 
         write_json(plugin_out / CODEX_PLUGIN_DIR / "plugin.json", codex_manifest)
         lock["plugins"].append(
@@ -169,11 +165,14 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
             }
         )
 
+    write_json(out_root / "marketplace.json", codex_marketplace)
     write_json(out_root / ".github" / "plugin" / "marketplace.json", codex_marketplace)
     write_json(out_root / "marketplace-lock.json", lock)
     (out_root / "README.md").write_text(
         "# Intelligence Marketplace\n\n"
-        "This branch is generated from the referential source graph on `main`.\n",
+        "This branch is generated from the referential source graph on `main`.\n\n"
+        "`marketplace.json` is the Codex-native marketplace entrypoint. "
+        "`.github/plugin/marketplace.json` is kept as a mirror for GitHub plugin discovery.\n",
         encoding="utf-8",
     )
     print(f"materialized marketplace at {out_root}")

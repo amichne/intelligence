@@ -167,5 +167,9 @@ node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-mark
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```
 
+The generated branch publishes a Codex-native `marketplace.json` at the branch
+root, keeps `.github/plugin/marketplace.json` as an identical mirror for GitHub
+plugin discovery, and leaves the provider-neutral source graph on `main`.
+
 Merges to `main` run `.github/workflows/publish-marketplace.yml`, validate the
 source contracts, materialize the marketplace, and force-update `marketplace`.

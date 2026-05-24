@@ -181,6 +181,7 @@ function hydratedChecks(directory) {
     return [];
   }
   return [
+    ["codex-marketplace.schema.json", path.join(directory, "marketplace.json")],
     ["codex-marketplace.schema.json", path.join(directory, ".github", "plugin", "marketplace.json")],
     ["codex-marketplace-lock.schema.json", path.join(directory, "marketplace-lock.json")],
     ...listCodexPluginManifests(path.join(directory, "plugins")).map((file) => [

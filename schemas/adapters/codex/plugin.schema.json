@@ -64,18 +64,6 @@
         "./skills/"
       ]
     },
-    "agents": {
-      "type": "string",
-      "enum": [
-        "./agents/"
-      ]
-    },
-    "hooks": {
-      "type": "string",
-      "enum": [
-        "./hooks/"
-      ]
-    },
     "interface": {
       "type": "object",
       "required": [
