@@ -8,7 +8,7 @@ This repository uses the local `concordance` symlink as schema reference
 material. The manifest validator loads schemas from:
 
 ```text
-concordance/schemas/core/
+schemas/core/
 concordance/standards/codex-hooks.schema.json
 ```
 
@@ -22,7 +22,7 @@ node scripts/validate-manifests.mjs
 
 Codex provider adapters under `hooks/codex/` validate against the Codex hooks
 standard from Concordance. Repository-owned manifest and generated-report JSON
-validates against `schemas/intelligence/*.schema.json`. The same command also
+validates against `garden/schemas/intelligence/*.schema.json`. The same command also
 checks local primitive references, promotion source paths, and rejects any JSON
 file that is not covered by a schema validation path.
 
@@ -40,7 +40,7 @@ owning schema before treating the artifact as accepted.
 - Every `dependsOn` reference points at a canonical primitive.
 - Any plugin that composes the hook references it from `hooks/*`, not from a
   plugin-local payload copy.
-- `manifests/promotions.json` records source provenance for promoted hooks.
+- `garden/manifests/promotions.json` records source provenance for promoted hooks.
 
 ## Extra Checks
 

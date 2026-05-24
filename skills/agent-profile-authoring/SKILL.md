@@ -19,7 +19,7 @@ boundaries, and output contract.
   quality bars, edge cases, and output shape.
 - Limit tools when a narrower tool set reduces risk.
 - Validate that the profile does not overlap confusingly with existing agents.
-- Record promoted source material in `manifests/promotions.json`.
+- Record promoted source material in `garden/manifests/promotions.json`.
 
 ## Workflow
 

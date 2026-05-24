@@ -1,0 +1,28 @@
+name: Publish Marketplace
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate source
+        run: |
+          node scripts/validate-manifests.mjs
+          python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
+          node scripts/validate-manifests.mjs --hydrated /tmp/intelligence-marketplace
+
+      - name: Publish marketplace branch
+        run: python3 scripts/publish-marketplace.py publish-branch --branch marketplace

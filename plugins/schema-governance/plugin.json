@@ -49,6 +49,6 @@
   "hooks": [],
   "metadata": {
     "composition": "referential",
-    "promotionManifest": "manifests/promotions.json"
+    "promotionManifest": "garden/manifests/promotions.json"
   }
 }

@@ -32,5 +32,5 @@ Use this reference before promoting an agent profile.
 - Add the agent to `marketplace.json` only after the file exists under
   `agents/`.
 - Compose it into plugin manifests by reference.
-- Record source provenance in `manifests/promotions.json`.
+- Record source provenance in `garden/manifests/promotions.json`.
 - Regenerate inventory and validate manifests.

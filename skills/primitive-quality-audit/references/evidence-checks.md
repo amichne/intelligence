@@ -6,10 +6,10 @@ only to create activity; run them because the decision depends on their result.
 ## Source Graph
 
 ```sh
-python3 scripts/inventory-primitives.py
-python3 scripts/inventory-primitives.py --check
-python3 scripts/analyze-consolidation.py
-python3 scripts/analyze-consolidation.py --check
+python3 garden/scripts/inventory-primitives.py
+python3 garden/scripts/inventory-primitives.py --check
+python3 garden/scripts/analyze-consolidation.py
+python3 garden/scripts/analyze-consolidation.py --check
 ```
 
 Use these after adding, moving, renaming, or removing canonical primitive
@@ -30,7 +30,7 @@ catalogs, hook metadata, or hook adapters.
 
 ```sh
 bash -n hooks/*.sh
-python3 -m py_compile scripts/inventory-primitives.py scripts/analyze-consolidation.py hooks/kotlin-horizontalization-check.py
+python3 -m py_compile garden/scripts/inventory-primitives.py garden/scripts/analyze-consolidation.py hooks/kotlin-horizontalization-check.py
 node skills/manage-json-schemas/scripts/schema-contracts.js policy-tree --root skills/manage-json-schemas/references/schemas
 git diff --check
 ```
@@ -41,7 +41,7 @@ documentation site builds for docs plugins.
 
 ## Evidence Recording
 
-Record durable audit decisions in `manifests/primitive-audits.json` when the
+Record durable audit decisions in `garden/manifests/primitive-audits.json` when the
 decision affects promotion, runtime activation, or cleanup. Store transient raw
 outputs outside packaged primitive directories unless the output itself is a
 maintained fixture.

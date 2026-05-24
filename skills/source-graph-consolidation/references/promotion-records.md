@@ -1,6 +1,6 @@
 # Promotion Records
 
-Use this reference when editing `manifests/promotions.json`.
+Use this reference when editing `garden/manifests/promotions.json`.
 
 ## Required Record Shape
 
@@ -36,7 +36,7 @@ sources unless intentional handling is recorded.
 ## Structured Data Rule
 
 `promotions.json` is governed by
-`schemas/intelligence/promotions.schema.json`. After editing it, run:
+`garden/schemas/intelligence/promotions.schema.json`. After editing it, run:
 
 ```sh
 node scripts/validate-manifests.mjs

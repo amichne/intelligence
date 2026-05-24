@@ -51,8 +51,8 @@ blocked by another.
 
 ## Runtime And Cleanup Safety
 
-- Runtime exposure is represented in `manifests/runtime-links.json` before any
+- Runtime exposure is represented in `garden/manifests/runtime-links.json` before any
   write to runtime targets.
-- Cleanup intent is represented in `manifests/cleanup-ledger.json` before any
+- Cleanup intent is represented in `garden/manifests/cleanup-ledger.json` before any
   source deletion or symlink replacement.
 - The rollback path is concrete enough for another agent to follow.

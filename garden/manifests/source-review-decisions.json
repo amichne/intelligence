@@ -1,0 +1,1951 @@
+{
+  "type": "SOURCE_REVIEW_DECISIONS",
+  "schemaVersion": 1,
+  "policy": "Every generated name-review group needs an explicit keep, cover, defer, retain, rewrite, or review decision before it can guide trimming. This manifest records decisions only; source deletion still requires cleanup-ledger approval.",
+  "entries": [
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "analyzer"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 5,
+        "buckets": [
+          "authored-local",
+          "installed-marketplace",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "global-agent-skills",
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:bf68f4cac5a56c673a928c2e6d619586c5b93ea364026ab37547772cb45a663a"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "comparator"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 5,
+        "buckets": [
+          "authored-local",
+          "installed-marketplace",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "global-agent-skills",
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "grader"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 5,
+        "buckets": [
+          "authored-local",
+          "installed-marketplace",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "global-agent-skills",
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:57134da0c1a4eea33fbd74a1c9c44aa814f07d6bc64de303edb586f941e5d21a"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "kotlin-boundary-contract-reviewer"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-agents",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "kotlin-package-cohesion-reviewer"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-agents",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "kotlin-review-captain"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-agents",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "kotlin-type-safety-reviewer"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-agents",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "openai"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "RECONCILE_RUNTIME_COPY",
+        "priority": 2,
+        "entryCount": 26,
+        "buckets": [
+          "authored-local",
+          "backup",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-agents",
+          "apollo-skills",
+          "global-agent-skills",
+          "global-codex-skills",
+          "global-codex-skills-backup",
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:03f8f25b25be6267c15f42a87c15caf54fe0863d40ebf90104c4a44e93a1864c",
+          "sha256:06e8c33671310a3ecea781940a6dc650e68a9d63fbdcd3d5bb79f93c0fa220d9",
+          "sha256:114e8c083f9273d25a18ac9338bb96a6db425fdb2b2bfa9abb49208fc29aaab9",
+          "sha256:351eea544c3eb8ccc40009f3d3a28453dffdd9bd6831d179b0ceec633b1a91a4",
+          "sha256:36f73b9450504983d1647c960689596f59bf9147c14b1b43162912ed7ada9af6",
+          "sha256:580081dd6c0896d72307d1f1b90d2248a64b9353bc546fdbf05ddeb3848e8c39",
+          "sha256:5ce223d8b1070b82c42298538f1b8d376f788eb9e7a42a987e8c094070d73f0e",
+          "sha256:92f10ea22987f3d9a0efa1db7319c986e6750e8e3a9da95d2e11a38b5e21c64f",
+          "sha256:9ca574af14580dc7a2a3dc37a1796d17f93cb8850be66501f0799ef8603e9dc0",
+          "sha256:9d4409fa52b1527ee4a9b69b2484499825ca6bf65ea96bb1d5c1b4d8a31e3757",
+          "sha256:acb36025114319c3d3191b809b93fed889156ec726f3bbd29ae9276bf5ee447e",
+          "sha256:d07d21b93fcf3d4dc8d9a3399c05fc226a49a333a96d3e1c68b451b8dd9eade6",
+          "sha256:ec75c2639e4d34cbc1a208d01c403fad83160dea2232deef733a272d86684a1d",
+          "sha256:fafccbf7ded0d78be24c7dc1c0a2e0ac1bbf27bfd13a1fed969da643d973826a",
+          "sha256:fecaf35d692bd3d33d1a065648258d12e393afa9055d78adf6e57b42f4142f6d"
+        ]
+      },
+      "rationale": "The reviewed openai.yaml files are host interface metadata and tool dependency declarations. They are useful runtime adapters, but they are not standalone agent profiles and should not be promoted under a provider name.",
+      "nextAction": "Keep openai.yaml files in their owning skills or runtimes. Use provider-neutral agent and skill authoring primitives for local canonical behavior.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/agent-profile-authoring",
+          "notes": "Canonical workflow for independent agent profiles with host-neutral names and trigger boundaries."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Canonical workflow for separating skill behavior from optional runtime/UI metadata."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "routing-improvement"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local"
+        ],
+        "sourceRoots": [
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:2411d141e1d60c1443c9174954367984899c8d2fdab9256f0bfe5fb86ba4c131",
+          "sha256:63760ac2e4edd64bac7b2969df361acfc3662b35acc94f0464e9a4771e8f6ab9"
+        ]
+      },
+      "rationale": "The useful routing handoff workflow has been synthesized into a provider-neutral canonical skill. The Kast source files remain provenance and repo-local maintenance assets, not cleanup targets.",
+      "nextAction": "Use skills/primitive-routing-evaluation for future routing-eval work. Do not remove Kast fixtures unless the Kast repository records its own cleanup approval.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/primitive-routing-evaluation",
+          "notes": "Canonical provider-neutral skill synthesized from the Kast routing-improvement source group."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "AGENT",
+        "name": "schema-type-enforcer"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-agents",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "agents/schema-type-enforcer.agent.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "HOOK",
+        "name": "agents-md-turn-refresh"
+      },
+      "decision": "KEEP_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 3,
+        "buckets": [
+          "canonical"
+        ],
+        "sourceRoots": [
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:08b8270637614a5c8cbc176a22a636fa28c3be9d5474fa16b73b4f1534cee5ab",
+          "sha256:133f8441e2bd2f8b577dfb992dc16d4ac5230c5b096eaf55f303b6ddf04775c9",
+          "sha256:c723de50014f3bfb386ed21c65f887396871a33e42b22d2e2c585cbd2c82fb2a"
+        ]
+      },
+      "rationale": "The duplicate name comes from multiple files that together form one canonical hook family. This is not a source cleanup target by itself.",
+      "nextAction": "Keep the canonical multi-file family as-is and avoid treating internal hook files as duplicate source roots.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/agents-md-turn-refresh.hook.json",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/agents-md-turn-refresh.sh",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/codex/agents-md-turn-refresh.hooks.json",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "HOOK",
+        "name": "hooks"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 11,
+        "buckets": [
+          "authored-local",
+          "installed-marketplace"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "kast-github-hooks"
+        ],
+        "sourceDigests": [
+          "sha256:1bc669778e2c62bd9a49f7962496d1ded7ab4b9eb6cb6b9ef75985197acc4153",
+          "sha256:2d4e4bc4623777b0323b8001c3ebaf20b6c18d1d86044eb8a6ba4fc967c16617",
+          "sha256:2f5725548acfcae80ae997996a5037aad0754c13498cd81b87df35893f283db8",
+          "sha256:5dfc22befb120e322358a6d39edef8ee00f4b66b1bb3e095889700c4a8b0389d",
+          "sha256:6ba33b3f6a75ba4271a76160b0465e7050a607a02e1ec212a7c0f3b9cd3cb35a",
+          "sha256:81d4cb787eb9f53290f46f37d775d762cb56f5347f078530c4453550c1ec0bd8",
+          "sha256:838dd2ffbe325307cc23a02ef541fd45c25fd42492d64ccbe9ec11233a3a04f0",
+          "sha256:cd60eabe587794c00c873c6f36d340f970c4b57ab9c5664d80c5a22915e74302",
+          "sha256:f941cedcbac07688675fb8d0fad741e9ba13900d73416409861001efe3fedba9"
+        ]
+      },
+      "rationale": "The reviewed files are provider-specific hook adapter catalogs, not independent hook primitives. The reusable hook behavior now belongs in provider-neutral metadata, implementations, and provider adapter projections under the local hooks workflow.",
+      "nextAction": "Leave installed marketplace and Kast hook catalogs in their owning runtimes. Use hook-primitive-authoring and canonical hook metadata when creating new local hooks.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/hook-primitive-authoring",
+          "notes": "Canonical workflow for creating provider-neutral hook primitives and adapter projections."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/required-skill-read.hook.json",
+          "notes": "Canonical provider-neutral hook derived from the Kast required skill-read family."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/agents-md-turn-refresh.hook.json",
+          "notes": "Canonical provider-neutral hook for repository instruction refresh behavior."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "HOOK",
+        "name": "kotlin-horizontalization-check"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 4,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-hooks",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:287b758f0af60bc380fd7ab44eb9f10c9a8a13f592bdac0cc887d79fc9beac49",
+          "sha256:84fd559699d2b6fac4497fac2db7d5675ea01c9c5067900867421296bd589d10",
+          "sha256:fccb8b56894574d55d7f170e027d861a00733f65c957f2236b631f2f18e7c478"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/kotlin-horizontalization-check.hook.json",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/kotlin-horizontalization-check.py",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "HOOK",
+        "name": "required-skill-read"
+      },
+      "decision": "KEEP_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 3,
+        "buckets": [
+          "canonical"
+        ],
+        "sourceRoots": [
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:19091b15a9c0808d815885c0dc5682e26aa8bf8b28ac9201063e11e60128867d",
+          "sha256:a910dbd91c0d21263deb49a78ab890a928e3bb724c152eea357c3aa853956cdd",
+          "sha256:f6a379058814e323e82becf0463106926d4cfdea39ae262d7f8d725408704811"
+        ]
+      },
+      "rationale": "The duplicate name comes from multiple files that together form one canonical hook family. This is not a source cleanup target by itself.",
+      "nextAction": "Keep the canonical multi-file family as-is and avoid treating internal hook files as duplicate source roots.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/required-skill-read.hook.json",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/required-skill-read.py",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "hooks/codex/required-skill-read.hooks.json",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "INSTRUCTION",
+        "name": "schema-driven-design"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-instructions",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116"
+        ]
+      },
+      "rationale": "The Examplar instruction path now resolves to the canonical local concept via symlink. The original divergent source digest remains preserved in the executed cleanup-ledger backup evidence.",
+      "nextAction": "Use the canonical concept path for new plugin composition; keep the executed cleanup-ledger entry as rollback and provenance evidence.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "concepts/schema-driven-design/core.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "INSTRUCTION",
+        "name": "type-safety"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "examplar-instructions",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5"
+        ]
+      },
+      "rationale": "The Examplar instruction path now resolves to the canonical local concept via symlink. The original divergent source digest remains preserved in the executed cleanup-ledger backup evidence.",
+      "nextAction": "Use the canonical concept path for new plugin composition; keep the executed cleanup-ledger entry as rollback and provenance evidence.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "concepts/type-safety/core.md",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "PLUGIN",
+        "name": "plugin-eval"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "installed-marketplace"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "examplar-plugins"
+        ],
+        "sourceDigests": [
+          "sha256:c00cccd19ff7c7e4867a02a84b1c1d758a994a95db850dbf363ccce5b91a4ecf",
+          "sha256:d69571cda6ed07b585aa81dacaa19025dc82ff81eaaff4ac3d2c0e20ef6beedd"
+        ]
+      },
+      "rationale": "The installed plugin-eval package remains useful as an external evaluator, but this repository should not promote a same-named local plugin. Local primitive governance is covered by renamed, rewritten audit and governance primitives.",
+      "nextAction": "Keep marketplace plugin-eval external. Use primitive-quality-audit and primitive-governance for local source-graph quality decisions.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/primitive-quality-audit",
+          "notes": "Canonical local governance skill for primitive quality and readiness decisions."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "plugins/primitive-governance",
+          "notes": "Referential local plugin that composes governance primitives without reusing the plugin-eval name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "agent-development"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "installed-marketplace"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:34ac2cce425050cfb88fa3af05ad0c9f78bc464b420a8715ff9f51b3fde25b2f",
+          "sha256:853f80a1643763f1f61d292ea9444c8a0c299f0a185a6dbcbed58c2b14f7d2e7"
+        ]
+      },
+      "rationale": "The useful local agent-development guidance has already been promoted as agent-profile-authoring with provenance recorded. Installed marketplace copies remain external and should not be raw-promoted under their source name.",
+      "nextAction": "Use skills/agent-profile-authoring for agent profile work and keep installed marketplace agent-development material as external reference only.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/agent-profile-authoring",
+          "notes": "Canonical local replacement for agent profile authoring guidance."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Companion canonical workflow for separating skill behavior from plugin/runtime metadata."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "agent-profile-authoring"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:1082a610e1b83155187bb9d1538a7b12631e93329fc95d95094f74f579bd72ad"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/agent-profile-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/agent-profile-authoring for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "bash-defensive-patterns"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 2,
+        "buckets": [
+          "backup",
+          "installed-marketplace"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:9471e328a60af1384aaa16e47c597d6f1deecef830fa030c9c3570e1ad71e697",
+          "sha256:f2d49259b334d7e90b9a1570dd2dcf57064f99df2535c8352d7a775029e73236"
+        ]
+      },
+      "rationale": "The useful shell safety guidance has been synthesized into shell-script-safety under a local non-colliding name. Installed marketplace material remains provenance only.",
+      "nextAction": "Use skills/shell-script-safety for shell automation work. Do not remove backup or marketplace copies without a cleanup ledger entry and runtime activation plan.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/shell-script-safety",
+          "notes": "Canonical local shell safety skill rewritten from backup and marketplace source evidence."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "define-goal"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:a3506ae804172344e1a60829f72fc6acac12fd6205445e70824874f861e56c5e"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/define-goal",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "gh-fix-ci"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 3,
+        "buckets": [
+          "backup",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "global-agent-skills",
+          "global-codex-backups",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:301337f0f2a777b637616f9bbac77bd4356a614458631619c97958a3327cfbe6",
+          "sha256:eca966668ee399a08e7efb6f4aa11f413c3eff65493b89a218cfe9a32a49ed52"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/github-ci-operations",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "plugins/version-control",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "git-change-flow"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:5a79fdf144c0a7986090ea2e82748e6cb30d0be411f5ab3a7ff77457adb13782"
+        ]
+      },
+      "rationale": "The prior Apollo skill path yeet is now represented by the canonical git-change-flow skill. The original directory is preserved under the cleanup backup tree, and active review evidence follows the canonical primitive name.",
+      "nextAction": "Use skills/git-change-flow for plugin composition; use cleanup-ledger backup records when auditing the retired yeet source path.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/git-change-flow",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "github-ci-operations"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/github-ci-operations",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/github-ci-operations for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "hook-primitive-authoring"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:74bcbe66007afde0a24fc162733354983a6237a6e02e33798d0c93d23f3eb104"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/hook-primitive-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/hook-primitive-authoring for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "imagegen"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "RECONCILE_RUNTIME_COPY",
+        "priority": 2,
+        "entryCount": 3,
+        "buckets": [
+          "authored-local",
+          "backup",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "global-codex-skills",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:3555f7bdb3a50a4ccb99be8d94d23528509b988f3f72645e03705da25594b66c",
+          "sha256:5c2fa22ca73f0d08e4fc634c1ccb56531c3e5ae41c0bef1ac6ebe820d8fcb828"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "jira-resolve-ticket"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "global-codex-skills"
+        ],
+        "sourceDigests": [
+          "sha256:f412bf1efc6fd541dcdd2db0b3347d6f6735899d35d1831a27ef439036c39a47"
+        ]
+      },
+      "rationale": "Jira ticket resolution is an integration-specific workflow that should remain in its owning Apollo/runtime source until a dedicated issue-tracking plugin is intentionally designed.",
+      "nextAction": "Retain the Apollo Jira skill externally for now. Revisit only when creating an issue-tracking or project-management plugin family."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "kotlin-architect"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "backup"
+        ],
+        "sourceRoots": [
+          "global-codex-backups",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:b41d67bee12100c273919dc7a96aca25ab7327f6cd1c176e6c7d6488f9130cff"
+        ]
+      },
+      "rationale": "The backup Kotlin architecture guidance overlaps with the canonical kotlin-standards skill and Kotlin review agents. A separate kotlin-architect skill would duplicate local standards rather than add a distinct primitive.",
+      "nextAction": "Use skills/kotlin-standards and the kotlin-review plugin for Kotlin architecture work. Keep backup copies as provenance until cleanup is explicitly approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/kotlin-standards",
+          "notes": "Canonical Kotlin design and implementation standards."
+        },
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "plugins/kotlin-review",
+          "notes": "Referential plugin that composes Kotlin standards, validation, review agents, and hooks."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "kotlin-gradle-validation"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:7c389a58218ded57ee137222140cdf4759f7ca598f0a84efbbe330f6f9108167"
+        ]
+      },
+      "rationale": "The prior Apollo skill path kotlin-gradle-loop is now represented by the canonical kotlin-gradle-validation skill. The original directory is preserved under the cleanup backup tree, and active review evidence follows the canonical primitive name.",
+      "nextAction": "Use skills/kotlin-gradle-validation for plugin composition; use cleanup-ledger backup records when auditing the retired kotlin-gradle-loop source path.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/kotlin-gradle-validation",
+          "notes": "Canonical local Kotlin/Gradle validation workflow."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "kotlin-standards"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 3,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "examplar-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/kotlin-standards",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "llm-native-signature-spec"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "SYNTHESIZE",
+        "priority": 1,
+        "entryCount": 2,
+        "buckets": [
+          "backup"
+        ],
+        "sourceRoots": [
+          "global-codex-backups",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:19adbbf49127aaabd209e3343aeb4845fd7b0b23d99411fb23662e90c5454d6d",
+          "sha256:4de75979b983eec2e057ad165b6015d040c3ddedd1c4d61336e5d95fe7f1f424"
+        ]
+      },
+      "rationale": "The signature-spec backup material has been rewritten as repository-signature-indexing with deterministic generated-artifact and drift-check boundaries.",
+      "nextAction": "Use skills/repository-signature-indexing for future signature index work; do not import backup generator scripts without a separate audit.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/repository-signature-indexing",
+          "notes": "Canonical local repository signature index workflow."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "local-repository-navigation"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/local-repository-navigation",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/local-repository-navigation for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "manage-json-schemas"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 3,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "examplar-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/manage-json-schemas",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "openai-docs"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "RECONCILE_RUNTIME_COPY",
+        "priority": 2,
+        "entryCount": 4,
+        "buckets": [
+          "authored-local",
+          "backup",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "global-agent-skills",
+          "global-codex-skills",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:eac17633a71c0fe8ba8b08cf73046efbb26dbc2211aff69e726aa99a210591e9",
+          "sha256:f00f09ecb7c682f9bfb09bbbc93de6242b2d10c7e4d97f059d91de82c14246c8"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "plugin-composition-authoring"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:6b651406e8e03097d2ce2ec6efce5bc29cf80efc399f96d85f686cae31cd8591"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/plugin-composition-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/plugin-composition-authoring for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "plugin-creator"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "RECONCILE_RUNTIME_COPY",
+        "priority": 2,
+        "entryCount": 3,
+        "buckets": [
+          "authored-local",
+          "backup",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "global-codex-skills",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:71bc91120548c46092abb98dba5ef2d91b12224d1106d6abfdc57862a6e26683",
+          "sha256:c716a9313f4629c9314362df5ec88026f9cd1d07412aede5835ee5948f30f8bf"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/plugin-composition-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "primitive-quality-audit"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:7047d5b9cc667230d64172f73819df89c44037ea298302a17f52ed47d6e082f4"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/primitive-quality-audit",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/primitive-quality-audit for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "primitive-routing-evaluation"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/primitive-routing-evaluation",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/primitive-routing-evaluation for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "reference-doc-workflow"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:4910662a523db7ec52ebd4eb628b9f856cfb3e2710689590e3fe2d65621e4bde"
+        ]
+      },
+      "rationale": "The prior Apollo skill path doc-coauthoring is now represented by the canonical reference-doc-workflow skill. The original directory is preserved under the cleanup backup tree, and active review evidence follows the canonical primitive name.",
+      "nextAction": "Use skills/reference-doc-workflow for plugin composition; use cleanup-ledger backup records when auditing the retired doc-coauthoring source path.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/reference-doc-workflow",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "repo-instruction-topology"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9"
+        ]
+      },
+      "rationale": "The prior Apollo skill path segment-codebase-agents-md is now represented by the canonical repo-instruction-topology skill. The original directory is preserved under the cleanup backup tree, and active review evidence follows the canonical primitive name.",
+      "nextAction": "Use skills/repo-instruction-topology for plugin composition; use cleanup-ledger backup records when auditing the retired segment-codebase-agents-md source path.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/repo-instruction-topology",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "repository-signature-indexing"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/repository-signature-indexing",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/repository-signature-indexing for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "runtime-linking"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:3717e49963fb909cd5c4a62a2c21dbfe57939baa26e0ad51a0c89a4c614d1861"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/runtime-linking",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/runtime-linking for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "shell-script-safety"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/shell-script-safety",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/shell-script-safety for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "site-docs-authoring"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/site-docs-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/site-docs-authoring for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "skill-creator"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "RECONCILE_RUNTIME_COPY",
+        "priority": 2,
+        "entryCount": 9,
+        "buckets": [
+          "authored-local",
+          "backup",
+          "installed-marketplace",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "claude-plugins",
+          "global-agent-skills",
+          "global-codex-skills",
+          "global-codex-skills-backup",
+          "kast-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:104b792090370aff47c4a70411cb84e737b7cfa9699f2f54c916d8946fc98f16",
+          "sha256:4557d54c524c67984e4bab23fa436e90196292ae8df4d2093f0ce0e6951bfc1c",
+          "sha256:4b71877c5a956eb05cd92c1ab01643f490f5f77c9a26f02304fd04bbfda640bc",
+          "sha256:887b2027e7eeb09e4e6bcc48f2a0f7f76adc8033462139260a77c6d39799b779",
+          "sha256:e4b45bbc86781005af2d1b425e60ddd691f9dbdab7447a9bc1bf769122cd8db5"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "skill-installer"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 4,
+        "buckets": [
+          "authored-local",
+          "backup",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "global-agent-skills",
+          "global-codex-skills",
+          "global-codex-skills-backup"
+        ],
+        "sourceDigests": [
+          "sha256:67717a8afb51f29380e849cad62036628bd5a3c8193bacf3b00b5cd7a30fc1cb"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "skill-primitive-authoring"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:e24ce9f217d02e7c5daf989e097d2c4188cea686fdbee2639bb8afc11c29e905"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/skill-primitive-authoring",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/skill-primitive-authoring for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "source-graph-consolidation"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:8c274af0389f6267860d1a5450834181babd28701897ae8b400290f2f29a7cbf"
+        ]
+      },
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/source-graph-consolidation",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ],
+      "rationale": "The generated duplicate-name group is identical to the canonical skill entry. Treat apollo-skills as aliases to the canonical primitive rather than independent source material.",
+      "nextAction": "Use skills/source-graph-consolidation for plugin composition; record cleanup-ledger entries before replacing or removing external aliases."
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "tdd"
+      },
+      "decision": "COVERED_BY_CANONICAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 3,
+        "buckets": [
+          "authored-local",
+          "canonical"
+        ],
+        "sourceRoots": [
+          "apollo-skills",
+          "examplar-skills",
+          "intelligence"
+        ],
+        "sourceDigests": [
+          "sha256:eca4563ecde084b66c8e276ea0eabed1ad2864c5ec6e10cc41a674390bbc9c61"
+        ]
+      },
+      "rationale": "A local canonical primitive already covers this review group under a non-colliding name. Keep source candidates as provenance until runtime activation and cleanup ledger entries are reviewed.",
+      "nextAction": "Use the canonical coverage path for new plugin composition; create cleanup-ledger entries only after runtime-link activation is approved.",
+      "canonicalCoverage": [
+        {
+          "type": "CANONICAL_COVERAGE",
+          "path": "skills/tdd",
+          "notes": "Use this local primitive instead of promoting the reviewed source under its current name."
+        }
+      ]
+    },
+    {
+      "type": "SOURCE_REVIEW_DECISION",
+      "target": {
+        "type": "SOURCE_REVIEW_TARGET",
+        "primitiveType": "SKILL",
+        "name": "web-artifacts-builder"
+      },
+      "decision": "RETAIN_EXTERNAL",
+      "status": "DECIDED",
+      "queueEvidence": {
+        "type": "QUEUE_EVIDENCE",
+        "queueType": "NAME_REVIEW",
+        "generatedAction": "DEDUP_IDENTICAL_NAME",
+        "priority": 2,
+        "entryCount": 2,
+        "buckets": [
+          "installed-marketplace",
+          "runtime"
+        ],
+        "sourceRoots": [
+          "claude-plugins",
+          "global-agent-skills"
+        ],
+        "sourceDigests": [
+          "sha256:0f102ba19f13b4deb19f2248a5014952d2af1521129a5a0e4f3d805f74632b75"
+        ]
+      },
+      "rationale": "This group is runtime, system, or installed first-party material. Keep it external for now and reference the local canonical alternative when one exists.",
+      "nextAction": "Do not import this source into intelligence. Keep it available through its owning runtime or first-party distribution."
+    }
+  ]
+}

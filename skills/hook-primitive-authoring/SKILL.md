@@ -22,7 +22,7 @@ repo-owned primitive before any plugin composes it.
 - Treat every hook metadata file and provider adapter as structured data with a
   mandatory schema-backed validation path.
 - Run syntax checks for every touched executable hook implementation.
-- Record promoted hook source material in `manifests/promotions.json`.
+- Record promoted hook source material in `garden/manifests/promotions.json`.
 
 ## Workflow
 

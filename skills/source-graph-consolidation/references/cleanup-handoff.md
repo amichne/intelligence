@@ -8,7 +8,7 @@ source paths.
 Promotion does not imply cleanup. Cleanup starts only after:
 
 - the canonical primitive exists and validates;
-- the original source path is recorded in `manifests/promotions.json`;
+- the original source path is recorded in `garden/manifests/promotions.json`;
 - the generated inventory confirms the canonical replacement;
 - duplicate digest or explicit review proves replacement equivalence;
 - rollback or backup path is known;
@@ -16,7 +16,7 @@ Promotion does not imply cleanup. Cleanup starts only after:
 
 ## Ledger Intent
 
-`manifests/cleanup-ledger.json` is the approval gate. A future entry should
+`garden/manifests/cleanup-ledger.json` is the approval gate. A future entry should
 record:
 
 - original `sourcePath`;
@@ -32,7 +32,7 @@ current turn.
 ## Validation
 
 `cleanup-ledger.json` is governed by
-`schemas/intelligence/cleanup-ledger.schema.json`. Validate with:
+`garden/schemas/intelligence/cleanup-ledger.schema.json`. Validate with:
 
 ```sh
 node scripts/validate-manifests.mjs
