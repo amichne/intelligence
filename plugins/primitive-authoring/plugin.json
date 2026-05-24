@@ -1,0 +1,72 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "primitive-authoring",
+  "version": "0.1.0",
+  "description": "Skill, agent, hook, schema, and referential plugin authoring workflows composed from independent primitives.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/skill-primitive-authoring",
+      "name": "skill-primitive-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/agent-profile-authoring",
+      "name": "agent-profile-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/plugin-composition-authoring",
+      "name": "plugin-composition-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/hook-primitive-authoring",
+      "name": "hook-primitive-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/manage-json-schemas",
+      "name": "manage-json-schemas"
+    }
+  ],
+  "agents": [],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json",
+    "schemaReference": "concordance/schemas/core"
+  }
+}

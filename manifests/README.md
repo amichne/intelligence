@@ -24,3 +24,8 @@ provenance only. Canonical local primitives should be renamed and rewritten so
 they do not collide with installed first-party tools. The manifest validator
 also rejects canonical primitives whose content digest is identical to a
 first-party source.
+
+When a promoted primitive synthesizes several source skills, keep the canonical
+name local and capability-oriented. Preserve source paths in `promotions.json`,
+but keep plugin manifests referential: they should point at `skills/*`,
+`agents/*`, `hooks/*`, or `concepts/*`, not copied payload folders.

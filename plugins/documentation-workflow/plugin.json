@@ -1,0 +1,34 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "documentation-workflow",
+  "version": "0.1.0",
+  "description": "Documentation planning and site-authoring workflows composed from independent skills.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/reference-doc-workflow",
+      "name": "reference-doc-workflow"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/site-docs-authoring",
+      "name": "site-docs-authoring"
+    }
+  ],
+  "agents": [],
+  "instructions": [],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json"
+  }
+}

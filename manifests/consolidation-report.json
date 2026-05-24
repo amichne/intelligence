@@ -97,7 +97,7 @@
     "byBucket": {
       "authored-local": 76,
       "backup": 33,
-      "canonical": 28,
+      "canonical": 40,
       "installed-marketplace": 608,
       "runtime": 49
     },
@@ -117,8 +117,8 @@
         "AGENT": 5,
         "HOOK": 6,
         "INSTRUCTION": 7,
-        "PLUGIN": 5,
-        "SKILL": 5
+        "PLUGIN": 9,
+        "SKILL": 13
       },
       "installed-marketplace": {
         "AGENT": 231,
@@ -136,14 +136,14 @@
       "AGENT": 301,
       "HOOK": 38,
       "INSTRUCTION": 11,
-      "PLUGIN": 138,
-      "SKILL": 306
+      "PLUGIN": 142,
+      "SKILL": 314
     },
     "digestReviewGroups": 24,
     "firstPartyDigestMatches": 0,
     "firstPartyNameCollisions": 0,
     "nameReviewGroups": 36,
-    "totalEntries": 794
+    "totalEntries": 806
   },
   "digestReviewQueue": [
     {
@@ -1016,7 +1016,7 @@
   "firstPartyDigestMatches": [],
   "firstPartyNameCollisions": [],
   "inventory": "manifests/discovered-primitives.json",
-  "inventoryGeneratedAt": "2026-05-24T05:40:06.062900+00:00",
+  "inventoryGeneratedAt": "2026-05-24T06:10:45.897262+00:00",
   "nameReviewQueue": [
     {
       "action": "SYNTHESIZE",
@@ -1425,7 +1425,7 @@
           "name": "schema-driven-design",
           "path": "concepts/schema-driven-design/core.md",
           "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
-          "sha256": "sha256:11614657993dabe4c555d38647713d9d26015750d7bbfa87c301fa22d482950c",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
           "sourceRoot": "intelligence",
           "type": "INSTRUCTION"
         }
@@ -3490,7 +3490,7 @@
       "name": "schema-driven-design",
       "path": "concepts/schema-driven-design/core.md",
       "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
-      "sha256": "sha256:11614657993dabe4c555d38647713d9d26015750d7bbfa87c301fa22d482950c",
+      "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3500,7 +3500,7 @@
       "name": "skills-agents-instructions",
       "path": "skills/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
-      "sha256": "sha256:3af6aea7bee7ff2d2624afc539a1ae36d6992cecba2ddf988f3621149ee4b56d",
+      "sha256": "sha256:8b41b0804e827f6572345f90e83b22dc4e0ab8e102b4e2f1681f3a61308228ea",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3532,6 +3532,16 @@
       "resolvedPath": "/Users/amichne/code/examplar/plugins/agentic-coding/plugin.json",
       "sha256": "sha256:5de9924dde09e16323153fd1b9f0b84cee36afd411f001ea4638554e12970e45",
       "sourceRoot": "examplar-plugins",
+      "type": "PLUGIN"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "documentation-workflow",
+      "path": "plugins/documentation-workflow",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/documentation-workflow/plugin.json",
+      "sha256": "sha256:2248b654eef58a50b446b98c80107aa69c73c64d00ff76b96a44d37a75e27d39",
+      "sourceRoot": "intelligence",
       "type": "PLUGIN"
     },
     {
@@ -3577,6 +3587,26 @@
     {
       "action": "KEEP_CANONICAL",
       "bucket": "canonical",
+      "name": "primitive-authoring",
+      "path": "plugins/primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
+      "sha256": "sha256:7409599517757291f79430bf220de5722e719466b202d90b3bcade463b860897",
+      "sourceRoot": "intelligence",
+      "type": "PLUGIN"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "repository-orientation",
+      "path": "plugins/repository-orientation",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/repository-orientation/plugin.json",
+      "sha256": "sha256:43aaef1eb937fc681bb42d5393ead13fc245e8dfad0b85c1d0e53851015aedc3",
+      "sourceRoot": "intelligence",
+      "type": "PLUGIN"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
       "name": "schema-governance",
       "path": "plugins/schema-governance",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/schema-governance/plugin.json",
@@ -3595,6 +3625,16 @@
       "type": "PLUGIN"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "version-control",
+      "path": "plugins/version-control",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/version-control/plugin.json",
+      "sha256": "sha256:240da3cdf5e0bf6cb2d17dfd1bef307b07765873e00ef86efe251fc5b67e3e9c",
+      "sourceRoot": "intelligence",
+      "type": "PLUGIN"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "agent-development",
@@ -3602,6 +3642,16 @@
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/agent-development/SKILL.md",
       "sha256": "sha256:853f80a1643763f1f61d292ea9444c8a0c299f0a185a6dbcbed58c2b14f7d2e7",
       "sourceRoot": "kast-agent-skills",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "agent-profile-authoring",
+      "path": "skills/agent-profile-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring/SKILL.md",
+      "sha256": "sha256:f7789cf6996c66a8ae0d09857c127c597bbeabaa5805be3d90b481374726c4f9",
+      "sourceRoot": "intelligence",
       "type": "SKILL"
     },
     {
@@ -3632,6 +3682,36 @@
       "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
       "sha256": "sha256:fd8325cb199c45d53792e9fbc144d72832900c77aa31bc3b781099d5cbe81266",
       "sourceRoot": "apollo-skills",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "git-change-flow",
+      "path": "skills/git-change-flow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
+      "sha256": "sha256:b08c9ea72c1dd62e7269546de3372e9fe902274080ae97c0e2ebc869242dd646",
+      "sourceRoot": "intelligence",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "github-ci-operations",
+      "path": "skills/github-ci-operations",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/github-ci-operations/SKILL.md",
+      "sha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+      "sourceRoot": "intelligence",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "hook-primitive-authoring",
+      "path": "skills/hook-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
+      "sha256": "sha256:8a6769c909bb8df404796c3705a3c745d247a3ead6d1af835ebf24486179c767",
+      "sourceRoot": "intelligence",
       "type": "SKILL"
     },
     {
@@ -3745,6 +3825,16 @@
       "type": "SKILL"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "plugin-composition-authoring",
+      "path": "skills/plugin-composition-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
+      "sha256": "sha256:cb665208e75877050d2c2fbb6ac4d08deb0241afbd3c254497c28becc0b886f6",
+      "sourceRoot": "intelligence",
+      "type": "SKILL"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "plugin-creator",
@@ -3775,6 +3865,16 @@
       "type": "SKILL"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "repo-instruction-topology",
+      "path": "skills/repo-instruction-topology",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repo-instruction-topology/SKILL.md",
+      "sha256": "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9",
+      "sourceRoot": "intelligence",
+      "type": "SKILL"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "segment-codebase-agents-md",
@@ -3782,6 +3882,16 @@
       "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
       "sha256": "sha256:c0c6aea845e03bead9593879d44db6628ed9da7f9b77aba706e2ad0f2459e475",
       "sourceRoot": "apollo-skills",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "site-docs-authoring",
+      "path": "skills/site-docs-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/site-docs-authoring/SKILL.md",
+      "sha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+      "sourceRoot": "intelligence",
       "type": "SKILL"
     },
     {
@@ -3812,6 +3922,16 @@
       "resolvedPath": "/Users/amichne/code/apollo/skills/.system/skill-installer/SKILL.md",
       "sha256": "sha256:67717a8afb51f29380e849cad62036628bd5a3c8193bacf3b00b5cd7a30fc1cb",
       "sourceRoot": "apollo-skills",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "skill-primitive-authoring",
+      "path": "skills/skill-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
+      "sha256": "sha256:2a5e5160dd6e0177a1b5621b9b56f828daf0074ea7b0e0a09d26907999b9431e",
+      "sourceRoot": "intelligence",
       "type": "SKILL"
     },
     {

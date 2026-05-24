@@ -1,7 +1,7 @@
 # Consolidation Queue
 
 Inventory source: `manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-24T05:40:06.062900+00:00`
+Inventory generated at: `2026-05-24T06:10:45.897262+00:00`
 
 ## Counts
 
@@ -9,7 +9,7 @@ Inventory generated at: `2026-05-24T05:40:06.062900+00:00`
 |---|---:|
 | `authored-local` | 76 |
 | `backup` | 33 |
-| `canonical` | 28 |
+| `canonical` | 40 |
 | `installed-marketplace` | 608 |
 | `runtime` | 49 |
 
@@ -18,8 +18,8 @@ Inventory generated at: `2026-05-24T05:40:06.062900+00:00`
 | `AGENT` | 301 |
 | `HOOK` | 38 |
 | `INSTRUCTION` | 11 |
-| `PLUGIN` | 138 |
-| `SKILL` | 306 |
+| `PLUGIN` | 142 |
+| `SKILL` | 314 |
 
 ## Promotion Candidates
 
@@ -100,14 +100,14 @@ These are canonical or local-authored entries. They are the first review set bef
 | `INSTRUCTION` | `type-safety` | `authored-local` | `examplar-instructions` | `type-safety.md` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `type-safety` | `canonical` | `intelligence` | `concepts/type-safety/core.md` | `KEEP_CANONICAL` |
 | `PLUGIN` | `agentic-coding` | `authored-local` | `examplar-plugins` | `agentic-coding` | `REVIEW_PROMOTE` |
+| `PLUGIN` | `documentation-workflow` | `canonical` | `intelligence` | `plugins/documentation-workflow` | `KEEP_CANONICAL` |
 | `PLUGIN` | `intelligence-core` | `canonical` | `intelligence` | `plugins/intelligence-core` | `KEEP_CANONICAL` |
 | `PLUGIN` | `kotlin-review` | `canonical` | `intelligence` | `plugins/kotlin-review` | `KEEP_CANONICAL` |
 | `PLUGIN` | `planning-and-docs` | `canonical` | `intelligence` | `plugins/planning-and-docs` | `KEEP_CANONICAL` |
 | `PLUGIN` | `plugin-eval` | `authored-local` | `examplar-plugins` | `plugin-eval` | `REVIEW_PROMOTE` |
-| `PLUGIN` | `schema-governance` | `canonical` | `intelligence` | `plugins/schema-governance` | `KEEP_CANONICAL` |
-| `PLUGIN` | `tdd-workflow` | `canonical` | `intelligence` | `plugins/tdd-workflow` | `KEEP_CANONICAL` |
-| `SKILL` | `agent-development` | `authored-local` | `kast-agent-skills` | `agent-development` | `REVIEW_PROMOTE` |
-| | | | | plus 24 more in the JSON report | |
+| `PLUGIN` | `primitive-authoring` | `canonical` | `intelligence` | `plugins/primitive-authoring` | `KEEP_CANONICAL` |
+| `PLUGIN` | `repository-orientation` | `canonical` | `intelligence` | `plugins/repository-orientation` | `KEEP_CANONICAL` |
+| | | | | plus 36 more in the JSON report | |
 
 ## Name Review Queue
 

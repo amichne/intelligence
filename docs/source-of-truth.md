@@ -34,6 +34,21 @@ The local `concordance` symlink supplies the provider-neutral schemas used to
 validate marketplace, plugin, and hook primitive files. It is reference material,
 not owned source for this repository.
 
+## Structured Data Rule
+
+All structured data in this repository must follow a schema-driven workflow.
+There are no exceptions for small manifests, local ledgers, hook adapters,
+plugin catalogs, generated reports, fixtures, or examples.
+
+- Identify the owning schema, typed parser, generator, or equivalent boundary
+  assertion before editing persisted JSON, YAML, TOML, or other structured data.
+- Add or update the schema path first when the shape changes.
+- Validate the data with the owning command before calling the change complete.
+- Use the local `concordance/schemas/core/` schemas for marketplace, plugin,
+  hook, and primitive-reference manifests.
+- Use `skills/manage-json-schemas` and `concepts/schema-driven-design/core.md`
+  when creating new JSON schema contracts or changing existing ones.
+
 ## Workflow
 
 1. Run `python3 scripts/inventory-primitives.py` to refresh the local primitive
@@ -51,6 +66,22 @@ not owned source for this repository.
 Plugins remain composition surfaces. The primitive must be useful without the
 plugin, and the plugin must only assemble primitives that already exist
 independently.
+
+## Current Plugin Families
+
+- `intelligence-core`: portable instruction and hook primitives.
+- `kotlin-review`: Kotlin standards, review agents, and layout checks.
+- `primitive-authoring`: skill, agent, hook, schema, and referential plugin
+  authoring workflows.
+- `repository-orientation`: repository boundary mapping and scoped instruction
+  authoring workflows.
+- `schema-governance`: schema contract skill plus schema/type review surface.
+- `tdd-workflow`: language-agnostic TDD workflow with design concepts.
+- `planning-and-docs`: goal definition and reference-document workflow.
+- `documentation-workflow`: documentation-site authoring for MkDocs,
+  Zensical, and related docs-as-code sites.
+- `version-control`: local Git process plus GitHub CI, Actions workflow, and
+  release-operation skills.
 
 ## First-Party Source Handling
 

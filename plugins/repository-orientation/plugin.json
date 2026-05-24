@@ -1,0 +1,34 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "repository-orientation",
+  "version": "0.1.0",
+  "description": "Repository boundary mapping and scoped instruction authoring composed from independent skills.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repo-instruction-topology",
+      "name": "repo-instruction-topology"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/reference-doc-workflow",
+      "name": "reference-doc-workflow"
+    }
+  ],
+  "agents": [],
+  "instructions": [],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json"
+  }
+}

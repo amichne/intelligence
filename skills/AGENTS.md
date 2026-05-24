@@ -13,6 +13,9 @@ This file applies to reusable skills under `skills/`.
   requires otherwise.
 - Reference shared concepts with repository-relative paths such as
   `concepts/type-safety/core.md` instead of duplicating the full concept text.
+- For any structured data a skill creates, updates, validates, or documents,
+  require a schema-driven workflow. Name the schema, parser, generator, or
+  validation command; do not leave JSON/YAML/TOML shape as prose-only guidance.
 - When synthesizing from OpenAI, Anthropic, or other first-party skills, use a
   local non-colliding skill name and rewrite the body instead of raw-copying the
   first-party text.

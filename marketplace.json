@@ -53,6 +53,48 @@
     },
     {
       "type": "PLUGIN_ENTRY",
+      "name": "primitive-authoring",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "primitive-authoring",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/primitive-authoring"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Skill, agent, hook, schema, and referential plugin authoring workflows composed by reference.",
+      "tags": [
+        "agents",
+        "hooks",
+        "plugins",
+        "schemas",
+        "skills",
+        "source-graph"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "repository-orientation",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "repository-orientation",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/repository-orientation"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Repository boundary mapping and scoped instruction authoring skills composed by reference.",
+      "tags": [
+        "docs",
+        "instructions",
+        "repository",
+        "skills"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
       "name": "planning-and-docs",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
@@ -69,6 +111,27 @@
         "planning",
         "skills",
         "workflow"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "documentation-workflow",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "documentation-workflow",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/documentation-workflow"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Reference-document and MkDocs/Zensical site authoring skills composed by reference.",
+      "tags": [
+        "docs",
+        "mkdocs",
+        "skills",
+        "workflow",
+        "zensical"
       ]
     },
     {
@@ -109,6 +172,27 @@
         "testing",
         "workflow"
       ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "version-control",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "version-control",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/version-control"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Git process, GitHub CI, Actions workflow, and release-operation skills composed by reference.",
+      "tags": [
+        "ci",
+        "git",
+        "github",
+        "skills",
+        "workflow"
+      ]
     }
   ],
   "skills": [
@@ -129,6 +213,78 @@
       },
       "path": "skills/reference-doc-workflow",
       "name": "reference-doc-workflow"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/skill-primitive-authoring",
+      "name": "skill-primitive-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/agent-profile-authoring",
+      "name": "agent-profile-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/plugin-composition-authoring",
+      "name": "plugin-composition-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/hook-primitive-authoring",
+      "name": "hook-primitive-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repo-instruction-topology",
+      "name": "repo-instruction-topology"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/site-docs-authoring",
+      "name": "site-docs-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/git-change-flow",
+      "name": "git-change-flow"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/github-ci-operations",
+      "name": "github-ci-operations"
     },
     {
       "type": "SKILL",

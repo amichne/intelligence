@@ -96,8 +96,8 @@
     "AGENT": 301,
     "HOOK": 38,
     "INSTRUCTION": 11,
-    "PLUGIN": 138,
-    "SKILL": 306
+    "PLUGIN": 142,
+    "SKILL": 314
   },
   "digestDuplicates": [
     {
@@ -6981,7 +6981,7 @@
       "observedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
       "path": "concepts/schema-driven-design/core.md",
       "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
-      "sha256": "sha256:11614657993dabe4c555d38647713d9d26015750d7bbfa87c301fa22d482950c",
+      "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -6995,7 +6995,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
       "path": "skills/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
-      "sha256": "sha256:3af6aea7bee7ff2d2624afc539a1ae36d6992cecba2ddf988f3621149ee4b56d",
+      "sha256": "sha256:8b41b0804e827f6572345f90e83b22dc4e0ab8e102b4e2f1681f3a61308228ea",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -7786,6 +7786,19 @@
       "type": "PLUGIN"
     },
     {
+      "entryFile": "plugins/documentation-workflow/plugin.json",
+      "name": "documentation-workflow",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/documentation-workflow/plugin.json",
+      "path": "plugins/documentation-workflow",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/documentation-workflow/plugin.json",
+      "sha256": "sha256:2248b654eef58a50b446b98c80107aa69c73c64d00ff76b96a44d37a75e27d39",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
       "entryFile": "marketplaces/claude-code-workflows/plugins/dotnet-contribution/.claude-plugin/plugin.json",
       "name": "dotnet-contribution",
       "observedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/dotnet-contribution/.claude-plugin/plugin.json",
@@ -8488,6 +8501,19 @@
       "type": "PLUGIN"
     },
     {
+      "entryFile": "plugins/primitive-authoring/plugin.json",
+      "name": "primitive-authoring",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
+      "path": "plugins/primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
+      "sha256": "sha256:7409599517757291f79430bf220de5722e719466b202d90b3bcade463b860897",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
       "entryFile": "marketplaces/claude-code-workflows/plugins/protect-mcp/.claude-plugin/plugin.json",
       "name": "protect-mcp",
       "observedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/protect-mcp/.claude-plugin/plugin.json",
@@ -8536,6 +8562,19 @@
       "sourceRoot": "claude-plugins",
       "sourceRootPath": "~/.claude/plugins",
       "sourceRootRole": "runtime-source",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
+      "entryFile": "plugins/repository-orientation/plugin.json",
+      "name": "repository-orientation",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/repository-orientation/plugin.json",
+      "path": "plugins/repository-orientation",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/repository-orientation/plugin.json",
+      "sha256": "sha256:43aaef1eb937fc681bb42d5393ead13fc245e8dfad0b85c1d0e53851015aedc3",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "type": "PLUGIN"
     },
@@ -8813,6 +8852,19 @@
       "type": "PLUGIN"
     },
     {
+      "entryFile": "plugins/version-control/plugin.json",
+      "name": "version-control",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/version-control/plugin.json",
+      "path": "plugins/version-control",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/version-control/plugin.json",
+      "sha256": "sha256:240da3cdf5e0bf6cb2d17dfd1bef307b07765873e00ef86efe251fc5b67e3e9c",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
       "entryFile": "marketplaces/claude-code-workflows/plugins/web-scripting/.claude-plugin/plugin.json",
       "name": "web-scripting",
       "observedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/web-scripting/.claude-plugin/plugin.json",
@@ -8964,6 +9016,27 @@
       "sourceRootRole": "local-repo-source",
       "symlink": false,
       "title": "Agent Development for Claude Code Plugins",
+      "type": "SKILL"
+    },
+    {
+      "description": "Design, revise, or consolidate agent profiles that are independent of plugins. Use when creating specialist agents, writing agent markdown/frontmatter, defining trigger conditions and examples, shaping system prompts, limiting tools, or validating that an agent profile is clear enough to delegate work safely.",
+      "entryFile": "skills/agent-profile-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/system-prompt-structure.md",
+        "references/trigger-design.md",
+        "references/validation.md"
+      ],
+      "name": "agent-profile-authoring",
+      "observedPath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring/SKILL.md",
+      "path": "skills/agent-profile-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring/SKILL.md",
+      "sha256": "sha256:f7789cf6996c66a8ae0d09857c127c597bbeabaa5805be3d90b481374726c4f9",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Agent Profile Authoring",
       "type": "SKILL"
     },
     {
@@ -10877,6 +10950,26 @@
       "type": "SKILL"
     },
     {
+      "description": "Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved.",
+      "entryFile": "skills/git-change-flow/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/branch-and-commit.md",
+        "references/recovery.md"
+      ],
+      "name": "git-change-flow",
+      "observedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
+      "path": "skills/git-change-flow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
+      "sha256": "sha256:b08c9ea72c1dd62e7269546de3372e9fe902274080ae97c0e2ebc869242dd646",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Git Change Flow",
+      "type": "SKILL"
+    },
+    {
       "description": "Build production CI/CD pipelines with GitHub Actions. Implements matrix builds, caching, deployments, testing, security scanning. Use for automated testing, deployments, release workflows. Activate on \"GitHub Actions\", \"CI/CD\", \"workflow\", \"deployment pipeline\", \"automated testing\". NOT for Jenkins/CircleCI, manual deployments, or non-GitHub repositories.",
       "entryFile": "github-actions-pipeline-builder/SKILL.md",
       "expectedResources": [
@@ -10932,6 +11025,27 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "GitHub Actions Templates",
+      "type": "SKILL"
+    },
+    {
+      "description": "Triage and fix GitHub Actions failures, maintain GitHub workflow files, inspect PR checks with gh, design CI jobs, and handle release-oriented GitHub automation. Use for GitHub CI, Actions YAML, failing PR checks, workflow dispatch, caches, artifacts, secrets, permissions, and release pipelines.",
+      "entryFile": "skills/github-ci-operations/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/actions-workflows.md",
+        "references/ci-failure-triage.md",
+        "references/release-flow.md"
+      ],
+      "name": "github-ci-operations",
+      "observedPath": "/Users/amichne/code/intelligence/skills/github-ci-operations/SKILL.md",
+      "path": "skills/github-ci-operations",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/github-ci-operations/SKILL.md",
+      "sha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "GitHub CI Operations",
       "type": "SKILL"
     },
     {
@@ -11226,6 +11340,28 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "Hook Development for Claude Code Plugins",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, provider adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "entryFile": "skills/hook-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/codex-adapters.md",
+        "references/implementation-guidance.md",
+        "references/local-layout.md",
+        "references/schema-validation.md"
+      ],
+      "name": "hook-primitive-authoring",
+      "observedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
+      "path": "skills/hook-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
+      "sha256": "sha256:8a6769c909bb8df404796c3705a3c745d247a3ead6d1af835ebf24486179c767",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Hook Primitive Authoring",
       "type": "SKILL"
     },
     {
@@ -13023,6 +13159,26 @@
       "type": "SKILL"
     },
     {
+      "description": "Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into source-root references.",
+      "entryFile": "skills/plugin-composition-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/marketplace-catalog.md",
+        "references/referential-plugin-shape.md"
+      ],
+      "name": "plugin-composition-authoring",
+      "observedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
+      "path": "skills/plugin-composition-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
+      "sha256": "sha256:cb665208e75877050d2c2fbb6ac4d08deb0241afbd3c254497c28becc0b886f6",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Plugin Composition Authoring",
+      "type": "SKILL"
+    },
+    {
       "description": "Create and scaffold plugin directories for Codex with a required `.codex-plugin/plugin.json`, optional plugin folders/files, valid manifest defaults, and personal-marketplace entries by default. Use when Codex needs to create a new personal plugin, add optional plugin structure, or generate or update marketplace entries for plugin ordering and availability metadata.",
       "entryFile": ".system/plugin-creator/SKILL.md",
       "expectedResources": [
@@ -13780,6 +13936,27 @@
       "type": "SKILL"
     },
     {
+      "description": "Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces.",
+      "entryFile": "skills/repo-instruction-topology/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/boundary-heuristics.md",
+        "references/instruction-file-contract.md",
+        "references/source-of-truth-map.md"
+      ],
+      "name": "repo-instruction-topology",
+      "observedPath": "/Users/amichne/code/intelligence/skills/repo-instruction-topology/SKILL.md",
+      "path": "skills/repo-instruction-topology",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repo-instruction-topology/SKILL.md",
+      "sha256": "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Repo Instruction Topology",
+      "type": "SKILL"
+    },
+    {
       "description": "Implement modern responsive layouts using container queries, fluid typography, CSS Grid, and mobile-first breakpoint strategies. Use when building adaptive interfaces, implementing fluid layouts, or creating component-level responsive behavior.",
       "entryFile": "marketplaces/claude-code-workflows/plugins/ui-design/skills/responsive-design/SKILL.md",
       "expectedResources": [
@@ -14059,6 +14236,28 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "Similarity Search Patterns",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or restructure technical documentation sites that use MkDocs, Zensical, Material-style Markdown features, or similar docs-as-code navigation. Use when documentation work needs site config awareness, page structure, nav updates, generated-doc boundaries, or consistent prose across docs pages.",
+      "entryFile": "skills/site-docs-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/mkdocs.md",
+        "references/page-structures.md",
+        "references/prose-structure.md",
+        "references/zensical.md"
+      ],
+      "name": "site-docs-authoring",
+      "observedPath": "/Users/amichne/code/intelligence/skills/site-docs-authoring/SKILL.md",
+      "path": "skills/site-docs-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/site-docs-authoring/SKILL.md",
+      "sha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Site Docs Authoring",
       "type": "SKILL"
     },
     {
@@ -14462,6 +14661,27 @@
       "sourceRootRole": "backup-source",
       "symlink": false,
       "title": "Skill Installer",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills.",
+      "entryFile": "skills/skill-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/evaluation-scaffold.md",
+        "references/interface-adapters.md",
+        "references/progressive-disclosure.md"
+      ],
+      "name": "skill-primitive-authoring",
+      "observedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
+      "path": "skills/skill-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
+      "sha256": "sha256:2a5e5160dd6e0177a1b5621b9b56f828daf0074ea7b0e0a09d26907999b9431e",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Skill Primitive Authoring",
       "type": "SKILL"
     },
     {
@@ -15467,7 +15687,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T05:40:06.062900+00:00",
+  "generatedAt": "2026-05-24T06:10:45.897262+00:00",
   "generator": "scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [

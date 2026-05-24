@@ -3,9 +3,16 @@
 ## Scope
 
 This standard applies to boundary contracts, serialized data, configuration,
-messages, persisted records, tool inputs, API payloads, and any intermediate
-representation that crosses a module, process, storage, or human-authored file
-boundary.
+messages, persisted records, tool inputs, API payloads, manifests, hook
+metadata, plugin catalogs, and any intermediate representation that crosses a
+module, process, storage, or human-authored file boundary.
+
+For any content stored as structured data, a schema-driven workflow is
+mandatory. There are no exceptions for "small" JSON, TOML, YAML, generated
+manifests, plugin metadata, hook adapters, fixtures, or local ledgers. If the
+repo persists structured data, the accepted shape must be owned by a schema,
+typed parser, generated model, or equivalent boundary assertion, and the change
+must have a validation path.
 
 Inside the program, use type-system constructs as the internal authority. At the
 boundary, use schemas, parsers, generated models, or equivalent assertions as
@@ -26,6 +33,8 @@ are in `json/`; Kotlin boundary representations are in `kotlin/`.
    value.
 5. Keep descriptions, defaults, variants, examples, and compatibility notes with
    the boundary model.
+6. For stored structured data, identify the schema or validator before editing
+   the data and run that validation before calling the change complete.
 
 ## Reference Map
 

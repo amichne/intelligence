@@ -179,6 +179,224 @@
         "canonicalName": "reference-doc-workflow"
       },
       "notes": "Synthesized into a host-agnostic documentation workflow skill with a local non-first-party name and a one-level reader-testing reference."
+    },
+    {
+      "type": "SKILL",
+      "name": "site-docs-authoring",
+      "canonicalPath": "skills/site-docs-authoring",
+      "sourceRoot": "global-codex-skills-backup",
+      "sourcePath": "~/.codex/skills.backup/author-zensical-docs",
+      "sourceResolvedPath": "/Users/amichne/.codex/skills.backup/author-zensical-docs",
+      "supportingSources": [
+        {
+          "sourceRoot": "kast-docs",
+          "sourcePath": "../kast/zensical.toml",
+          "sourceResolvedPath": "/Users/amichne/code/kast/zensical.toml",
+          "notes": "Used as live Zensical configuration evidence."
+        },
+        {
+          "sourceRoot": "kast-docs",
+          "sourcePath": "../kast/docs/AGENTS.md",
+          "sourceResolvedPath": "/Users/amichne/code/kast/docs/AGENTS.md",
+          "notes": "Used for generated-reference and nav ownership conventions."
+        },
+        {
+          "sourceRoot": "okai-docs",
+          "sourcePath": "../okai/zensical.toml",
+          "sourceResolvedPath": "/Users/amichne/code/okai/zensical.toml",
+          "notes": "Used as a second Zensical site configuration baseline."
+        },
+        {
+          "sourceRoot": "okai-docs",
+          "sourcePath": "../okai/docs/AGENTS.md",
+          "sourceResolvedPath": "/Users/amichne/code/okai/docs/AGENTS.md",
+          "notes": "Used for concrete docs-as-source-of-truth conventions."
+        },
+        {
+          "sourceRoot": "apollo-docs",
+          "sourcePath": "../apollo/mkdocs.yml",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/mkdocs.yml",
+          "notes": "Used as live MkDocs configuration evidence."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized from the local Zensical backup skill and live MkDocs/Zensical repos into a provider-neutral documentation-site authoring skill. Host UI metadata was not promoted."
+    },
+    {
+      "type": "SKILL",
+      "name": "git-change-flow",
+      "canonicalPath": "skills/git-change-flow",
+      "sourceRoot": "apollo-skills",
+      "sourcePath": "../apollo/skills/yeet",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/skills/yeet",
+      "supportingSources": [
+        {
+          "sourceRoot": "local-plugin-agentic-development",
+          "sourcePath": "../../plugins/agentic-development/skills/agentic-development",
+          "sourceResolvedPath": "/Users/amichne/plugins/agentic-development/skills/agentic-development",
+          "notes": "Used for host-neutral workflow handoff and hook/CI delegation principles."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Reworked the commit/publish flow into a host-neutral Git process skill with destructive-operation guardrails and no plugin dependency."
+    },
+    {
+      "type": "SKILL",
+      "name": "github-ci-operations",
+      "canonicalPath": "skills/github-ci-operations",
+      "sourceRoot": "global-agent-skills",
+      "sourcePath": "~/.agents/skills/gh-fix-ci",
+      "sourceResolvedPath": "/Users/amichne/.agents/skills/gh-fix-ci",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "~/.codex/skills.backup/github-actions-pipeline-builder",
+          "sourceResolvedPath": "/Users/amichne/.codex/skills.backup/github-actions-pipeline-builder",
+          "notes": "Used for workflow-authoring concerns such as matrix jobs, caches, secrets, and deployment gates."
+        },
+        {
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "~/.codex/skills.backup/github-release-management",
+          "sourceResolvedPath": "/Users/amichne/.codex/skills.backup/github-release-management",
+          "notes": "Used only as release-flow source material; swarm and Claude-specific orchestration were intentionally not promoted."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized GitHub Actions failure triage, workflow maintenance, and release-operation guidance under a local non-colliding name."
+    },
+    {
+      "type": "SKILL",
+      "name": "skill-primitive-authoring",
+      "canonicalPath": "skills/skill-primitive-authoring",
+      "sourceRoot": "kast-agent-skills",
+      "sourcePath": "skill-creator",
+      "sourceResolvedPath": "/Users/amichne/code/kast/.agents/skills/skill-creator",
+      "supportingSources": [
+        {
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "../apollo/skills/.system/skill-creator",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/skills/.system/skill-creator",
+          "notes": "Used for progressive-disclosure and skill anatomy guidance; canonical body was renamed and rewritten."
+        }
+      ],
+      "status": "PROMOTED",
+      "firstPartyHandling": {
+        "provider": "openai",
+        "policy": "RENAMED_AND_REWRITTEN",
+        "sourceNames": [
+          "skill-creator"
+        ],
+        "canonicalName": "skill-primitive-authoring"
+      },
+      "notes": "Synthesized local skill-creation, progressive-disclosure, and eval-scaffold guidance into a host-neutral skill primitive authoring workflow."
+    },
+    {
+      "type": "SKILL",
+      "name": "agent-profile-authoring",
+      "canonicalPath": "skills/agent-profile-authoring",
+      "sourceRoot": "kast-agent-skills",
+      "sourcePath": "agent-development",
+      "sourceResolvedPath": "/Users/amichne/code/kast/.agents/skills/agent-development",
+      "status": "PROMOTED",
+      "notes": "Synthesized local agent-development guidance into a plugin-independent agent profile authoring workflow. Installed marketplace copies with similar names were not used as canonical source material."
+    },
+    {
+      "type": "SKILL",
+      "name": "plugin-composition-authoring",
+      "canonicalPath": "skills/plugin-composition-authoring",
+      "sourceRoot": "apollo-skills",
+      "sourcePath": "../apollo/skills/.system/plugin-creator",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/skills/.system/plugin-creator",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "plugins/intelligence-core/plugin.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/plugins/intelligence-core/plugin.json",
+          "notes": "Used as the local referential plugin manifest baseline."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "marketplace.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/marketplace.json",
+          "notes": "Used as the local marketplace catalog baseline."
+        }
+      ],
+      "status": "PROMOTED",
+      "firstPartyHandling": {
+        "provider": "openai",
+        "policy": "RENAMED_AND_REWRITTEN",
+        "sourceNames": [
+          "plugin-creator"
+        ],
+        "canonicalName": "plugin-composition-authoring"
+      },
+      "notes": "Reworked plugin creation guidance into this repository's referential plugin-composition workflow, without copying scaffold-specific UI behavior."
+    },
+    {
+      "type": "SKILL",
+      "name": "repo-instruction-topology",
+      "canonicalPath": "skills/repo-instruction-topology",
+      "sourceRoot": "apollo-skills",
+      "sourcePath": "../apollo/skills/segment-codebase-agents-md",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "~/.codex/skills/segment-codebase-agents-md",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md",
+          "notes": "Runtime copy resolves to Apollo; used to verify the promoted skill is not diverging from the installed copy."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized scoped AGENTS.md placement guidance into a host-neutral repository instruction topology skill with source-of-truth mapping references."
+    },
+    {
+      "type": "SKILL",
+      "name": "hook-primitive-authoring",
+      "canonicalPath": "skills/hook-primitive-authoring",
+      "sourceRoot": "intelligence",
+      "sourcePath": "hooks/AGENTS.md",
+      "sourceResolvedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/agents-md-turn-refresh.hook.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/hooks/agents-md-turn-refresh.hook.json",
+          "notes": "Used as local neutral hook metadata example."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/codex/agents-md-turn-refresh.hooks.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/hooks/codex/agents-md-turn-refresh.hooks.json",
+          "notes": "Used as local Codex provider adapter example."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "hooks/kotlin-horizontalization-check.py",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+          "notes": "Used as local executable hook implementation example."
+        },
+        {
+          "sourceRoot": "concordance",
+          "sourcePath": "concordance/schemas/core/hook.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/hook.schema.json",
+          "notes": "Owns the provider-neutral hook metadata schema used by validation."
+        },
+        {
+          "sourceRoot": "concordance",
+          "sourcePath": "concordance/schemas/core/plugin.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/plugin.schema.json",
+          "notes": "Owns plugin hook-reference schema validation."
+        },
+        {
+          "sourceRoot": "concordance",
+          "sourcePath": "concordance/schemas/core/marketplace.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/concordance/schemas/core/marketplace.schema.json",
+          "notes": "Owns marketplace hook and skill catalog schema validation."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized the local hooks layout and Concordance schema dependency into a reusable hook primitive authoring workflow."
     }
   ]
 }
