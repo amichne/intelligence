@@ -102,6 +102,8 @@
     ".gradle",
     ".idea",
     ".kotlin",
+    ".codex-plugin",
+    ".migration-backups",
     ".mypy_cache",
     ".venv",
     "__pycache__",
@@ -112,7 +114,12 @@
     "out",
     "target"
   ],
-  "excludeGlobs": [],
+  "excludeGlobs": [
+    "plugins/*/agents/**",
+    "plugins/*/hooks/**",
+    "plugins/*/instructions/**",
+    "plugins/*/skills/**"
+  ],
   "classificationRules": [
     "A directory containing SKILL.md is a SKILL primitive.",
     "A plugin.json file is a PLUGIN primitive rooted at its parent directory.",

@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-source-cleanup-gaps.schema.json",
+  "title": "Intelligence Source Cleanup Gaps",
+  "description": "Generated per-entry cleanup coverage view for discovered AI tooling primitives.",
+  "type": "object",
+  "required": [
+    "type",
+    "schemaVersion",
+    "generatedFrom",
+    "summary",
+    "entries"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "SOURCE_CLEANUP_GAP_REPORT"
+      ]
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "generatedFrom": {
+      "$ref": "#/$defs/generatedFrom"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/gapEntry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "primitiveType": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION",
+        "PLUGIN",
+        "SKILL"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "cleanupState": {
+      "type": "string",
+      "enum": [
+        "CANONICAL_OWNER",
+        "CLEANUP_LEDGER_ENTRY",
+        "DIGEST_RETAINED",
+        "NEEDS_CLEANUP_PROPOSAL",
+        "NO_CLEANUP_ACTION",
+        "ROOT_RETAINED",
+        "ROOT_REVIEW_REQUIRED",
+        "SOURCE_RETAINED"
+      ]
+    },
+    "generatedFrom": {
+      "type": "object",
+      "required": [
+        "type",
+        "discoveredPrimitives",
+        "sourceReviewDecisions",
+        "digestReviewDecisions",
+        "sourceRootDecisions",
+        "cleanupLedger"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_CLEANUP_GAP_INPUTS"
+          ]
+        },
+        "discoveredPrimitives": {
+          "$ref": "#/$defs/path"
+        },
+        "sourceReviewDecisions": {
+          "$ref": "#/$defs/path"
+        },
+        "digestReviewDecisions": {
+          "$ref": "#/$defs/path"
+        },
+        "sourceRootDecisions": {
+          "$ref": "#/$defs/path"
+        },
+        "cleanupLedger": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "type",
+        "totalEntries",
+        "canonicalOwner",
+        "cleanupLedgerEntry",
+        "sourceRetained",
+        "digestRetained",
+        "rootRetained",
+        "rootReviewRequired",
+        "needsCleanupProposal",
+        "noCleanupAction",
+        "nextAction"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_CLEANUP_GAP_SUMMARY"
+          ]
+        },
+        "totalEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "canonicalOwner": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cleanupLedgerEntry": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sourceRetained": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "digestRetained": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rootRetained": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rootReviewRequired": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "needsCleanupProposal": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "noCleanupAction": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "primitive": {
+      "type": "object",
+      "required": [
+        "type",
+        "primitiveType",
+        "name"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_CLEANUP_PRIMITIVE"
+          ]
+        },
+        "primitiveType": {
+          "$ref": "#/$defs/primitiveType"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "type",
+        "source",
+        "decision"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_CLEANUP_GAP_EVIDENCE"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "enum": [
+            "cleanup-ledger",
+            "digest-review-decision",
+            "source-review-decision",
+            "source-root-decision"
+          ]
+        },
+        "decision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canonicalPaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/path"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "gapEntry": {
+      "type": "object",
+      "required": [
+        "type",
+        "sourceRoot",
+        "sourcePath",
+        "observedPath",
+        "primitive",
+        "sha256",
+        "cleanupState",
+        "reason",
+        "evidence"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_CLEANUP_GAP_ENTRY"
+          ]
+        },
+        "sourceRoot": {
+          "$ref": "#/$defs/name"
+        },
+        "sourcePath": {
+          "$ref": "#/$defs/path"
+        },
+        "observedPath": {
+          "$ref": "#/$defs/path"
+        },
+        "primitive": {
+          "$ref": "#/$defs/primitive"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "cleanupState": {
+          "$ref": "#/$defs/cleanupState"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidence"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

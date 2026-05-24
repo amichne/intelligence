@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-runtime-links.schema.json",
+  "title": "Intelligence Runtime Links",
+  "description": "Planned symlink or materialization targets for exposing canonical primitives to local runtimes.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "policy",
+    "entries"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/runtimeLinkEntry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primitiveType": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION",
+        "PLUGIN",
+        "SKILL"
+      ]
+    },
+    "runtimeLinkEntry": {
+      "type": "object",
+      "required": [
+        "name",
+        "runtime",
+        "sourcePath",
+        "targetPath",
+        "primitiveTypes",
+        "strategy",
+        "status",
+        "requiresApproval",
+        "collisionPolicy",
+        "notes"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "runtime": {
+          "type": "string",
+          "enum": [
+            "AGENTS",
+            "CLAUDE",
+            "CODEX",
+            "CODEX_APP",
+            "COPILOT",
+            "LOCAL"
+          ]
+        },
+        "sourcePath": {
+          "$ref": "#/$defs/path"
+        },
+        "targetPath": {
+          "$ref": "#/$defs/path"
+        },
+        "primitiveTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/primitiveType"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "MARKETPLACE_IMPORT",
+            "SYMLINK_CHILDREN",
+            "SYMLINK_FILE",
+            "SYMLINK_TREE"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "PLANNED",
+            "REVIEW_REQUIRED",
+            "READY"
+          ]
+        },
+        "requiresApproval": {
+          "type": "boolean"
+        },
+        "collisionPolicy": {
+          "type": "string",
+          "enum": [
+            "BACKUP_THEN_LINK",
+            "FAIL_IF_EXISTS",
+            "SKIP_EXISTING"
+          ]
+        },
+        "reviewFindings": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/runtimeLinkReviewFinding"
+          },
+          "minItems": 1
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "runtimeLinkReviewFinding": {
+      "type": "object",
+      "required": [
+        "type",
+        "status",
+        "summary",
+        "evidence"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "RUNTIME_LINK_REVIEW_FINDING"
+          ]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "BLOCKING",
+            "CLEAR",
+            "INFORMATIONAL"
+          ]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

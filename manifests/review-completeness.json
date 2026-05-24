@@ -1,0 +1,795 @@
+{
+  "entries": [
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-boundary-contract-reviewer",
+        "primitiveType": "AGENT",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-package-cohesion-reviewer",
+        "primitiveType": "AGENT",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "agents/kotlin-review/kotlin-review-captain.agent.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-review-captain",
+        "primitiveType": "AGENT",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-type-safety-reviewer",
+        "primitiveType": "AGENT",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "agents/schema-type-enforcer.agent.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "schema-type-enforcer",
+        "primitiveType": "AGENT",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "hooks/agents-md-turn-refresh.hook.json",
+        "hooks/agents-md-turn-refresh.sh",
+        "hooks/codex/agents-md-turn-refresh.hooks.json"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "agents-md-turn-refresh",
+        "primitiveType": "HOOK",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "hooks/codex/kotlin-horizontalization-check.hooks.json",
+        "hooks/kotlin-horizontalization-check.hook.json",
+        "hooks/kotlin-horizontalization-check.py"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-horizontalization-check",
+        "primitiveType": "HOOK",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "hooks/codex/required-skill-read.hooks.json",
+        "hooks/required-skill-read.hook.json",
+        "hooks/required-skill-read.py"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "required-skill-read",
+        "primitiveType": "HOOK",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "agents/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "agents-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "concepts/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "concepts-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "hooks/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "hooks-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "intelligence-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "concepts/schema-driven-design/core.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "schema-driven-design",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "schemas/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "schemas-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "skills-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "concepts/type-safety/core.md"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "type-safety",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/documentation-workflow"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "documentation-workflow",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/intelligence-core"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "intelligence-core",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/kotlin-review"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-review",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/planning-and-docs"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "planning-and-docs",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/primitive-authoring"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "primitive-authoring",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/primitive-governance"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "primitive-governance",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/repository-orientation"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "repository-orientation",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/runtime-activation"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "runtime-activation",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/schema-governance"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "schema-governance",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/tdd-workflow"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "tdd-workflow",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "plugins/version-control"
+      ],
+      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "version-control",
+        "primitiveType": "PLUGIN",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/agent-profile-authoring"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "agent-profile-authoring",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/define-goal"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "define-goal",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/git-change-flow"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "git-change-flow",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/github-ci-operations"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "github-ci-operations",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/hook-primitive-authoring"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "hook-primitive-authoring",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/kotlin-gradle-validation"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-gradle-validation",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/kotlin-standards"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "kotlin-standards",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/local-repository-navigation"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "local-repository-navigation",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/manage-json-schemas"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "manage-json-schemas",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/plugin-composition-authoring"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "plugin-composition-authoring",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/primitive-quality-audit"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "primitive-quality-audit",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/primitive-routing-evaluation"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "primitive-routing-evaluation",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/reference-doc-workflow"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "reference-doc-workflow",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/repo-instruction-topology"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "repo-instruction-topology",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/repository-signature-indexing"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "repository-signature-indexing",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/runtime-linking"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "runtime-linking",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/shell-script-safety"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "shell-script-safety",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/site-docs-authoring"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "site-docs-authoring",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/skill-primitive-authoring"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "skill-primitive-authoring",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/source-graph-consolidation"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "source-graph-consolidation",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
+        "skills/tdd"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "tdd",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "PROMOTED",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    }
+  ],
+  "generatedFrom": {
+    "pluginCoverage": "manifests/plugin-coverage.json",
+    "primitiveAudits": "manifests/primitive-audits.json",
+    "promotions": "manifests/promotions.json",
+    "type": "REVIEW_COMPLETENESS_INPUTS"
+  },
+  "schemaVersion": 1,
+  "summary": {
+    "allCanonicalAudited": true,
+    "audited": 48,
+    "nativeCanonical": 18,
+    "needsAudit": 0,
+    "promoted": 30,
+    "totalCanonical": 48,
+    "type": "REVIEW_COMPLETENESS_SUMMARY"
+  },
+  "type": "REVIEW_COMPLETENESS_REPORT"
+}

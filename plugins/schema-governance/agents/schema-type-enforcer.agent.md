@@ -1,0 +1,1 @@
+../../../agents/schema-type-enforcer.agent.md

@@ -42,13 +42,15 @@
         },
         "version": "0.1.0"
       },
-      "description": "Kotlin standards skill, review agents, and layout hook composed from independent primitives.",
+      "description": "Kotlin standards, Gradle validation, review agents, and layout hook composed from independent primitives.",
       "tags": [
         "agents",
+        "gradle",
         "hooks",
         "kotlin",
         "review",
-        "skills"
+        "skills",
+        "validation"
       ]
     },
     {
@@ -63,13 +65,37 @@
         },
         "version": "0.1.0"
       },
-      "description": "Skill, agent, hook, schema, and referential plugin authoring workflows composed by reference.",
+      "description": "Skill, agent, hook, shell script, schema, source-graph consolidation, and referential plugin authoring workflows composed by reference.",
       "tags": [
         "agents",
+        "consolidation",
         "hooks",
         "plugins",
         "schemas",
+        "shell",
         "skills",
+        "source-graph"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "primitive-governance",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "primitive-governance",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/primitive-governance"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Quality audit, routing evaluation, source-graph governance, runtime readiness, and schema validation workflows composed by reference.",
+      "tags": [
+        "audit",
+        "governance",
+        "quality",
+        "routing",
+        "schemas",
         "source-graph"
       ]
     },
@@ -85,12 +111,34 @@
         },
         "version": "0.1.0"
       },
-      "description": "Repository boundary mapping and scoped instruction authoring skills composed by reference.",
+      "description": "Repository boundary mapping, scoped instruction authoring, and signature indexing skills composed by reference.",
       "tags": [
         "docs",
         "instructions",
         "repository",
+        "signatures",
         "skills"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "runtime-activation",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "runtime-activation",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/runtime-activation"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Runtime linking and activation workflows for exposing canonical primitives without mutating targets by default.",
+      "tags": [
+        "activation",
+        "runtime",
+        "skills",
+        "source-graph",
+        "symlinks"
       ]
     },
     {
@@ -256,8 +304,62 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
+      "path": "skills/source-graph-consolidation",
+      "name": "source-graph-consolidation"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/primitive-quality-audit",
+      "name": "primitive-quality-audit"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/primitive-routing-evaluation",
+      "name": "primitive-routing-evaluation"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/shell-script-safety",
+      "name": "shell-script-safety"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/runtime-linking",
+      "name": "runtime-linking"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
       "path": "skills/repo-instruction-topology",
       "name": "repo-instruction-topology"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repository-signature-indexing",
+      "name": "repository-signature-indexing"
     },
     {
       "type": "SKILL",
@@ -294,6 +396,15 @@
       },
       "path": "skills/kotlin-standards",
       "name": "kotlin-standards"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-gradle-validation",
+      "name": "kotlin-gradle-validation"
     },
     {
       "type": "SKILL",
@@ -390,6 +501,15 @@
       },
       "path": "hooks/agents-md-turn-refresh.hook.json",
       "name": "agents-md-turn-refresh"
+    },
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/required-skill-read.hook.json",
+      "name": "required-skill-read"
     },
     {
       "type": "HOOK",

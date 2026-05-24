@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-source-root-decisions.schema.json",
+  "title": "Intelligence Source Root Decisions",
+  "description": "Durable source-root retention and review decisions for scanned roots that need explicit root-level handling.",
+  "type": "object",
+  "required": [
+    "type",
+    "schemaVersion",
+    "policy",
+    "entries"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "SOURCE_ROOT_DECISIONS"
+      ]
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/sourceRootDecision"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "primitiveType": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION",
+        "PLUGIN",
+        "SKILL"
+      ]
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "PROMOTE_CANDIDATES",
+        "RETAIN_EXTERNAL_OWNER",
+        "REVIEW_REQUIRED"
+      ]
+    },
+    "coverageMode": {
+      "type": "string",
+      "enum": [
+        "ALL_DISCOVERED_ENTRIES",
+        "LISTED_PRIMITIVES"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "DECIDED",
+        "NEEDS_REVIEW"
+      ]
+    },
+    "primitiveEvidence": {
+      "type": "object",
+      "required": [
+        "type",
+        "primitiveType",
+        "name",
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_ROOT_PRIMITIVE_EVIDENCE"
+          ]
+        },
+        "primitiveType": {
+          "$ref": "#/$defs/primitiveType"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sourceRootDecision": {
+      "type": "object",
+      "required": [
+        "type",
+        "sourceRoot",
+        "decision",
+        "status",
+        "coverageMode",
+        "observedEntryCount",
+        "primitiveEvidence",
+        "rationale",
+        "nextAction"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "SOURCE_ROOT_DECISION"
+          ]
+        },
+        "sourceRoot": {
+          "$ref": "#/$defs/name"
+        },
+        "decision": {
+          "$ref": "#/$defs/decision"
+        },
+        "status": {
+          "$ref": "#/$defs/status"
+        },
+        "coverageMode": {
+          "$ref": "#/$defs/coverageMode"
+        },
+        "observedEntryCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "primitiveEvidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/primitiveEvidence"
+          }
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

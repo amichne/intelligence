@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-codex-marketplace.schema.json",
+  "title": "Codex Marketplace Adapter",
+  "description": "Generated Codex-native marketplace projection derived from the provider-neutral marketplace manifest.",
+  "type": "object",
+  "required": [
+    "name",
+    "interface",
+    "plugins"
+  ],
+  "properties": {
+    "name": {
+      "$ref": "#/$defs/name"
+    },
+    "interface": {
+      "type": "object",
+      "required": [
+        "displayName"
+      ],
+      "properties": {
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "plugins": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/pluginEntry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "pluginEntry": {
+      "type": "object",
+      "required": [
+        "name",
+        "source",
+        "policy",
+        "category"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/name"
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "source",
+            "path"
+          ],
+          "properties": {
+            "source": {
+              "type": "string",
+              "enum": [
+                "local"
+              ]
+            },
+            "path": {
+              "type": "string",
+              "pattern": "^\\./plugins/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "policy": {
+          "type": "object",
+          "required": [
+            "installation",
+            "authentication"
+          ],
+          "properties": {
+            "installation": {
+              "type": "string",
+              "enum": [
+                "NOT_AVAILABLE",
+                "AVAILABLE",
+                "INSTALLED_BY_DEFAULT"
+              ]
+            },
+            "authentication": {
+              "type": "string",
+              "enum": [
+                "ON_INSTALL",
+                "ON_USE"
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

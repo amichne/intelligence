@@ -1,0 +1,120 @@
+{
+  "generatedFrom": {
+    "cleanupLedger": "manifests/cleanup-ledger.json",
+    "concordancePackage": "concordance/package.json",
+    "localSchemaDirectory": "schemas/intelligence",
+    "pluginCoverage": "manifests/plugin-coverage.json",
+    "primitiveDecisionCoverage": "manifests/primitive-decision-coverage.json",
+    "reviewCompleteness": "manifests/review-completeness.json",
+    "runtimeActivationApprovals": "manifests/runtime-activation-approvals.json",
+    "sourceCleanupGaps": "manifests/source-cleanup-gaps.json",
+    "sourceTurnoffReadiness": "manifests/source-turnoff-readiness.json",
+    "type": "TOOLBOX_READINESS_INPUTS"
+  },
+  "requirements": [
+    {
+      "evidence": [
+        "Canonical primitives: 48.",
+        "Audited canonical primitives: 48/48.",
+        "Needs audit: 0."
+      ],
+      "id": "canonical-primitive-set",
+      "nextAction": "Maintain primitive audits alongside any new canonical primitive.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Referential plugins: 11.",
+        "All canonical primitives routed: true.",
+        "Coverage statuses: MARKETPLACE_EXPOSED=11, PLUGIN_COMPOSED=31, SCOPED_INSTRUCTION=6."
+      ],
+      "id": "referential-plugins",
+      "nextAction": "Keep plugin manifests referential; do not copy primitive payloads into plugin folders.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Canonical hook primitives: 3.",
+        "Codex hook adapter packet: ALREADY_ACTIVE."
+      ],
+      "id": "hook-federation",
+      "nextAction": "Keep provider-neutral hook metadata separate from provider adapter files.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Canonical agent profiles: 5.",
+        "Claude agent runtime packet: ALREADY_ACTIVE."
+      ],
+      "id": "independent-agent-profiles",
+      "nextAction": "Keep agent profiles in agents/ and compose them into plugins by reference.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Discovered primitive entries: 867.",
+        "Unreviewed singleton entries: 0.",
+        "Cleanup proposal gaps: 0.",
+        "Open source review groups: 0.",
+        "Open digest review groups: 0."
+      ],
+      "id": "comprehensive-source-review",
+      "nextAction": "Continue using source-review, digest-review, and source-root decisions for new scan roots.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Concordance schema package present: true.",
+        "Repository manifest schema directory present: true.",
+        "validate-manifests.mjs rejects JSON files without a schema validation path."
+      ],
+      "id": "schema-driven-structured-data",
+      "nextAction": "Keep every persisted structured-data change on a schema-backed validation path.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Executed source delete entries: 0.",
+        "Executed symlink replacements: 20.",
+        "Missing replacement backups: 0.",
+        "Executed broken symlink removals: 13."
+      ],
+      "id": "preserve-original-sources",
+      "nextAction": "Continue preserving replaced originals under .migration-backups/source-turnoff/.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    },
+    {
+      "evidence": [
+        "Already active packets: 18.",
+        "Ready for approval packets: 0.",
+        "Ready for manual import packets: 0.",
+        "Review-required packets: 0.",
+        "Blocked packets: 0."
+      ],
+      "id": "runtime-activation",
+      "nextAction": "No activation approval action is pending.",
+      "status": "SATISFIED",
+      "type": "TOOLBOX_READINESS_REQUIREMENT"
+    }
+  ],
+  "schemaVersion": 1,
+  "summary": {
+    "completionStatus": "COMPLETE",
+    "incomplete": 0,
+    "needsApproval": 0,
+    "needsReview": 0,
+    "nextAction": "All objective-level requirements are satisfied by current generated evidence.",
+    "readyForCompletion": true,
+    "satisfied": 8,
+    "totalRequirements": 8,
+    "type": "TOOLBOX_READINESS_SUMMARY"
+  },
+  "type": "TOOLBOX_READINESS_REPORT"
+}

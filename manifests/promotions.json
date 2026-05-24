@@ -397,6 +397,336 @@
       ],
       "status": "PROMOTED",
       "notes": "Synthesized the local hooks layout and Concordance schema dependency into a reusable hook primitive authoring workflow."
+    },
+    {
+      "type": "SKILL",
+      "name": "source-graph-consolidation",
+      "canonicalPath": "skills/source-graph-consolidation",
+      "sourceRoot": "intelligence",
+      "sourcePath": "docs/source-of-truth.md",
+      "sourceResolvedPath": "/Users/amichne/code/intelligence/docs/source-of-truth.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "docs/consolidation-queue.md",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/docs/consolidation-queue.md",
+          "notes": "Used as the generated review queue interface for promotion selection."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "manifests/promotions.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/manifests/promotions.json",
+          "notes": "Used as the provenance ledger contract."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "manifests/cleanup-ledger.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/manifests/cleanup-ledger.json",
+          "notes": "Used as the cleanup approval boundary."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "scripts/inventory-primitives.py",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/scripts/inventory-primitives.py",
+          "notes": "Used as the inventory evidence generator."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "scripts/analyze-consolidation.py",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/scripts/analyze-consolidation.py",
+          "notes": "Used as the consolidation queue generator."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "scripts/validate-manifests.mjs",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/scripts/validate-manifests.mjs",
+          "notes": "Used as the schema-backed source graph validation gate."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized the repository source-of-truth workflow, inventory queue, promotion manifest, and cleanup ledger policy into a reusable consolidation workflow skill."
+    },
+    {
+      "type": "SKILL",
+      "name": "runtime-linking",
+      "canonicalPath": "skills/runtime-linking",
+      "sourceRoot": "intelligence",
+      "sourcePath": "manifests/runtime-links.json",
+      "sourceResolvedPath": "/Users/amichne/code/intelligence/manifests/runtime-links.json",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/intelligence/runtime-links.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/schemas/intelligence/runtime-links.schema.json",
+          "notes": "Owns the activation-plan data contract."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation/SKILL.md",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+          "notes": "Provides the promotion and cleanup boundary used by runtime activation."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "docs/consolidation-queue.md",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/docs/consolidation-queue.md",
+          "notes": "Used for runtime-copy and broken-symlink evidence."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized the symlink/materialization requirements into an approval-gated runtime linking workflow backed by a schema-validated activation manifest."
+    },
+    {
+      "type": "PLUGIN",
+      "name": "runtime-activation",
+      "canonicalPath": "plugins/runtime-activation",
+      "sourceRoot": "intelligence",
+      "sourcePath": "manifests/runtime-links.json",
+      "sourceResolvedPath": "/Users/amichne/code/intelligence/manifests/runtime-links.json",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/runtime-linking",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking",
+          "notes": "Primary runtime activation workflow skill."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation",
+          "notes": "Prevents runtime linking from bypassing promotion and cleanup evidence."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Created as a referential plugin that composes runtime linking with source-graph consolidation without owning either primitive."
+    },
+    {
+      "type": "SKILL",
+      "name": "primitive-quality-audit",
+      "canonicalPath": "skills/primitive-quality-audit",
+      "sourceRoot": "intelligence",
+      "sourcePath": "docs/source-of-truth.md",
+      "sourceResolvedPath": "/Users/amichne/code/intelligence/docs/source-of-truth.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/skill-primitive-authoring/references/evaluation-scaffold.md",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/references/evaluation-scaffold.md",
+          "notes": "Used as the local evidence-scaffold baseline for skill-quality decisions."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation/SKILL.md",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+          "notes": "Provides promotion, provenance, first-party, and cleanup boundaries."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "manifests/primitive-audits.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/manifests/primitive-audits.json",
+          "notes": "Stores durable audit decisions behind a schema-validated manifest."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/intelligence/primitive-audits.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/schemas/intelligence/primitive-audits.schema.json",
+          "notes": "Owns the primitive audit manifest contract."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Created as a local governance skill for evidence-bound primitive promotion, runtime activation, and cleanup decisions without depending on first-party evaluation names or plugin payloads."
+    },
+    {
+      "type": "PLUGIN",
+      "name": "primitive-governance",
+      "canonicalPath": "plugins/primitive-governance",
+      "sourceRoot": "intelligence",
+      "sourcePath": "skills/primitive-quality-audit",
+      "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit",
+      "supportingSources": [
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/source-graph-consolidation",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation",
+          "notes": "Provides promotion and cleanup evidence workflow."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/runtime-linking",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking",
+          "notes": "Provides runtime activation planning workflow."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "skills/manage-json-schemas",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas",
+          "notes": "Provides schema-contract workflow for structured audit and manifest data."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Created as a referential governance plugin that composes audit, consolidation, runtime linking, and schema validation primitives without owning their payloads."
+    },
+    {
+      "type": "HOOK",
+      "name": "required-skill-read",
+      "canonicalPath": "hooks/required-skill-read.hook.json",
+      "sourceRoot": "kast-github-hooks",
+      "sourcePath": "require-skills.sh",
+      "sourceResolvedPath": "/Users/amichne/code/kast/.github/hooks/require-skills.sh",
+      "supportingSources": [
+        {
+          "sourceRoot": "kast-github-hooks",
+          "sourcePath": "hook-state.sh",
+          "sourceResolvedPath": "/Users/amichne/code/kast/.github/hooks/hook-state.sh",
+          "notes": "Source helper for per-repository hook state files."
+        },
+        {
+          "sourceRoot": "kast-github-hooks",
+          "sourcePath": "skill-shadowing.json",
+          "sourceResolvedPath": "/Users/amichne/code/kast/.github/hooks/skill-shadowing.json",
+          "notes": "Source configuration shape for required skill reads."
+        },
+        {
+          "sourceRoot": "kast-github-hooks",
+          "sourcePath": "hooks.json",
+          "sourceResolvedPath": "/Users/amichne/code/kast/.github/hooks/hooks.json",
+          "notes": "Source provider adapter showing session-start and pre-tool-use hook wiring."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "schemas/intelligence/hook-skill-requirements.schema.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/schemas/intelligence/hook-skill-requirements.schema.json",
+          "notes": "Owns the canonical required-skill-read configuration contract."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized the Kast required-skill hook into a provider-neutral required-skill-read hook with schema-validated configuration and a Codex adapter. The canonical hook defaults to advisory mode so activation can be reviewed before hard denial."
+    },
+    {
+      "type": "SKILL",
+      "name": "primitive-routing-evaluation",
+      "canonicalPath": "skills/primitive-routing-evaluation",
+      "sourceRoot": "kast-agent-skills",
+      "sourcePath": "kast/references/routing-improvement.md",
+      "sourceResolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/routing-improvement.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "kast-agent-skills",
+          "sourcePath": "kast/fixtures/maintenance/references/routing-improvement.md",
+          "sourceResolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/fixtures/maintenance/references/routing-improvement.md",
+          "notes": "Repo-specific maintenance playbook used as source evidence for the provider-neutral routing evaluation workflow."
+        },
+        {
+          "sourceRoot": "intelligence",
+          "sourcePath": "manifests/source-review-decisions.json",
+          "sourceResolvedPath": "/Users/amichne/code/intelligence/manifests/source-review-decisions.json",
+          "notes": "Records the generated routing-improvement name-review group and the canonical coverage decision."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized the Kast-specific routing improvement notes into a provider-neutral primitive routing evaluation skill for building sanitized, schema-backed routing cases without copying repo-local maintenance fixtures."
+    },
+    {
+      "type": "SKILL",
+      "name": "shell-script-safety",
+      "canonicalPath": "skills/shell-script-safety",
+      "sourceRoot": "global-codex-skills-backup",
+      "sourcePath": "bash-defensive-patterns",
+      "sourceResolvedPath": "/Users/amichne/.codex/skills.backup/bash-defensive-patterns/SKILL.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "bash-defensive-patterns/resources/implementation-playbook.md",
+          "sourceResolvedPath": "/Users/amichne/.codex/skills.backup/bash-defensive-patterns/resources/implementation-playbook.md",
+          "notes": "Used as local backup evidence for common shell safety failure modes and checklists."
+        },
+        {
+          "sourceRoot": "claude-plugins",
+          "sourcePath": "marketplaces/claude-code-workflows/plugins/shell-scripting/skills/bash-defensive-patterns",
+          "sourceResolvedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/shell-scripting/skills/bash-defensive-patterns/SKILL.md",
+          "notes": "Installed marketplace source retained as provenance only; the canonical local skill is renamed and rewritten."
+        }
+      ],
+      "status": "PROMOTED",
+      "firstPartyHandling": {
+        "provider": "Claude Code Workflows marketplace",
+        "policy": "RENAMED_AND_REWRITTEN",
+        "sourceNames": [
+          "bash-defensive-patterns"
+        ],
+        "canonicalName": "shell-script-safety"
+      },
+      "notes": "Synthesized shell defensive guidance into a local host-neutral shell safety skill for hooks, CI, and release scripts without raw-copying installed marketplace material."
+    },
+    {
+      "type": "SKILL",
+      "name": "kotlin-gradle-validation",
+      "canonicalPath": "skills/kotlin-gradle-validation",
+      "sourceRoot": "apollo-skills",
+      "sourcePath": "kotlin-gradle-loop",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
+      "status": "PROMOTED",
+      "notes": "Synthesized the Apollo Kotlin/Gradle loop into a smaller canonical validation skill focused on structured build evidence, report parsing, and widening verification rings."
+    },
+    {
+      "type": "SKILL",
+      "name": "repository-signature-indexing",
+      "canonicalPath": "skills/repository-signature-indexing",
+      "sourceRoot": "global-codex-backups",
+      "sourcePath": "llm-native-signature-spec",
+      "sourceResolvedPath": "/Users/amichne/.codex/backups/llm-native-signature-spec/SKILL.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-codex-backups",
+          "sourcePath": "llm-native-signature-spec/references/signature_spec.md",
+          "sourceResolvedPath": "/Users/amichne/.codex/backups/llm-native-signature-spec/references/signature_spec.md",
+          "notes": "Used as source evidence for deterministic signature index contract shape."
+        },
+        {
+          "sourceRoot": "global-codex-skills-backup",
+          "sourcePath": "llm-native-signature-spec",
+          "sourceResolvedPath": "/Users/amichne/.codex/skills.backup/llm-native-signature-spec/SKILL.md",
+          "notes": "Backup copy retained as provenance; generated scripts were not imported in this pass."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Reframed signature-spec backup material as a repository-signature-indexing workflow for deterministic generated source maps and drift checks."
+    },
+    {
+      "type": "SKILL",
+      "name": "local-repository-navigation",
+      "canonicalPath": "skills/local-repository-navigation",
+      "sourceRoot": "apollo-agents",
+      "sourcePath": "../apollo/agents/codebase-navigator/AGENT.md",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/agents/codebase-navigator/AGENT.md",
+      "supportingSources": [
+        {
+          "sourceRoot": "apollo-agents",
+          "sourcePath": "../apollo/agents/codebase-navigator/copilot/chatmode.md",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/agents/codebase-navigator/copilot/chatmode.md",
+          "notes": "Used as source evidence for the local navigation mode and generated-summary contract."
+        },
+        {
+          "sourceRoot": "apollo-agents",
+          "sourcePath": "../apollo/agents/codebase-navigator/copilot/prompts/bootstrap.prompt.md",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/agents/codebase-navigator/copilot/prompts/bootstrap.prompt.md",
+          "notes": "Used as source evidence for bootstrap workflow shape."
+        },
+        {
+          "sourceRoot": "apollo-agents",
+          "sourcePath": "../apollo/agents/codebase-navigator/copilot/prompts/process-outdated.prompt.md",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/agents/codebase-navigator/copilot/prompts/process-outdated.prompt.md",
+          "notes": "Used as source evidence for marker-based stale-summary refresh."
+        },
+        {
+          "sourceRoot": "apollo-agents",
+          "sourcePath": "../apollo/agents/codebase-navigator/scripts/gen-agents-local.py",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/agents/codebase-navigator/scripts/gen-agents-local.py",
+          "notes": "Reviewed as provenance for deterministic local summary generation; script code was not imported."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Synthesized the Apollo codebase-navigator agent family into a host-neutral local repository navigation skill for git-excluded generated summaries and staleness refresh workflows."
     }
   ]
 }

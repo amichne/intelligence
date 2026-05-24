@@ -1,0 +1,36 @@
+{
+  "author": {
+    "name": "Amichne"
+  },
+  "description": "Quality audit, routing evaluation, source-graph consolidation, runtime linking, and schema governance workflows composed from independent primitives.",
+  "interface": {
+    "brandColor": "#0F766E",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "category": "Engineering",
+    "defaultPrompt": [
+      "Use Primitive Governance for this task.",
+      "Review this repo with Primitive Governance.",
+      "Show the Primitive Governance workflow."
+    ],
+    "developerName": "Amichne",
+    "displayName": "Primitive Governance",
+    "longDescription": "Quality audit, routing evaluation, source-graph consolidation, runtime linking, and schema governance workflows composed from independent primitives.",
+    "shortDescription": "Quality audit, routing evaluation, source-graph consolidation, runtim..."
+  },
+  "keywords": [
+    "audit",
+    "governance",
+    "primitive-governance",
+    "quality",
+    "routing",
+    "schemas",
+    "source-graph"
+  ],
+  "license": "UNLICENSED",
+  "name": "primitive-governance",
+  "skills": "./skills/",
+  "version": "0.1.0"
+}

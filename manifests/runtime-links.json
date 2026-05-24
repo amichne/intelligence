@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "policy": "Runtime link entries are plans, not execution. Do not write to target paths until the source primitive is promoted, validation passes, collisions are reviewed, and the user explicitly approves activation.",
+  "entries": [
+    {
+      "name": "codex-app-marketplace",
+      "runtime": "CODEX_APP",
+      "sourcePath": "marketplace.json",
+      "targetPath": "codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json",
+      "primitiveTypes": [
+        "PLUGIN",
+        "SKILL",
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION"
+      ],
+      "strategy": "MARKETPLACE_IMPORT",
+      "status": "READY",
+      "requiresApproval": true,
+      "collisionPolicy": "SKIP_EXISTING",
+      "reviewFindings": [
+        {
+          "type": "RUNTIME_LINK_REVIEW_FINDING",
+          "status": "CLEAR",
+          "summary": "Marketplace import is virtual and does not write to local runtime paths by itself.",
+          "evidence": [
+            "targetPath uses the codex:// marketplace import URL.",
+            "sourcePath resolves to marketplace.json in the intelligence repository."
+          ]
+        }
+      ],
+      "notes": "Primary activation path for referential plugins. User action still controls installation from the Codex app."
+    },
+    {
+      "name": "codex-skill-children",
+      "runtime": "CODEX",
+      "sourcePath": "skills",
+      "targetPath": "~/.codex/skills",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "strategy": "SYMLINK_CHILDREN",
+      "status": "PLANNED",
+      "requiresApproval": true,
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "reviewFindings": [
+        {
+          "type": "RUNTIME_LINK_REVIEW_FINDING",
+          "status": "CLEAR",
+          "summary": "~/.codex/skills resolves through the Apollo skill home, and the current eligible intelligence skill children have no direct target collisions.",
+          "evidence": [
+            "readlink /Users/amichne/.codex/skills -> /Users/amichne/code/apollo/skills",
+            "Existing canonical Apollo-backed skill links: define-goal and kotlin-standards.",
+            "Legacy Apollo aliases doc-coauthoring, kotlin-gradle-loop, segment-codebase-agents-md, and yeet already resolve to canonical intelligence skills under renamed local skill directories.",
+            "Current preflight reports no direct eligible SKILL child collisions; approval will still mutate /Users/amichne/code/apollo/skills by adding only missing symlinks."
+          ]
+        }
+      ],
+      "notes": "Ready for explicit approval to add missing canonical intelligence skill children into the Apollo-backed Codex skill home as symlinks; approval remains required because the target is ~/.codex/skills -> /Users/amichne/code/apollo/skills."
+    },
+    {
+      "name": "agent-skill-children",
+      "runtime": "AGENTS",
+      "sourcePath": "skills",
+      "targetPath": "~/.agents/skills",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "strategy": "SYMLINK_CHILDREN",
+      "status": "PLANNED",
+      "requiresApproval": true,
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "reviewFindings": [
+        {
+          "type": "RUNTIME_LINK_REVIEW_FINDING",
+          "status": "CLEAR",
+          "summary": "~/.agents/skills has no direct collisions for eligible intelligence skill children after the targeted trims.",
+          "evidence": [
+            "Preflight filters SKILL runtime child links to directories with SKILL.md, so skills/AGENTS.md is not part of the activation surface.",
+            "Current eligible intelligence skill children already active in ~/.agents/skills: kotlin-standards, manage-json-schemas, tdd.",
+            "The remaining eligible intelligence skill children are missing in ~/.agents/skills and would be added as symlinks only after approval.",
+            "Existing external ~/.agents/skills children such as .system, .DS_Store, gh-cli, gh-fix-ci, skill-creator, and manage-json-schemas.zip are not activation targets."
+          ]
+        }
+      ],
+      "notes": "Ready for explicit approval to add missing intelligence skill children as symlinks while leaving external runtime skills and non-skill artifacts untouched."
+    },
+    {
+      "name": "claude-agent-children",
+      "runtime": "CLAUDE",
+      "sourcePath": "agents",
+      "targetPath": "~/.claude/agents",
+      "primitiveTypes": [
+        "AGENT"
+      ],
+      "strategy": "SYMLINK_CHILDREN",
+      "status": "PLANNED",
+      "requiresApproval": true,
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "reviewFindings": [
+        {
+          "type": "RUNTIME_LINK_REVIEW_FINDING",
+          "status": "CLEAR",
+          "summary": "The Claude agent target exists and has no direct children.",
+          "evidence": [
+            "find /Users/amichne/.claude/agents -mindepth 1 -maxdepth 1 returned no entries."
+          ]
+        }
+      ],
+      "notes": "Future activation still requires explicit approval before linking agent profiles."
+    },
+    {
+      "name": "codex-hook-adapters",
+      "runtime": "CODEX",
+      "sourcePath": "hooks/codex",
+      "targetPath": "~/.codex/hooks",
+      "primitiveTypes": [
+        "HOOK"
+      ],
+      "strategy": "SYMLINK_CHILDREN",
+      "status": "PLANNED",
+      "requiresApproval": true,
+      "collisionPolicy": "FAIL_IF_EXISTS",
+      "reviewFindings": [
+        {
+          "type": "RUNTIME_LINK_REVIEW_FINDING",
+          "status": "CLEAR",
+          "summary": "The Codex hook target is currently absent, so activation can create it after approval.",
+          "evidence": [
+            "Preflight classifies a missing target path as READY_FOR_APPROVAL only when the runtime link operation is WAITING_APPROVAL.",
+            "Activation steps include mkdir -p /Users/amichne/.codex/hooks before linking children."
+          ]
+        }
+      ],
+      "notes": "The approval packet will create the target directory before linking provider adapter configs. Keep provider-neutral hook metadata in this repository."
+    }
+  ]
+}

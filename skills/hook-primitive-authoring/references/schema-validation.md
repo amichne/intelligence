@@ -9,6 +9,7 @@ material. The manifest validator loads schemas from:
 
 ```text
 concordance/schemas/core/
+concordance/standards/codex-hooks.schema.json
 ```
 
 Hook metadata is validated with `hook.schema.json`, plugin composition with
@@ -19,7 +20,11 @@ through:
 node scripts/validate-manifests.mjs
 ```
 
-That command also checks local primitive references and promotion source paths.
+Codex provider adapters under `hooks/codex/` validate against the Codex hooks
+standard from Concordance. Repository-owned manifest and generated-report JSON
+validates against `schemas/intelligence/*.schema.json`. The same command also
+checks local primitive references, promotion source paths, and rejects any JSON
+file that is not covered by a schema validation path.
 
 This is mandatory for every structured hook or plugin data change. If a new
 structured hook artifact does not fit an existing schema, add or update the
@@ -29,6 +34,8 @@ owning schema before treating the artifact as accepted.
 
 - `hooks/<name>.hook.json` parses as JSON.
 - The hook metadata validates against Concordance `hook.schema.json`.
+- Provider adapters validate against their provider schema, currently
+  `concordance/standards/codex-hooks.schema.json` for `hooks/codex/*.json`.
 - Every local `path` exists.
 - Every `dependsOn` reference points at a canonical primitive.
 - Any plugin that composes the hook references it from `hooks/*`, not from a

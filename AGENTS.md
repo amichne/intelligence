@@ -28,7 +28,9 @@ not justified.
 - `hooks/` contains reusable hook assets and provider adapter configs.
 - `plugins/` is reserved for plugin composition manifests.
 - `manifests/` contains source-root inventory, generated discovery output, and
-  promotion and cleanup ledgers.
+  promotion, primitive-audit, runtime-link, and cleanup ledgers.
+- `schemas/` contains repository-owned JSON Schema contracts for structured
+  data that is not owned by Concordance.
 - `scripts/` contains local validation and inventory tooling.
 - `docs/` contains current-state source graph documentation.
 - `concordance` is a local schema-reference symlink, not owned source for this
@@ -40,10 +42,17 @@ not justified.
   they do not own the only copy of a primitive.
 - Do not delete or replace scattered originals until `manifests/cleanup-ledger.json`
   records the canonical replacement and verification evidence.
+- Record durable quality and readiness decisions in
+  `manifests/primitive-audits.json` before using them to justify runtime
+  activation or cleanup.
 - Treat `manifests/source-roots.json` as the hand-authored scan boundary and
   `manifests/discovered-primitives.json` as generated evidence.
 - Keep root marketplace and plugin manifests aligned with the Concordance core
   schemas when the `concordance` symlink is present.
+- Every persisted structured data file must have an owning schema, typed parser,
+  generator, or equivalent boundary assertion. For JSON in this repository,
+  `node scripts/validate-manifests.mjs` is the coverage gate and must reject
+  unvalidated files.
 
 ## Hook Rules
 
@@ -67,7 +76,7 @@ not justified.
 - Run `python3 scripts/analyze-consolidation.py --check` after changing the
   generated inventory or consolidation report.
 - Run `node scripts/validate-manifests.mjs` after changing `marketplace.json`,
-  `plugins/*/plugin.json`, or provider-neutral hook metadata.
+  `plugins/*/plugin.json`, hooks, schemas, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
   `concordance/schemas/core/hook.schema.json` if that schema reference is

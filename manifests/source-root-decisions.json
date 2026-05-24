@@ -1,0 +1,274 @@
+{
+  "type": "SOURCE_ROOT_DECISIONS",
+  "schemaVersion": 1,
+  "policy": "Root-level decisions cover scanned source roots that do not enter duplicate-name or duplicate-digest review queues but still need explicit retention, promotion, or review handling before source turnoff.",
+  "entries": [
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "apollo-agents",
+      "decision": "PROMOTE_CANDIDATES",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 7,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "codebase-navigator",
+          "path": "codebase-navigator/AGENT.md",
+          "sha256": "sha256:d1953bc9a0c3632b7630847de0b836e7fd8e4cfc251f0d5162b6b6b1dfcff9a9"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "bootstrap-prompt",
+          "path": "codebase-navigator/copilot/prompts/bootstrap.prompt.md",
+          "sha256": "sha256:4194e6c2e2e7cd15ef95f5bb6f4be4c508cf0f3296fc35f9f6552eff8b30c220"
+        }
+      ],
+      "rationale": "Apollo codebase-navigator material has been synthesized into skills/local-repository-navigation as host-neutral guidance for git-excluded local navigation summaries. The Apollo provider-specific metadata remains external provenance rather than a canonical agent profile.",
+      "nextAction": "Use skills/local-repository-navigation through the repository-orientation plugin. Keep Apollo source files in place until a separate cleanup-ledger proposal and approval packet are reviewed."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "claude-plugins",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 608,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "accessibility-expert",
+          "path": "marketplaces/claude-code-workflows/plugins/ui-design/agents/accessibility-expert.md",
+          "sha256": "sha256:b3aa7a39667be536a9624108635d0f04858cf069b932dfdcf7c7719f42514267"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "agent-creator",
+          "path": "marketplaces/claude-plugins-official/plugins/plugin-dev/agents/agent-creator.md",
+          "sha256": "sha256:99ca808b7577e5c4b816cd7e621a1dea4b0ba9104ba24629cd713170cfe9dbd3"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "codex-rescue",
+          "path": "marketplaces/openai-codex/plugins/codex/agents/codex-rescue.md",
+          "sha256": "sha256:5b0362f3658fe1fedb6f1def42b585bd20d58f0d27659edd165a6592a91c7587"
+        }
+      ],
+      "rationale": "This root is installed marketplace and cache material from Claude/OpenAI/third-party plugin distributions. Treat it as external provenance, not canonical source, to avoid raw duplication, provider-name collisions, and accidental ownership of first-party plugin payloads.",
+      "nextAction": "Retain this root externally. Promote only renamed, rewritten, locally reviewed derivatives into this repository."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "examplar-instructions",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 3,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "INSTRUCTION",
+          "name": "instructions-agents-instructions",
+          "path": "AGENTS.md",
+          "sha256": "sha256:fd2281850453b8d4833fde12c1d69032a4b7f6691e9d8fa50b909806e5d7aa40"
+        }
+      ],
+      "rationale": "The remaining singleton instruction is Examplar repository guidance. It should remain owned by Examplar unless a future review extracts provider-neutral guidance into this repository.",
+      "nextAction": "Retain Examplar instructions externally; promote only rewritten portable guidance if a future gap appears."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "examplar-plugins",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 2,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "PLUGIN",
+          "name": "agentic-coding",
+          "path": "agentic-coding",
+          "sha256": "sha256:5de9924dde09e16323153fd1b9f0b84cee36afd411f001ea4638554e12970e45"
+        }
+      ],
+      "rationale": "The remaining singleton plugin belongs to Examplar's marketplace/source graph. This repository already contains synthesized primitive-authoring, governance, and orientation plugins rather than copying Examplar's plugin payload.",
+      "nextAction": "Retain the Examplar plugin externally; revisit only if this repository needs a deliberately renamed derivative."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "global-agent-skills",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 46,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "gh-cli",
+          "path": "gh-cli",
+          "sha256": "sha256:aaa15ef27f73bcf285030d9b7ad92931ee7992cc1bb783746649023ace973b9b"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "copilot-sdk",
+          "path": "copilot-sdk",
+          "sha256": "sha256:2f6a52ef93cab4dd35518cd009513541a1fdefeff7b8b170f2198e62be5a5dd0"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "deploy-model",
+          "path": "microsoft-foundry/models/deploy-model",
+          "sha256": "sha256:01cfe2bf288ed688441853febab4f76197f1d24cd8c906126981616768893cf9"
+        }
+      ],
+      "rationale": "This root is an active installed skill runtime containing first-party, third-party, and local runtime copies. Covered entries already have canonical review decisions, while retained entries should stay with their owning runtime or provider distribution to avoid raw duplication and name collisions.",
+      "nextAction": "Retain this runtime root externally. Use this repository's canonical skills for new composition, and activate links into ~/.agents/skills only through the runtime-activation approval queue."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "global-codex-backups",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 5,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "arch-review",
+          "path": "arch-review",
+          "sha256": "sha256:1354810f46b808e8a80c3bd73d2696fa12c27b7da461e2920aa17205fe1d95db"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "idea-integration",
+          "path": "idea-integration",
+          "sha256": "sha256:ef8576652ab9060ef8257669cba8f388c7b4e6fe6f763aab7bed46e5fe8d4328"
+        }
+      ],
+      "rationale": "This root is a historical backup store, not an active runtime surface. Its overlapping entries are already covered by source-review decisions, and remaining singleton backup entries should stay as provenance unless a future promotion explicitly rewrites them.",
+      "nextAction": "Retain this backup root as provenance. Do not add runtime replacement proposals for backup-only material unless a future audit promotes a canonical derivative."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "global-codex-skills-backup",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 28,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "author-zensical-docs",
+          "path": "author-zensical-docs",
+          "sha256": "sha256:fb59afadd875bbc276231ac2c56cd30c424d92e06db93e86aa6acf08adaa7d80"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "github-actions-pipeline-builder",
+          "path": "github-actions-pipeline-builder",
+          "sha256": "sha256:2bc9d2c1b1d17b9a0be68bd1c5c53b19b9bf8552d3a5d6145e22152e1f96aea2"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "SKILL",
+          "name": "kotlin-mastery",
+          "path": "kotlin-mastery",
+          "sha256": "sha256:8e662ae35ada6fdbb8bbf71d45739b557f98cd7949d666c37fa478cacbb0fe7e"
+        }
+      ],
+      "rationale": "This root is a historical backup of older Codex skills. Covered entries already have canonical or retained-external review decisions, while the remaining singleton backup material should not be promoted or removed from this repository without a separate synthesis audit.",
+      "nextAction": "Retain this backup root as provenance. Use the current canonical skills and plugins for new work, and revisit individual backup skills only when a capability gap is identified."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "kast-agent-skills",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 23,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "agent-creation-prompt",
+          "path": "agent-development/examples/agent-creation-prompt.md",
+          "sha256": "sha256:fddc24d6f7c67722e5c007087d19606cf116a89f3360519c2ae8f52989f40a4d"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "commands",
+          "path": "kast/references/commands.json",
+          "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "evaluation-scaffold",
+          "path": "skill-creator/references/evaluation_scaffold.md",
+          "sha256": "sha256:2ddf7f4b2e5dfd9f48eae8dab1a943a91930e15bdb0a63bf7f3f7b9e49a09f89"
+        }
+      ],
+      "rationale": "Kast agent-skill material is repo-specific and includes examples, references, command fixtures, and Kast maintenance context. Keep it owned by Kast; promote only rewritten generic lessons into this repository.",
+      "nextAction": "Retain the Kast root externally. Revisit individual entries only when designing a Kast-specific plugin family."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "kast-github-agents",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 1,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "kast-orchestrator",
+          "path": "kast-orchestrator.md",
+          "sha256": "sha256:69a471bb03a8c944873961111898a6ac4a2ab688710c8ec64e475fb12e38fb8d"
+        }
+      ],
+      "rationale": "The only discovered primitive is a Kast-specific GitHub agent that requires Kast runtime behavior, Kast project memory, and project-local AST workflow conventions. It should remain owned by the Kast repository rather than becoming a general-purpose personal toolbox primitive in this pass.",
+      "nextAction": "Retain the source root as an external Kast owner. Revisit only if a dedicated Kast plugin family is designed in this repository."
+    },
+    {
+      "type": "SOURCE_ROOT_DECISION",
+      "sourceRoot": "kast-github-hooks",
+      "decision": "RETAIN_EXTERNAL_OWNER",
+      "status": "DECIDED",
+      "coverageMode": "ALL_DISCOVERED_ENTRIES",
+      "observedEntryCount": 9,
+      "primitiveEvidence": [
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "HOOK",
+          "name": "require-skills",
+          "path": "require-skills.sh",
+          "sha256": "sha256:9593ebcfceb24e6f3bf58b23bcac9d6820e061b1781ad37df9004a23ee737e5e"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "HOOK",
+          "name": "skill-shadowing",
+          "path": "skill-shadowing.json",
+          "sha256": "sha256:8f22c418823bf3043a51706690bb1a9c53197fe28f8b909831383e93d747a826"
+        }
+      ],
+      "rationale": "Kast GitHub hooks are repo runtime infrastructure. This repository has already extracted generic hook lessons into canonical hook primitives; the remaining hook files should stay owned by Kast unless a future Kast-specific plugin is designed.",
+      "nextAction": "Retain these hooks in Kast and do not replace them from this repository without a dedicated Kast runtime activation plan."
+    }
+  ]
+}

@@ -33,6 +33,21 @@ def main() -> int:
         help="Markdown review queue to write.",
     )
     parser.add_argument(
+        "--source-review-decisions",
+        default="manifests/source-review-decisions.json",
+        help="Optional hand-authored source review decisions to summarize in the Markdown queue.",
+    )
+    parser.add_argument(
+        "--digest-review-decisions",
+        default="manifests/digest-review-decisions.json",
+        help="Optional hand-authored digest review decisions to summarize in the Markdown queue.",
+    )
+    parser.add_argument(
+        "--cleanup-ledger",
+        default="manifests/cleanup-ledger.json",
+        help="Optional cleanup ledger to summarize in the Markdown queue.",
+    )
+    parser.add_argument(
         "--check",
         action="store_true",
         help="Fail if generated report or doc differs from disk.",
@@ -42,9 +57,15 @@ def main() -> int:
     repo_root = Path.cwd().resolve()
     inventory_path = (repo_root / args.inventory).resolve()
     inventory = read_json(inventory_path)
-    report = build_report(inventory)
+    source_review_path = (repo_root / args.source_review_decisions).resolve()
+    source_review = read_json(source_review_path) if source_review_path.exists() else None
+    digest_review_path = (repo_root / args.digest_review_decisions).resolve()
+    digest_review = read_json(digest_review_path) if digest_review_path.exists() else None
+    cleanup_ledger_path = (repo_root / args.cleanup_ledger).resolve()
+    cleanup_ledger = read_json(cleanup_ledger_path) if cleanup_ledger_path.exists() else None
+    report = build_report(inventory, repo_root)
     report_text = json.dumps(report, indent=2, sort_keys=True) + "\n"
-    doc_text = render_doc(report)
+    doc_text = render_doc(report, source_review, digest_review, cleanup_ledger)
 
     out_path = (repo_root / args.out).resolve()
     doc_path = (repo_root / args.doc).resolve()
@@ -60,9 +81,9 @@ def main() -> int:
     return 0
 
 
-def build_report(inventory: dict[str, Any]) -> dict[str, Any]:
+def build_report(inventory: dict[str, Any], repo_root: Path) -> dict[str, Any]:
     entries = inventory.get("entries", [])
-    enriched = [with_bucket(entry) for entry in entries]
+    enriched = [with_bucket(entry, repo_root) for entry in entries]
     by_type = Counter(entry["type"] for entry in enriched)
     by_bucket = Counter(entry["bucket"] for entry in enriched)
     by_bucket_type = bucket_type_counts(enriched)
@@ -74,25 +95,27 @@ def build_report(inventory: dict[str, Any]) -> dict[str, Any]:
 
     name_groups = grouped(enriched, ("type", "name"))
     digest_groups = grouped(enriched, ("sha256",))
+    name_review_values = [reviewable_values(values) for values in name_groups.values()]
+    digest_review_values = [reviewable_values(values) for values in digest_groups.values()]
     name_review = [
         name_review_item(values)
-        for values in name_groups.values()
+        for values in name_review_values
         if len(values) > 1 and needs_name_review(values)
     ]
     digest_review = [
         digest_review_item(values)
-        for values in digest_groups.values()
+        for values in digest_review_values
         if len(values) > 1 and needs_digest_review(values)
     ]
     first_party_collisions = [
         first_party_collision_item(values)
-        for values in name_groups.values()
-        if has_first_party_name_collision(values)
+        for values in name_review_values
+        if len(values) > 1 and has_first_party_name_collision(values)
     ]
     first_party_digest_matches = [
         first_party_digest_item(values)
-        for values in digest_groups.values()
-        if has_first_party_digest_match(values)
+        for values in digest_review_values
+        if len(values) > 1 and has_first_party_digest_match(values)
     ]
 
     return {
@@ -134,16 +157,18 @@ def build_report(inventory: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def with_bucket(entry: dict[str, Any]) -> dict[str, Any]:
+def with_bucket(entry: dict[str, Any], repo_root: Path) -> dict[str, Any]:
     result = dict(entry)
-    result["bucket"] = bucket(entry)
+    result["bucket"] = bucket(entry, repo_root)
     return result
 
 
-def bucket(entry: dict[str, Any]) -> str:
+def bucket(entry: dict[str, Any], repo_root: Path) -> str:
     role = entry.get("sourceRootRole")
     source_root = entry.get("sourceRoot")
     path = entry.get("path", "")
+    if active_repo_runtime_alias(entry, repo_root):
+        return "runtime-alias"
     if role == "canonical-candidate":
         return "canonical"
     if source_root == "claude-plugins" and path.startswith(INSTALLED_MARKETPLACE_PREFIXES):
@@ -155,6 +180,25 @@ def bucket(entry: dict[str, Any]) -> str:
     if role == "backup-source":
         return "backup"
     return "uncategorized"
+
+
+def active_repo_runtime_alias(entry: dict[str, Any], repo_root: Path) -> bool:
+    if entry.get("sourceRootRole") != "runtime-source" or not entry.get("symlink"):
+        return False
+    try:
+        observed = Path(entry["observedPath"])
+        resolved = Path(entry["resolvedPath"]).resolve(strict=False)
+    except OSError:
+        return False
+    return not observed.is_relative_to(repo_root) and resolved.is_relative_to(repo_root)
+
+
+def reviewable_values(values: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [
+        entry
+        for entry in values
+        if entry["bucket"] != "runtime-alias"
+    ]
 
 
 def action_for(entry: dict[str, Any]) -> str:
@@ -283,7 +327,12 @@ def bucket_type_counts(entries: list[dict[str, Any]]) -> dict[str, dict[str, int
     }
 
 
-def render_doc(report: dict[str, Any]) -> str:
+def render_doc(
+    report: dict[str, Any],
+    source_review: dict[str, Any] | None = None,
+    digest_review: dict[str, Any] | None = None,
+    cleanup_ledger: dict[str, Any] | None = None,
+) -> str:
     counts = report["counts"]
     lines = [
         "# Consolidation Queue",
@@ -338,6 +387,9 @@ def render_doc(report: dict[str, Any]) -> str:
             f"`{group['action']}` | `{', '.join(group['buckets'])}` | {len(group['entries'])} |"
         )
 
+    if source_review:
+        lines.extend(render_source_review_decisions(source_review))
+
     lines.extend([
         "",
         "## Digest Review Queue",
@@ -352,6 +404,9 @@ def render_doc(report: dict[str, Any]) -> str:
             f"| {group['priority']} | {len(group['entries'])} | "
             f"`{', '.join(group['buckets'])}` | `{group['sha256']}` |"
         )
+
+    if digest_review:
+        lines.extend(render_digest_review_decisions(digest_review))
 
     lines.extend([
         "",
@@ -391,19 +446,191 @@ def render_doc(report: dict[str, Any]) -> str:
     else:
         lines.append("No canonical primitive currently has the same digest as a first-party installed or system source.")
 
+    if cleanup_ledger:
+        lines.extend(render_cleanup_ledger(cleanup_ledger))
+
     lines.extend([
         "",
         "## Broken Symlinks",
         "",
         "Broken symlinks are cleanup candidates, but they still need ledger entries before removal.",
         "",
-        "| Source | Path | Target |",
-        "|---|---|---|",
     ])
-    for item in report["brokenSymlinks"]:
-        lines.append(f"| `{item['sourceRoot']}` | `{item['path']}` | `{item['target']}` |")
+    if report["brokenSymlinks"]:
+        lines.extend([
+            "| Source | Path | Target |",
+            "|---|---|---|",
+        ])
+        for item in report["brokenSymlinks"]:
+            lines.append(f"| `{item['sourceRoot']}` | `{item['path']}` | `{item['target']}` |")
+    else:
+        lines.append("No broken symlinks currently found.")
     lines.append("")
     return "\n".join(lines)
+
+
+def render_source_review_decisions(source_review: dict[str, Any]) -> list[str]:
+    entries = sorted(
+        source_review.get("entries", []),
+        key=lambda item: (
+            item.get("queueEvidence", {}).get("priority", 99),
+            item.get("target", {}).get("primitiveType", ""),
+            item.get("target", {}).get("name", ""),
+        ),
+    )
+    decision_counts = Counter(entry.get("decision", "") for entry in entries)
+    status_counts = Counter(entry.get("status", "") for entry in entries)
+    lines = [
+        "",
+        "## Source Review Decisions",
+        "",
+        "Hand-authored trim decisions cover generated name-review groups. These decisions do not authorize deletion; cleanup still requires `manifests/cleanup-ledger.json`.",
+        "",
+        "| Decision | Count |",
+        "|---|---:|",
+    ]
+    for decision, count in sorted(decision_counts.items()):
+        lines.append(f"| `{decision}` | {count} |")
+    lines.extend([
+        "",
+        "| Status | Count |",
+        "|---|---:|",
+    ])
+    for status, count in sorted(status_counts.items()):
+        lines.append(f"| `{status}` | {count} |")
+    lines.extend([
+        "",
+        "| Priority | Type | Name | Decision | Status | Coverage |",
+        "|---:|---|---|---|---|---|",
+    ])
+    for entry in entries[:80]:
+        target = entry.get("target", {})
+        evidence = entry.get("queueEvidence", {})
+        coverage = ", ".join(f"`{item['path']}`" for item in entry.get("canonicalCoverage", []))
+        if not coverage:
+            coverage = "-"
+        lines.append(
+            f"| {evidence.get('priority')} | `{target.get('primitiveType')}` | "
+            f"`{target.get('name')}` | `{entry.get('decision')}` | `{entry.get('status')}` | {coverage} |"
+        )
+    remaining = len(entries) - 80
+    if remaining > 0:
+        lines.append(f"| | | | | | plus {remaining} more in the JSON manifest |")
+    return lines
+
+
+def render_cleanup_ledger(cleanup_ledger: dict[str, Any]) -> list[str]:
+    status_order = {
+        "PROPOSED": 0,
+        "APPROVED": 1,
+        "EXECUTED": 2,
+    }
+    entries = sorted(
+        cleanup_ledger.get("entries", []),
+        key=lambda item: (
+            status_order.get(item.get("status", ""), 99),
+            item.get("decision", ""),
+            item.get("sourceRoot", ""),
+            item.get("sourcePath", ""),
+        ),
+    )
+    decision_counts = Counter(entry.get("decision", "") for entry in entries)
+    status_counts = Counter(entry.get("status", "") for entry in entries)
+    lines = [
+        "",
+        "## Cleanup Ledger",
+        "",
+        "Ledger entries are the cleanup authority. `PROPOSED` entries are review records only; they do not authorize deletion or symlink writes.",
+        "",
+        "| Decision | Count |",
+        "|---|---:|",
+    ]
+    for decision, count in sorted(decision_counts.items()):
+        lines.append(f"| `{decision}` | {count} |")
+    lines.extend([
+        "",
+        "| Status | Count |",
+        "|---|---:|",
+    ])
+    for status, count in sorted(status_counts.items()):
+        lines.append(f"| `{status}` | {count} |")
+    lines.extend([
+        "",
+        "| Status | Decision | Source | Path | Canonical | Evidence |",
+        "|---|---|---|---|---|---|",
+    ])
+    for entry in entries[:80]:
+        evidence = entry.get("reviewEvidence", {})
+        evidence_target = cleanup_evidence_label(evidence)
+        if evidence_target != "-":
+            evidence_target = f"`{evidence_target}`"
+        canonical = entry.get("canonicalPath") or "-"
+        if canonical != "-":
+            canonical = f"`{canonical}`"
+        lines.append(
+            f"| `{entry.get('status')}` | `{entry.get('decision')}` | "
+            f"`{entry.get('sourceRoot')}` | `{entry.get('sourcePath')}` | {canonical} | {evidence_target} |"
+        )
+    remaining = len(entries) - 80
+    if remaining > 0:
+        lines.append(f"| | | | | | plus {remaining} more in the JSON manifest |")
+    return lines
+
+
+def cleanup_evidence_label(evidence: dict[str, Any]) -> str:
+    if evidence.get("type") == "SOURCE_REVIEW_EVIDENCE":
+        return evidence.get("sourceSha256", "-")
+    return evidence.get("targetSha256", "-")
+
+
+def render_digest_review_decisions(digest_review: dict[str, Any]) -> list[str]:
+    entries = sorted(
+        digest_review.get("entries", []),
+        key=lambda item: (
+            item.get("queueEvidence", {}).get("priority", 99),
+            item.get("target", {}).get("sha256", ""),
+        ),
+    )
+    decision_counts = Counter(entry.get("decision", "") for entry in entries)
+    status_counts = Counter(entry.get("status", "") for entry in entries)
+    lines = [
+        "",
+        "## Digest Review Decisions",
+        "",
+        "Hand-authored trim decisions cover generated duplicate-content groups. These decisions do not authorize deletion; cleanup still requires `manifests/cleanup-ledger.json`.",
+        "",
+        "| Decision | Count |",
+        "|---|---:|",
+    ]
+    for decision, count in sorted(decision_counts.items()):
+        lines.append(f"| `{decision}` | {count} |")
+    lines.extend([
+        "",
+        "| Status | Count |",
+        "|---|---:|",
+    ])
+    for status, count in sorted(status_counts.items()):
+        lines.append(f"| `{status}` | {count} |")
+    lines.extend([
+        "",
+        "| Priority | Digest | Decision | Status | Candidates | Coverage |",
+        "|---:|---|---|---|---|---|",
+    ])
+    for entry in entries[:80]:
+        target = entry.get("target", {})
+        evidence = entry.get("queueEvidence", {})
+        candidates = ", ".join(f"`{item}`" for item in evidence.get("candidateKeys", []))
+        coverage = ", ".join(f"`{item['path']}`" for item in entry.get("canonicalCoverage", []))
+        if not coverage:
+            coverage = "-"
+        lines.append(
+            f"| {evidence.get('priority')} | `{target.get('sha256')}` | "
+            f"`{entry.get('decision')}` | `{entry.get('status')}` | {candidates} | {coverage} |"
+        )
+    remaining = len(entries) - 80
+    if remaining > 0:
+        lines.append(f"| | | | | | plus {remaining} more in the JSON manifest |")
+    return lines
 
 
 def entry_sort_key(entry: dict[str, Any]) -> tuple[str, str, str, str]:

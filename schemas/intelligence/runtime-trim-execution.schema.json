@@ -1,0 +1,292 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-runtime-trim-execution.schema.json",
+  "title": "Intelligence Runtime Trim Execution Receipt",
+  "description": "Receipt for explicit packet-scoped runtime trimming or activation attempts.",
+  "type": "object",
+  "required": [
+    "type",
+    "schemaVersion",
+    "generatedAt",
+    "generatedFrom",
+    "summary",
+    "entries"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "RUNTIME_TRIM_EXECUTION_REPORT"
+      ]
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generatedFrom": {
+      "$ref": "#/$defs/generatedFrom"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primitiveType": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION",
+        "PLUGIN",
+        "SKILL"
+      ]
+    },
+    "generatedFrom": {
+      "type": "object",
+      "required": [
+        "type",
+        "runtimeActivationApprovals"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "RUNTIME_TRIM_EXECUTION_INPUTS"
+          ]
+        },
+        "runtimeActivationApprovals": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "type",
+        "mode",
+        "requestedPackets",
+        "selectedPackets",
+        "dryRunEntries",
+        "appliedEntries",
+        "skippedEntries",
+        "failedEntries",
+        "runtimeMutationAttempted"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "RUNTIME_TRIM_EXECUTION_SUMMARY"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "APPLY",
+            "DRY_RUN"
+          ]
+        },
+        "requestedPackets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "selectedPackets": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dryRunEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "appliedEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skippedEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failedEntries": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "runtimeMutationAttempted": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "operationType": {
+      "type": "string",
+      "enum": [
+        "ACTIVATE_RUNTIME_LINK",
+        "IMPORT_MARKETPLACE",
+        "REPLACE_SOURCE_WITH_SYMLINK"
+      ]
+    },
+    "approvalState": {
+      "type": "string",
+      "enum": [
+        "ALREADY_ACTIVE",
+        "BLOCKED",
+        "READY_FOR_APPROVAL",
+        "READY_FOR_MANUAL_IMPORT",
+        "REVIEW_REQUIRED"
+      ]
+    },
+    "actionState": {
+      "type": "string",
+      "enum": [
+        "APPLIED",
+        "DRY_RUN",
+        "FAILED",
+        "SKIPPED"
+      ]
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ]
+    },
+    "actionEffect": {
+      "type": "string",
+      "enum": [
+        "BACKUP_TARGET",
+        "CREATE_SYMLINK",
+        "MANUAL",
+        "PREPARE_TARGET",
+        "ROLLBACK",
+        "SKIP_ACTIVE",
+        "VERIFY_SOURCE"
+      ]
+    },
+    "action": {
+      "type": "object",
+      "required": [
+        "type",
+        "effect",
+        "description",
+        "commandPreview"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "RUNTIME_TRIM_EXECUTION_ACTION"
+          ]
+        },
+        "effect": {
+          "$ref": "#/$defs/actionEffect"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commandPreview": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "entry": {
+      "type": "object",
+      "required": [
+        "type",
+        "packetName",
+        "operationType",
+        "approvalState",
+        "actionState",
+        "riskLevel",
+        "sourcePath",
+        "targetPath",
+        "actions",
+        "reasons"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "RUNTIME_TRIM_EXECUTION_ENTRY"
+          ]
+        },
+        "packetName": {
+          "$ref": "#/$defs/name"
+        },
+        "operationType": {
+          "$ref": "#/$defs/operationType"
+        },
+        "approvalState": {
+          "$ref": "#/$defs/approvalState"
+        },
+        "actionState": {
+          "$ref": "#/$defs/actionState"
+        },
+        "riskLevel": {
+          "$ref": "#/$defs/riskLevel"
+        },
+        "sourcePath": {
+          "$ref": "#/$defs/path"
+        },
+        "targetPath": {
+          "$ref": "#/$defs/path"
+        },
+        "backupPath": {
+          "$ref": "#/$defs/path"
+        },
+        "runtimeLinkStrategy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "primitiveTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/primitiveType"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          },
+          "minItems": 1
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

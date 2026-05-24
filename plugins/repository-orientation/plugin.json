@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "name": "repository-orientation",
   "version": "0.1.0",
-  "description": "Repository boundary mapping and scoped instruction authoring composed from independent skills.",
+  "description": "Repository boundary mapping, scoped instruction authoring, and signature indexing composed from independent skills.",
   "skills": [
     {
       "type": "SKILL",
@@ -13,6 +13,24 @@
       },
       "path": "skills/repo-instruction-topology",
       "name": "repo-instruction-topology"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repository-signature-indexing",
+      "name": "repository-signature-indexing"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/local-repository-navigation",
+      "name": "local-repository-navigation"
     },
     {
       "type": "SKILL",

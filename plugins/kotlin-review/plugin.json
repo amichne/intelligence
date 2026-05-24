@@ -3,7 +3,7 @@
   "schemaVersion": 1,
   "name": "kotlin-review",
   "version": "0.1.0",
-  "description": "Kotlin standards, review agents, and layout gate composed from independent skill, agent, hook, and concept primitives.",
+  "description": "Kotlin standards, Gradle validation, review agents, and layout gate composed from independent skill, agent, hook, and concept primitives.",
   "skills": [
     {
       "type": "SKILL",
@@ -13,6 +13,15 @@
       },
       "path": "skills/kotlin-standards",
       "name": "kotlin-standards"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-gradle-validation",
+      "name": "kotlin-gradle-validation"
     }
   ],
   "agents": [

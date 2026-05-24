@@ -1,0 +1,227 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-review-completeness.schema.json",
+  "title": "Intelligence Review Completeness",
+  "description": "Generated report that compares canonical primitive coverage against durable primitive audit records.",
+  "type": "object",
+  "required": [
+    "type",
+    "schemaVersion",
+    "generatedFrom",
+    "summary",
+    "entries"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "REVIEW_COMPLETENESS_REPORT"
+      ]
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "generatedFrom": {
+      "$ref": "#/$defs/generatedFrom"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reviewEntry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primitiveType": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION",
+        "PLUGIN",
+        "SKILL"
+      ]
+    },
+    "coverageStatus": {
+      "type": "string",
+      "enum": [
+        "MARKETPLACE_EXPOSED",
+        "PLUGIN_COMPOSED",
+        "SCOPED_INSTRUCTION",
+        "STANDALONE_ONLY"
+      ]
+    },
+    "auditState": {
+      "type": "string",
+      "enum": [
+        "AUDITED",
+        "NEEDS_AUDIT"
+      ]
+    },
+    "promotionState": {
+      "type": "string",
+      "enum": [
+        "NATIVE_CANONICAL",
+        "PROMOTED"
+      ]
+    },
+    "generatedFrom": {
+      "type": "object",
+      "required": [
+        "type",
+        "pluginCoverage",
+        "primitiveAudits",
+        "promotions"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "REVIEW_COMPLETENESS_INPUTS"
+          ]
+        },
+        "pluginCoverage": {
+          "$ref": "#/$defs/path"
+        },
+        "primitiveAudits": {
+          "$ref": "#/$defs/path"
+        },
+        "promotions": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "type",
+        "totalCanonical",
+        "audited",
+        "needsAudit",
+        "promoted",
+        "nativeCanonical",
+        "allCanonicalAudited"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "REVIEW_COMPLETENESS_SUMMARY"
+          ]
+        },
+        "totalCanonical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "audited": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "needsAudit": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "promoted": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "nativeCanonical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allCanonicalAudited": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "primitiveTarget": {
+      "type": "object",
+      "required": [
+        "type",
+        "primitiveType",
+        "name"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PRIMITIVE_TARGET"
+          ]
+        },
+        "primitiveType": {
+          "$ref": "#/$defs/primitiveType"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "reviewEntry": {
+      "type": "object",
+      "required": [
+        "type",
+        "primitive",
+        "canonicalPaths",
+        "coverageStatus",
+        "auditState",
+        "promotionState",
+        "notes"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "REVIEW_COMPLETENESS_ENTRY"
+          ]
+        },
+        "primitive": {
+          "$ref": "#/$defs/primitiveTarget"
+        },
+        "canonicalPaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/path"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "coverageStatus": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "auditState": {
+          "$ref": "#/$defs/auditState"
+        },
+        "promotionState": {
+          "$ref": "#/$defs/promotionState"
+        },
+        "auditDecision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

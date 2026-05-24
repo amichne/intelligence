@@ -1,0 +1,770 @@
+{
+  "generatedFrom": {
+    "cleanupLedger": "manifests/cleanup-ledger.json",
+    "digestReviewDecisions": "manifests/digest-review-decisions.json",
+    "discoveredPrimitives": "manifests/discovered-primitives.json",
+    "runtimeActivationApprovals": "manifests/runtime-activation-approvals.json",
+    "sourceReviewDecisions": "manifests/source-review-decisions.json",
+    "sourceRootDecisions": "manifests/source-root-decisions.json",
+    "sourceRoots": "manifests/source-roots.json",
+    "type": "SOURCE_ROOT_RETIREMENT_INPUTS"
+  },
+  "roots": [
+    {
+      "approvalSummary": {
+        "alreadyActive": 2,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 29,
+        "sourceKeepCanonical": 2,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot intelligence.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=29 and retained=0 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links.",
+      "observedEntries": 54,
+      "resolvedPath": "/Users/amichne/code/intelligence",
+      "retirementState": "CANONICAL_OWNER",
+      "role": "canonical-candidate",
+      "sourcePath": ".",
+      "sourceRoot": "intelligence",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 1,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 4,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot claude-agents.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=0 and retained=0 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=4, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Keep the cleanup ledger as the source of truth for completed cleanup and rerun inventory to detect drift.",
+      "observedEntries": 6,
+      "resolvedPath": "/Users/amichne/.claude/agents",
+      "retirementState": "CLEANUP_RECORDED",
+      "role": "runtime-source",
+      "sourcePath": "~/.claude/agents",
+      "sourceRoot": "claude-agents",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 5,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 5,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot examplar-agents.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=5 and retained=0 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=5, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal.",
+      "observedEntries": 5,
+      "resolvedPath": "/Users/amichne/code/examplar/agents",
+      "retirementState": "COVERED_NO_REPLACEMENT_PLAN",
+      "role": "local-repo-source",
+      "sourcePath": "../examplar/agents",
+      "sourceRoot": "examplar-agents",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 1,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 1,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot examplar-hooks.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=1 and retained=0 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=1, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal.",
+      "observedEntries": 1,
+      "resolvedPath": "/Users/amichne/code/examplar/hooks",
+      "retirementState": "COVERED_NO_REPLACEMENT_PLAN",
+      "role": "local-repo-source",
+      "sourcePath": "../examplar/hooks",
+      "sourceRoot": "examplar-hooks",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 3,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 3,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot examplar-skills.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=3 and retained=0 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=3, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal.",
+      "observedEntries": 3,
+      "resolvedPath": "/Users/amichne/code/examplar/skills",
+      "retirementState": "COVERED_NO_REPLACEMENT_PLAN",
+      "role": "local-repo-source",
+      "sourcePath": "../examplar/skills",
+      "sourceRoot": "examplar-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot apollo-plugins.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=0 and retained=0 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Keep or remove the scan root only through a source-roots manifest review; no primitives are currently discovered.",
+      "observedEntries": 0,
+      "resolvedPath": "/Users/amichne/code/apollo/plugins",
+      "retirementState": "EMPTY_SOURCE_ROOT",
+      "role": "local-repo-source",
+      "sourcePath": "../apollo/plugins",
+      "sourceRoot": "apollo-plugins",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 1,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 1,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot apollo-agents.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=1 and retained=1 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 7,
+      "resolvedPath": "/Users/amichne/code/apollo/agents",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "local-repo-source",
+      "sourcePath": "../apollo/agents",
+      "sourceRoot": "apollo-agents",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 3,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 2,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 7,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot claude-plugins.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=2 and retained=11 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 608,
+      "resolvedPath": "/Users/amichne/.claude/plugins",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "runtime-source",
+      "sourcePath": "~/.claude/plugins",
+      "sourceRoot": "claude-plugins",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 2,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 2,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot examplar-instructions.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=2 and retained=1 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=2, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 3,
+      "resolvedPath": "/Users/amichne/code/examplar/instructions",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "local-repo-source",
+      "sourcePath": "../examplar/instructions",
+      "sourceRoot": "examplar-instructions",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 1,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 6,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 7,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 1,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 8,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot global-agent-skills.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=1 and retained=16 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=6, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 46,
+      "resolvedPath": "/Users/amichne/.agents/skills",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "runtime-source",
+      "sourcePath": "~/.agents/skills",
+      "sourceRoot": "global-agent-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 1,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 3,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot global-codex-backups.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=3 and retained=1 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=1, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 5,
+      "resolvedPath": "/Users/amichne/.codex/backups",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "backup-source",
+      "sourcePath": "~/.codex/backups",
+      "sourceRoot": "global-codex-backups",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 5,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 4,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 4,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 6,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot global-codex-skills-backup.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=4 and retained=11 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=5, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 28,
+      "resolvedPath": "/Users/amichne/.codex/skills.backup",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "backup-source",
+      "sourcePath": "~/.codex/skills.backup",
+      "sourceRoot": "global-codex-skills-backup",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 3,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 2,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 5,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot kast-agent-skills.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=2 and retained=9 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
+      "observedEntries": 23,
+      "resolvedPath": "/Users/amichne/code/kast/.agents/skills",
+      "retirementState": "MIXED_RETAIN_AND_COVERED",
+      "role": "local-repo-source",
+      "sourcePath": "../kast/.agents/skills",
+      "sourceRoot": "kast-agent-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 13,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 6,
+        "proposed": 13,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 12,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 21,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 7,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot apollo-skills.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=21 and retained=19 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=13, executed=6, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement.",
+      "observedEntries": 33,
+      "resolvedPath": "/Users/amichne/code/apollo/skills",
+      "retirementState": "PARTIAL_REPLACEMENT_READY",
+      "role": "local-repo-source",
+      "sourcePath": "../apollo/skills",
+      "sourceRoot": "apollo-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 1,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot examplar-plugins.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=0 and retained=2 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Leave this source root under its current owner unless a future review promotes a canonical replacement.",
+      "observedEntries": 2,
+      "resolvedPath": "/Users/amichne/code/examplar/plugins",
+      "retirementState": "RETAIN_EXTERNAL_OWNER",
+      "role": "local-repo-source",
+      "sourcePath": "../examplar/plugins",
+      "sourceRoot": "examplar-plugins",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 1,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 12,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 7,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot global-codex-skills.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=0 and retained=19 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Leave this source root under its current owner unless a future review promotes a canonical replacement.",
+      "observedEntries": 33,
+      "resolvedPath": "/Users/amichne/.codex/skills",
+      "retirementState": "RETAIN_EXTERNAL_OWNER",
+      "role": "runtime-source",
+      "sourcePath": "~/.codex/skills",
+      "sourceRoot": "global-codex-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 0,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot kast-github-agents.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=0 and retained=1 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Leave this source root under its current owner unless a future review promotes a canonical replacement.",
+      "observedEntries": 1,
+      "resolvedPath": "/Users/amichne/code/kast/.github/agents",
+      "retirementState": "RETAIN_EXTERNAL_OWNER",
+      "role": "local-repo-source",
+      "sourcePath": "../kast/.github/agents",
+      "sourceRoot": "kast-github-agents",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 0,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 0,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 1,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "manifests/discovered-primitives.json records entries for sourceRoot kast-github-hooks.",
+        "manifests/source-review-decisions.json and manifests/digest-review-decisions.json record covered=0 and retained=2 review groups.",
+        "manifests/cleanup-ledger.json and manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Leave this source root under its current owner unless a future review promotes a canonical replacement.",
+      "observedEntries": 9,
+      "resolvedPath": "/Users/amichne/code/kast/.github/hooks",
+      "retirementState": "RETAIN_EXTERNAL_OWNER",
+      "role": "local-repo-source",
+      "sourcePath": "../kast/.github/hooks",
+      "sourceRoot": "kast-github-hooks",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    }
+  ],
+  "schemaVersion": 1,
+  "summary": {
+    "canonicalOwners": 1,
+    "cleanupRecorded": 1,
+    "coveredNoReplacementPlan": 3,
+    "emptySourceRoots": 1,
+    "mixedRetainAndCovered": 7,
+    "nextAction": "Review PARTIAL_REPLACEMENT_READY roots and their activation approval packets before any source turnoff execution.",
+    "noActionRecorded": 0,
+    "partialReplacementReady": 1,
+    "retainExternalOwners": 4,
+    "runtimeDependencyMapped": 0,
+    "runtimeReviewRequired": 0,
+    "totalObservedEntries": 867,
+    "totalRoots": 18,
+    "type": "SOURCE_ROOT_RETIREMENT_SUMMARY"
+  },
+  "type": "SOURCE_ROOT_RETIREMENT_REPORT"
+}

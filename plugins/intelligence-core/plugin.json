@@ -35,6 +35,15 @@
       },
       "path": "hooks/agents-md-turn-refresh.hook.json",
       "name": "agents-md-turn-refresh"
+    },
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/required-skill-read.hook.json",
+      "name": "required-skill-read"
     }
   ],
   "metadata": {

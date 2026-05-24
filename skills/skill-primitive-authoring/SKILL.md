@@ -52,8 +52,9 @@ on the plugin to explain its behavior.
 
 6. Promote.
    Add the skill to `marketplace.json`, any referential plugin that should
-   compose it, and `manifests/promotions.json`. Regenerate inventory and run
-   manifest validation.
+   compose it, and `manifests/promotions.json`. If promotion changes any JSON
+   shape, update the owning schema first. Regenerate inventory and run manifest
+   validation.
 
 ## Reference Routing
 
@@ -70,4 +71,6 @@ on the plugin to explain its behavior.
 - Related details are discoverable without loading unnecessary context.
 - Existing overlap was checked and either avoided or intentionally synthesized.
 - Source provenance and first-party handling are recorded when applicable.
+- Structured data created or changed by the skill has an owning schema,
+  generator, parser, or validation command.
 - Inventory and manifest validation pass after promotion.

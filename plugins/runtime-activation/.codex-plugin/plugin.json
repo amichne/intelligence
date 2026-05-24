@@ -1,0 +1,35 @@
+{
+  "author": {
+    "name": "Amichne"
+  },
+  "description": "Runtime linking and source-graph activation workflows composed from independent primitives.",
+  "interface": {
+    "brandColor": "#7C3AED",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "category": "Productivity",
+    "defaultPrompt": [
+      "Use Runtime Activation for this task.",
+      "Review this repo with Runtime Activation.",
+      "Show the Runtime Activation workflow."
+    ],
+    "developerName": "Amichne",
+    "displayName": "Runtime Activation",
+    "longDescription": "Runtime linking and source-graph activation workflows composed from independent primitives.",
+    "shortDescription": "Runtime linking and source-graph activation workflows composed from i..."
+  },
+  "keywords": [
+    "activation",
+    "runtime",
+    "runtime-activation",
+    "skills",
+    "source-graph",
+    "symlinks"
+  ],
+  "license": "UNLICENSED",
+  "name": "runtime-activation",
+  "skills": "./skills/",
+  "version": "0.1.0"
+}

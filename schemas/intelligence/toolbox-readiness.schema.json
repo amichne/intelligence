@@ -1,0 +1,211 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-toolbox-readiness.schema.json",
+  "title": "Intelligence Toolbox Readiness",
+  "description": "Generated objective-level readiness report for the personal AI tooling toolbox.",
+  "type": "object",
+  "required": [
+    "type",
+    "schemaVersion",
+    "generatedFrom",
+    "summary",
+    "requirements"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "TOOLBOX_READINESS_REPORT"
+      ]
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "generatedFrom": {
+      "$ref": "#/$defs/generatedFrom"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "requirements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/requirement"
+      },
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirementId": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "completionStatus": {
+      "type": "string",
+      "enum": [
+        "APPROVAL_READY",
+        "COMPLETE",
+        "INCOMPLETE",
+        "REVIEW_READY"
+      ]
+    },
+    "requirementStatus": {
+      "type": "string",
+      "enum": [
+        "INCOMPLETE",
+        "NEEDS_APPROVAL",
+        "NEEDS_REVIEW",
+        "SATISFIED"
+      ]
+    },
+    "generatedFrom": {
+      "type": "object",
+      "required": [
+        "type",
+        "pluginCoverage",
+        "reviewCompleteness",
+        "primitiveDecisionCoverage",
+        "sourceCleanupGaps",
+        "sourceTurnoffReadiness",
+        "runtimeActivationApprovals",
+        "cleanupLedger",
+        "concordancePackage",
+        "localSchemaDirectory"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "TOOLBOX_READINESS_INPUTS"
+          ]
+        },
+        "pluginCoverage": {
+          "$ref": "#/$defs/path"
+        },
+        "reviewCompleteness": {
+          "$ref": "#/$defs/path"
+        },
+        "primitiveDecisionCoverage": {
+          "$ref": "#/$defs/path"
+        },
+        "sourceCleanupGaps": {
+          "$ref": "#/$defs/path"
+        },
+        "sourceTurnoffReadiness": {
+          "$ref": "#/$defs/path"
+        },
+        "runtimeActivationApprovals": {
+          "$ref": "#/$defs/path"
+        },
+        "cleanupLedger": {
+          "$ref": "#/$defs/path"
+        },
+        "concordancePackage": {
+          "$ref": "#/$defs/path"
+        },
+        "localSchemaDirectory": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "type",
+        "completionStatus",
+        "totalRequirements",
+        "satisfied",
+        "needsApproval",
+        "needsReview",
+        "incomplete",
+        "readyForCompletion",
+        "nextAction"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "TOOLBOX_READINESS_SUMMARY"
+          ]
+        },
+        "completionStatus": {
+          "$ref": "#/$defs/completionStatus"
+        },
+        "totalRequirements": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "satisfied": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "needsApproval": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "needsReview": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "incomplete": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "readyForCompletion": {
+          "type": "boolean"
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "requirement": {
+      "type": "object",
+      "required": [
+        "type",
+        "id",
+        "status",
+        "evidence",
+        "nextAction"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "TOOLBOX_READINESS_REQUIREMENT"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/requirementId"
+        },
+        "status": {
+          "$ref": "#/$defs/requirementStatus"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

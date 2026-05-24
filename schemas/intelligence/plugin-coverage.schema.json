@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "intelligence-plugin-coverage.schema.json",
+  "title": "Intelligence Plugin Coverage",
+  "description": "Generated coverage report showing how canonical primitives are exposed through referential plugins, marketplace entries, or scoped repository instructions.",
+  "type": "object",
+  "required": [
+    "type",
+    "schemaVersion",
+    "generatedFrom",
+    "summary",
+    "entries"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "PLUGIN_COVERAGE_REPORT"
+      ]
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "enum": [
+        1
+      ]
+    },
+    "generatedFrom": {
+      "$ref": "#/$defs/generatedFrom"
+    },
+    "summary": {
+      "$ref": "#/$defs/summary"
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/coverageEntry"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primitiveType": {
+      "type": "string",
+      "enum": [
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION",
+        "PLUGIN",
+        "SKILL"
+      ]
+    },
+    "coverageStatus": {
+      "type": "string",
+      "enum": [
+        "MARKETPLACE_EXPOSED",
+        "PLUGIN_COMPOSED",
+        "SCOPED_INSTRUCTION",
+        "STANDALONE_ONLY"
+      ]
+    },
+    "generatedFrom": {
+      "type": "object",
+      "required": [
+        "type",
+        "inventory",
+        "marketplace",
+        "pluginDirectory"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PLUGIN_COVERAGE_INPUTS"
+          ]
+        },
+        "inventory": {
+          "$ref": "#/$defs/path"
+        },
+        "marketplace": {
+          "$ref": "#/$defs/path"
+        },
+        "pluginDirectory": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "type",
+        "totalPrimitives",
+        "allCanonicalRouted",
+        "byStatus",
+        "byType"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PLUGIN_COVERAGE_SUMMARY"
+          ]
+        },
+        "totalPrimitives": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "allCanonicalRouted": {
+          "type": "boolean"
+        },
+        "byStatus": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/count"
+          }
+        },
+        "byType": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/count"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "count": {
+      "type": "object",
+      "required": [
+        "type",
+        "name",
+        "count"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "COVERAGE_COUNT"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "primitiveTarget": {
+      "type": "object",
+      "required": [
+        "type",
+        "primitiveType",
+        "name"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PRIMITIVE_TARGET"
+          ]
+        },
+        "primitiveType": {
+          "$ref": "#/$defs/primitiveType"
+        },
+        "name": {
+          "$ref": "#/$defs/name"
+        }
+      },
+      "additionalProperties": false
+    },
+    "pluginReference": {
+      "type": "object",
+      "required": [
+        "type",
+        "pluginName",
+        "primitivePath"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PLUGIN_COVERAGE_REFERENCE"
+          ]
+        },
+        "pluginName": {
+          "$ref": "#/$defs/name"
+        },
+        "primitivePath": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "marketplaceReference": {
+      "type": "object",
+      "required": [
+        "type",
+        "pluginName",
+        "pluginPath"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "MARKETPLACE_COVERAGE_REFERENCE"
+          ]
+        },
+        "pluginName": {
+          "$ref": "#/$defs/name"
+        },
+        "pluginPath": {
+          "$ref": "#/$defs/path"
+        }
+      },
+      "additionalProperties": false
+    },
+    "coverageEntry": {
+      "type": "object",
+      "required": [
+        "type",
+        "primitive",
+        "coverageStatus",
+        "canonicalPaths",
+        "pluginReferences",
+        "marketplaceReferences"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "PLUGIN_COVERAGE_ENTRY"
+          ]
+        },
+        "primitive": {
+          "$ref": "#/$defs/primitiveTarget"
+        },
+        "coverageStatus": {
+          "$ref": "#/$defs/coverageStatus"
+        },
+        "canonicalPaths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/path"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "pluginReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pluginReference"
+          }
+        },
+        "marketplaceReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/marketplaceReference"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

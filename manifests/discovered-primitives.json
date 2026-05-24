@@ -1,103 +1,11 @@
 {
-  "brokenSymlinks": [
-    {
-      "observedPath": "/Users/amichne/.claude/agents/code-documentation-generator.md",
-      "path": "code-documentation-generator.md",
-      "sourceRoot": "claude-agents",
-      "sourceRootPath": "~/.claude/agents",
-      "target": "/Users/amichne/code/examplar/common/agents/code-documentation-generator.md"
-    },
-    {
-      "observedPath": "/Users/amichne/.claude/agents/codebase-uplift-agent.md",
-      "path": "codebase-uplift-agent.md",
-      "sourceRoot": "claude-agents",
-      "sourceRootPath": "~/.claude/agents",
-      "target": "/Users/amichne/code/examplar/common/agents/codebase-uplift-agent.md"
-    },
-    {
-      "observedPath": "/Users/amichne/.claude/agents/kotlin-idiom-forge.agent.md",
-      "path": "kotlin-idiom-forge.agent.md",
-      "sourceRoot": "claude-agents",
-      "sourceRootPath": "~/.claude/agents",
-      "target": "/Users/amichne/code/examplar/common/agents/kotlin-idiom-forge.agent.md"
-    },
-    {
-      "observedPath": "/Users/amichne/.claude/agents/prompt-enhancer.md",
-      "path": "prompt-enhancer.md",
-      "sourceRoot": "claude-agents",
-      "sourceRootPath": "~/.claude/agents",
-      "target": "/Users/amichne/code/examplar/common/agents/prompt-enhancer.md"
-    },
-    {
-      "observedPath": "/Users/amichne/.agents/skills/design-an-interface",
-      "path": "design-an-interface",
-      "sourceRoot": "global-agent-skills",
-      "sourceRootPath": "~/.agents/skills",
-      "target": "/Users/amichne/code/examplar/common/skills/design-an-interface"
-    },
-    {
-      "observedPath": "/Users/amichne/.agents/skills/karpathy-guidelines",
-      "path": "karpathy-guidelines",
-      "sourceRoot": "global-agent-skills",
-      "sourceRootPath": "~/.agents/skills",
-      "target": "/Users/amichne/code/examplar/common/skills/karpathy-guidelines"
-    },
-    {
-      "observedPath": "/Users/amichne/.agents/skills/kast",
-      "path": "kast",
-      "sourceRoot": "global-agent-skills",
-      "sourceRootPath": "~/.agents/skills",
-      "target": "/Users/amichne/.kast/lib/skills/kast"
-    },
-    {
-      "observedPath": "/Users/amichne/.codex/backups/find-skills",
-      "path": "find-skills",
-      "sourceRoot": "global-codex-backups",
-      "sourceRootPath": "~/.codex/backups",
-      "target": "../../.agents/skills/find-skills"
-    },
-    {
-      "observedPath": "/Users/amichne/.codex/skills.backup/arch-review",
-      "path": "arch-review",
-      "sourceRoot": "global-codex-skills-backup",
-      "sourceRootPath": "~/.codex/skills.backup",
-      "target": "/Users/amichne/code/apollo/skills/arch-review"
-    },
-    {
-      "observedPath": "/Users/amichne/.codex/skills.backup/documentation",
-      "path": "documentation",
-      "sourceRoot": "global-codex-skills-backup",
-      "sourceRootPath": "~/.codex/skills.backup",
-      "target": "/Users/amichne/code/examplar/common/skills/documentation"
-    },
-    {
-      "observedPath": "/Users/amichne/.codex/skills.backup/segment-codebase-agents-md",
-      "path": "segment-codebase-agents-md",
-      "sourceRoot": "global-codex-skills-backup",
-      "sourceRootPath": "~/.codex/skills.backup",
-      "target": "/Users/amichne/code/examplar/common/skills/segment-codebase-agents-md"
-    },
-    {
-      "observedPath": "/Users/amichne/.codex/skills.backup/tdd",
-      "path": "tdd",
-      "sourceRoot": "global-codex-skills-backup",
-      "sourceRootPath": "~/.codex/skills.backup",
-      "target": "/Users/amichne/code/examplar/common/skills/tdd"
-    },
-    {
-      "observedPath": "/Users/amichne/.codex/skills.backup/yeet",
-      "path": "yeet",
-      "sourceRoot": "global-codex-skills-backup",
-      "sourceRootPath": "~/.codex/skills.backup",
-      "target": "/Users/amichne/code/examplar/common/skills/yeet"
-    }
-  ],
+  "brokenSymlinks": [],
   "counts": {
-    "AGENT": 301,
-    "HOOK": 38,
-    "INSTRUCTION": 11,
-    "PLUGIN": 142,
-    "SKILL": 314
+    "AGENT": 299,
+    "HOOK": 41,
+    "INSTRUCTION": 13,
+    "PLUGIN": 144,
+    "SKILL": 370
   },
   "digestDuplicates": [
     {
@@ -737,25 +645,6 @@
     {
       "entries": [
         {
-          "name": "yeet",
-          "path": "yeet",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "yeet",
-          "path": "yeet",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "sha256": "sha256:5892fe0117b49ea1832157035bf4cd6615208d0929b1f2fa28a8e2256e868fcf"
-    },
-    {
-      "entries": [
-        {
           "name": "tdd-orchestrator",
           "path": "marketplaces/claude-code-workflows/plugins/backend-development/agents/tdd-orchestrator.md",
           "resolvedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/backend-development/agents/tdd-orchestrator.md",
@@ -970,25 +859,6 @@
         }
       ],
       "sha256": "sha256:6ebc614e48dd994a4fe2aa1a3f2b5ab413ffd2b3c22f81c66cacd23f9c92919e"
-    },
-    {
-      "entries": [
-        {
-          "name": "openai",
-          "path": "yeet/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
-          "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "yeet/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
-          "sourceRoot": "global-codex-skills",
-          "type": "AGENT"
-        }
-      ],
-      "sha256": "sha256:6f0a463b53232932ad70aec529e25fad9d54312de0bd29d64a38bb14a4e748de"
     },
     {
       "entries": [
@@ -1340,25 +1210,6 @@
       "entries": [
         {
           "name": "openai",
-          "path": "segment-codebase-agents-md/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-          "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "segment-codebase-agents-md/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-          "sourceRoot": "global-codex-skills",
-          "type": "AGENT"
-        }
-      ],
-      "sha256": "sha256:96e60e84b8210c74a26762f66073519f516da8d346bd0b535d1ca170c1a29f0d"
-    },
-    {
-      "entries": [
-        {
-          "name": "openai",
           "path": ".system/imagegen/agents/openai.yaml",
           "resolvedPath": "/Users/amichne/code/apollo/skills/.system/imagegen/agents/openai.yaml",
           "sourceRoot": "apollo-skills",
@@ -1392,25 +1243,6 @@
         }
       ],
       "sha256": "sha256:9cd2fbbdaf32dbec0befeb0040a5b088aa1695d49c7f536a0f00df2fcda70a84"
-    },
-    {
-      "entries": [
-        {
-          "name": "openai",
-          "path": "define-goal/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-          "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "define-goal/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-          "sourceRoot": "global-codex-skills",
-          "type": "AGENT"
-        }
-      ],
-      "sha256": "sha256:9d870a5d594130261173d7a4bd3fd9221a71eff34c347a7c782da5046fd23cb9"
     },
     {
       "entries": [
@@ -1468,25 +1300,6 @@
         }
       ],
       "sha256": "sha256:a7df173bf77a00da5584c6401a1061524fdbe477b6fef5dd496d4c7a9113c78c"
-    },
-    {
-      "entries": [
-        {
-          "name": "kotlin-standards",
-          "path": "kotlin-standards",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-standards",
-          "path": "kotlin-standards",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "sha256": "sha256:a93c1a3a9379a8d154c28f625eb8eb66c59bfb31e7407b9f6c34bb5fa4a6f3d8"
     },
     {
       "entries": [
@@ -1584,44 +1397,6 @@
         }
       ],
       "sha256": "sha256:bffc54da55c58ff5988fa652e2fe56235283da743dfcdda8548ccb0e39f3e313"
-    },
-    {
-      "entries": [
-        {
-          "name": "segment-codebase-agents-md",
-          "path": "segment-codebase-agents-md",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "segment-codebase-agents-md",
-          "path": "segment-codebase-agents-md",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "sha256": "sha256:c0c6aea845e03bead9593879d44db6628ed9da7f9b77aba706e2ad0f2459e475"
-    },
-    {
-      "entries": [
-        {
-          "name": "kotlin-gradle-loop",
-          "path": "kotlin-gradle-loop",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-gradle-loop",
-          "path": "kotlin-gradle-loop",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "sha256": "sha256:c16057f6fd84c37cc1474c821e28717dcf263d288e6272941b80833f8086dd03"
     },
     {
       "entries": [
@@ -1851,25 +1626,6 @@
     {
       "entries": [
         {
-          "name": "define-goal",
-          "path": "define-goal",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "define-goal",
-          "path": "define-goal",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "sha256": "sha256:e988680dcf9a18be5e5b0891b959a76d3e3889f0c1b56620f50e4c00306dc169"
-    },
-    {
-      "entries": [
-        {
           "name": "openai-docs",
           "path": ".system/openai-docs",
           "resolvedPath": "/Users/amichne/.agents/skills/.system/openai-docs/SKILL.md",
@@ -2089,32 +1845,6 @@
         }
       ],
       "sha256": "sha256:f95d3b27036a6e8460609415d19d44306f4486accb786139b1c90de4ef7e17cf"
-    },
-    {
-      "entries": [
-        {
-          "name": "doc-coauthoring",
-          "path": "doc-coauthoring",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "doc-coauthoring",
-          "path": "marketplaces/anthropic-agent-skills/skills/doc-coauthoring",
-          "resolvedPath": "/Users/amichne/.claude/plugins/marketplaces/anthropic-agent-skills/skills/doc-coauthoring/SKILL.md",
-          "sourceRoot": "claude-plugins",
-          "type": "SKILL"
-        },
-        {
-          "name": "doc-coauthoring",
-          "path": "doc-coauthoring",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "sha256": "sha256:fd8325cb199c45d53792e9fbc144d72832900c77aa31bc3b781099d5cbe81266"
     },
     {
       "entries": [
@@ -3073,7 +2803,7 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
       "path": "kast/references/commands.json",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
-      "sha256": "sha256:1eefe3bbd8e789e82df2db2ecc962d77f7ec1cd6378e6b19591a1d769f217f60",
+      "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -4273,16 +4003,32 @@
     },
     {
       "description": "Use this review agent after Kotlin changes to public APIs, adapters, CLI commands, serialization, persistence, HTTP, messaging, or interop boundaries. It enforces parse-don't-validate and explicit boundary failures.",
+      "entryFile": "kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "name": "kotlin-boundary-contract-reviewer",
+      "observedPath": "/Users/amichne/.claude/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "path": "kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
+      "sourceRoot": "claude-agents",
+      "sourceRootPath": "~/.claude/agents",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Kotlin Boundary Contract Reviewer",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this review agent after Kotlin changes to public APIs, adapters, CLI commands, serialization, persistence, HTTP, messaging, or interop boundaries. It enforces parse-don't-validate and explicit boundary failures.",
       "entryFile": "kotlin-boundary-contract-reviewer.agent.md",
       "name": "kotlin-boundary-contract-reviewer",
       "observedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
       "path": "kotlin-boundary-contract-reviewer.agent.md",
-      "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
-      "sha256": "sha256:47428c1826d5ed716bb2bda9457f9eee78fb22183ddbf2626a53c8478e347a60",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
       "title": "Kotlin Boundary Contract Reviewer",
       "type": "AGENT"
     },
@@ -4302,17 +4048,33 @@
       "type": "AGENT"
     },
     {
-      "description": "Use this review agent after Kotlin code changes when you need to prevent flat packages, prefix-heavy directories, multi-member files, or horizontal layer buckets. It reviews package/file layout and proposes subpackage boundaries using measurable heuristics.",
+      "description": "Use this review agent after Kotlin code changes when you need to prevent flat packages, prefix-heavy directories, multi-member files, or horizontal layer buckets. It reviews package and file layout and proposes subpackage boundaries using measurable heuristics.",
+      "entryFile": "kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "name": "kotlin-package-cohesion-reviewer",
+      "observedPath": "/Users/amichne/.claude/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "path": "kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
+      "sourceRoot": "claude-agents",
+      "sourceRootPath": "~/.claude/agents",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Kotlin Package Cohesion Reviewer",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this review agent after Kotlin code changes when you need to prevent flat packages, prefix-heavy directories, multi-member files, or horizontal layer buckets. It reviews package and file layout and proposes subpackage boundaries using measurable heuristics.",
       "entryFile": "kotlin-package-cohesion-reviewer.agent.md",
       "name": "kotlin-package-cohesion-reviewer",
       "observedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
       "path": "kotlin-package-cohesion-reviewer.agent.md",
-      "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
-      "sha256": "sha256:a9383c5b37ccbb5f8d560c71b7e6fd6d906f3ff347d12e58c759cd6dd4879f07",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
       "title": "Kotlin Package Cohesion Reviewer",
       "type": "AGENT"
     },
@@ -4332,17 +4094,33 @@
       "type": "AGENT"
     },
     {
-      "description": "Use this agent at the end of a Kotlin coding turn to coordinate focused review. It routes changed Kotlin work to type-safety and package-cohesion review, then returns a single prioritized finding list.",
+      "description": "Use this agent at the end of a Kotlin coding turn to coordinate focused review. It routes changed Kotlin work to type-safety, boundary-contract, and package-cohesion review, then returns one prioritized finding list.",
+      "entryFile": "kotlin-review/kotlin-review-captain.agent.md",
+      "name": "kotlin-review-captain",
+      "observedPath": "/Users/amichne/.claude/agents/kotlin-review/kotlin-review-captain.agent.md",
+      "path": "kotlin-review/kotlin-review-captain.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+      "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
+      "sourceRoot": "claude-agents",
+      "sourceRootPath": "~/.claude/agents",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Kotlin Review Captain",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this agent at the end of a Kotlin coding turn to coordinate focused review. It routes changed Kotlin work to type-safety, boundary-contract, and package-cohesion review, then returns one prioritized finding list.",
       "entryFile": "kotlin-review-captain.agent.md",
       "name": "kotlin-review-captain",
       "observedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
       "path": "kotlin-review-captain.agent.md",
-      "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
-      "sha256": "sha256:b1092a1c89e766b106b27ebff911376c9b3610e6ebbaa7a00725bb51b19fd712",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+      "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
       "title": "Kotlin Review Captain",
       "type": "AGENT"
     },
@@ -4362,17 +4140,33 @@
       "type": "AGENT"
     },
     {
-      "description": "Use this review agent after Kotlin code changes when you need a focused type-safety audit. It reviews changed Kotlin APIs, domain models, parser boundaries, nullable state, primitive strings/ids, expected failures, and visibility choices. It does not implement broad refactors unless explicitly asked.",
+      "description": "Use this review agent after Kotlin code changes when you need a focused type-safety audit. It reviews changed Kotlin APIs, domain models, parser boundaries, nullable state, primitive strings or ids, expected failures, and visibility choices.",
+      "entryFile": "kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "name": "kotlin-type-safety-reviewer",
+      "observedPath": "/Users/amichne/.claude/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "path": "kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
+      "sourceRoot": "claude-agents",
+      "sourceRootPath": "~/.claude/agents",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Kotlin Type Safety Reviewer",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this review agent after Kotlin code changes when you need a focused type-safety audit. It reviews changed Kotlin APIs, domain models, parser boundaries, nullable state, primitive strings or ids, expected failures, and visibility choices.",
       "entryFile": "kotlin-type-safety-reviewer.agent.md",
       "name": "kotlin-type-safety-reviewer",
       "observedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
       "path": "kotlin-type-safety-reviewer.agent.md",
-      "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
-      "sha256": "sha256:d902b3c5b6c94bd89c1aa3e9ce4ad48041336dfe33b3c3362be1f0c62c95d948",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
       "title": "Kotlin Type Safety Reviewer",
       "type": "AGENT"
     },
@@ -4779,19 +4573,6 @@
       "type": "AGENT"
     },
     {
-      "entryFile": "define-goal/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-      "path": "define-goal/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-      "sha256": "sha256:9d870a5d594130261173d7a4bd3fd9221a71eff34c347a7c782da5046fd23cb9",
-      "sourceRoot": "apollo-skills",
-      "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "type": "AGENT"
-    },
-    {
       "entryFile": "jira-resolve-ticket/agents/openai.yaml",
       "name": "openai",
       "observedPath": "/Users/amichne/code/apollo/skills/jira-resolve-ticket/agents/openai.yaml",
@@ -4800,45 +4581,6 @@
       "sha256": "sha256:03f8f25b25be6267c15f42a87c15caf54fe0863d40ebf90104c4a44e93a1864c",
       "sourceRoot": "apollo-skills",
       "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "type": "AGENT"
-    },
-    {
-      "entryFile": "segment-codebase-agents-md/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-      "path": "segment-codebase-agents-md/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-      "sha256": "sha256:96e60e84b8210c74a26762f66073519f516da8d346bd0b535d1ca170c1a29f0d",
-      "sourceRoot": "apollo-skills",
-      "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "type": "AGENT"
-    },
-    {
-      "entryFile": "yeet/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
-      "path": "yeet/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
-      "sha256": "sha256:6f0a463b53232932ad70aec529e25fad9d54312de0bd29d64a38bb14a4e748de",
-      "sourceRoot": "apollo-skills",
-      "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "type": "AGENT"
-    },
-    {
-      "entryFile": "manage-json-schemas/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/agents/openai.yaml",
-      "path": "manage-json-schemas/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/agents/openai.yaml",
-      "sha256": "sha256:67ea5df4fa9d83b0e2d6db9c787290dcc6aeb118daa5a0e9eb207922b5b9da3c",
-      "sourceRoot": "examplar-skills",
-      "sourceRootPath": "../examplar/skills",
       "sourceRootRole": "local-repo-source",
       "symlink": false,
       "type": "AGENT"
@@ -4961,51 +4703,12 @@
       "type": "AGENT"
     },
     {
-      "entryFile": "define-goal/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/.codex/skills/define-goal/agents/openai.yaml",
-      "path": "define-goal/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-      "sha256": "sha256:9d870a5d594130261173d7a4bd3fd9221a71eff34c347a7c782da5046fd23cb9",
-      "sourceRoot": "global-codex-skills",
-      "sourceRootPath": "~/.codex/skills",
-      "sourceRootRole": "runtime-source",
-      "symlink": true,
-      "type": "AGENT"
-    },
-    {
       "entryFile": "jira-resolve-ticket/agents/openai.yaml",
       "name": "openai",
       "observedPath": "/Users/amichne/.codex/skills/jira-resolve-ticket/agents/openai.yaml",
       "path": "jira-resolve-ticket/agents/openai.yaml",
       "resolvedPath": "/Users/amichne/code/apollo/skills/jira-resolve-ticket/agents/openai.yaml",
       "sha256": "sha256:03f8f25b25be6267c15f42a87c15caf54fe0863d40ebf90104c4a44e93a1864c",
-      "sourceRoot": "global-codex-skills",
-      "sourceRootPath": "~/.codex/skills",
-      "sourceRootRole": "runtime-source",
-      "symlink": true,
-      "type": "AGENT"
-    },
-    {
-      "entryFile": "segment-codebase-agents-md/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/.codex/skills/segment-codebase-agents-md/agents/openai.yaml",
-      "path": "segment-codebase-agents-md/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-      "sha256": "sha256:96e60e84b8210c74a26762f66073519f516da8d346bd0b535d1ca170c1a29f0d",
-      "sourceRoot": "global-codex-skills",
-      "sourceRootPath": "~/.codex/skills",
-      "sourceRootRole": "runtime-source",
-      "symlink": true,
-      "type": "AGENT"
-    },
-    {
-      "entryFile": "yeet/agents/openai.yaml",
-      "name": "openai",
-      "observedPath": "/Users/amichne/.codex/skills/yeet/agents/openai.yaml",
-      "path": "yeet/agents/openai.yaml",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
-      "sha256": "sha256:6f0a463b53232932ad70aec529e25fad9d54312de0bd29d64a38bb14a4e748de",
       "sourceRoot": "global-codex-skills",
       "sourceRootPath": "~/.codex/skills",
       "sourceRootRole": "runtime-source",
@@ -5525,17 +5228,34 @@
       "type": "AGENT"
     },
     {
-      "description": "Use this review agent after changes to schemas, API contracts, serialized payloads, configuration formats, persistence records, generated models, or code that transforms boundary data into internal types. It enforces schema-driven design at boundaries and type-driven design inside the program.",
+      "description": "Use this review agent after changes to schemas, API contracts, serialized payloads, configuration formats, persistence records, generated models, or code that transforms boundary data into internal types.",
+      "entryFile": "schema-type-enforcer.agent.md",
+      "name": "schema-type-enforcer",
+      "observedPath": "/Users/amichne/.claude/agents/schema-type-enforcer.agent.md",
+      "path": "schema-type-enforcer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+      "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+      "sourceRoot": "claude-agents",
+      "sourceRootPath": "~/.claude/agents",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+      "title": "Schema Type Enforcer",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this review agent after changes to schemas, API contracts, serialized payloads, configuration formats, persistence records, generated models, or code that transforms boundary data into internal types.",
       "entryFile": "schema-type-enforcer.agent.md",
       "name": "schema-type-enforcer",
       "observedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
       "path": "schema-type-enforcer.agent.md",
-      "resolvedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
-      "sha256": "sha256:7d9b375234bfb426feabd6bfce62ae3cd0ed60de7985198cc3e45c9ba78efea6",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+      "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
       "title": "Schema Type Enforcer",
       "type": "AGENT"
     },
@@ -6622,12 +6342,13 @@
       "name": "kotlin-horizontalization-check",
       "observedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
       "path": "copilot/kotlin-horizontalization-check.py",
-      "resolvedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
-      "sha256": "sha256:7d40494fc877f233f7a45e92550ba34a28fe6fd7684fcd935c22a4a5f4e45836",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+      "sha256": "sha256:fccb8b56894574d55d7f170e027d861a00733f65c957f2236b631f2f18e7c478",
       "sourceRoot": "examplar-hooks",
       "sourceRootPath": "../examplar/hooks",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
       "type": "HOOK"
     },
     {
@@ -6744,6 +6465,45 @@
       "sourceRoot": "kast-github-hooks",
       "sourceRootPath": "../kast/.github/hooks",
       "sourceRootRole": "local-repo-source",
+      "symlink": false,
+      "type": "HOOK"
+    },
+    {
+      "entryFile": "hooks/codex/required-skill-read.hooks.json",
+      "name": "required-skill-read",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/codex/required-skill-read.hooks.json",
+      "path": "hooks/codex/required-skill-read.hooks.json",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/required-skill-read.hooks.json",
+      "sha256": "sha256:19091b15a9c0808d815885c0dc5682e26aa8bf8b28ac9201063e11e60128867d",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "HOOK"
+    },
+    {
+      "entryFile": "hooks/required-skill-read.hook.json",
+      "name": "required-skill-read",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/required-skill-read.hook.json",
+      "path": "hooks/required-skill-read.hook.json",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/required-skill-read.hook.json",
+      "sha256": "sha256:a910dbd91c0d21263deb49a78ab890a928e3bb724c152eea357c3aa853956cdd",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "HOOK"
+    },
+    {
+      "entryFile": "hooks/required-skill-read.py",
+      "name": "required-skill-read",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/required-skill-read.py",
+      "path": "hooks/required-skill-read.py",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/required-skill-read.py",
+      "sha256": "sha256:f6a379058814e323e82becf0463106926d4cfdea39ae262d7f8d725408704811",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "type": "HOOK"
     },
@@ -6878,6 +6638,21 @@
       "type": "HOOK"
     },
     {
+      "entryFile": "AGENTS.md",
+      "name": "agents-agents-instructions",
+      "observedPath": "/Users/amichne/.claude/agents/AGENTS.md",
+      "path": "AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/AGENTS.md",
+      "sha256": "sha256:162cd0729d1c4b9b8ff9b2c28069277b1672a6622b0421fa5fc9c83a5f5231c8",
+      "sourceRoot": "claude-agents",
+      "sourceRootPath": "~/.claude/agents",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/agents/AGENTS.md",
+      "title": "Agent Primitive Instructions",
+      "type": "INSTRUCTION"
+    },
+    {
       "entryFile": "agents/AGENTS.md",
       "name": "agents-agents-instructions",
       "observedPath": "/Users/amichne/code/intelligence/agents/AGENTS.md",
@@ -6953,7 +6728,7 @@
       "observedPath": "/Users/amichne/code/intelligence/AGENTS.md",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:c69530995622f5946e9ac9f78a6bf569988ac386c4d9288dff0055643ae9f83a",
+      "sha256": "sha256:5d25d7e6573bfe0f56bfcde6b49498bbfebc98d493e1fe0fdbd4584a2dc7eae9",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -6966,12 +6741,13 @@
       "name": "schema-driven-design",
       "observedPath": "/Users/amichne/code/examplar/instructions/schema-driven-design.md",
       "path": "schema-driven-design.md",
-      "resolvedPath": "/Users/amichne/code/examplar/instructions/schema-driven-design.md",
-      "sha256": "sha256:6e8049024c7fd7bc24d8a04d19ab45a8a7a41f63045529074e1b1f9cf7aca975",
+      "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
+      "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
       "sourceRoot": "examplar-instructions",
       "sourceRootPath": "../examplar/instructions",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
       "title": "Schema-Driven Design Standard",
       "type": "INSTRUCTION"
     },
@@ -6987,6 +6763,20 @@
       "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Schema-Driven Design Standard",
+      "type": "INSTRUCTION"
+    },
+    {
+      "entryFile": "schemas/AGENTS.md",
+      "name": "schemas-agents-instructions",
+      "observedPath": "/Users/amichne/code/intelligence/schemas/AGENTS.md",
+      "path": "schemas/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/schemas/AGENTS.md",
+      "sha256": "sha256:c730c8c59feb9fb5f7e8109a7fc70beb0215cac5630ecfd9a7adf8ce9d114968",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Schema Instructions",
       "type": "INSTRUCTION"
     },
     {
@@ -7008,12 +6798,13 @@
       "name": "type-safety",
       "observedPath": "/Users/amichne/code/examplar/instructions/type-safety.md",
       "path": "type-safety.md",
-      "resolvedPath": "/Users/amichne/code/examplar/instructions/type-safety.md",
-      "sha256": "sha256:e691dc8fc80c8e5b92b44988ca72a5a4a45d79633be080a9aa0ca4b95b13d906",
+      "resolvedPath": "/Users/amichne/code/intelligence/concepts/type-safety/core.md",
+      "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
       "sourceRoot": "examplar-instructions",
       "sourceRootPath": "../examplar/instructions",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
+      "symlinkTarget": "/Users/amichne/code/intelligence/concepts/type-safety/core.md",
       "title": "Type-Driven Design Standard",
       "type": "INSTRUCTION"
     },
@@ -7791,7 +7582,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/documentation-workflow/plugin.json",
       "path": "plugins/documentation-workflow",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/documentation-workflow/plugin.json",
-      "sha256": "sha256:2248b654eef58a50b446b98c80107aa69c73c64d00ff76b96a44d37a75e27d39",
+      "sha256": "sha256:340a0675c2f10551ef18a0df374598d3af1e765e8d621ce98dc58a67b3672fb7",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8155,7 +7946,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/intelligence-core/plugin.json",
       "path": "plugins/intelligence-core",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/intelligence-core/plugin.json",
-      "sha256": "sha256:6b4db786742cadb1fa62ef15e8ed9d4edfe7d7e9832caba4daec70cc382e31ca",
+      "sha256": "sha256:8106582aa13657b51acdc8ed832cc55e5530ac858e69e246bcf12377c485aa27",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8233,7 +8024,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/kotlin-review/plugin.json",
       "path": "plugins/kotlin-review",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/kotlin-review/plugin.json",
-      "sha256": "sha256:5e752560b1c45846c905712eba39d407410c0e9d5197e2f2f2f60cc6c79b59b1",
+      "sha256": "sha256:14994c0fc09a7137f90fa643dc92b50ff9c05ee7ab94e64173b0a1f76030a3be",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8415,7 +8206,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/planning-and-docs/plugin.json",
       "path": "plugins/planning-and-docs",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/planning-and-docs/plugin.json",
-      "sha256": "sha256:ce1682eaa1743e21414b091e3635245be8fc243e7e117ea30c9fd30f67b61960",
+      "sha256": "sha256:1bdad182b1eedd642ef1c37f99917d859ba435f4f9d467b7cf4f264e47e46292",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8506,7 +8297,20 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
       "path": "plugins/primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
-      "sha256": "sha256:7409599517757291f79430bf220de5722e719466b202d90b3bcade463b860897",
+      "sha256": "sha256:6ea24891883a1e2190143997c2447fd3b4c801d32ecaf39eea93d11bbc2596f0",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
+      "entryFile": "plugins/primitive-governance/plugin.json",
+      "name": "primitive-governance",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/primitive-governance/plugin.json",
+      "path": "plugins/primitive-governance",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/primitive-governance/plugin.json",
+      "sha256": "sha256:bc14d8ec02222fd9e06728ee2a06be6624fa8d9b84ab3526a513be75f6fb6cc0",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8571,7 +8375,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/repository-orientation/plugin.json",
       "path": "plugins/repository-orientation",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/repository-orientation/plugin.json",
-      "sha256": "sha256:43aaef1eb937fc681bb42d5393ead13fc245e8dfad0b85c1d0e53851015aedc3",
+      "sha256": "sha256:023c2c39267f8e4cf5d6e1a595c5a0fc4089259582a37328094de2fb1ac8eebc",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8592,12 +8396,25 @@
       "type": "PLUGIN"
     },
     {
+      "entryFile": "plugins/runtime-activation/plugin.json",
+      "name": "runtime-activation",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/runtime-activation/plugin.json",
+      "path": "plugins/runtime-activation",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/runtime-activation/plugin.json",
+      "sha256": "sha256:776e1bf3e73e2b156b1d87ffbb009c096bd4cb8cdaa770cc69f8fa5291052fb2",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
       "entryFile": "plugins/schema-governance/plugin.json",
       "name": "schema-governance",
       "observedPath": "/Users/amichne/code/intelligence/plugins/schema-governance/plugin.json",
       "path": "plugins/schema-governance",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/schema-governance/plugin.json",
-      "sha256": "sha256:125783c411bdcd0cc8a82ee17b370a0c60d080dd2145ee8d9c17a6615b15b698",
+      "sha256": "sha256:38240d2dad20123b1774038c12377a82411d745cdd8b806ca07387157f95b720",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8766,7 +8583,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/tdd-workflow/plugin.json",
       "path": "plugins/tdd-workflow",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/tdd-workflow/plugin.json",
-      "sha256": "sha256:4887455d72a494d32bd174a86cd26a5d5f08660800bfb1b23c11fdf25e292193",
+      "sha256": "sha256:0df4671817136685c732f1a7c0ccaee48ebe51eac6bdac4ad41ef026e3b4045c",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8857,7 +8674,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/version-control/plugin.json",
       "path": "plugins/version-control",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/version-control/plugin.json",
-      "sha256": "sha256:240da3cdf5e0bf6cb2d17dfd1bef307b07765873e00ef86efe251fc5b67e3e9c",
+      "sha256": "sha256:1e8511d65c6f2dd1b6e2190ae445fe2c6d90e3504077c435b6a67b6ff89ef520",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -9016,6 +8833,69 @@
       "sourceRootRole": "local-repo-source",
       "symlink": false,
       "title": "Agent Development for Claude Code Plugins",
+      "type": "SKILL"
+    },
+    {
+      "description": "Design, revise, or consolidate agent profiles that are independent of plugins. Use when creating specialist agents, writing agent markdown/frontmatter, defining trigger conditions and examples, shaping system prompts, limiting tools, or validating that an agent profile is clear enough to delegate work safely.",
+      "entryFile": "agent-profile-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/system-prompt-structure.md",
+        "references/trigger-design.md",
+        "references/validation.md"
+      ],
+      "name": "agent-profile-authoring",
+      "observedPath": "/Users/amichne/code/apollo/skills/agent-profile-authoring/SKILL.md",
+      "path": "agent-profile-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring/SKILL.md",
+      "sha256": "sha256:f7789cf6996c66a8ae0d09857c127c597bbeabaa5805be3d90b481374726c4f9",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Agent Profile Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Design, revise, or consolidate agent profiles that are independent of plugins. Use when creating specialist agents, writing agent markdown/frontmatter, defining trigger conditions and examples, shaping system prompts, limiting tools, or validating that an agent profile is clear enough to delegate work safely.",
+      "entryFile": "agent-profile-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/system-prompt-structure.md",
+        "references/trigger-design.md",
+        "references/validation.md"
+      ],
+      "name": "agent-profile-authoring",
+      "observedPath": "/Users/amichne/.agents/skills/agent-profile-authoring/SKILL.md",
+      "path": "agent-profile-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring/SKILL.md",
+      "sha256": "sha256:f7789cf6996c66a8ae0d09857c127c597bbeabaa5805be3d90b481374726c4f9",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Agent Profile Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Design, revise, or consolidate agent profiles that are independent of plugins. Use when creating specialist agents, writing agent markdown/frontmatter, defining trigger conditions and examples, shaping system prompts, limiting tools, or validating that an agent profile is clear enough to delegate work safely.",
+      "entryFile": "agent-profile-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/system-prompt-structure.md",
+        "references/trigger-design.md",
+        "references/validation.md"
+      ],
+      "name": "agent-profile-authoring",
+      "observedPath": "/Users/amichne/.codex/skills/agent-profile-authoring/SKILL.md",
+      "path": "agent-profile-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/agent-profile-authoring/SKILL.md",
+      "sha256": "sha256:f7789cf6996c66a8ae0d09857c127c597bbeabaa5805be3d90b481374726c4f9",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Agent Profile Authoring",
       "type": "SKILL"
     },
     {
@@ -10264,19 +10144,17 @@
       "description": "Help the user define a concrete, measurable goal before starting work, especially when they ask to use the goal tool, create a goal, set an objective, clarify success criteria, or turn a fuzzy intention into a quantitative outcome. Use this skill for goal creation and goal refinement only; it does not manage durable snapshots, decision logs, or long-running execution artifacts.",
       "entryFile": "define-goal/SKILL.md",
       "expectedResources": [
-        "LICENSE.txt",
-        "SKILL.md",
-        "agents/openai.yaml"
+        "SKILL.md"
       ],
       "name": "define-goal",
       "observedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
       "path": "define-goal",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
-      "sha256": "sha256:e988680dcf9a18be5e5b0891b959a76d3e3889f0c1b56620f50e4c00306dc169",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
+      "sha256": "sha256:a3506ae804172344e1a60829f72fc6acac12fd6205445e70824874f861e56c5e",
       "sourceRoot": "apollo-skills",
       "sourceRootPath": "../apollo/skills",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
       "title": "Define Goal",
       "type": "SKILL"
     },
@@ -10284,15 +10162,31 @@
       "description": "Help the user define a concrete, measurable goal before starting work, especially when they ask to use the goal tool, create a goal, set an objective, clarify success criteria, or turn a fuzzy intention into a quantitative outcome. Use this skill for goal creation and goal refinement only; it does not manage durable snapshots, decision logs, or long-running execution artifacts.",
       "entryFile": "define-goal/SKILL.md",
       "expectedResources": [
-        "LICENSE.txt",
-        "SKILL.md",
-        "agents/openai.yaml"
+        "SKILL.md"
+      ],
+      "name": "define-goal",
+      "observedPath": "/Users/amichne/.agents/skills/define-goal/SKILL.md",
+      "path": "define-goal",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
+      "sha256": "sha256:a3506ae804172344e1a60829f72fc6acac12fd6205445e70824874f861e56c5e",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Define Goal",
+      "type": "SKILL"
+    },
+    {
+      "description": "Help the user define a concrete, measurable goal before starting work, especially when they ask to use the goal tool, create a goal, set an objective, clarify success criteria, or turn a fuzzy intention into a quantitative outcome. Use this skill for goal creation and goal refinement only; it does not manage durable snapshots, decision logs, or long-running execution artifacts.",
+      "entryFile": "define-goal/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
       ],
       "name": "define-goal",
       "observedPath": "/Users/amichne/.codex/skills/define-goal/SKILL.md",
       "path": "define-goal",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
-      "sha256": "sha256:e988680dcf9a18be5e5b0891b959a76d3e3889f0c1b56620f50e4c00306dc169",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
+      "sha256": "sha256:a3506ae804172344e1a60829f72fc6acac12fd6205445e70824874f861e56c5e",
       "sourceRoot": "global-codex-skills",
       "sourceRootPath": "~/.codex/skills",
       "sourceRootRole": "runtime-source",
@@ -10448,24 +10342,6 @@
     },
     {
       "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.",
-      "entryFile": "doc-coauthoring/SKILL.md",
-      "expectedResources": [
-        "SKILL.md"
-      ],
-      "name": "doc-coauthoring",
-      "observedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-      "path": "doc-coauthoring",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-      "sha256": "sha256:fd8325cb199c45d53792e9fbc144d72832900c77aa31bc3b781099d5cbe81266",
-      "sourceRoot": "apollo-skills",
-      "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "title": "Doc Co-Authoring Workflow",
-      "type": "SKILL"
-    },
-    {
-      "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.",
       "entryFile": "marketplaces/anthropic-agent-skills/skills/doc-coauthoring/SKILL.md",
       "expectedResources": [
         "SKILL.md"
@@ -10479,24 +10355,6 @@
       "sourceRootPath": "~/.claude/plugins",
       "sourceRootRole": "runtime-source",
       "symlink": false,
-      "title": "Doc Co-Authoring Workflow",
-      "type": "SKILL"
-    },
-    {
-      "description": "Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, technical specs, decision docs, or similar structured content. This workflow helps users efficiently transfer context, refine content through iteration, and verify the doc works for readers. Trigger when user mentions writing docs, creating proposals, drafting specs, or similar documentation tasks.",
-      "entryFile": "doc-coauthoring/SKILL.md",
-      "expectedResources": [
-        "SKILL.md"
-      ],
-      "name": "doc-coauthoring",
-      "observedPath": "/Users/amichne/.codex/skills/doc-coauthoring/SKILL.md",
-      "path": "doc-coauthoring",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-      "sha256": "sha256:fd8325cb199c45d53792e9fbc144d72832900c77aa31bc3b781099d5cbe81266",
-      "sourceRoot": "global-codex-skills",
-      "sourceRootPath": "~/.codex/skills",
-      "sourceRootRole": "runtime-source",
-      "symlink": true,
       "title": "Doc Co-Authoring Workflow",
       "type": "SKILL"
     },
@@ -10951,6 +10809,66 @@
     },
     {
       "description": "Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved.",
+      "entryFile": "git-change-flow/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/branch-and-commit.md",
+        "references/recovery.md"
+      ],
+      "name": "git-change-flow",
+      "observedPath": "/Users/amichne/code/apollo/skills/git-change-flow/SKILL.md",
+      "path": "git-change-flow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
+      "sha256": "sha256:5a79fdf144c0a7986090ea2e82748e6cb30d0be411f5ab3a7ff77457adb13782",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Git Change Flow",
+      "type": "SKILL"
+    },
+    {
+      "description": "Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved.",
+      "entryFile": "git-change-flow/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/branch-and-commit.md",
+        "references/recovery.md"
+      ],
+      "name": "git-change-flow",
+      "observedPath": "/Users/amichne/.agents/skills/git-change-flow/SKILL.md",
+      "path": "git-change-flow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
+      "sha256": "sha256:5a79fdf144c0a7986090ea2e82748e6cb30d0be411f5ab3a7ff77457adb13782",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Git Change Flow",
+      "type": "SKILL"
+    },
+    {
+      "description": "Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved.",
+      "entryFile": "git-change-flow/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/branch-and-commit.md",
+        "references/recovery.md"
+      ],
+      "name": "git-change-flow",
+      "observedPath": "/Users/amichne/.codex/skills/git-change-flow/SKILL.md",
+      "path": "git-change-flow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
+      "sha256": "sha256:5a79fdf144c0a7986090ea2e82748e6cb30d0be411f5ab3a7ff77457adb13782",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Git Change Flow",
+      "type": "SKILL"
+    },
+    {
+      "description": "Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved.",
       "entryFile": "skills/git-change-flow/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -10961,7 +10879,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
       "path": "skills/git-change-flow",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/git-change-flow/SKILL.md",
-      "sha256": "sha256:b08c9ea72c1dd62e7269546de3372e9fe902274080ae97c0e2ebc869242dd646",
+      "sha256": "sha256:5a79fdf144c0a7986090ea2e82748e6cb30d0be411f5ab3a7ff77457adb13782",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -11025,6 +10943,69 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "GitHub Actions Templates",
+      "type": "SKILL"
+    },
+    {
+      "description": "Triage and fix GitHub Actions failures, maintain GitHub workflow files, inspect PR checks with gh, design CI jobs, and handle release-oriented GitHub automation. Use for GitHub CI, Actions YAML, failing PR checks, workflow dispatch, caches, artifacts, secrets, permissions, and release pipelines.",
+      "entryFile": "github-ci-operations/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/actions-workflows.md",
+        "references/ci-failure-triage.md",
+        "references/release-flow.md"
+      ],
+      "name": "github-ci-operations",
+      "observedPath": "/Users/amichne/code/apollo/skills/github-ci-operations/SKILL.md",
+      "path": "github-ci-operations",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/github-ci-operations/SKILL.md",
+      "sha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "GitHub CI Operations",
+      "type": "SKILL"
+    },
+    {
+      "description": "Triage and fix GitHub Actions failures, maintain GitHub workflow files, inspect PR checks with gh, design CI jobs, and handle release-oriented GitHub automation. Use for GitHub CI, Actions YAML, failing PR checks, workflow dispatch, caches, artifacts, secrets, permissions, and release pipelines.",
+      "entryFile": "github-ci-operations/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/actions-workflows.md",
+        "references/ci-failure-triage.md",
+        "references/release-flow.md"
+      ],
+      "name": "github-ci-operations",
+      "observedPath": "/Users/amichne/.agents/skills/github-ci-operations/SKILL.md",
+      "path": "github-ci-operations",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/github-ci-operations/SKILL.md",
+      "sha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "GitHub CI Operations",
+      "type": "SKILL"
+    },
+    {
+      "description": "Triage and fix GitHub Actions failures, maintain GitHub workflow files, inspect PR checks with gh, design CI jobs, and handle release-oriented GitHub automation. Use for GitHub CI, Actions YAML, failing PR checks, workflow dispatch, caches, artifacts, secrets, permissions, and release pipelines.",
+      "entryFile": "github-ci-operations/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/actions-workflows.md",
+        "references/ci-failure-triage.md",
+        "references/release-flow.md"
+      ],
+      "name": "github-ci-operations",
+      "observedPath": "/Users/amichne/.codex/skills/github-ci-operations/SKILL.md",
+      "path": "github-ci-operations",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/github-ci-operations/SKILL.md",
+      "sha256": "sha256:88fc2c00d20207399b75db33be2b67e7ae8e4ec717511c008ac0825909a33603",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "GitHub CI Operations",
       "type": "SKILL"
     },
     {
@@ -11344,6 +11325,72 @@
     },
     {
       "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, provider adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "entryFile": "hook-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/codex-adapters.md",
+        "references/implementation-guidance.md",
+        "references/local-layout.md",
+        "references/schema-validation.md"
+      ],
+      "name": "hook-primitive-authoring",
+      "observedPath": "/Users/amichne/code/apollo/skills/hook-primitive-authoring/SKILL.md",
+      "path": "hook-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
+      "sha256": "sha256:e22bd11538027c86a30c78e5cf1c342b5523dfc976ea3021caf101787963ce71",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Hook Primitive Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, provider adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "entryFile": "hook-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/codex-adapters.md",
+        "references/implementation-guidance.md",
+        "references/local-layout.md",
+        "references/schema-validation.md"
+      ],
+      "name": "hook-primitive-authoring",
+      "observedPath": "/Users/amichne/.agents/skills/hook-primitive-authoring/SKILL.md",
+      "path": "hook-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
+      "sha256": "sha256:e22bd11538027c86a30c78e5cf1c342b5523dfc976ea3021caf101787963ce71",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Hook Primitive Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, provider adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
+      "entryFile": "hook-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/codex-adapters.md",
+        "references/implementation-guidance.md",
+        "references/local-layout.md",
+        "references/schema-validation.md"
+      ],
+      "name": "hook-primitive-authoring",
+      "observedPath": "/Users/amichne/.codex/skills/hook-primitive-authoring/SKILL.md",
+      "path": "hook-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
+      "sha256": "sha256:e22bd11538027c86a30c78e5cf1c342b5523dfc976ea3021caf101787963ce71",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Hook Primitive Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, validate, or consolidate hook primitives using provider-neutral metadata, provider adapter projections, executable implementations, and Concordance-backed schema validation. Use when adding hooks, wiring hooks into plugins, authoring Codex hook adapters, or checking hook dependencies against skills, agents, concepts, and scripts.",
       "entryFile": "skills/hook-primitive-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -11356,7 +11403,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
       "path": "skills/hook-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/hook-primitive-authoring/SKILL.md",
-      "sha256": "sha256:8a6769c909bb8df404796c3705a3c745d247a3ead6d1af835ebf24486179c767",
+      "sha256": "sha256:e22bd11538027c86a30c78e5cf1c342b5523dfc976ea3021caf101787963ce71",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -11744,7 +11791,7 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
       "path": "kast",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
-      "sha256": "sha256:73072fae79bd8a747b93969833a2b4b7e6c1fee35c0d83f3c67e805ee5a877b2",
+      "sha256": "sha256:145f5d4db9b6a995bd601f0d11983e0add3ecbf941858adbc8a07c9ad64f9317",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -11789,57 +11836,75 @@
       "type": "SKILL"
     },
     {
-      "description": ">",
+      "description": "Iterate on Kotlin, JVM, and Gradle projects with structured build evidence. Use when running Gradle tasks, fixing failing tests, reading JUnit or JaCoCo reports, diagnosing Kotlin compilation or incremental-build problems, improving coverage, or getting a Kotlin/Gradle build green.",
       "entryFile": "kotlin-gradle-loop/SKILL.md",
       "expectedResources": [
-        "SKILL.md",
-        "references/reference/schemas/state-schema.md",
-        "scripts/gradle/run_task.sh",
-        "scripts/parse/jacoco_report.py",
-        "scripts/parse/junit_results.py",
-        "scripts/parse/kotlin_build_report.py",
-        "scripts/state/get_state.py",
-        "scripts/state/init_state.py",
-        "scripts/state/record_action.py",
-        "scripts/state/update_state.py"
+        "SKILL.md"
       ],
-      "name": "kotlin-gradle-loop",
+      "name": "kotlin-gradle-validation",
       "observedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
       "path": "kotlin-gradle-loop",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
-      "sha256": "sha256:c16057f6fd84c37cc1474c821e28717dcf263d288e6272941b80833f8086dd03",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-gradle-validation/SKILL.md",
+      "sha256": "sha256:7c389a58218ded57ee137222140cdf4759f7ca598f0a84efbbe330f6f9108167",
       "sourceRoot": "apollo-skills",
       "sourceRootPath": "../apollo/skills",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "title": "Kotlin/Gradle Agentic Workflow",
+      "symlink": true,
+      "title": "Kotlin Gradle Validation",
       "type": "SKILL"
     },
     {
-      "description": ">",
+      "description": "Iterate on Kotlin, JVM, and Gradle projects with structured build evidence. Use when running Gradle tasks, fixing failing tests, reading JUnit or JaCoCo reports, diagnosing Kotlin compilation or incremental-build problems, improving coverage, or getting a Kotlin/Gradle build green.",
+      "entryFile": "kotlin-gradle-validation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "kotlin-gradle-validation",
+      "observedPath": "/Users/amichne/.agents/skills/kotlin-gradle-validation/SKILL.md",
+      "path": "kotlin-gradle-validation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-gradle-validation/SKILL.md",
+      "sha256": "sha256:7c389a58218ded57ee137222140cdf4759f7ca598f0a84efbbe330f6f9108167",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Kotlin Gradle Validation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Iterate on Kotlin, JVM, and Gradle projects with structured build evidence. Use when running Gradle tasks, fixing failing tests, reading JUnit or JaCoCo reports, diagnosing Kotlin compilation or incremental-build problems, improving coverage, or getting a Kotlin/Gradle build green.",
       "entryFile": "kotlin-gradle-loop/SKILL.md",
       "expectedResources": [
-        "SKILL.md",
-        "references/reference/schemas/state-schema.md",
-        "scripts/gradle/run_task.sh",
-        "scripts/parse/jacoco_report.py",
-        "scripts/parse/junit_results.py",
-        "scripts/parse/kotlin_build_report.py",
-        "scripts/state/get_state.py",
-        "scripts/state/init_state.py",
-        "scripts/state/record_action.py",
-        "scripts/state/update_state.py"
+        "SKILL.md"
       ],
-      "name": "kotlin-gradle-loop",
+      "name": "kotlin-gradle-validation",
       "observedPath": "/Users/amichne/.codex/skills/kotlin-gradle-loop/SKILL.md",
       "path": "kotlin-gradle-loop",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
-      "sha256": "sha256:c16057f6fd84c37cc1474c821e28717dcf263d288e6272941b80833f8086dd03",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-gradle-validation/SKILL.md",
+      "sha256": "sha256:7c389a58218ded57ee137222140cdf4759f7ca598f0a84efbbe330f6f9108167",
       "sourceRoot": "global-codex-skills",
       "sourceRootPath": "~/.codex/skills",
       "sourceRootRole": "runtime-source",
       "symlink": true,
-      "title": "Kotlin/Gradle Agentic Workflow",
+      "title": "Kotlin Gradle Validation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Iterate on Kotlin, JVM, and Gradle projects with structured build evidence. Use when running Gradle tasks, fixing failing tests, reading JUnit or JaCoCo reports, diagnosing Kotlin compilation or incremental-build problems, improving coverage, or getting a Kotlin/Gradle build green.",
+      "entryFile": "skills/kotlin-gradle-validation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "kotlin-gradle-validation",
+      "observedPath": "/Users/amichne/code/intelligence/skills/kotlin-gradle-validation/SKILL.md",
+      "path": "skills/kotlin-gradle-validation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-gradle-validation/SKILL.md",
+      "sha256": "sha256:7c389a58218ded57ee137222140cdf4759f7ca598f0a84efbbe330f6f9108167",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Kotlin Gradle Validation",
       "type": "SKILL"
     },
     {
@@ -11888,7 +11953,6 @@
       "description": ">",
       "entryFile": "kotlin-standards/SKILL.md",
       "expectedResources": [
-        ".DS_Store",
         "SKILL.md",
         "references/api-builders-and-configuration.md",
         "references/api-dsl-choices.md",
@@ -11896,8 +11960,10 @@
         "references/api-parameter-selection.md",
         "references/api-review-guides.md",
         "references/api-surface-stability.md",
+        "references/horizontalization-heuristic.md",
         "references/idioms.md",
         "references/kotlin-antipatterns.md",
+        "references/layout-package-code-style.md",
         "references/parse-dont-validate-examples.md",
         "references/type-safety-patterns.md",
         "references/types-domain-modeling.md",
@@ -11907,13 +11973,13 @@
       "name": "kotlin-standards",
       "observedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
       "path": "kotlin-standards",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
-      "sha256": "sha256:a93c1a3a9379a8d154c28f625eb8eb66c59bfb31e7407b9f6c34bb5fa4a6f3d8",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
       "sourceRoot": "apollo-skills",
       "sourceRootPath": "../apollo/skills",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "title": "Kotlin Mastery",
+      "symlink": true,
+      "title": "Kotlin Standards",
       "type": "SKILL"
     },
     {
@@ -11940,12 +12006,12 @@
       "name": "kotlin-standards",
       "observedPath": "/Users/amichne/code/examplar/skills/kotlin-standards/SKILL.md",
       "path": "kotlin-standards",
-      "resolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards/SKILL.md",
-      "sha256": "sha256:0628e172d411987f024ec68c05bdc94343fef16a712074e1203ab2b6fee7b318",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
       "sourceRoot": "examplar-skills",
       "sourceRootPath": "../examplar/skills",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
       "title": "Kotlin Standards",
       "type": "SKILL"
     },
@@ -11973,12 +12039,12 @@
       "name": "kotlin-standards",
       "observedPath": "/Users/amichne/.agents/skills/kotlin-standards/SKILL.md",
       "path": "kotlin-standards",
-      "resolvedPath": "/Users/amichne/.agents/skills/kotlin-standards/SKILL.md",
-      "sha256": "sha256:fed19b2d040c61b3276a543943faf350ba62d79b7ab717e14670a36789ab69af",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
       "sourceRoot": "global-agent-skills",
       "sourceRootPath": "~/.agents/skills",
       "sourceRootRole": "runtime-source",
-      "symlink": false,
+      "symlink": true,
       "title": "Kotlin Standards",
       "type": "SKILL"
     },
@@ -11986,7 +12052,6 @@
       "description": ">",
       "entryFile": "kotlin-standards/SKILL.md",
       "expectedResources": [
-        ".DS_Store",
         "SKILL.md",
         "references/api-builders-and-configuration.md",
         "references/api-dsl-choices.md",
@@ -11994,8 +12059,10 @@
         "references/api-parameter-selection.md",
         "references/api-review-guides.md",
         "references/api-surface-stability.md",
+        "references/horizontalization-heuristic.md",
         "references/idioms.md",
         "references/kotlin-antipatterns.md",
+        "references/layout-package-code-style.md",
         "references/parse-dont-validate-examples.md",
         "references/type-safety-patterns.md",
         "references/types-domain-modeling.md",
@@ -12005,13 +12072,13 @@
       "name": "kotlin-standards",
       "observedPath": "/Users/amichne/.codex/skills/kotlin-standards/SKILL.md",
       "path": "kotlin-standards",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
-      "sha256": "sha256:a93c1a3a9379a8d154c28f625eb8eb66c59bfb31e7407b9f6c34bb5fa4a6f3d8",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
       "sourceRoot": "global-codex-skills",
       "sourceRootPath": "~/.codex/skills",
       "sourceRootRole": "runtime-source",
       "symlink": true,
-      "title": "Kotlin Mastery",
+      "title": "Kotlin Standards",
       "type": "SKILL"
     },
     {
@@ -12183,6 +12250,86 @@
       "type": "SKILL"
     },
     {
+      "description": "Create or refresh git-excluded local repository navigation summaries, such as AGENTS.local.md, OUTDATED.local.md, directory purpose maps, and staleness-driven summary refresh workflows. Use when bootstrapping AI-readable repo maps, designing local navigation generators, or maintaining lightweight generated summaries without turning them into durable documentation.",
+      "entryFile": "local-repository-navigation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/staleness-workflow.md",
+        "references/summary-contract.md"
+      ],
+      "name": "local-repository-navigation",
+      "observedPath": "/Users/amichne/code/apollo/skills/local-repository-navigation/SKILL.md",
+      "path": "local-repository-navigation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/local-repository-navigation/SKILL.md",
+      "sha256": "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Local Repository Navigation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or refresh git-excluded local repository navigation summaries, such as AGENTS.local.md, OUTDATED.local.md, directory purpose maps, and staleness-driven summary refresh workflows. Use when bootstrapping AI-readable repo maps, designing local navigation generators, or maintaining lightweight generated summaries without turning them into durable documentation.",
+      "entryFile": "local-repository-navigation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/staleness-workflow.md",
+        "references/summary-contract.md"
+      ],
+      "name": "local-repository-navigation",
+      "observedPath": "/Users/amichne/.agents/skills/local-repository-navigation/SKILL.md",
+      "path": "local-repository-navigation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/local-repository-navigation/SKILL.md",
+      "sha256": "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Local Repository Navigation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or refresh git-excluded local repository navigation summaries, such as AGENTS.local.md, OUTDATED.local.md, directory purpose maps, and staleness-driven summary refresh workflows. Use when bootstrapping AI-readable repo maps, designing local navigation generators, or maintaining lightweight generated summaries without turning them into durable documentation.",
+      "entryFile": "local-repository-navigation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/staleness-workflow.md",
+        "references/summary-contract.md"
+      ],
+      "name": "local-repository-navigation",
+      "observedPath": "/Users/amichne/.codex/skills/local-repository-navigation/SKILL.md",
+      "path": "local-repository-navigation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/local-repository-navigation/SKILL.md",
+      "sha256": "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Local Repository Navigation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or refresh git-excluded local repository navigation summaries, such as AGENTS.local.md, OUTDATED.local.md, directory purpose maps, and staleness-driven summary refresh workflows. Use when bootstrapping AI-readable repo maps, designing local navigation generators, or maintaining lightweight generated summaries without turning them into durable documentation.",
+      "entryFile": "skills/local-repository-navigation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/staleness-workflow.md",
+        "references/summary-contract.md"
+      ],
+      "name": "local-repository-navigation",
+      "observedPath": "/Users/amichne/code/intelligence/skills/local-repository-navigation/SKILL.md",
+      "path": "skills/local-repository-navigation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/local-repository-navigation/SKILL.md",
+      "sha256": "sha256:ac83ea1916cdcab2c49e2ee63a8bca81c0fbafcf56db22c5bc0202d8f0b276d8",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Local Repository Navigation",
+      "type": "SKILL"
+    },
+    {
       "description": "End-to-end onboarding for a freshly-plugged-in M5Stack ESP32 device (Cardputer, Cardputer-Adv, Core, CoreS3, Stick) \u2014 detect on USB, flash UIFlow 2.0 firmware, and install the Claude Buddy MicroPython app bundle. Use whenever the user plugs in or wants to flash/provision/reset an M5Stack or ESP32 board, or says \"m5-onboard go\".",
       "entryFile": "marketplaces/claude-plugins-official/plugins/cwc-makers/skills/m5-onboard/SKILL.md",
       "expectedResources": [
@@ -12201,24 +12348,32 @@
       "type": "SKILL"
     },
     {
-      "description": "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, and discriminator values as CAPS_CASE.",
+      "description": "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment.",
       "entryFile": "manage-json-schemas/SKILL.md",
       "expectedResources": [
         "SKILL.md",
-        "agents/openai.yaml",
+        "references/enforcement.md",
+        "references/hierarchical-schema-layout.md",
         "references/schema-examples.md",
         "references/schema-policy.md",
+        "references/schema-profile.md",
+        "references/schema-profile/schema-profile.schema.json",
+        "references/schemas/order/created.schema.json",
+        "references/schemas/order/order.schema.json",
+        "references/schemas/upload/command.schema.json",
+        "references/schemas/upload/manifest.schema.json",
+        "references/schemas/upload/upload.schema.json",
         "scripts/schema-contracts.js"
       ],
       "name": "manage-json-schemas",
-      "observedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/SKILL.md",
+      "observedPath": "/Users/amichne/code/apollo/skills/manage-json-schemas/SKILL.md",
       "path": "manage-json-schemas",
-      "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/SKILL.md",
-      "sha256": "sha256:ca24fb7ba2d80085b7c2f9dc099cad26539841dddd50525578419fd3e52bdc8c",
-      "sourceRoot": "examplar-skills",
-      "sourceRootPath": "../examplar/skills",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
       "title": "Manage JSON Schemas",
       "type": "SKILL"
     },
@@ -12226,9 +12381,37 @@
       "description": "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment.",
       "entryFile": "manage-json-schemas/SKILL.md",
       "expectedResources": [
-        ".DS_Store",
         "SKILL.md",
-        "references/.DS_Store",
+        "references/enforcement.md",
+        "references/hierarchical-schema-layout.md",
+        "references/schema-examples.md",
+        "references/schema-policy.md",
+        "references/schema-profile.md",
+        "references/schema-profile/schema-profile.schema.json",
+        "references/schemas/order/created.schema.json",
+        "references/schemas/order/order.schema.json",
+        "references/schemas/upload/command.schema.json",
+        "references/schemas/upload/manifest.schema.json",
+        "references/schemas/upload/upload.schema.json",
+        "scripts/schema-contracts.js"
+      ],
+      "name": "manage-json-schemas",
+      "observedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/SKILL.md",
+      "path": "manage-json-schemas",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
+      "sourceRoot": "examplar-skills",
+      "sourceRootPath": "../examplar/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Manage JSON Schemas",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment.",
+      "entryFile": "manage-json-schemas/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
         "references/enforcement.md",
         "references/hierarchical-schema-layout.md",
         "references/schema-examples.md",
@@ -12245,12 +12428,42 @@
       "name": "manage-json-schemas",
       "observedPath": "/Users/amichne/.agents/skills/manage-json-schemas/SKILL.md",
       "path": "manage-json-schemas",
-      "resolvedPath": "/Users/amichne/.agents/skills/manage-json-schemas/SKILL.md",
-      "sha256": "sha256:014412957414e464f9f80f50d19ab0905999ed002f0908fac64270bd4b749514",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
       "sourceRoot": "global-agent-skills",
       "sourceRootPath": "~/.agents/skills",
       "sourceRootRole": "runtime-source",
-      "symlink": false,
+      "symlink": true,
+      "title": "Manage JSON Schemas",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment.",
+      "entryFile": "manage-json-schemas/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/enforcement.md",
+        "references/hierarchical-schema-layout.md",
+        "references/schema-examples.md",
+        "references/schema-policy.md",
+        "references/schema-profile.md",
+        "references/schema-profile/schema-profile.schema.json",
+        "references/schemas/order/created.schema.json",
+        "references/schemas/order/order.schema.json",
+        "references/schemas/upload/command.schema.json",
+        "references/schemas/upload/manifest.schema.json",
+        "references/schemas/upload/upload.schema.json",
+        "scripts/schema-contracts.js"
+      ],
+      "name": "manage-json-schemas",
+      "observedPath": "/Users/amichne/.codex/skills/manage-json-schemas/SKILL.md",
+      "path": "manage-json-schemas",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
       "title": "Manage JSON Schemas",
       "type": "SKILL"
     },
@@ -13160,6 +13373,66 @@
     },
     {
       "description": "Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into source-root references.",
+      "entryFile": "plugin-composition-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/marketplace-catalog.md",
+        "references/referential-plugin-shape.md"
+      ],
+      "name": "plugin-composition-authoring",
+      "observedPath": "/Users/amichne/code/apollo/skills/plugin-composition-authoring/SKILL.md",
+      "path": "plugin-composition-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
+      "sha256": "sha256:cb665208e75877050d2c2fbb6ac4d08deb0241afbd3c254497c28becc0b886f6",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Plugin Composition Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into source-root references.",
+      "entryFile": "plugin-composition-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/marketplace-catalog.md",
+        "references/referential-plugin-shape.md"
+      ],
+      "name": "plugin-composition-authoring",
+      "observedPath": "/Users/amichne/.agents/skills/plugin-composition-authoring/SKILL.md",
+      "path": "plugin-composition-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
+      "sha256": "sha256:cb665208e75877050d2c2fbb6ac4d08deb0241afbd3c254497c28becc0b886f6",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Plugin Composition Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into source-root references.",
+      "entryFile": "plugin-composition-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/marketplace-catalog.md",
+        "references/referential-plugin-shape.md"
+      ],
+      "name": "plugin-composition-authoring",
+      "observedPath": "/Users/amichne/.codex/skills/plugin-composition-authoring/SKILL.md",
+      "path": "plugin-composition-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/plugin-composition-authoring/SKILL.md",
+      "sha256": "sha256:cb665208e75877050d2c2fbb6ac4d08deb0241afbd3c254497c28becc0b886f6",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Plugin Composition Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into source-root references.",
       "entryFile": "skills/plugin-composition-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -13429,6 +13702,162 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "Deploy Model to Optimal Region",
+      "type": "SKILL"
+    },
+    {
+      "description": "Audit skills, agents, hooks, concepts, plugin manifests, and runtime-link plans before promotion, activation, or cleanup. Use when deciding whether a primitive is good enough to become canonical, whether older sources can be turned off, whether first-party material was safely renamed and rewritten, or whether a referential plugin is composed from independent primitives.",
+      "entryFile": "primitive-quality-audit/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/audit-rubric.md",
+        "references/evidence-checks.md",
+        "references/promotion-readiness.md"
+      ],
+      "name": "primitive-quality-audit",
+      "observedPath": "/Users/amichne/code/apollo/skills/primitive-quality-audit/SKILL.md",
+      "path": "primitive-quality-audit",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit/SKILL.md",
+      "sha256": "sha256:4ee7ae20c6010911f68c103495ddf8a93080b378cd2330797c35ca5214ee0a97",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Primitive Quality Audit",
+      "type": "SKILL"
+    },
+    {
+      "description": "Audit skills, agents, hooks, concepts, plugin manifests, and runtime-link plans before promotion, activation, or cleanup. Use when deciding whether a primitive is good enough to become canonical, whether older sources can be turned off, whether first-party material was safely renamed and rewritten, or whether a referential plugin is composed from independent primitives.",
+      "entryFile": "primitive-quality-audit/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/audit-rubric.md",
+        "references/evidence-checks.md",
+        "references/promotion-readiness.md"
+      ],
+      "name": "primitive-quality-audit",
+      "observedPath": "/Users/amichne/.agents/skills/primitive-quality-audit/SKILL.md",
+      "path": "primitive-quality-audit",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit/SKILL.md",
+      "sha256": "sha256:4ee7ae20c6010911f68c103495ddf8a93080b378cd2330797c35ca5214ee0a97",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Primitive Quality Audit",
+      "type": "SKILL"
+    },
+    {
+      "description": "Audit skills, agents, hooks, concepts, plugin manifests, and runtime-link plans before promotion, activation, or cleanup. Use when deciding whether a primitive is good enough to become canonical, whether older sources can be turned off, whether first-party material was safely renamed and rewritten, or whether a referential plugin is composed from independent primitives.",
+      "entryFile": "primitive-quality-audit/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/audit-rubric.md",
+        "references/evidence-checks.md",
+        "references/promotion-readiness.md"
+      ],
+      "name": "primitive-quality-audit",
+      "observedPath": "/Users/amichne/.codex/skills/primitive-quality-audit/SKILL.md",
+      "path": "primitive-quality-audit",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit/SKILL.md",
+      "sha256": "sha256:4ee7ae20c6010911f68c103495ddf8a93080b378cd2330797c35ca5214ee0a97",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Primitive Quality Audit",
+      "type": "SKILL"
+    },
+    {
+      "description": "Audit skills, agents, hooks, concepts, plugin manifests, and runtime-link plans before promotion, activation, or cleanup. Use when deciding whether a primitive is good enough to become canonical, whether older sources can be turned off, whether first-party material was safely renamed and rewritten, or whether a referential plugin is composed from independent primitives.",
+      "entryFile": "skills/primitive-quality-audit/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/audit-rubric.md",
+        "references/evidence-checks.md",
+        "references/promotion-readiness.md"
+      ],
+      "name": "primitive-quality-audit",
+      "observedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit/SKILL.md",
+      "path": "skills/primitive-quality-audit",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-quality-audit/SKILL.md",
+      "sha256": "sha256:4ee7ae20c6010911f68c103495ddf8a93080b378cd2330797c35ca5214ee0a97",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Primitive Quality Audit",
+      "type": "SKILL"
+    },
+    {
+      "description": "Diagnose and improve when skills, agents, hooks, or plugin workflows load too rarely, load in the wrong situations, or get bypassed by generic tool use. Use when building routing eval cases from session exports, logs, user corrections, or missed triggers, and when deciding how to tighten primitive descriptions without overfitting.",
+      "entryFile": "primitive-routing-evaluation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "primitive-routing-evaluation",
+      "observedPath": "/Users/amichne/code/apollo/skills/primitive-routing-evaluation/SKILL.md",
+      "path": "primitive-routing-evaluation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-routing-evaluation/SKILL.md",
+      "sha256": "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Primitive Routing Evaluation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Diagnose and improve when skills, agents, hooks, or plugin workflows load too rarely, load in the wrong situations, or get bypassed by generic tool use. Use when building routing eval cases from session exports, logs, user corrections, or missed triggers, and when deciding how to tighten primitive descriptions without overfitting.",
+      "entryFile": "primitive-routing-evaluation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "primitive-routing-evaluation",
+      "observedPath": "/Users/amichne/.agents/skills/primitive-routing-evaluation/SKILL.md",
+      "path": "primitive-routing-evaluation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-routing-evaluation/SKILL.md",
+      "sha256": "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Primitive Routing Evaluation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Diagnose and improve when skills, agents, hooks, or plugin workflows load too rarely, load in the wrong situations, or get bypassed by generic tool use. Use when building routing eval cases from session exports, logs, user corrections, or missed triggers, and when deciding how to tighten primitive descriptions without overfitting.",
+      "entryFile": "primitive-routing-evaluation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "primitive-routing-evaluation",
+      "observedPath": "/Users/amichne/.codex/skills/primitive-routing-evaluation/SKILL.md",
+      "path": "primitive-routing-evaluation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-routing-evaluation/SKILL.md",
+      "sha256": "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Primitive Routing Evaluation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Diagnose and improve when skills, agents, hooks, or plugin workflows load too rarely, load in the wrong situations, or get bypassed by generic tool use. Use when building routing eval cases from session exports, logs, user corrections, or missed triggers, and when deciding how to tighten primitive descriptions without overfitting.",
+      "entryFile": "skills/primitive-routing-evaluation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "primitive-routing-evaluation",
+      "observedPath": "/Users/amichne/code/intelligence/skills/primitive-routing-evaluation/SKILL.md",
+      "path": "skills/primitive-routing-evaluation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/primitive-routing-evaluation/SKILL.md",
+      "sha256": "sha256:c7a9697567dfe4442abe481162aae4f5724b108db671b41586bbc38d30f62e7a",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Primitive Routing Evaluation",
       "type": "SKILL"
     },
     {
@@ -13879,6 +14308,63 @@
     },
     {
       "description": "Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name.",
+      "entryFile": "doc-coauthoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/reader-testing.md"
+      ],
+      "name": "reference-doc-workflow",
+      "observedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
+      "path": "doc-coauthoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/reference-doc-workflow/SKILL.md",
+      "sha256": "sha256:4910662a523db7ec52ebd4eb628b9f856cfb3e2710689590e3fe2d65621e4bde",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Reference Doc Workflow",
+      "type": "SKILL"
+    },
+    {
+      "description": "Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name.",
+      "entryFile": "reference-doc-workflow/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/reader-testing.md"
+      ],
+      "name": "reference-doc-workflow",
+      "observedPath": "/Users/amichne/.agents/skills/reference-doc-workflow/SKILL.md",
+      "path": "reference-doc-workflow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/reference-doc-workflow/SKILL.md",
+      "sha256": "sha256:4910662a523db7ec52ebd4eb628b9f856cfb3e2710689590e3fe2d65621e4bde",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Reference Doc Workflow",
+      "type": "SKILL"
+    },
+    {
+      "description": "Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name.",
+      "entryFile": "doc-coauthoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/reader-testing.md"
+      ],
+      "name": "reference-doc-workflow",
+      "observedPath": "/Users/amichne/.codex/skills/doc-coauthoring/SKILL.md",
+      "path": "doc-coauthoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/reference-doc-workflow/SKILL.md",
+      "sha256": "sha256:4910662a523db7ec52ebd4eb628b9f856cfb3e2710689590e3fe2d65621e4bde",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Reference Doc Workflow",
+      "type": "SKILL"
+    },
+    {
+      "description": "Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name.",
       "entryFile": "skills/reference-doc-workflow/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -13937,6 +14423,69 @@
     },
     {
       "description": "Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces.",
+      "entryFile": "repo-instruction-topology/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/boundary-heuristics.md",
+        "references/instruction-file-contract.md",
+        "references/source-of-truth-map.md"
+      ],
+      "name": "repo-instruction-topology",
+      "observedPath": "/Users/amichne/code/apollo/skills/repo-instruction-topology/SKILL.md",
+      "path": "repo-instruction-topology",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repo-instruction-topology/SKILL.md",
+      "sha256": "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Repo Instruction Topology",
+      "type": "SKILL"
+    },
+    {
+      "description": "Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces.",
+      "entryFile": "repo-instruction-topology/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/boundary-heuristics.md",
+        "references/instruction-file-contract.md",
+        "references/source-of-truth-map.md"
+      ],
+      "name": "repo-instruction-topology",
+      "observedPath": "/Users/amichne/.agents/skills/repo-instruction-topology/SKILL.md",
+      "path": "repo-instruction-topology",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repo-instruction-topology/SKILL.md",
+      "sha256": "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Repo Instruction Topology",
+      "type": "SKILL"
+    },
+    {
+      "description": "Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces.",
+      "entryFile": "repo-instruction-topology/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/boundary-heuristics.md",
+        "references/instruction-file-contract.md",
+        "references/source-of-truth-map.md"
+      ],
+      "name": "repo-instruction-topology",
+      "observedPath": "/Users/amichne/.codex/skills/repo-instruction-topology/SKILL.md",
+      "path": "repo-instruction-topology",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repo-instruction-topology/SKILL.md",
+      "sha256": "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Repo Instruction Topology",
+      "type": "SKILL"
+    },
+    {
+      "description": "Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces.",
       "entryFile": "skills/repo-instruction-topology/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -13954,6 +14503,78 @@
       "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Repo Instruction Topology",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation.",
+      "entryFile": "repository-signature-indexing/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "repository-signature-indexing",
+      "observedPath": "/Users/amichne/code/apollo/skills/repository-signature-indexing/SKILL.md",
+      "path": "repository-signature-indexing",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repository-signature-indexing/SKILL.md",
+      "sha256": "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Repository Signature Indexing",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation.",
+      "entryFile": "repository-signature-indexing/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "repository-signature-indexing",
+      "observedPath": "/Users/amichne/.agents/skills/repository-signature-indexing/SKILL.md",
+      "path": "repository-signature-indexing",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repository-signature-indexing/SKILL.md",
+      "sha256": "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Repository Signature Indexing",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation.",
+      "entryFile": "repository-signature-indexing/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "repository-signature-indexing",
+      "observedPath": "/Users/amichne/.codex/skills/repository-signature-indexing/SKILL.md",
+      "path": "repository-signature-indexing",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repository-signature-indexing/SKILL.md",
+      "sha256": "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Repository Signature Indexing",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation.",
+      "entryFile": "skills/repository-signature-indexing/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "repository-signature-indexing",
+      "observedPath": "/Users/amichne/code/intelligence/skills/repository-signature-indexing/SKILL.md",
+      "path": "skills/repository-signature-indexing",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repository-signature-indexing/SKILL.md",
+      "sha256": "sha256:8494dd6b59ead010e7f071cb22d5c85d818842801dcc7494f7e443157db83a73",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Repository Signature Indexing",
       "type": "SKILL"
     },
     {
@@ -13993,6 +14614,90 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "Risk Metrics Calculation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Plan, validate, dry-run, and execute approval-gated symlink or marketplace activation of canonical AI tooling primitives into local runtimes without overwriting scattered originals. Use when connecting this source graph to Codex, Agents, Claude, Copilot, or other runtime directories, updating runtime link manifests, checking collisions, or preparing backup-then-link activation work.",
+      "entryFile": "runtime-linking/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/collision-safety.md",
+        "references/manifest.md",
+        "references/runtime-targets.md"
+      ],
+      "name": "runtime-linking",
+      "observedPath": "/Users/amichne/code/apollo/skills/runtime-linking/SKILL.md",
+      "path": "runtime-linking",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking/SKILL.md",
+      "sha256": "sha256:58e05aee752728295f29ee6327d4101634b15847818a967c53035f0a28e1ead4",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Runtime Linking",
+      "type": "SKILL"
+    },
+    {
+      "description": "Plan, validate, dry-run, and execute approval-gated symlink or marketplace activation of canonical AI tooling primitives into local runtimes without overwriting scattered originals. Use when connecting this source graph to Codex, Agents, Claude, Copilot, or other runtime directories, updating runtime link manifests, checking collisions, or preparing backup-then-link activation work.",
+      "entryFile": "runtime-linking/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/collision-safety.md",
+        "references/manifest.md",
+        "references/runtime-targets.md"
+      ],
+      "name": "runtime-linking",
+      "observedPath": "/Users/amichne/.agents/skills/runtime-linking/SKILL.md",
+      "path": "runtime-linking",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking/SKILL.md",
+      "sha256": "sha256:58e05aee752728295f29ee6327d4101634b15847818a967c53035f0a28e1ead4",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Runtime Linking",
+      "type": "SKILL"
+    },
+    {
+      "description": "Plan, validate, dry-run, and execute approval-gated symlink or marketplace activation of canonical AI tooling primitives into local runtimes without overwriting scattered originals. Use when connecting this source graph to Codex, Agents, Claude, Copilot, or other runtime directories, updating runtime link manifests, checking collisions, or preparing backup-then-link activation work.",
+      "entryFile": "runtime-linking/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/collision-safety.md",
+        "references/manifest.md",
+        "references/runtime-targets.md"
+      ],
+      "name": "runtime-linking",
+      "observedPath": "/Users/amichne/.codex/skills/runtime-linking/SKILL.md",
+      "path": "runtime-linking",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking/SKILL.md",
+      "sha256": "sha256:58e05aee752728295f29ee6327d4101634b15847818a967c53035f0a28e1ead4",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Runtime Linking",
+      "type": "SKILL"
+    },
+    {
+      "description": "Plan, validate, dry-run, and execute approval-gated symlink or marketplace activation of canonical AI tooling primitives into local runtimes without overwriting scattered originals. Use when connecting this source graph to Codex, Agents, Claude, Copilot, or other runtime directories, updating runtime link manifests, checking collisions, or preparing backup-then-link activation work.",
+      "entryFile": "skills/runtime-linking/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/collision-safety.md",
+        "references/manifest.md",
+        "references/runtime-targets.md"
+      ],
+      "name": "runtime-linking",
+      "observedPath": "/Users/amichne/code/intelligence/skills/runtime-linking/SKILL.md",
+      "path": "skills/runtime-linking",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/runtime-linking/SKILL.md",
+      "sha256": "sha256:58e05aee752728295f29ee6327d4101634b15847818a967c53035f0a28e1ead4",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Runtime Linking",
       "type": "SKILL"
     },
     {
@@ -14123,48 +14828,6 @@
       "type": "SKILL"
     },
     {
-      "description": "Explore a repository, decide where hierarchical `AGENTS.md` files should live, and draft or update them so local instructions align with real codebase boundaries. Use when Codex needs to introduce or refactor repo guidance, split a monolithic root `AGENTS.md`, add scoped instructions for a polyglot or multi-module repo, map generated/manual boundaries, or rationalize agent instructions for Gradle multi-module builds, workspace monorepos, API contract trees, custom scaffolds, or mixed-language codebases.",
-      "entryFile": "segment-codebase-agents-md/SKILL.md",
-      "expectedResources": [
-        "SKILL.md",
-        "agents/openai.yaml",
-        "references/agents-file-contract.md",
-        "references/boundary-heuristics.md"
-      ],
-      "name": "segment-codebase-agents-md",
-      "observedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-      "path": "segment-codebase-agents-md",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-      "sha256": "sha256:c0c6aea845e03bead9593879d44db6628ed9da7f9b77aba706e2ad0f2459e475",
-      "sourceRoot": "apollo-skills",
-      "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "title": "Segment Codebase AGENTS.md",
-      "type": "SKILL"
-    },
-    {
-      "description": "Explore a repository, decide where hierarchical `AGENTS.md` files should live, and draft or update them so local instructions align with real codebase boundaries. Use when Codex needs to introduce or refactor repo guidance, split a monolithic root `AGENTS.md`, add scoped instructions for a polyglot or multi-module repo, map generated/manual boundaries, or rationalize agent instructions for Gradle multi-module builds, workspace monorepos, API contract trees, custom scaffolds, or mixed-language codebases.",
-      "entryFile": "segment-codebase-agents-md/SKILL.md",
-      "expectedResources": [
-        "SKILL.md",
-        "agents/openai.yaml",
-        "references/agents-file-contract.md",
-        "references/boundary-heuristics.md"
-      ],
-      "name": "segment-codebase-agents-md",
-      "observedPath": "/Users/amichne/.codex/skills/segment-codebase-agents-md/SKILL.md",
-      "path": "segment-codebase-agents-md",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-      "sha256": "sha256:c0c6aea845e03bead9593879d44db6628ed9da7f9b77aba706e2ad0f2459e475",
-      "sourceRoot": "global-codex-skills",
-      "sourceRootPath": "~/.codex/skills",
-      "sourceRootRole": "runtime-source",
-      "symlink": true,
-      "title": "Segment Codebase AGENTS.md",
-      "type": "SKILL"
-    },
-    {
       "description": "Implement comprehensive observability for service meshes including distributed tracing, metrics, and visualization. Use when setting up mesh monitoring, debugging latency issues, or implementing SLOs for service communication.",
       "entryFile": "marketplaces/claude-code-workflows/plugins/cloud-infrastructure/skills/service-mesh-observability/SKILL.md",
       "expectedResources": [
@@ -14203,6 +14866,78 @@
       "type": "SKILL"
     },
     {
+      "description": "Write, review, or harden Bash and shell automation used by hooks, CI, release scripts, installers, and local developer tooling. Use when shell scripts need predictable failure handling, quoting, dry-run boundaries, temporary-file cleanup, argument parsing, or safer destructive-operation guardrails.",
+      "entryFile": "shell-script-safety/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "shell-script-safety",
+      "observedPath": "/Users/amichne/code/apollo/skills/shell-script-safety/SKILL.md",
+      "path": "shell-script-safety",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/shell-script-safety/SKILL.md",
+      "sha256": "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Shell Script Safety",
+      "type": "SKILL"
+    },
+    {
+      "description": "Write, review, or harden Bash and shell automation used by hooks, CI, release scripts, installers, and local developer tooling. Use when shell scripts need predictable failure handling, quoting, dry-run boundaries, temporary-file cleanup, argument parsing, or safer destructive-operation guardrails.",
+      "entryFile": "shell-script-safety/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "shell-script-safety",
+      "observedPath": "/Users/amichne/.agents/skills/shell-script-safety/SKILL.md",
+      "path": "shell-script-safety",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/shell-script-safety/SKILL.md",
+      "sha256": "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Shell Script Safety",
+      "type": "SKILL"
+    },
+    {
+      "description": "Write, review, or harden Bash and shell automation used by hooks, CI, release scripts, installers, and local developer tooling. Use when shell scripts need predictable failure handling, quoting, dry-run boundaries, temporary-file cleanup, argument parsing, or safer destructive-operation guardrails.",
+      "entryFile": "shell-script-safety/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "shell-script-safety",
+      "observedPath": "/Users/amichne/.codex/skills/shell-script-safety/SKILL.md",
+      "path": "shell-script-safety",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/shell-script-safety/SKILL.md",
+      "sha256": "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Shell Script Safety",
+      "type": "SKILL"
+    },
+    {
+      "description": "Write, review, or harden Bash and shell automation used by hooks, CI, release scripts, installers, and local developer tooling. Use when shell scripts need predictable failure handling, quoting, dry-run boundaries, temporary-file cleanup, argument parsing, or safer destructive-operation guardrails.",
+      "entryFile": "skills/shell-script-safety/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "shell-script-safety",
+      "observedPath": "/Users/amichne/code/intelligence/skills/shell-script-safety/SKILL.md",
+      "path": "skills/shell-script-safety",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/shell-script-safety/SKILL.md",
+      "sha256": "sha256:fee78b7f191c58520722e4ecc99cdd31ed9b668f5c4c4dba68a1993d8c361a1f",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Shell Script Safety",
+      "type": "SKILL"
+    },
+    {
       "description": "Master ShellCheck static analysis configuration and usage for shell script quality. Use when setting up linting infrastructure, fixing code issues, or ensuring script portability.",
       "entryFile": "marketplaces/claude-code-workflows/plugins/shell-scripting/skills/shellcheck-configuration/SKILL.md",
       "expectedResources": [
@@ -14236,6 +14971,72 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "Similarity Search Patterns",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or restructure technical documentation sites that use MkDocs, Zensical, Material-style Markdown features, or similar docs-as-code navigation. Use when documentation work needs site config awareness, page structure, nav updates, generated-doc boundaries, or consistent prose across docs pages.",
+      "entryFile": "site-docs-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/mkdocs.md",
+        "references/page-structures.md",
+        "references/prose-structure.md",
+        "references/zensical.md"
+      ],
+      "name": "site-docs-authoring",
+      "observedPath": "/Users/amichne/code/apollo/skills/site-docs-authoring/SKILL.md",
+      "path": "site-docs-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/site-docs-authoring/SKILL.md",
+      "sha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Site Docs Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or restructure technical documentation sites that use MkDocs, Zensical, Material-style Markdown features, or similar docs-as-code navigation. Use when documentation work needs site config awareness, page structure, nav updates, generated-doc boundaries, or consistent prose across docs pages.",
+      "entryFile": "site-docs-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/mkdocs.md",
+        "references/page-structures.md",
+        "references/prose-structure.md",
+        "references/zensical.md"
+      ],
+      "name": "site-docs-authoring",
+      "observedPath": "/Users/amichne/.agents/skills/site-docs-authoring/SKILL.md",
+      "path": "site-docs-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/site-docs-authoring/SKILL.md",
+      "sha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Site Docs Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, or restructure technical documentation sites that use MkDocs, Zensical, Material-style Markdown features, or similar docs-as-code navigation. Use when documentation work needs site config awareness, page structure, nav updates, generated-doc boundaries, or consistent prose across docs pages.",
+      "entryFile": "site-docs-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/mkdocs.md",
+        "references/page-structures.md",
+        "references/prose-structure.md",
+        "references/zensical.md"
+      ],
+      "name": "site-docs-authoring",
+      "observedPath": "/Users/amichne/.codex/skills/site-docs-authoring/SKILL.md",
+      "path": "site-docs-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/site-docs-authoring/SKILL.md",
+      "sha256": "sha256:3d4683e1792a3ec3b33809425e80f0af61c1be1a49ce789423612b0aeeeffb00",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Site Docs Authoring",
       "type": "SKILL"
     },
     {
@@ -14665,6 +15466,69 @@
     },
     {
       "description": "Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills.",
+      "entryFile": "skill-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/evaluation-scaffold.md",
+        "references/interface-adapters.md",
+        "references/progressive-disclosure.md"
+      ],
+      "name": "skill-primitive-authoring",
+      "observedPath": "/Users/amichne/code/apollo/skills/skill-primitive-authoring/SKILL.md",
+      "path": "skill-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
+      "sha256": "sha256:acc08f67edeac53ff96d28117913c11e55abc3a144724077bb6e8ba376acdee7",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Skill Primitive Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills.",
+      "entryFile": "skill-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/evaluation-scaffold.md",
+        "references/interface-adapters.md",
+        "references/progressive-disclosure.md"
+      ],
+      "name": "skill-primitive-authoring",
+      "observedPath": "/Users/amichne/.agents/skills/skill-primitive-authoring/SKILL.md",
+      "path": "skill-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
+      "sha256": "sha256:acc08f67edeac53ff96d28117913c11e55abc3a144724077bb6e8ba376acdee7",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Skill Primitive Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills.",
+      "entryFile": "skill-primitive-authoring/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/evaluation-scaffold.md",
+        "references/interface-adapters.md",
+        "references/progressive-disclosure.md"
+      ],
+      "name": "skill-primitive-authoring",
+      "observedPath": "/Users/amichne/.codex/skills/skill-primitive-authoring/SKILL.md",
+      "path": "skill-primitive-authoring",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
+      "sha256": "sha256:acc08f67edeac53ff96d28117913c11e55abc3a144724077bb6e8ba376acdee7",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Skill Primitive Authoring",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills.",
       "entryFile": "skills/skill-primitive-authoring/SKILL.md",
       "expectedResources": [
         "SKILL.md",
@@ -14676,7 +15540,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
       "path": "skills/skill-primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/skill-primitive-authoring/SKILL.md",
-      "sha256": "sha256:2a5e5160dd6e0177a1b5621b9b56f828daf0074ea7b0e0a09d26907999b9431e",
+      "sha256": "sha256:acc08f67edeac53ff96d28117913c11e55abc3a144724077bb6e8ba376acdee7",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -14742,6 +15606,90 @@
       "sourceRootRole": "runtime-source",
       "symlink": false,
       "title": "Solidity Security",
+      "type": "SKILL"
+    },
+    {
+      "description": "Inventory, review, promote, synthesize, validate, and prepare cleanup for scattered AI tooling primitives while preserving originals. Use when consolidating skills, agents, hooks, concepts, instructions, or plugin manifests into a single source graph, updating promotion manifests, interpreting duplicate queues, or preparing later symlink/deletion handoff ledgers.",
+      "entryFile": "source-graph-consolidation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/cleanup-handoff.md",
+        "references/promotion-records.md",
+        "references/review-queue.md"
+      ],
+      "name": "source-graph-consolidation",
+      "observedPath": "/Users/amichne/code/apollo/skills/source-graph-consolidation/SKILL.md",
+      "path": "source-graph-consolidation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+      "sha256": "sha256:86dbd7f4878f531348acb3daf82db00fc25c1cf797d0335b77fc44e14c726f7e",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Source Graph Consolidation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Inventory, review, promote, synthesize, validate, and prepare cleanup for scattered AI tooling primitives while preserving originals. Use when consolidating skills, agents, hooks, concepts, instructions, or plugin manifests into a single source graph, updating promotion manifests, interpreting duplicate queues, or preparing later symlink/deletion handoff ledgers.",
+      "entryFile": "source-graph-consolidation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/cleanup-handoff.md",
+        "references/promotion-records.md",
+        "references/review-queue.md"
+      ],
+      "name": "source-graph-consolidation",
+      "observedPath": "/Users/amichne/.agents/skills/source-graph-consolidation/SKILL.md",
+      "path": "source-graph-consolidation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+      "sha256": "sha256:86dbd7f4878f531348acb3daf82db00fc25c1cf797d0335b77fc44e14c726f7e",
+      "sourceRoot": "global-agent-skills",
+      "sourceRootPath": "~/.agents/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Source Graph Consolidation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Inventory, review, promote, synthesize, validate, and prepare cleanup for scattered AI tooling primitives while preserving originals. Use when consolidating skills, agents, hooks, concepts, instructions, or plugin manifests into a single source graph, updating promotion manifests, interpreting duplicate queues, or preparing later symlink/deletion handoff ledgers.",
+      "entryFile": "source-graph-consolidation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/cleanup-handoff.md",
+        "references/promotion-records.md",
+        "references/review-queue.md"
+      ],
+      "name": "source-graph-consolidation",
+      "observedPath": "/Users/amichne/.codex/skills/source-graph-consolidation/SKILL.md",
+      "path": "source-graph-consolidation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+      "sha256": "sha256:86dbd7f4878f531348acb3daf82db00fc25c1cf797d0335b77fc44e14c726f7e",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
+      "title": "Source Graph Consolidation",
+      "type": "SKILL"
+    },
+    {
+      "description": "Inventory, review, promote, synthesize, validate, and prepare cleanup for scattered AI tooling primitives while preserving originals. Use when consolidating skills, agents, hooks, concepts, instructions, or plugin manifests into a single source graph, updating promotion manifests, interpreting duplicate queues, or preparing later symlink/deletion handoff ledgers.",
+      "entryFile": "skills/source-graph-consolidation/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/cleanup-handoff.md",
+        "references/promotion-records.md",
+        "references/review-queue.md"
+      ],
+      "name": "source-graph-consolidation",
+      "observedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+      "path": "skills/source-graph-consolidation",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/source-graph-consolidation/SKILL.md",
+      "sha256": "sha256:86dbd7f4878f531348acb3daf82db00fc25c1cf797d0335b77fc44e14c726f7e",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Source Graph Consolidation",
       "type": "SKILL"
     },
     {
@@ -14917,6 +15865,31 @@
       "expectedResources": [
         "SKILL.md",
         "references/deep-modules.md",
+        "references/handoff.md",
+        "references/interface-design.md",
+        "references/mocking.md",
+        "references/refactoring.md",
+        "references/tests.md"
+      ],
+      "name": "tdd",
+      "observedPath": "/Users/amichne/code/apollo/skills/tdd/SKILL.md",
+      "path": "tdd",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+      "sha256": "sha256:eca4563ecde084b66c8e276ea0eabed1ad2864c5ec6e10cc41a674390bbc9c61",
+      "sourceRoot": "apollo-skills",
+      "sourceRootPath": "../apollo/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": true,
+      "title": "Test-Driven Development",
+      "type": "SKILL"
+    },
+    {
+      "description": ">",
+      "entryFile": "tdd/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/deep-modules.md",
+        "references/handoff.md",
         "references/interface-design.md",
         "references/mocking.md",
         "references/refactoring.md",
@@ -14925,35 +15898,60 @@
       "name": "tdd",
       "observedPath": "/Users/amichne/code/examplar/skills/tdd/SKILL.md",
       "path": "tdd",
-      "resolvedPath": "/Users/amichne/code/examplar/skills/tdd/SKILL.md",
-      "sha256": "sha256:761f8af110477436cd7fad9552170529d9f90dfc6633bb5416fa7f027b11b06f",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+      "sha256": "sha256:eca4563ecde084b66c8e276ea0eabed1ad2864c5ec6e10cc41a674390bbc9c61",
       "sourceRoot": "examplar-skills",
       "sourceRootPath": "../examplar/skills",
       "sourceRootRole": "local-repo-source",
-      "symlink": false,
+      "symlink": true,
       "title": "Test-Driven Development",
       "type": "SKILL"
     },
     {
-      "description": "Test-driven development with red-green-refactor loop. Use when user wants to build features or fix bugs using TDD, mentions \"red-green-refactor\", wants integration tests, or asks for test-first development.",
+      "description": ">",
       "entryFile": "tdd/SKILL.md",
       "expectedResources": [
         "SKILL.md",
-        "deep-modules.md",
-        "interface-design.md",
-        "mocking.md",
-        "refactoring.md",
-        "tests.md"
+        "references/deep-modules.md",
+        "references/handoff.md",
+        "references/interface-design.md",
+        "references/mocking.md",
+        "references/refactoring.md",
+        "references/tests.md"
       ],
       "name": "tdd",
       "observedPath": "/Users/amichne/.agents/skills/tdd/SKILL.md",
       "path": "tdd",
-      "resolvedPath": "/Users/amichne/.agents/skills/tdd/SKILL.md",
-      "sha256": "sha256:d5826cecfb40ba4616d23eceb721b5c97a55ab36777c5cc5288094488f3bbbc6",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+      "sha256": "sha256:eca4563ecde084b66c8e276ea0eabed1ad2864c5ec6e10cc41a674390bbc9c61",
       "sourceRoot": "global-agent-skills",
       "sourceRootPath": "~/.agents/skills",
       "sourceRootRole": "runtime-source",
-      "symlink": false,
+      "symlink": true,
+      "title": "Test-Driven Development",
+      "type": "SKILL"
+    },
+    {
+      "description": ">",
+      "entryFile": "tdd/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/deep-modules.md",
+        "references/handoff.md",
+        "references/interface-design.md",
+        "references/mocking.md",
+        "references/refactoring.md",
+        "references/tests.md"
+      ],
+      "name": "tdd",
+      "observedPath": "/Users/amichne/.codex/skills/tdd/SKILL.md",
+      "path": "tdd",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+      "sha256": "sha256:eca4563ecde084b66c8e276ea0eabed1ad2864c5ec6e10cc41a674390bbc9c61",
+      "sourceRoot": "global-codex-skills",
+      "sourceRootPath": "~/.codex/skills",
+      "sourceRootRole": "runtime-source",
+      "symlink": true,
       "title": "Test-Driven Development",
       "type": "SKILL"
     },
@@ -15643,51 +16641,9 @@
       "symlink": false,
       "title": "Requirements for Outputs",
       "type": "SKILL"
-    },
-    {
-      "description": "Use only when the user explicitly asks to stage, commit, push, and open a GitHub pull request in one flow using the GitHub CLI (`gh`).",
-      "entryFile": "yeet/SKILL.md",
-      "expectedResources": [
-        "LICENSE.txt",
-        "SKILL.md",
-        "agents/openai.yaml",
-        "assets/yeet-small.svg",
-        "assets/yeet.png"
-      ],
-      "name": "yeet",
-      "observedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-      "path": "yeet",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-      "sha256": "sha256:5892fe0117b49ea1832157035bf4cd6615208d0929b1f2fa28a8e2256e868fcf",
-      "sourceRoot": "apollo-skills",
-      "sourceRootPath": "../apollo/skills",
-      "sourceRootRole": "local-repo-source",
-      "symlink": false,
-      "type": "SKILL"
-    },
-    {
-      "description": "Use only when the user explicitly asks to stage, commit, push, and open a GitHub pull request in one flow using the GitHub CLI (`gh`).",
-      "entryFile": "yeet/SKILL.md",
-      "expectedResources": [
-        "LICENSE.txt",
-        "SKILL.md",
-        "agents/openai.yaml",
-        "assets/yeet-small.svg",
-        "assets/yeet.png"
-      ],
-      "name": "yeet",
-      "observedPath": "/Users/amichne/.codex/skills/yeet/SKILL.md",
-      "path": "yeet",
-      "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-      "sha256": "sha256:5892fe0117b49ea1832157035bf4cd6615208d0929b1f2fa28a8e2256e868fcf",
-      "sourceRoot": "global-codex-skills",
-      "sourceRootPath": "~/.codex/skills",
-      "sourceRootRole": "runtime-source",
-      "symlink": true,
-      "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T06:10:45.897262+00:00",
+  "generatedAt": "2026-05-24T12:06:08.463666+00:00",
   "generator": "scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [
@@ -16554,94 +17510,6 @@
     {
       "entries": [
         {
-          "name": "kotlin-boundary-contract-reviewer",
-          "path": "kotlin-boundary-contract-reviewer.agent.md",
-          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
-          "sourceRoot": "examplar-agents",
-          "type": "AGENT"
-        },
-        {
-          "name": "kotlin-boundary-contract-reviewer",
-          "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
-          "sourceRoot": "intelligence",
-          "type": "AGENT"
-        }
-      ],
-      "key": {
-        "name": "kotlin-boundary-contract-reviewer",
-        "type": "AGENT"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "kotlin-package-cohesion-reviewer",
-          "path": "kotlin-package-cohesion-reviewer.agent.md",
-          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
-          "sourceRoot": "examplar-agents",
-          "type": "AGENT"
-        },
-        {
-          "name": "kotlin-package-cohesion-reviewer",
-          "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
-          "sourceRoot": "intelligence",
-          "type": "AGENT"
-        }
-      ],
-      "key": {
-        "name": "kotlin-package-cohesion-reviewer",
-        "type": "AGENT"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "kotlin-review-captain",
-          "path": "kotlin-review-captain.agent.md",
-          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
-          "sourceRoot": "examplar-agents",
-          "type": "AGENT"
-        },
-        {
-          "name": "kotlin-review-captain",
-          "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
-          "sourceRoot": "intelligence",
-          "type": "AGENT"
-        }
-      ],
-      "key": {
-        "name": "kotlin-review-captain",
-        "type": "AGENT"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "kotlin-type-safety-reviewer",
-          "path": "kotlin-type-safety-reviewer.agent.md",
-          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
-          "sourceRoot": "examplar-agents",
-          "type": "AGENT"
-        },
-        {
-          "name": "kotlin-type-safety-reviewer",
-          "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
-          "sourceRoot": "intelligence",
-          "type": "AGENT"
-        }
-      ],
-      "key": {
-        "name": "kotlin-type-safety-reviewer",
-        "type": "AGENT"
-      }
-    },
-    {
-      "entries": [
-        {
           "name": "kubernetes-architect",
           "path": "cache/claude-code-workflows/cicd-automation/1.2.1/agents/kubernetes-architect.md",
           "resolvedPath": "/Users/amichne/.claude/plugins/cache/claude-code-workflows/cicd-automation/1.2.1/agents/kubernetes-architect.md",
@@ -16816,37 +17684,9 @@
         },
         {
           "name": "openai",
-          "path": "define-goal/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-          "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
           "path": "jira-resolve-ticket/agents/openai.yaml",
           "resolvedPath": "/Users/amichne/code/apollo/skills/jira-resolve-ticket/agents/openai.yaml",
           "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "segment-codebase-agents-md/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-          "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "yeet/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
-          "sourceRoot": "apollo-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "manage-json-schemas/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/agents/openai.yaml",
-          "sourceRoot": "examplar-skills",
           "type": "AGENT"
         },
         {
@@ -16914,29 +17754,8 @@
         },
         {
           "name": "openai",
-          "path": "define-goal/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/agents/openai.yaml",
-          "sourceRoot": "global-codex-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
           "path": "jira-resolve-ticket/agents/openai.yaml",
           "resolvedPath": "/Users/amichne/code/apollo/skills/jira-resolve-ticket/agents/openai.yaml",
-          "sourceRoot": "global-codex-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "segment-codebase-agents-md/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/agents/openai.yaml",
-          "sourceRoot": "global-codex-skills",
-          "type": "AGENT"
-        },
-        {
-          "name": "openai",
-          "path": "yeet/agents/openai.yaml",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/agents/openai.yaml",
           "sourceRoot": "global-codex-skills",
           "type": "AGENT"
         },
@@ -17071,28 +17890,6 @@
       ],
       "key": {
         "name": "routing-improvement",
-        "type": "AGENT"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "schema-type-enforcer",
-          "path": "schema-type-enforcer.agent.md",
-          "resolvedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
-          "sourceRoot": "examplar-agents",
-          "type": "AGENT"
-        },
-        {
-          "name": "schema-type-enforcer",
-          "path": "agents/schema-type-enforcer.agent.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
-          "sourceRoot": "intelligence",
-          "type": "AGENT"
-        }
-      ],
-      "key": {
-        "name": "schema-type-enforcer",
         "type": "AGENT"
       }
     },
@@ -17504,13 +18301,6 @@
       "entries": [
         {
           "name": "kotlin-horizontalization-check",
-          "path": "copilot/kotlin-horizontalization-check.py",
-          "resolvedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
-          "sourceRoot": "examplar-hooks",
-          "type": "HOOK"
-        },
-        {
-          "name": "kotlin-horizontalization-check",
           "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
           "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/kotlin-horizontalization-check.hooks.json",
           "sourceRoot": "intelligence",
@@ -17583,6 +18373,35 @@
     {
       "entries": [
         {
+          "name": "required-skill-read",
+          "path": "hooks/codex/required-skill-read.hooks.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/required-skill-read.hooks.json",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        },
+        {
+          "name": "required-skill-read",
+          "path": "hooks/required-skill-read.hook.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/required-skill-read.hook.json",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        },
+        {
+          "name": "required-skill-read",
+          "path": "hooks/required-skill-read.py",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/required-skill-read.py",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        }
+      ],
+      "key": {
+        "name": "required-skill-read",
+        "type": "HOOK"
+      }
+    },
+    {
+      "entries": [
+        {
           "name": "stop",
           "path": "cache/claude-plugins-official/hookify/unknown/hooks/stop.py",
           "resolvedPath": "/Users/amichne/.claude/plugins/cache/claude-plugins-official/hookify/unknown/hooks/stop.py",
@@ -17622,50 +18441,6 @@
       "key": {
         "name": "userpromptsubmit",
         "type": "HOOK"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "schema-driven-design",
-          "path": "schema-driven-design.md",
-          "resolvedPath": "/Users/amichne/code/examplar/instructions/schema-driven-design.md",
-          "sourceRoot": "examplar-instructions",
-          "type": "INSTRUCTION"
-        },
-        {
-          "name": "schema-driven-design",
-          "path": "concepts/schema-driven-design/core.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
-          "sourceRoot": "intelligence",
-          "type": "INSTRUCTION"
-        }
-      ],
-      "key": {
-        "name": "schema-driven-design",
-        "type": "INSTRUCTION"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "type-safety",
-          "path": "type-safety.md",
-          "resolvedPath": "/Users/amichne/code/examplar/instructions/type-safety.md",
-          "sourceRoot": "examplar-instructions",
-          "type": "INSTRUCTION"
-        },
-        {
-          "name": "type-safety",
-          "path": "concepts/type-safety/core.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/concepts/type-safety/core.md",
-          "sourceRoot": "intelligence",
-          "type": "INSTRUCTION"
-        }
-      ],
-      "key": {
-        "name": "type-safety",
-        "type": "INSTRUCTION"
       }
     },
     {
@@ -18147,35 +18922,6 @@
     {
       "entries": [
         {
-          "name": "define-goal",
-          "path": "define-goal",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "define-goal",
-          "path": "define-goal",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "define-goal",
-          "path": "skills/define-goal",
-          "resolvedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
-          "sourceRoot": "intelligence",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "define-goal",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
           "name": "deployment-pipeline-design",
           "path": "cache/claude-code-workflows/cicd-automation/1.2.1/skills/deployment-pipeline-design",
           "resolvedPath": "/Users/amichne/.claude/plugins/cache/claude-code-workflows/cicd-automation/1.2.1/skills/deployment-pipeline-design/SKILL.md",
@@ -18192,35 +18938,6 @@
       ],
       "key": {
         "name": "deployment-pipeline-design",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "doc-coauthoring",
-          "path": "doc-coauthoring",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "doc-coauthoring",
-          "path": "marketplaces/anthropic-agent-skills/skills/doc-coauthoring",
-          "resolvedPath": "/Users/amichne/.claude/plugins/marketplaces/anthropic-agent-skills/skills/doc-coauthoring/SKILL.md",
-          "sourceRoot": "claude-plugins",
-          "type": "SKILL"
-        },
-        {
-          "name": "doc-coauthoring",
-          "path": "doc-coauthoring",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "doc-coauthoring",
         "type": "SKILL"
       }
     },
@@ -18417,71 +19134,6 @@
     {
       "entries": [
         {
-          "name": "kotlin-gradle-loop",
-          "path": "kotlin-gradle-loop",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-gradle-loop",
-          "path": "kotlin-gradle-loop",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-gradle-loop/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "kotlin-gradle-loop",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "kotlin-standards",
-          "path": "kotlin-standards",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-standards",
-          "path": "kotlin-standards",
-          "resolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "examplar-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-standards",
-          "path": "kotlin-standards",
-          "resolvedPath": "/Users/amichne/.agents/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "global-agent-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-standards",
-          "path": "kotlin-standards",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "kotlin-standards",
-          "path": "skills/kotlin-standards",
-          "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
-          "sourceRoot": "intelligence",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "kotlin-standards",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
           "name": "llm-native-signature-spec",
           "path": "llm-native-signature-spec",
           "resolvedPath": "/Users/amichne/.codex/backups/llm-native-signature-spec/SKILL.md",
@@ -18498,35 +19150,6 @@
       ],
       "key": {
         "name": "llm-native-signature-spec",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "manage-json-schemas",
-          "path": "manage-json-schemas",
-          "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/SKILL.md",
-          "sourceRoot": "examplar-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "manage-json-schemas",
-          "path": "manage-json-schemas",
-          "resolvedPath": "/Users/amichne/.agents/skills/manage-json-schemas/SKILL.md",
-          "sourceRoot": "global-agent-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "manage-json-schemas",
-          "path": "skills/manage-json-schemas",
-          "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
-          "sourceRoot": "intelligence",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "manage-json-schemas",
         "type": "SKILL"
       }
     },
@@ -18686,28 +19309,6 @@
     {
       "entries": [
         {
-          "name": "segment-codebase-agents-md",
-          "path": "segment-codebase-agents-md",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "segment-codebase-agents-md",
-          "path": "segment-codebase-agents-md",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/segment-codebase-agents-md/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "segment-codebase-agents-md",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
           "name": "skill-creator",
           "path": ".system/skill-creator",
           "resolvedPath": "/Users/amichne/code/apollo/skills/.system/skill-creator/SKILL.md",
@@ -18837,35 +19438,6 @@
     {
       "entries": [
         {
-          "name": "tdd",
-          "path": "tdd",
-          "resolvedPath": "/Users/amichne/code/examplar/skills/tdd/SKILL.md",
-          "sourceRoot": "examplar-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "tdd",
-          "path": "tdd",
-          "resolvedPath": "/Users/amichne/.agents/skills/tdd/SKILL.md",
-          "sourceRoot": "global-agent-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "tdd",
-          "path": "skills/tdd",
-          "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
-          "sourceRoot": "intelligence",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "tdd",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
           "name": "team-communication-protocols",
           "path": "cache/claude-code-workflows/agent-teams/1.0.2/skills/team-communication-protocols",
           "resolvedPath": "/Users/amichne/.claude/plugins/cache/claude-code-workflows/agent-teams/1.0.2/skills/team-communication-protocols/SKILL.md",
@@ -18948,28 +19520,6 @@
       ],
       "key": {
         "name": "writing-hookify-rules",
-        "type": "SKILL"
-      }
-    },
-    {
-      "entries": [
-        {
-          "name": "yeet",
-          "path": "yeet",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-          "sourceRoot": "apollo-skills",
-          "type": "SKILL"
-        },
-        {
-          "name": "yeet",
-          "path": "yeet",
-          "resolvedPath": "/Users/amichne/code/apollo/skills/yeet/SKILL.md",
-          "sourceRoot": "global-codex-skills",
-          "type": "SKILL"
-        }
-      ],
-      "key": {
-        "name": "yeet",
         "type": "SKILL"
       }
     }

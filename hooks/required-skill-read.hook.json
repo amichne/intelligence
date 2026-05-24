@@ -1,0 +1,38 @@
+{
+  "type": "HOOK",
+  "source": {
+    "type": "LOCAL_SOURCE",
+    "path": "./"
+  },
+  "path": "hooks/codex/required-skill-read.hooks.json",
+  "name": "required-skill-read",
+  "dependsOn": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/source-graph-consolidation",
+      "name": "source-graph-consolidation"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/manage-json-schemas",
+      "name": "manage-json-schemas"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/primitive-quality-audit",
+      "name": "primitive-quality-audit"
+    }
+  ]
+}

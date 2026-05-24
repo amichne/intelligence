@@ -100,8 +100,8 @@ def build_inventory(repo_root: Path, config: dict[str, Any]) -> dict[str, Any]:
         "counts": counts(entries),
         "missingRoots": missing_roots,
         "brokenSymlinks": sorted(broken_symlinks, key=lambda item: (item["sourceRoot"], item["path"])),
-        "nameCollisions": collision_groups(entries, ("type", "name")),
-        "digestDuplicates": digest_groups(entries),
+        "nameCollisions": collision_groups(entries, ("type", "name"), repo_root),
+        "digestDuplicates": digest_groups(entries, repo_root),
         "entries": entries,
     }
 
@@ -302,6 +302,8 @@ def root_kind_hint(source_root: dict[str, Any], observed_root: Path) -> str | No
 
 
 def is_hook_file(path: Path, parts: tuple[str, ...], suffix: str, hint: str | None) -> bool:
+    if path.name.endswith(".requirements.json"):
+        return False
     if path.name.endswith((".hook.json", ".hooks.json")):
         return True
     if path.name == "hooks.json":
@@ -449,9 +451,13 @@ def counts(entries: list[dict[str, Any]]) -> dict[str, int]:
     return dict(sorted(result.items()))
 
 
-def collision_groups(entries: list[dict[str, Any]], keys: tuple[str, ...]) -> list[dict[str, Any]]:
+def collision_groups(
+    entries: list[dict[str, Any]],
+    keys: tuple[str, ...],
+    repo_root: Path,
+) -> list[dict[str, Any]]:
     groups: dict[tuple[str, ...], list[dict[str, Any]]] = defaultdict(list)
-    for entry in entries:
+    for entry in duplicate_review_candidates(entries, repo_root):
         groups[tuple(entry[key] for key in keys)].append(entry)
     result = []
     for key, values in groups.items():
@@ -466,15 +472,34 @@ def collision_groups(entries: list[dict[str, Any]], keys: tuple[str, ...]) -> li
     return sorted(result, key=lambda item: tuple(item["key"].values()))
 
 
-def digest_groups(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def digest_groups(entries: list[dict[str, Any]], repo_root: Path) -> list[dict[str, Any]]:
     groups: dict[str, list[dict[str, Any]]] = defaultdict(list)
-    for entry in entries:
+    for entry in duplicate_review_candidates(entries, repo_root):
         groups[entry["sha256"]].append(entry)
     return [
         {"sha256": sha, "entries": [entry_ref(entry) for entry in values]}
         for sha, values in sorted(groups.items())
         if len(values) > 1
     ]
+
+
+def duplicate_review_candidates(entries: list[dict[str, Any]], repo_root: Path) -> list[dict[str, Any]]:
+    return [
+        entry
+        for entry in entries
+        if not active_repo_runtime_alias(entry, repo_root)
+    ]
+
+
+def active_repo_runtime_alias(entry: dict[str, Any], repo_root: Path) -> bool:
+    if not entry.get("symlink"):
+        return False
+    try:
+        observed = Path(entry["observedPath"])
+        resolved = Path(entry["resolvedPath"]).resolve(strict=False)
+    except OSError:
+        return False
+    return not observed.is_relative_to(repo_root) and resolved.is_relative_to(repo_root)
 
 
 def entry_ref(entry: dict[str, Any]) -> dict[str, str]:

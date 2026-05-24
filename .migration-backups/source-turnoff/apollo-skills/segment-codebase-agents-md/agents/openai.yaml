@@ -1,0 +1,4 @@
+interface:
+  display_name: "Segment Codebase AGENTS.md"
+  short_description: "Plan AGENTS.md boundaries in polyglot repos"
+  default_prompt: "Use $segment-codebase-agents-md to explore this repo, choose AGENTS.md boundaries, and create the files."

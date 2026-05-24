@@ -1,0 +1,336 @@
+{
+  "entries": [
+    {
+      "actionState": "APPLIED",
+      "actions": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
+          "description": "Verify source directory exists",
+          "effect": "VERIFY_SOURCE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.agents/skills",
+          "description": "Prepare target directory",
+          "effect": "PREPARE_TARGET",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/agent-profile-authoring /Users/amichne/.agents/skills/agent-profile-authoring",
+          "description": "Link child agent-profile-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/define-goal /Users/amichne/.agents/skills/define-goal",
+          "description": "Link child define-goal",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/git-change-flow /Users/amichne/.agents/skills/git-change-flow",
+          "description": "Link child git-change-flow",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/github-ci-operations /Users/amichne/.agents/skills/github-ci-operations",
+          "description": "Link child github-ci-operations",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/hook-primitive-authoring /Users/amichne/.agents/skills/hook-primitive-authoring",
+          "description": "Link child hook-primitive-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/kotlin-gradle-validation /Users/amichne/.agents/skills/kotlin-gradle-validation",
+          "description": "Link child kotlin-gradle-validation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "true",
+          "description": "Child kotlin-standards is already linked",
+          "effect": "SKIP_ACTIVE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/local-repository-navigation /Users/amichne/.agents/skills/local-repository-navigation",
+          "description": "Link child local-repository-navigation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "true",
+          "description": "Child manage-json-schemas is already linked",
+          "effect": "SKIP_ACTIVE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/plugin-composition-authoring /Users/amichne/.agents/skills/plugin-composition-authoring",
+          "description": "Link child plugin-composition-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/primitive-quality-audit /Users/amichne/.agents/skills/primitive-quality-audit",
+          "description": "Link child primitive-quality-audit",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/primitive-routing-evaluation /Users/amichne/.agents/skills/primitive-routing-evaluation",
+          "description": "Link child primitive-routing-evaluation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/reference-doc-workflow /Users/amichne/.agents/skills/reference-doc-workflow",
+          "description": "Link child reference-doc-workflow",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/repo-instruction-topology /Users/amichne/.agents/skills/repo-instruction-topology",
+          "description": "Link child repo-instruction-topology",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/repository-signature-indexing /Users/amichne/.agents/skills/repository-signature-indexing",
+          "description": "Link child repository-signature-indexing",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/runtime-linking /Users/amichne/.agents/skills/runtime-linking",
+          "description": "Link child runtime-linking",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/shell-script-safety /Users/amichne/.agents/skills/shell-script-safety",
+          "description": "Link child shell-script-safety",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/site-docs-authoring /Users/amichne/.agents/skills/site-docs-authoring",
+          "description": "Link child site-docs-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/skill-primitive-authoring /Users/amichne/.agents/skills/skill-primitive-authoring",
+          "description": "Link child skill-primitive-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/source-graph-consolidation /Users/amichne/.agents/skills/source-graph-consolidation",
+          "description": "Link child source-graph-consolidation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "true",
+          "description": "Child tdd is already linked",
+          "effect": "SKIP_ACTIVE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        }
+      ],
+      "approvalState": "READY_FOR_APPROVAL",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "packetName": "agent-skill-children",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "reasons": [
+        "Created missing child symlinks."
+      ],
+      "riskLevel": "MEDIUM",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourcePath": "/Users/amichne/code/intelligence/skills",
+      "targetPath": "/Users/amichne/.agents/skills",
+      "type": "RUNTIME_TRIM_EXECUTION_ENTRY"
+    },
+    {
+      "actionState": "APPLIED",
+      "actions": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
+          "description": "Verify source directory exists",
+          "effect": "VERIFY_SOURCE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.codex/skills",
+          "description": "Prepare target directory",
+          "effect": "PREPARE_TARGET",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/agent-profile-authoring /Users/amichne/.codex/skills/agent-profile-authoring",
+          "description": "Link child agent-profile-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "true",
+          "description": "Child define-goal is already linked",
+          "effect": "SKIP_ACTIVE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/git-change-flow /Users/amichne/.codex/skills/git-change-flow",
+          "description": "Link child git-change-flow",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/github-ci-operations /Users/amichne/.codex/skills/github-ci-operations",
+          "description": "Link child github-ci-operations",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/hook-primitive-authoring /Users/amichne/.codex/skills/hook-primitive-authoring",
+          "description": "Link child hook-primitive-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/kotlin-gradle-validation /Users/amichne/.codex/skills/kotlin-gradle-validation",
+          "description": "Link child kotlin-gradle-validation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "true",
+          "description": "Child kotlin-standards is already linked",
+          "effect": "SKIP_ACTIVE",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/local-repository-navigation /Users/amichne/.codex/skills/local-repository-navigation",
+          "description": "Link child local-repository-navigation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/manage-json-schemas /Users/amichne/.codex/skills/manage-json-schemas",
+          "description": "Link child manage-json-schemas",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/plugin-composition-authoring /Users/amichne/.codex/skills/plugin-composition-authoring",
+          "description": "Link child plugin-composition-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/primitive-quality-audit /Users/amichne/.codex/skills/primitive-quality-audit",
+          "description": "Link child primitive-quality-audit",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/primitive-routing-evaluation /Users/amichne/.codex/skills/primitive-routing-evaluation",
+          "description": "Link child primitive-routing-evaluation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/reference-doc-workflow /Users/amichne/.codex/skills/reference-doc-workflow",
+          "description": "Link child reference-doc-workflow",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/repo-instruction-topology /Users/amichne/.codex/skills/repo-instruction-topology",
+          "description": "Link child repo-instruction-topology",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/repository-signature-indexing /Users/amichne/.codex/skills/repository-signature-indexing",
+          "description": "Link child repository-signature-indexing",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/runtime-linking /Users/amichne/.codex/skills/runtime-linking",
+          "description": "Link child runtime-linking",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/shell-script-safety /Users/amichne/.codex/skills/shell-script-safety",
+          "description": "Link child shell-script-safety",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/site-docs-authoring /Users/amichne/.codex/skills/site-docs-authoring",
+          "description": "Link child site-docs-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/skill-primitive-authoring /Users/amichne/.codex/skills/skill-primitive-authoring",
+          "description": "Link child skill-primitive-authoring",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/source-graph-consolidation /Users/amichne/.codex/skills/source-graph-consolidation",
+          "description": "Link child source-graph-consolidation",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        },
+        {
+          "commandPreview": "ln -s /Users/amichne/code/intelligence/skills/tdd /Users/amichne/.codex/skills/tdd",
+          "description": "Link child tdd",
+          "effect": "CREATE_SYMLINK",
+          "type": "RUNTIME_TRIM_EXECUTION_ACTION"
+        }
+      ],
+      "approvalState": "READY_FOR_APPROVAL",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "packetName": "codex-skill-children",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "reasons": [
+        "Created missing child symlinks."
+      ],
+      "riskLevel": "MEDIUM",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourcePath": "/Users/amichne/code/intelligence/skills",
+      "targetPath": "/Users/amichne/.codex/skills",
+      "type": "RUNTIME_TRIM_EXECUTION_ENTRY"
+    }
+  ],
+  "generatedAt": "2026-05-24T10:20:32Z",
+  "generatedFrom": {
+    "runtimeActivationApprovals": "manifests/runtime-activation-approvals.json",
+    "type": "RUNTIME_TRIM_EXECUTION_INPUTS"
+  },
+  "schemaVersion": 1,
+  "summary": {
+    "appliedEntries": 2,
+    "dryRunEntries": 0,
+    "failedEntries": 0,
+    "mode": "APPLY",
+    "requestedPackets": 2,
+    "runtimeMutationAttempted": true,
+    "selectedPackets": 2,
+    "skippedEntries": 0,
+    "type": "RUNTIME_TRIM_EXECUTION_SUMMARY"
+  },
+  "type": "RUNTIME_TRIM_EXECUTION_REPORT"
+}

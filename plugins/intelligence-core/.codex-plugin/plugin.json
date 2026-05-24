@@ -1,0 +1,32 @@
+{
+  "author": {
+    "name": "Amichne"
+  },
+  "description": "Core portable instructions and hooks from the intelligence source graph.",
+  "interface": {
+    "brandColor": "#7C3AED",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "category": "Productivity",
+    "defaultPrompt": [
+      "Use Intelligence Core for this task.",
+      "Review this repo with Intelligence Core.",
+      "Show the Intelligence Core workflow."
+    ],
+    "developerName": "Amichne",
+    "displayName": "Intelligence Core",
+    "longDescription": "Core portable instructions and hooks from the intelligence source graph.",
+    "shortDescription": "Core portable instructions and hooks from the intelligence source graph."
+  },
+  "keywords": [
+    "core",
+    "hooks",
+    "instructions",
+    "intelligence-core"
+  ],
+  "license": "UNLICENSED",
+  "name": "intelligence-core",
+  "version": "0.1.0"
+}

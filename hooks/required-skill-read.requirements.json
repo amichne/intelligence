@@ -1,0 +1,29 @@
+{
+  "$schema": "../schemas/intelligence/hook-skill-requirements.schema.json",
+  "type": "HOOK_SKILL_REQUIREMENTS",
+  "schemaVersion": 1,
+  "mode": "ADVISORY",
+  "skills": [
+    {
+      "type": "REQUIRED_SKILL",
+      "id": "source-graph-consolidation",
+      "skillPath": "skills/source-graph-consolidation/SKILL.md",
+      "requireRead": true,
+      "notes": "Source graph work should load the consolidation workflow before tool-heavy edits."
+    },
+    {
+      "type": "REQUIRED_SKILL",
+      "id": "manage-json-schemas",
+      "skillPath": "skills/manage-json-schemas/SKILL.md",
+      "requireRead": true,
+      "notes": "Structured data changes should load the schema contract workflow before manifest or JSON edits."
+    },
+    {
+      "type": "REQUIRED_SKILL",
+      "id": "primitive-quality-audit",
+      "skillPath": "skills/primitive-quality-audit/SKILL.md",
+      "requireRead": true,
+      "notes": "Promotion, activation, and cleanup decisions should load the primitive audit workflow before mutating ledgers."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: git-change-flow
-description: Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved.
+description: "Manage local Git change flow: inspect status, protect user work, branch safely, review diffs, stage intentionally, commit, recover from common mistakes, and prepare a branch for publication. Use for version-control hygiene even when no GitHub workflow is involved."
 ---
 
 # Git Change Flow
