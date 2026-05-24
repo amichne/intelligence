@@ -15,6 +15,8 @@ from typing import Any
 
 
 CODEX_PLUGIN_DIR = ".codex-plugin"
+CODEX_PROVIDER_DIR = "codex"
+GITHUB_COPILOT_PROVIDER_DIR = "github-copilot"
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -88,10 +90,23 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
     out_root.mkdir(parents=True)
 
     marketplace = read_json(repo_root / "marketplace.json")
-    owner = marketplace.get("owner", {}).get("name", "Local developer")
+    owner = marketplace.get("owner", {})
+    owner_name = owner.get("name", "Local developer")
+    codex_root = out_root / CODEX_PROVIDER_DIR
+    github_copilot_root = out_root / GITHUB_COPILOT_PROVIDER_DIR
     codex_marketplace = {
         "name": marketplace["name"],
         "interface": {"displayName": title_case(marketplace["name"])},
+        "plugins": [],
+    }
+    github_copilot_marketplace = {
+        "$schema": "github-marketplace.schema.json",
+        "name": marketplace["name"],
+        "owner": person_for(owner, owner_name),
+        "metadata": {
+            "description": marketplace.get("description", ""),
+            "pluginRoot": "./plugins",
+        },
         "plugins": [],
     }
     lock = {
@@ -107,8 +122,10 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
         source_path = Path(plugin_ref["source"]["path"])
         plugin_manifest = read_json(repo_root / source_path / "plugin.json")
         plugin_name = plugin_manifest["name"]
-        plugin_out = out_root / "plugins" / plugin_name
-        plugin_out.mkdir(parents=True, exist_ok=True)
+        codex_plugin_out = codex_root / "plugins" / plugin_name
+        github_copilot_plugin_out = github_copilot_root / "plugins" / plugin_name
+        codex_plugin_out.mkdir(parents=True, exist_ok=True)
+        github_copilot_plugin_out.mkdir(parents=True, exist_ok=True)
 
         description = (
             plugin_manifest.get("description")
@@ -117,7 +134,12 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
         )
         tags = entry.get("tags", [])
         category = category_for(tags)
-        hydrated = hydrate_plugin(repo_root, plugin_out, plugin_manifest)
+        codex_hydrated = hydrate_plugin(repo_root, codex_plugin_out, plugin_manifest)
+        github_copilot_hydrated = hydrate_plugin(
+            repo_root,
+            github_copilot_plugin_out,
+            plugin_manifest,
+        )
 
         codex_marketplace["plugins"].append(
             {
@@ -133,49 +155,102 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
                 "category": category,
             }
         )
+        github_copilot_marketplace["plugins"].append(
+            github_copilot_plugin_entry(
+                plugin_name=plugin_name,
+                description=description,
+                version=plugin_manifest.get("version", plugin_ref.get("version", "0.1.0")),
+                owner=person_for(owner, owner_name),
+                tags=tags,
+                category=category,
+                hydrated=github_copilot_hydrated,
+            )
+        )
 
         codex_manifest = {
             "name": plugin_name,
             "version": plugin_manifest.get("version", plugin_ref.get("version", "0.1.0")),
             "description": description,
-            "author": {"name": owner},
+            "author": {"name": owner_name},
             "license": "UNLICENSED",
             "keywords": sorted(set([plugin_name, *tags])),
             "interface": {
                 "displayName": title_case(plugin_name),
                 "shortDescription": short_description(description),
                 "longDescription": description,
-                "developerName": owner,
+                "developerName": owner_name,
                 "category": category,
-                "capabilities": capabilities_for(hydrated),
+                "capabilities": capabilities_for(codex_hydrated),
                 "brandColor": brand_color_for(category),
                 "defaultPrompt": default_prompts(plugin_name),
             },
         }
-        if hydrated["skills"]:
+        if codex_hydrated["skills"]:
             codex_manifest["skills"] = "./skills/"
 
-        write_json(plugin_out / CODEX_PLUGIN_DIR / "plugin.json", codex_manifest)
+        write_json(codex_plugin_out / CODEX_PLUGIN_DIR / "plugin.json", codex_manifest)
         lock["plugins"].append(
             {
                 "name": plugin_name,
                 "version": codex_manifest["version"],
                 "sourceManifest": f"{source_path.as_posix()}/plugin.json",
-                "references": hydrated["references"],
+                "references": codex_hydrated["references"],
             }
         )
 
-    write_json(out_root / "marketplace.json", codex_marketplace)
-    write_json(out_root / ".github" / "plugin" / "marketplace.json", codex_marketplace)
-    write_json(out_root / "marketplace-lock.json", lock)
+    write_json(codex_root / "marketplace.json", codex_marketplace)
+    write_json(codex_root / "marketplace-lock.json", lock)
+    write_json(github_copilot_root / "marketplace.json", github_copilot_marketplace)
     (out_root / "README.md").write_text(
         "# Intelligence Marketplace\n\n"
         "This branch is generated from the referential source graph on `main`.\n\n"
-        "`marketplace.json` is the Codex-native marketplace entrypoint. "
-        "`.github/plugin/marketplace.json` is kept as a mirror for GitHub plugin discovery.\n",
+        "Provider-specific marketplace projections are scoped under their provider directories:\n\n"
+        "- `codex/marketplace.json`\n"
+        "- `github-copilot/marketplace.json`\n\n"
+        "Each provider directory owns its own `plugins/` payloads so marketplace-relative "
+        "paths stay provider-native.\n",
         encoding="utf-8",
     )
     print(f"materialized marketplace at {out_root}")
+
+
+def person_for(owner: dict[str, Any], fallback_name: str) -> dict[str, str]:
+    person = {"name": owner.get("name", fallback_name)}
+    for key in ("email", "url"):
+        if owner.get(key):
+            person[key] = owner[key]
+    return person
+
+
+def github_copilot_plugin_entry(
+    *,
+    plugin_name: str,
+    description: str,
+    version: str,
+    owner: dict[str, str],
+    tags: list[str],
+    category: str,
+    hydrated: dict[str, Any],
+) -> dict[str, Any]:
+    plugin_entry: dict[str, Any] = {
+        "name": plugin_name,
+        "source": f"./plugins/{plugin_name}",
+        "description": description,
+        "version": version,
+        "author": owner,
+        "license": "UNLICENSED",
+        "keywords": sorted(set([plugin_name, *tags])),
+        "category": category,
+        "tags": tags,
+        "strict": True,
+    }
+    if hydrated["agents"]:
+        plugin_entry["agents"] = "./agents"
+    if hydrated["skills"]:
+        plugin_entry["skills"] = "./skills"
+    if hydrated["hooks"]:
+        plugin_entry["hooks"] = "./hooks"
+    return plugin_entry
 
 
 def hydrate_plugin(repo_root: Path, plugin_out: Path, plugin_manifest: dict[str, Any]) -> dict[str, Any]:

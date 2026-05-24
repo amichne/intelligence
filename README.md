@@ -167,9 +167,11 @@ node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-mark
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```
 
-The generated branch publishes a Codex-native `marketplace.json` at the branch
-root, keeps `.github/plugin/marketplace.json` as an identical mirror for GitHub
-plugin discovery, and leaves the provider-neutral source graph on `main`.
+The generated branch scopes provider projections under provider directories:
+`codex/marketplace.json` is the Codex-native entrypoint and
+`github-copilot/marketplace.json` is the GitHub Copilot marketplace projection.
+Each provider directory owns its own `plugins/` payloads so marketplace-relative
+paths stay provider-native. The provider-neutral source graph remains on `main`.
 
 Merges to `main` run `.github/workflows/publish-marketplace.yml`, validate the
 source contracts, materialize the marketplace, and force-update `marketplace`.
