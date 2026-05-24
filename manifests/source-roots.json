@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Known local roots that may contain AI tooling primitives to consolidate into this repository.",
+  "scanRoots": [
+    {
+      "name": "intelligence",
+      "path": ".",
+      "role": "canonical-candidate",
+      "notes": "This repository. Entries found here are candidates for canonical ownership."
+    },
+    {
+      "name": "apollo-skills",
+      "path": "../apollo/skills",
+      "role": "local-repo-source",
+      "notes": "Historical Codex skill home on this machine."
+    },
+    {
+      "name": "apollo-agents",
+      "path": "../apollo/agents",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "apollo-plugins",
+      "path": "../apollo/plugins",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "examplar-skills",
+      "path": "../examplar/skills",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "examplar-agents",
+      "path": "../examplar/agents",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "examplar-hooks",
+      "path": "../examplar/hooks",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "examplar-instructions",
+      "path": "../examplar/instructions",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "examplar-plugins",
+      "path": "../examplar/plugins",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "kast-agent-skills",
+      "path": "../kast/.agents/skills",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "kast-github-agents",
+      "path": "../kast/.github/agents",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "kast-github-hooks",
+      "path": "../kast/.github/hooks",
+      "role": "local-repo-source"
+    },
+    {
+      "name": "global-agent-skills",
+      "path": "~/.agents/skills",
+      "role": "runtime-source"
+    },
+    {
+      "name": "global-codex-skills",
+      "path": "~/.codex/skills",
+      "role": "runtime-source",
+      "notes": "May be a symlink to another local repo; inventory records both observed and resolved paths."
+    },
+    {
+      "name": "global-codex-skills-backup",
+      "path": "~/.codex/skills.backup",
+      "role": "backup-source"
+    },
+    {
+      "name": "global-codex-backups",
+      "path": "~/.codex/backups",
+      "role": "backup-source"
+    },
+    {
+      "name": "claude-agents",
+      "path": "~/.claude/agents",
+      "role": "runtime-source"
+    },
+    {
+      "name": "claude-plugins",
+      "path": "~/.claude/plugins",
+      "role": "runtime-source"
+    }
+  ],
+  "excludedPathParts": [
+    ".agent-turn",
+    ".git",
+    ".gradle",
+    ".idea",
+    ".kotlin",
+    ".mypy_cache",
+    ".venv",
+    "__pycache__",
+    "build",
+    "concordance",
+    "dist",
+    "node_modules",
+    "out",
+    "target"
+  ],
+  "excludeGlobs": [
+    "plugouts/concepts/schema-driven-design.md",
+    "plugouts/concepts/type-safety.md"
+  ],
+  "classificationRules": [
+    "A directory containing SKILL.md is a SKILL primitive.",
+    "A plugin.json file is a PLUGIN primitive rooted at its parent directory.",
+    "Files under an agents directory are AGENT primitives unless they are AGENTS.md.",
+    "AGENTS.md, CLAUDE.md, copilot-instructions.md, and Markdown files under instructions, concepts, or standards directories are INSTRUCTION primitives.",
+    "Hook metadata, hook adapter JSON, and executable files under hooks directories are HOOK primitives."
+  ]
+}

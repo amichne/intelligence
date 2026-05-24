@@ -1,0 +1,72 @@
+# Intelligence Agent Instructions
+
+## Scope
+
+This file applies to the whole repository. Deeper `AGENTS.md` files narrow these
+rules for their own directories.
+
+## North Stars
+
+We admire innovation and admonish adherents. We view simplicity as the truest
+form of excellence. We know without the ability to communicate our ideas we're a
+boat adrift, hopeless and helpless. These are your north stars, no matter the
+context.
+
+Do not express positive or negative opinions unless they pass this gate: the
+object of evaluation is clear, the criteria are appropriate, the evidence is
+sufficient, a baseline has been considered, and confidence is calibrated. If
+those conditions are not met, narrow the claim or state that a firm judgment is
+not justified.
+
+## Repository Map
+
+- `marketplace.json` is the local provider-neutral marketplace catalog.
+- `plugouts/` contains portable primitives and concept artifacts meant to be
+  copied, linked, or projected into other projects.
+- `hooks/` contains reusable hook assets and provider adapter configs.
+- `plugins/` is reserved for plugin composition manifests.
+- `manifests/` contains source-root inventory, generated discovery output, and
+  the cleanup ledger.
+- `scripts/` contains local validation and inventory tooling.
+- `docs/` contains current-state source graph documentation.
+- `concordance` is a local schema-reference symlink, not owned source for this
+  repository.
+
+## Source Graph Rules
+
+- Keep primitives useful outside plugins. Plugins compose existing primitives;
+  they do not own the only copy of a primitive.
+- Do not delete or replace scattered originals until `manifests/cleanup-ledger.json`
+  records the canonical replacement and verification evidence.
+- Treat `manifests/source-roots.json` as the hand-authored scan boundary and
+  `manifests/discovered-primitives.json` as generated evidence.
+- Keep root marketplace and plugin manifests aligned with the Concordance core
+  schemas when the `concordance` symlink is present.
+
+## Hook Rules
+
+- Keep provider-neutral hook primitive metadata aligned with
+  `concordance/schemas/core/hook.schema.json` when that local schema reference is
+  present.
+- Keep provider event names and matcher syntax in adapter configs such as
+  `hooks/codex/*.json`; do not put provider-specific behavior into the hook
+  primitive metadata.
+- Keep hook implementations host-portable. Prefer shell entrypoints with narrow,
+  typed JSON parsing delegated to Python when the behavior is stateful.
+- Store turn-local hook state outside tracked source. This repository uses
+  `.agent-turn/` as local untracked state.
+
+## Verification
+
+- Run `bash -n hooks/*.sh` after editing shell hook entrypoints.
+- Parse changed JSON hook assets with `python3 -m json.tool`.
+- Run `python3 scripts/inventory-primitives.py --check` after changing source
+  roots, primitive locations, or the generated inventory.
+- Run `python3 scripts/analyze-consolidation.py --check` after changing the
+  generated inventory or consolidation report.
+- Run `node scripts/validate-manifests.mjs` after changing `marketplace.json`,
+  `plugins/*/plugin.json`, or provider-neutral hook metadata.
+- When changing schema-aligned hook metadata, check required fields,
+  `additionalProperties`, relative paths, and kebab-case names against
+  `concordance/schemas/core/hook.schema.json` if that schema reference is
+  available.

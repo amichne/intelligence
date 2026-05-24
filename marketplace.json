@@ -1,0 +1,71 @@
+{
+  "type": "MARKETPLACE",
+  "schemaVersion": 1,
+  "name": "intelligence",
+  "owner": {
+    "name": "Amichne"
+  },
+  "description": "Personal source graph for AI tooling primitives.",
+  "management": {
+    "type": "MANAGEMENT_POLICY",
+    "mode": "CURATED"
+  },
+  "plugins": [
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "intelligence-core",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "intelligence-core",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/intelligence-core"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Core portable instructions and hook primitives.",
+      "tags": [
+        "core",
+        "hooks",
+        "instructions"
+      ]
+    }
+  ],
+  "skills": [],
+  "agents": [],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "plugouts/concepts/type-safety/core.md",
+      "name": "type-safety"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "plugouts/concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/agents-md-turn-refresh.hook.json",
+      "name": "agents-md-turn-refresh"
+    }
+  ],
+  "metadata": {
+    "inventory": "manifests/discovered-primitives.json",
+    "sources": "manifests/source-roots.json"
+  }
+}

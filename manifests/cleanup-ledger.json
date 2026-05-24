@@ -1,0 +1,5 @@
+{
+  "schemaVersion": 1,
+  "policy": "No scattered source path should be deleted until a ledger entry records its canonical replacement, verification evidence, and backup or rollback path.",
+  "entries": []
+}

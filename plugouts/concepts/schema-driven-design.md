@@ -1,0 +1,1 @@
+schema-driven-design/core.md
