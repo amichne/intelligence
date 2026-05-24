@@ -1,1 +1,0 @@
-type-safety/core.md

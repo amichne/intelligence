@@ -21,8 +21,8 @@ not justified.
 ## Repository Map
 
 - `marketplace.json` is the local provider-neutral marketplace catalog.
-- `plugouts/` contains portable primitives and concept artifacts meant to be
-  copied, linked, or projected into other projects.
+- `concepts/` contains portable concept primitives meant to be copied, linked,
+  or projected into other projects.
 - `hooks/` contains reusable hook assets and provider adapter configs.
 - `plugins/` is reserved for plugin composition manifests.
 - `manifests/` contains source-root inventory, generated discovery output, and

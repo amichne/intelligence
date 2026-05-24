@@ -112,10 +112,7 @@
     "out",
     "target"
   ],
-  "excludeGlobs": [
-    "plugouts/concepts/schema-driven-design.md",
-    "plugouts/concepts/type-safety.md"
-  ],
+  "excludeGlobs": [],
   "classificationRules": [
     "A directory containing SKILL.md is a SKILL primitive.",
     "A plugin.json file is a PLUGIN primitive rooted at its parent directory.",

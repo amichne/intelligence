@@ -13,7 +13,7 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
-      "path": "plugouts/concepts/type-safety/core.md",
+      "path": "concepts/type-safety/core.md",
       "name": "type-safety"
     },
     {
@@ -22,7 +22,7 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
-      "path": "plugouts/concepts/schema-driven-design/core.md",
+      "path": "concepts/schema-driven-design/core.md",
       "name": "schema-driven-design"
     }
   ],

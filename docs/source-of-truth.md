@@ -12,7 +12,7 @@ and rollback path.
 
 - `marketplace.json` exposes the local marketplace catalog.
 - `plugins/*/plugin.json` defines composed plugin sets by reference.
-- `plugouts/concepts/` currently holds portable instruction primitives.
+- `concepts/` currently holds portable instruction primitives.
 - `hooks/` holds provider-neutral hook metadata, implementations, and provider
   adapter configs.
 - `manifests/source-roots.json` lists local roots that may contain source

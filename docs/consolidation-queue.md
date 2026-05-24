@@ -1,7 +1,7 @@
 # Consolidation Queue
 
 Inventory source: `manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-24T05:01:18.761002+00:00`
+Inventory generated at: `2026-05-24T05:04:04.044220+00:00`
 
 ## Counts
 
@@ -81,13 +81,13 @@ These are canonical or local-authored entries. They are the first review set bef
 | `HOOK` | `session-end` | `authored-local` | `kast-github-hooks` | `session-end.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `session-start` | `authored-local` | `kast-github-hooks` | `session-start.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `skill-shadowing` | `authored-local` | `kast-github-hooks` | `skill-shadowing.json` | `REVIEW_PROMOTE` |
-| `INSTRUCTION` | `concepts-agents-instructions` | `canonical` | `intelligence` | `plugouts/concepts/AGENTS.md` | `KEEP_CANONICAL` |
+| `INSTRUCTION` | `concepts-agents-instructions` | `canonical` | `intelligence` | `concepts/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `instructions-agents-instructions` | `authored-local` | `examplar-instructions` | `AGENTS.md` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `intelligence-agents-instructions` | `canonical` | `intelligence` | `AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `schema-driven-design` | `authored-local` | `examplar-instructions` | `schema-driven-design.md` | `REVIEW_PROMOTE` |
-| `INSTRUCTION` | `schema-driven-design` | `canonical` | `intelligence` | `plugouts/concepts/schema-driven-design/core.md` | `KEEP_CANONICAL` |
+| `INSTRUCTION` | `schema-driven-design` | `canonical` | `intelligence` | `concepts/schema-driven-design/core.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `type-safety` | `authored-local` | `examplar-instructions` | `type-safety.md` | `REVIEW_PROMOTE` |
-| `INSTRUCTION` | `type-safety` | `canonical` | `intelligence` | `plugouts/concepts/type-safety/core.md` | `KEEP_CANONICAL` |
+| `INSTRUCTION` | `type-safety` | `canonical` | `intelligence` | `concepts/type-safety/core.md` | `KEEP_CANONICAL` |
 | `PLUGIN` | `agentic-coding` | `authored-local` | `examplar-plugins` | `agentic-coding` | `REVIEW_PROMOTE` |
 | `PLUGIN` | `intelligence-core` | `canonical` | `intelligence` | `plugins/intelligence-core` | `KEEP_CANONICAL` |
 | `PLUGIN` | `plugin-eval` | `authored-local` | `examplar-plugins` | `plugin-eval` | `REVIEW_PROMOTE` |

@@ -46,8 +46,8 @@ cleanup.
 
 Immediate canonical entries are intentionally small:
 
-- `plugouts/concepts/type-safety/core.md`
-- `plugouts/concepts/schema-driven-design/core.md`
+- `concepts/type-safety/core.md`
+- `concepts/schema-driven-design/core.md`
 - `hooks/agents-md-turn-refresh.hook.json`
 - `plugins/intelligence-core/plugin.json`
 - `marketplace.json`

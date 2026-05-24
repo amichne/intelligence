@@ -1010,7 +1010,7 @@
     }
   ],
   "inventory": "manifests/discovered-primitives.json",
-  "inventoryGeneratedAt": "2026-05-24T05:01:18.761002+00:00",
+  "inventoryGeneratedAt": "2026-05-24T05:04:04.044220+00:00",
   "nameReviewQueue": [
     {
       "action": "SYNTHESIZE",
@@ -1213,8 +1213,8 @@
         {
           "bucket": "canonical",
           "name": "schema-driven-design",
-          "path": "plugouts/concepts/schema-driven-design/core.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/plugouts/concepts/schema-driven-design/core.md",
+          "path": "concepts/schema-driven-design/core.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
           "sha256": "sha256:11614657993dabe4c555d38647713d9d26015750d7bbfa87c301fa22d482950c",
           "sourceRoot": "intelligence",
           "type": "INSTRUCTION"
@@ -1244,8 +1244,8 @@
         {
           "bucket": "canonical",
           "name": "type-safety",
-          "path": "plugouts/concepts/type-safety/core.md",
-          "resolvedPath": "/Users/amichne/code/intelligence/plugouts/concepts/type-safety/core.md",
+          "path": "concepts/type-safety/core.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/concepts/type-safety/core.md",
           "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
           "sourceRoot": "intelligence",
           "type": "INSTRUCTION"
@@ -3098,8 +3098,8 @@
       "action": "KEEP_CANONICAL",
       "bucket": "canonical",
       "name": "concepts-agents-instructions",
-      "path": "plugouts/concepts/AGENTS.md",
-      "resolvedPath": "/Users/amichne/code/intelligence/plugouts/concepts/AGENTS.md",
+      "path": "concepts/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/concepts/AGENTS.md",
       "sha256": "sha256:15ec5bbd2d65d1eec188e37f8cdc676bc37ecb3e3851dc7f12c62965729347bf",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
@@ -3120,7 +3120,7 @@
       "name": "intelligence-agents-instructions",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:846d0098c66abb8e089944d059607ddecfe05a3b0d7a362c820de2294f2aa17e",
+      "sha256": "sha256:7dc61ba6e842ed1171c2efe72cec5447cd195968d00a2c6b0491b9714527fe8d",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3138,8 +3138,8 @@
       "action": "KEEP_CANONICAL",
       "bucket": "canonical",
       "name": "schema-driven-design",
-      "path": "plugouts/concepts/schema-driven-design/core.md",
-      "resolvedPath": "/Users/amichne/code/intelligence/plugouts/concepts/schema-driven-design/core.md",
+      "path": "concepts/schema-driven-design/core.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
       "sha256": "sha256:11614657993dabe4c555d38647713d9d26015750d7bbfa87c301fa22d482950c",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
@@ -3158,8 +3158,8 @@
       "action": "KEEP_CANONICAL",
       "bucket": "canonical",
       "name": "type-safety",
-      "path": "plugouts/concepts/type-safety/core.md",
-      "resolvedPath": "/Users/amichne/code/intelligence/plugouts/concepts/type-safety/core.md",
+      "path": "concepts/type-safety/core.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/concepts/type-safety/core.md",
       "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
@@ -3180,7 +3180,7 @@
       "name": "intelligence-core",
       "path": "plugins/intelligence-core",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/intelligence-core/plugin.json",
-      "sha256": "sha256:f060ccef1c299a11a945c623520a19dc4811efd6291c016647637327199a7bf8",
+      "sha256": "sha256:6b4db786742cadb1fa62ef15e8ed9d4edfe7d7e9832caba4daec70cc382e31ca",
       "sourceRoot": "intelligence",
       "type": "PLUGIN"
     },
