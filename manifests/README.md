@@ -18,3 +18,9 @@ This directory separates current facts from future cleanup decisions.
 
 Do not remove source files based only on a duplicate name. Require a matching
 digest or a reviewed promotion entry first.
+
+For OpenAI, Anthropic, or other first-party sources, use promotion entries as
+provenance only. Canonical local primitives should be renamed and rewritten so
+they do not collide with installed first-party tools. The manifest validator
+also rejects canonical primitives whose content digest is identical to a
+first-party source.

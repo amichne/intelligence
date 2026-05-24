@@ -10,6 +10,7 @@ from typing import Any
 
 
 INSTALLED_MARKETPLACE_PREFIXES = ("cache/", "marketplaces/")
+SYSTEM_SOURCE_PREFIX = ".system/"
 
 
 def main() -> int:
@@ -83,6 +84,16 @@ def build_report(inventory: dict[str, Any]) -> dict[str, Any]:
         for values in digest_groups.values()
         if len(values) > 1 and needs_digest_review(values)
     ]
+    first_party_collisions = [
+        first_party_collision_item(values)
+        for values in name_groups.values()
+        if has_first_party_name_collision(values)
+    ]
+    first_party_digest_matches = [
+        first_party_digest_item(values)
+        for values in digest_groups.values()
+        if has_first_party_digest_match(values)
+    ]
 
     return {
         "schemaVersion": 1,
@@ -95,6 +106,8 @@ def build_report(inventory: dict[str, Any]) -> dict[str, Any]:
             "totalEntries": len(enriched),
             "nameReviewGroups": len(name_review),
             "digestReviewGroups": len(digest_review),
+            "firstPartyNameCollisions": len(first_party_collisions),
+            "firstPartyDigestMatches": len(first_party_digest_matches),
             "brokenSymlinks": len(inventory.get("brokenSymlinks", [])),
         },
         "promotionCandidates": sorted(
@@ -108,6 +121,14 @@ def build_report(inventory: dict[str, Any]) -> dict[str, Any]:
         "digestReviewQueue": sorted(
             digest_review,
             key=lambda item: (item["priority"], item["sha256"]),
+        ),
+        "firstPartyNameCollisions": sorted(
+            first_party_collisions,
+            key=lambda item: (item["type"], item["name"]),
+        ),
+        "firstPartyDigestMatches": sorted(
+            first_party_digest_matches,
+            key=lambda item: item["sha256"],
         ),
         "brokenSymlinks": inventory.get("brokenSymlinks", []),
     }
@@ -159,6 +180,45 @@ def needs_name_review(values: list[dict[str, Any]]) -> bool:
 def needs_digest_review(values: list[dict[str, Any]]) -> bool:
     buckets = {entry["bucket"] for entry in values}
     return bool(buckets & {"canonical", "authored-local"}) and bool(buckets & {"runtime", "backup", "installed-marketplace"})
+
+
+def is_first_party_source(entry: dict[str, Any]) -> bool:
+    source_root = entry.get("sourceRoot", "")
+    path = entry.get("path", "")
+    if entry.get("bucket") == "installed-marketplace":
+        return True
+    if source_root == "claude-plugins":
+        return True
+    return source_root in {"apollo-skills", "global-agent-skills", "global-codex-skills", "global-codex-skills-backup"} and path.startswith(SYSTEM_SOURCE_PREFIX)
+
+
+def has_first_party_name_collision(values: list[dict[str, Any]]) -> bool:
+    return any(entry.get("bucket") == "canonical" for entry in values) and any(
+        is_first_party_source(entry) for entry in values
+    )
+
+
+def has_first_party_digest_match(values: list[dict[str, Any]]) -> bool:
+    return any(entry.get("bucket") == "canonical" for entry in values) and any(
+        is_first_party_source(entry) for entry in values
+    )
+
+
+def first_party_collision_item(values: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "type": values[0]["type"],
+        "name": values[0]["name"],
+        "action": "RENAME_OR_RECORD_INTENTIONAL_REPLACEMENT",
+        "entries": [candidate_ref(entry) for entry in sorted(values, key=entry_sort_key)],
+    }
+
+
+def first_party_digest_item(values: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "sha256": values[0]["sha256"],
+        "action": "REWRITE_CANONICAL_DERIVATIVE",
+        "entries": [candidate_ref(entry) for entry in sorted(values, key=entry_sort_key)],
+    }
 
 
 def name_review_item(values: list[dict[str, Any]]) -> dict[str, Any]:
@@ -292,6 +352,44 @@ def render_doc(report: dict[str, Any]) -> str:
             f"| {group['priority']} | {len(group['entries'])} | "
             f"`{', '.join(group['buckets'])}` | `{group['sha256']}` |"
         )
+
+    lines.extend([
+        "",
+        "## First-Party Name Collisions",
+        "",
+        "Canonical primitives should not reuse first-party OpenAI/Anthropic names unless an intentional replacement is recorded.",
+        "",
+    ])
+    if report["firstPartyNameCollisions"]:
+        lines.extend([
+            "| Type | Name | Action | Entries |",
+            "|---|---|---|---:|",
+        ])
+        for group in report["firstPartyNameCollisions"]:
+            lines.append(
+                f"| `{group['type']}` | `{group['name']}` | `{group['action']}` | {len(group['entries'])} |"
+            )
+    else:
+        lines.append("No canonical primitive currently shares a type/name with a first-party installed or system source.")
+
+    lines.extend([
+        "",
+        "## First-Party Raw Digest Matches",
+        "",
+        "Canonical primitives should not have identical content digests to first-party OpenAI/Anthropic sources.",
+        "",
+    ])
+    if report["firstPartyDigestMatches"]:
+        lines.extend([
+            "| Digest | Action | Entries |",
+            "|---|---|---:|",
+        ])
+        for group in report["firstPartyDigestMatches"]:
+            lines.append(
+                f"| `{group['sha256']}` | `{group['action']}` | {len(group['entries'])} |"
+            )
+    else:
+        lines.append("No canonical primitive currently has the same digest as a first-party installed or system source.")
 
     lines.extend([
         "",

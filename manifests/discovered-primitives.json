@@ -96,8 +96,8 @@
     "AGENT": 301,
     "HOOK": 38,
     "INSTRUCTION": 11,
-    "PLUGIN": 136,
-    "SKILL": 303
+    "PLUGIN": 138,
+    "SKILL": 306
   },
   "digestDuplicates": [
     {
@@ -3073,7 +3073,7 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
       "path": "kast/references/commands.json",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
-      "sha256": "sha256:f182f6e5f0503b853d353b4554bbc1b18c8e6f2757a1c0ed46a8c00785e516fd",
+      "sha256": "sha256:1eefe3bbd8e789e82df2db2ecc962d77f7ec1cd6378e6b19591a1d769f217f60",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -5374,7 +5374,7 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/quickstart.md",
       "path": "kast/references/quickstart.md",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/quickstart.md",
-      "sha256": "sha256:cc8face63df81c5b3be49d7ab1413e4be66ea817de44803f57628965cd6c58c3",
+      "sha256": "sha256:f054c5175269272367ba3fe4db1268ea2df2d85aba3a697b58de603a8fb890d4",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -6995,7 +6995,7 @@
       "observedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
       "path": "skills/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
-      "sha256": "sha256:e32bff6f4ee8d7dde83a3f3f3cda0a3bc35e66e9f756ec3efdce3cff60d1d858",
+      "sha256": "sha256:3af6aea7bee7ff2d2624afc539a1ae36d6992cecba2ddf988f3621149ee4b56d",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8397,6 +8397,19 @@
       "type": "PLUGIN"
     },
     {
+      "entryFile": "plugins/planning-and-docs/plugin.json",
+      "name": "planning-and-docs",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/planning-and-docs/plugin.json",
+      "path": "plugins/planning-and-docs",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/planning-and-docs/plugin.json",
+      "sha256": "sha256:ce1682eaa1743e21414b091e3635245be8fc243e7e117ea30c9fd30f67b61960",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
       "entryFile": "marketplaces/claude-plugins-official/plugins/playground/.claude-plugin/plugin.json",
       "name": "playground",
       "observedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-plugins-official/plugins/playground/.claude-plugin/plugin.json",
@@ -8705,6 +8718,19 @@
       "sourceRoot": "claude-plugins",
       "sourceRootPath": "~/.claude/plugins",
       "sourceRootRole": "runtime-source",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
+      "entryFile": "plugins/tdd-workflow/plugin.json",
+      "name": "tdd-workflow",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/tdd-workflow/plugin.json",
+      "path": "plugins/tdd-workflow",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/tdd-workflow/plugin.json",
+      "sha256": "sha256:4887455d72a494d32bd174a86cd26a5d5f08660800bfb1b23c11fdf25e292193",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "type": "PLUGIN"
     },
@@ -10202,6 +10228,24 @@
       "type": "SKILL"
     },
     {
+      "description": "Help the user define a concrete, measurable goal before starting work, especially when they ask to use the goal tool, create a goal, set an objective, clarify success criteria, or turn a fuzzy intention into a quantitative outcome. Use this skill for goal creation and goal refinement only; it does not manage durable snapshots, decision logs, or long-running execution artifacts.",
+      "entryFile": "skills/define-goal/SKILL.md",
+      "expectedResources": [
+        "SKILL.md"
+      ],
+      "name": "define-goal",
+      "observedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
+      "path": "skills/define-goal",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
+      "sha256": "sha256:a3506ae804172344e1a60829f72fc6acac12fd6205445e70824874f861e56c5e",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Define Goal",
+      "type": "SKILL"
+    },
+    {
       "description": "Manage major dependency version upgrades with compatibility analysis, staged rollout, and comprehensive testing. Use when upgrading framework versions, updating major dependencies, or managing breaking changes in libraries.",
       "entryFile": "marketplaces/claude-code-workflows/plugins/framework-migration/skills/dependency-upgrade/SKILL.md",
       "expectedResources": [
@@ -11564,7 +11608,7 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
       "path": "kast",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
-      "sha256": "sha256:cb0d6a4a3bede93c01468e8c5434702ada8c72478132ac25c546b238a327262d",
+      "sha256": "sha256:73072fae79bd8a747b93969833a2b4b7e6c1fee35c0d83f3c67e805ee5a877b2",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -13678,6 +13722,25 @@
       "type": "SKILL"
     },
     {
+      "description": "Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name.",
+      "entryFile": "skills/reference-doc-workflow/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/reader-testing.md"
+      ],
+      "name": "reference-doc-workflow",
+      "observedPath": "/Users/amichne/code/intelligence/skills/reference-doc-workflow/SKILL.md",
+      "path": "skills/reference-doc-workflow",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/reference-doc-workflow/SKILL.md",
+      "sha256": "sha256:4910662a523db7ec52ebd4eb628b9f856cfb3e2710689590e3fe2d65621e4bde",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Reference Doc Workflow",
+      "type": "SKILL"
+    },
+    {
       "description": "Update only the `AGENTS.md` files that sit on modified git paths by deriving scope from `git diff`. Use when a repository already has hierarchical `AGENTS.md` files and Codex needs to refresh local instructions after source files, manifests, build scripts, or codegen boundaries change in the current worktree or in a specified diff range.",
       "entryFile": "refresh-affected-agents/SKILL.md",
       "expectedResources": [
@@ -14675,6 +14738,30 @@
       "type": "SKILL"
     },
     {
+      "description": ">",
+      "entryFile": "skills/tdd/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/deep-modules.md",
+        "references/handoff.md",
+        "references/interface-design.md",
+        "references/mocking.md",
+        "references/refactoring.md",
+        "references/tests.md"
+      ],
+      "name": "tdd",
+      "observedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+      "path": "skills/tdd",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+      "sha256": "sha256:eca4563ecde084b66c8e276ea0eabed1ad2864c5ec6e10cc41a674390bbc9c61",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Test-Driven Development",
+      "type": "SKILL"
+    },
+    {
       "description": "Structured messaging protocols for agent team communication including message type selection, plan approval, shutdown procedures, and anti-patterns to avoid. Use this skill when establishing team communication norms, handling plan approvals, or managing team shutdown.",
       "entryFile": "cache/claude-code-workflows/agent-teams/1.0.2/skills/team-communication-protocols/SKILL.md",
       "expectedResources": [
@@ -15380,7 +15467,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T05:24:33.227106+00:00",
+  "generatedAt": "2026-05-24T05:40:06.062900+00:00",
   "generator": "scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [
@@ -17852,6 +17939,13 @@
           "resolvedPath": "/Users/amichne/code/apollo/skills/define-goal/SKILL.md",
           "sourceRoot": "global-codex-skills",
           "type": "SKILL"
+        },
+        {
+          "name": "define-goal",
+          "path": "skills/define-goal",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/define-goal/SKILL.md",
+          "sourceRoot": "intelligence",
+          "type": "SKILL"
         }
       ],
       "key": {
@@ -18534,6 +18628,13 @@
           "path": "tdd",
           "resolvedPath": "/Users/amichne/.agents/skills/tdd/SKILL.md",
           "sourceRoot": "global-agent-skills",
+          "type": "SKILL"
+        },
+        {
+          "name": "tdd",
+          "path": "skills/tdd",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/tdd/SKILL.md",
+          "sourceRoot": "intelligence",
           "type": "SKILL"
         }
       ],

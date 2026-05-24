@@ -13,6 +13,9 @@ This file applies to reusable skills under `skills/`.
   requires otherwise.
 - Reference shared concepts with repository-relative paths such as
   `concepts/type-safety/core.md` instead of duplicating the full concept text.
+- When synthesizing from OpenAI, Anthropic, or other first-party skills, use a
+  local non-colliding skill name and rewrite the body instead of raw-copying the
+  first-party text.
 - Do not point a skill at a runtime cache, installed plugin copy, or generated
   bundle as its authority.
 - If a skill came from another local source, record that source in

@@ -1,0 +1,34 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "planning-and-docs",
+  "version": "0.1.0",
+  "description": "Goal-definition and reference-document workflows composed from independent skills.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/define-goal",
+      "name": "define-goal"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/reference-doc-workflow",
+      "name": "reference-doc-workflow"
+    }
+  ],
+  "agents": [],
+  "instructions": [],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json"
+  }
+}

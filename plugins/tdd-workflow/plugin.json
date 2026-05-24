@@ -1,0 +1,44 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "tdd-workflow",
+  "version": "0.1.0",
+  "description": "Test-driven workflow composed from an independent TDD skill and source-of-truth design concepts.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/tdd",
+      "name": "tdd"
+    }
+  ],
+  "agents": [],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/type-safety/core.md",
+      "name": "type-safety"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json"
+  }
+}

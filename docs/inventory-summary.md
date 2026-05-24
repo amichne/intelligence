@@ -6,15 +6,15 @@ Generated with:
 python3 scripts/inventory-primitives.py
 ```
 
-The current pass found 789 primitive-shaped artifacts:
+The current pass found 794 primitive-shaped artifacts:
 
 | Type | Count |
 |---|---:|
 | Agent | 301 |
 | Hook | 38 |
 | Instruction | 11 |
-| Plugin | 136 |
-| Skill | 303 |
+| Plugin | 138 |
+| Skill | 306 |
 
 Most entries currently come from installed Claude plugin marketplace material:
 
@@ -27,7 +27,7 @@ Most entries currently come from installed Claude plugin marketplace material:
 | `apollo-skills` | 21 |
 | `global-codex-skills` | 21 |
 | `kast-github-hooks` | 9 |
-| `intelligence` | 23 |
+| `intelligence` | 28 |
 | `apollo-agents` | 7 |
 | `examplar-agents` | 5 |
 | `global-codex-backups` | 5 |
@@ -52,8 +52,11 @@ Immediate canonical entries are intentionally small:
 - `agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md`
 - `agents/schema-type-enforcer.agent.md`
 - `skills/AGENTS.md`
+- `skills/define-goal/SKILL.md`
 - `skills/kotlin-standards/SKILL.md`
 - `skills/manage-json-schemas/SKILL.md`
+- `skills/reference-doc-workflow/SKILL.md`
+- `skills/tdd/SKILL.md`
 - `concepts/type-safety/core.md`
 - `concepts/schema-driven-design/core.md`
 - `hooks/AGENTS.md`
@@ -63,7 +66,9 @@ Immediate canonical entries are intentionally small:
 - `hooks/codex/kotlin-horizontalization-check.hooks.json`
 - `plugins/intelligence-core/plugin.json`
 - `plugins/kotlin-review/plugin.json`
+- `plugins/planning-and-docs/plugin.json`
 - `plugins/schema-governance/plugin.json`
+- `plugins/tdd-workflow/plugin.json`
 - `marketplace.json`
 
 Next consolidation should separate authored/local primitives from installed

@@ -62,6 +62,8 @@ for (const manifest of listJsonFiles(path.join(repoRoot, "manifests"))) {
   console.log(`OK ${path.relative(repoRoot, manifest)}`);
 }
 
+failures += validateFirstPartyCollisionPolicy();
+
 if (failures > 0) {
   process.exitCode = 1;
 }
@@ -144,8 +146,119 @@ function validateManifestReferences(filePath, data) {
         failures += 1;
       }
     }
+    failures += validateFirstPartyPromotion(filePath, entry);
   }
   return failures;
+}
+
+function validateFirstPartyPromotion(filePath, entry) {
+  if (!hasFirstPartySource(entry)) {
+    return 0;
+  }
+  const handling = entry.firstPartyHandling;
+  if (!handling) {
+    console.error(
+      `FAIL ${path.relative(repoRoot, filePath)}: promotion ${entry.name} uses first-party source material without firstPartyHandling`
+    );
+    return 1;
+  }
+  let failures = 0;
+  if (handling.policy !== "RENAMED_AND_REWRITTEN" && handling.policy !== "INTENTIONAL_LOCAL_REPLACEMENT") {
+    console.error(
+      `FAIL ${path.relative(repoRoot, filePath)}: promotion ${entry.name} has unsupported firstPartyHandling.policy: ${handling.policy}`
+    );
+    failures += 1;
+  }
+  if (handling.policy === "RENAMED_AND_REWRITTEN" && !Array.isArray(handling.sourceNames)) {
+    console.error(
+      `FAIL ${path.relative(repoRoot, filePath)}: promotion ${entry.name} must list firstPartyHandling.sourceNames when renamed and rewritten`
+    );
+    failures += 1;
+  }
+  if (handling.policy === "RENAMED_AND_REWRITTEN" && handling.sourceNames?.includes(entry.name)) {
+    console.error(
+      `FAIL ${path.relative(repoRoot, filePath)}: promotion ${entry.name} still uses a first-party source name`
+    );
+    failures += 1;
+  }
+  return failures;
+}
+
+function hasFirstPartySource(entry) {
+  return firstPartySourceLike(entry) || (entry.supportingSources ?? []).some(firstPartySourceLike);
+}
+
+function firstPartySourceLike(source) {
+  const sourceRoot = source?.sourceRoot ?? "";
+  const sourcePath = source?.sourcePath ?? "";
+  const sourceResolvedPath = source?.sourceResolvedPath ?? "";
+  return sourceRoot === "claude-plugins" ||
+    sourcePath.includes(".claude/plugins") ||
+    sourceResolvedPath.includes("/.claude/plugins/") ||
+    sourcePath.startsWith("../apollo/skills/.system/") ||
+    sourcePath.startsWith("~/.agents/skills/.system/") ||
+    sourcePath.startsWith("~/.codex/skills/.system/") ||
+    sourceResolvedPath.includes("/.agents/skills/.system/") ||
+    sourceResolvedPath.includes("/.codex/skills/.system/") ||
+    sourceResolvedPath.includes("/apollo/skills/.system/");
+}
+
+function validateFirstPartyCollisionPolicy() {
+  const inventoryPath = path.join(repoRoot, "manifests", "discovered-primitives.json");
+  if (!fs.existsSync(inventoryPath)) {
+    return 0;
+  }
+  const inventory = readJson(inventoryPath);
+  const nameGroups = new Map();
+  const digestGroups = new Map();
+  for (const entry of inventory.entries ?? []) {
+    appendGroup(nameGroups, `${entry.type}\u0000${entry.name}`, entry);
+    appendGroup(digestGroups, entry.sha256, entry);
+  }
+
+  let failures = 0;
+  for (const entries of nameGroups.values()) {
+    const canonical = entries.filter((entry) => entry.sourceRootRole === "canonical-candidate");
+    if (canonical.length === 0 || !entries.some(inventoryFirstPartySourceLike)) {
+      continue;
+    }
+    const [{ type, name }] = entries;
+    console.error(
+      `FAIL manifests/discovered-primitives.json: canonical ${type} ${name} collides with first-party installed/system source name`
+    );
+    failures += 1;
+  }
+  for (const entries of digestGroups.values()) {
+    const canonical = entries.filter((entry) => entry.sourceRootRole === "canonical-candidate");
+    const firstParty = entries.filter(inventoryFirstPartySourceLike);
+    if (canonical.length === 0 || firstParty.length === 0) {
+      continue;
+    }
+    console.error(
+      `FAIL manifests/discovered-primitives.json: canonical primitive content digest matches first-party installed/system source: ${entries[0].sha256}`
+    );
+    failures += 1;
+  }
+  return failures;
+}
+
+function appendGroup(groups, key, entry) {
+  if (!groups.has(key)) {
+    groups.set(key, []);
+  }
+  groups.get(key).push(entry);
+}
+
+function inventoryFirstPartySourceLike(entry) {
+  const sourceRoot = entry?.sourceRoot ?? "";
+  const sourceRootRole = entry?.sourceRootRole ?? "";
+  const entryPath = entry?.path ?? "";
+  return (sourceRoot === "claude-plugins" && (entryPath.startsWith("cache/") || entryPath.startsWith("marketplaces/"))) ||
+    sourceRoot === "claude-plugins" ||
+    (sourceRootRole === "runtime-source" && entryPath.startsWith(".system/")) ||
+    (sourceRoot === "apollo-skills" && entryPath.startsWith(".system/")) ||
+    (sourceRoot === "global-codex-skills" && entryPath.startsWith(".system/")) ||
+    (sourceRoot === "global-agent-skills" && entryPath.startsWith(".system/"));
 }
 
 function validatePrimitiveReference(filePath, primitive) {

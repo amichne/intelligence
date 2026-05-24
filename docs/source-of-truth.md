@@ -52,6 +52,25 @@ Plugins remain composition surfaces. The primitive must be useful without the
 plugin, and the plugin must only assemble primitives that already exist
 independently.
 
+## First-Party Source Handling
+
+OpenAI, Anthropic, and other first-party distributions are useful reference
+material, but they should not be copied into this repository verbatim as local
+canonical primitives.
+
+- Promote first-party material only after deciding it belongs in this personal
+  source graph.
+- Rename promoted derivatives with local, non-colliding primitive names.
+- Rewrite instructions into this repository's voice and provider-neutral
+  workflow shape.
+- Keep original first-party paths only as provenance in
+  `manifests/promotions.json`.
+- Do not ship local primitives whose names would collide with installed
+  first-party tools unless the primitive is intentionally replacing that local
+  name and the manifest says so.
+- `node scripts/validate-manifests.mjs` enforces first-party name and raw digest
+  collision checks against the generated inventory.
+
 ## Verification
 
 Use these checks after changing manifests, hooks, or source graph files:

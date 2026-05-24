@@ -53,6 +53,26 @@
     },
     {
       "type": "PLUGIN_ENTRY",
+      "name": "planning-and-docs",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "planning-and-docs",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/planning-and-docs"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Goal-definition and reference-document workflow skills composed by reference.",
+      "tags": [
+        "docs",
+        "planning",
+        "skills",
+        "workflow"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
       "name": "schema-governance",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
@@ -70,9 +90,46 @@
         "skills",
         "validation"
       ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "tdd-workflow",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "tdd-workflow",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/tdd-workflow"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Test-driven workflow skill composed with the core design concepts.",
+      "tags": [
+        "skills",
+        "testing",
+        "workflow"
+      ]
     }
   ],
   "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/define-goal",
+      "name": "define-goal"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/reference-doc-workflow",
+      "name": "reference-doc-workflow"
+    },
     {
       "type": "SKILL",
       "source": {
@@ -90,6 +147,15 @@
       },
       "path": "skills/manage-json-schemas",
       "name": "manage-json-schemas"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/tdd",
+      "name": "tdd"
     }
   ],
   "agents": [

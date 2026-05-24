@@ -1,7 +1,7 @@
 # Consolidation Queue
 
 Inventory source: `manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-24T05:24:33.227106+00:00`
+Inventory generated at: `2026-05-24T05:40:06.062900+00:00`
 
 ## Counts
 
@@ -9,7 +9,7 @@ Inventory generated at: `2026-05-24T05:24:33.227106+00:00`
 |---|---:|
 | `authored-local` | 76 |
 | `backup` | 33 |
-| `canonical` | 23 |
+| `canonical` | 28 |
 | `installed-marketplace` | 608 |
 | `runtime` | 49 |
 
@@ -18,8 +18,8 @@ Inventory generated at: `2026-05-24T05:24:33.227106+00:00`
 | `AGENT` | 301 |
 | `HOOK` | 38 |
 | `INSTRUCTION` | 11 |
-| `PLUGIN` | 136 |
-| `SKILL` | 303 |
+| `PLUGIN` | 138 |
+| `SKILL` | 306 |
 
 ## Promotion Candidates
 
@@ -102,12 +102,12 @@ These are canonical or local-authored entries. They are the first review set bef
 | `PLUGIN` | `agentic-coding` | `authored-local` | `examplar-plugins` | `agentic-coding` | `REVIEW_PROMOTE` |
 | `PLUGIN` | `intelligence-core` | `canonical` | `intelligence` | `plugins/intelligence-core` | `KEEP_CANONICAL` |
 | `PLUGIN` | `kotlin-review` | `canonical` | `intelligence` | `plugins/kotlin-review` | `KEEP_CANONICAL` |
+| `PLUGIN` | `planning-and-docs` | `canonical` | `intelligence` | `plugins/planning-and-docs` | `KEEP_CANONICAL` |
 | `PLUGIN` | `plugin-eval` | `authored-local` | `examplar-plugins` | `plugin-eval` | `REVIEW_PROMOTE` |
 | `PLUGIN` | `schema-governance` | `canonical` | `intelligence` | `plugins/schema-governance` | `KEEP_CANONICAL` |
+| `PLUGIN` | `tdd-workflow` | `canonical` | `intelligence` | `plugins/tdd-workflow` | `KEEP_CANONICAL` |
 | `SKILL` | `agent-development` | `authored-local` | `kast-agent-skills` | `agent-development` | `REVIEW_PROMOTE` |
-| `SKILL` | `define-goal` | `authored-local` | `apollo-skills` | `define-goal` | `REVIEW_PROMOTE` |
-| `SKILL` | `doc-coauthoring` | `authored-local` | `apollo-skills` | `doc-coauthoring` | `REVIEW_PROMOTE` |
-| | | | | plus 19 more in the JSON report | |
+| | | | | plus 24 more in the JSON report | |
 
 ## Name Review Queue
 
@@ -135,7 +135,7 @@ Name collisions need semantic review unless every entry has the same digest.
 | 2 | `AGENT` | `comparator` | `DEDUP_IDENTICAL_NAME` | `authored-local, installed-marketplace, runtime` | 5 |
 | 2 | `AGENT` | `grader` | `DEDUP_IDENTICAL_NAME` | `authored-local, installed-marketplace, runtime` | 5 |
 | 2 | `AGENT` | `openai` | `RECONCILE_RUNTIME_COPY` | `authored-local, backup, runtime` | 33 |
-| 2 | `SKILL` | `define-goal` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |
+| 2 | `SKILL` | `define-goal` | `RECONCILE_RUNTIME_COPY` | `authored-local, canonical, runtime` | 3 |
 | 2 | `SKILL` | `doc-coauthoring` | `DEDUP_IDENTICAL_NAME` | `authored-local, installed-marketplace, runtime` | 3 |
 | 2 | `SKILL` | `imagegen` | `RECONCILE_RUNTIME_COPY` | `authored-local, backup, runtime` | 3 |
 | 2 | `SKILL` | `jira-resolve-ticket` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |
@@ -148,7 +148,7 @@ Name collisions need semantic review unless every entry has the same digest.
 | 2 | `SKILL` | `segment-codebase-agents-md` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |
 | 2 | `SKILL` | `skill-creator` | `RECONCILE_RUNTIME_COPY` | `authored-local, backup, installed-marketplace, runtime` | 9 |
 | 2 | `SKILL` | `skill-installer` | `DEDUP_IDENTICAL_NAME` | `authored-local, backup, runtime` | 4 |
-| 2 | `SKILL` | `tdd` | `RECONCILE_RUNTIME_COPY` | `authored-local, runtime` | 2 |
+| 2 | `SKILL` | `tdd` | `RECONCILE_RUNTIME_COPY` | `authored-local, canonical, runtime` | 3 |
 | 2 | `SKILL` | `web-artifacts-builder` | `DEDUP_IDENTICAL_NAME` | `installed-marketplace, runtime` | 2 |
 | 2 | `SKILL` | `yeet` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |
 
@@ -182,6 +182,18 @@ Digest duplicates are candidates for symlink/reference replacement after promoti
 | 2 | 3 | `authored-local, installed-marketplace, runtime` | `sha256:fd8325cb199c45d53792e9fbc144d72832900c77aa31bc3b781099d5cbe81266` |
 | 2 | 5 | `authored-local, installed-marketplace, runtime` | `sha256:fe1fc9787c495d864c5d6eada47396478572325fde1b33a96d78bf4b849b7a3e` |
 | 2 | 2 | `authored-local, runtime` | `sha256:fecaf35d692bd3d33d1a065648258d12e393afa9055d78adf6e57b42f4142f6d` |
+
+## First-Party Name Collisions
+
+Canonical primitives should not reuse first-party OpenAI/Anthropic names unless an intentional replacement is recorded.
+
+No canonical primitive currently shares a type/name with a first-party installed or system source.
+
+## First-Party Raw Digest Matches
+
+Canonical primitives should not have identical content digests to first-party OpenAI/Anthropic sources.
+
+No canonical primitive currently has the same digest as a first-party installed or system source.
 
 ## Broken Symlinks
 

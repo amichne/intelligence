@@ -105,6 +105,80 @@
       ],
       "status": "PROMOTED",
       "notes": "Imported the Copilot Kotlin layout gate as provider-neutral hook metadata plus Codex adapter, with changed-file autodetection added to the canonical script."
+    },
+    {
+      "type": "SKILL",
+      "name": "tdd",
+      "canonicalPath": "skills/tdd",
+      "sourceRoot": "examplar-skills",
+      "sourcePath": "../examplar/skills/tdd",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/skills/tdd",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-agent-skills",
+          "sourcePath": "~/.agents/skills/tdd",
+          "sourceResolvedPath": "/Users/amichne/.agents/skills/tdd",
+          "notes": "Used to confirm older runtime copy semantics while preserving the newer references/ layout from Examplar."
+        },
+        {
+          "sourceRoot": "local-plugin-agentic-development",
+          "sourcePath": "../../plugins/agentic-development/skills/agentic-development",
+          "sourceResolvedPath": "/Users/amichne/plugins/agentic-development/skills/agentic-development",
+          "notes": "Used as inspiration for the decoupled phase, evidence, and handoff shape without making TDD depend on the plugin."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Imported as a compact workflow skill, updated to point at local type/schema concepts, and rewritten as language-agnostic TDD with a decoupled evidence handoff reference."
+    },
+    {
+      "type": "SKILL",
+      "name": "define-goal",
+      "canonicalPath": "skills/define-goal",
+      "sourceRoot": "apollo-skills",
+      "sourcePath": "../apollo/skills/define-goal",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/skills/define-goal",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "~/.codex/skills/define-goal",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/skills/define-goal",
+          "notes": "Runtime copy resolves to Apollo; used to verify the promoted skill is not diverging from the installed copy."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Imported the goal-definition workflow as an independent skill and intentionally did not promote host-specific agents/openai.yaml UI metadata."
+    },
+    {
+      "type": "SKILL",
+      "name": "reference-doc-workflow",
+      "canonicalPath": "skills/reference-doc-workflow",
+      "sourceRoot": "apollo-skills",
+      "sourcePath": "../apollo/skills/doc-coauthoring",
+      "sourceResolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring",
+      "supportingSources": [
+        {
+          "sourceRoot": "global-codex-skills",
+          "sourcePath": "~/.codex/skills/doc-coauthoring",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/skills/doc-coauthoring",
+          "notes": "Runtime copy resolves to Apollo and is byte-identical to the source skill."
+        },
+        {
+          "sourceRoot": "claude-plugins",
+          "sourcePath": "~/.claude/plugins/marketplaces/anthropic-agent-skills/skills/doc-coauthoring",
+          "sourceResolvedPath": "/Users/amichne/.claude/plugins/marketplaces/anthropic-agent-skills/skills/doc-coauthoring",
+          "notes": "Installed marketplace copy is byte-identical to the Apollo source; used as supporting evidence while the canonical copy was renamed and rewritten to avoid first-party skill-name collision."
+        }
+      ],
+      "status": "PROMOTED",
+      "firstPartyHandling": {
+        "provider": "anthropic",
+        "policy": "RENAMED_AND_REWRITTEN",
+        "sourceNames": [
+          "doc-coauthoring"
+        ],
+        "canonicalName": "reference-doc-workflow"
+      },
+      "notes": "Synthesized into a host-agnostic documentation workflow skill with a local non-first-party name and a one-level reader-testing reference."
     }
   ]
 }
