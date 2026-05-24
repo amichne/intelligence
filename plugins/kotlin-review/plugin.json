@@ -1,0 +1,100 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "kotlin-review",
+  "version": "0.1.0",
+  "description": "Kotlin standards, review agents, and layout gate composed from independent skill, agent, hook, and concept primitives.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-standards",
+      "name": "kotlin-standards"
+    }
+  ],
+  "agents": [
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+      "name": "kotlin-review-captain"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "name": "kotlin-type-safety-reviewer"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "name": "kotlin-boundary-contract-reviewer"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "name": "kotlin-package-cohesion-reviewer"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/schema-type-enforcer.agent.md",
+      "name": "schema-type-enforcer"
+    }
+  ],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/type-safety/core.md",
+      "name": "type-safety"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/kotlin-horizontalization-check.hook.json",
+      "name": "kotlin-horizontalization-check"
+    }
+  ],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json"
+  }
+}

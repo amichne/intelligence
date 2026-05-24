@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "policy": "Promotions copy useful primitives into this repository without deleting or replacing their original source paths.",
+  "entries": [
+    {
+      "type": "AGENT",
+      "name": "kotlin-review-captain",
+      "canonicalPath": "agents/kotlin-review/kotlin-review-captain.agent.md",
+      "sourceRoot": "examplar-agents",
+      "sourcePath": "../examplar/agents/kotlin-review-captain.agent.md",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
+      "status": "PROMOTED",
+      "notes": "Imported as part of the Kotlin review agent set and updated to reference local concepts."
+    },
+    {
+      "type": "AGENT",
+      "name": "kotlin-type-safety-reviewer",
+      "canonicalPath": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "sourceRoot": "examplar-agents",
+      "sourcePath": "../examplar/agents/kotlin-type-safety-reviewer.agent.md",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
+      "status": "PROMOTED",
+      "notes": "Imported as part of the Kotlin review agent set and updated to reference local concepts."
+    },
+    {
+      "type": "AGENT",
+      "name": "kotlin-boundary-contract-reviewer",
+      "canonicalPath": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "sourceRoot": "examplar-agents",
+      "sourcePath": "../examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
+      "status": "PROMOTED",
+      "notes": "Imported as part of the Kotlin review agent set and updated to reference local concepts."
+    },
+    {
+      "type": "AGENT",
+      "name": "kotlin-package-cohesion-reviewer",
+      "canonicalPath": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "sourceRoot": "examplar-agents",
+      "sourcePath": "../examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
+      "status": "PROMOTED",
+      "notes": "Imported as part of the Kotlin review agent set and made self-contained rather than depending on a skill-local heuristic file."
+    },
+    {
+      "type": "AGENT",
+      "name": "schema-type-enforcer",
+      "canonicalPath": "agents/schema-type-enforcer.agent.md",
+      "sourceRoot": "examplar-agents",
+      "sourcePath": "../examplar/agents/schema-type-enforcer.agent.md",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
+      "status": "PROMOTED",
+      "notes": "Imported as a language-agnostic schema/type review agent and updated to reference local concepts."
+    },
+    {
+      "type": "SKILL",
+      "name": "kotlin-standards",
+      "canonicalPath": "skills/kotlin-standards",
+      "sourceRoot": "examplar-skills",
+      "sourcePath": "../examplar/skills/kotlin-standards",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards",
+      "supportingSources": [
+        {
+          "sourceRoot": "apollo-skills",
+          "sourcePath": "../apollo/skills/kotlin-standards",
+          "sourceResolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards",
+          "notes": "Used for trigger and completion-gate reconciliation."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Imported from the compact Examplar skill layout, reconciled with Apollo trigger language, and updated to reference local concepts."
+    },
+    {
+      "type": "SKILL",
+      "name": "manage-json-schemas",
+      "canonicalPath": "skills/manage-json-schemas",
+      "sourceRoot": "global-agent-skills",
+      "sourcePath": "~/.agents/skills/manage-json-schemas",
+      "sourceResolvedPath": "/Users/amichne/.agents/skills/manage-json-schemas",
+      "supportingSources": [
+        {
+          "sourceRoot": "examplar-skills",
+          "sourcePath": "../examplar/skills/manage-json-schemas",
+          "sourceResolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas",
+          "notes": "Used as the older compact baseline and source of the OpenAI UI metadata that was intentionally not promoted."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Imported from the richer runtime copy, removed host-specific and missing-asset references, and updated to reference local concepts."
+    },
+    {
+      "type": "HOOK",
+      "name": "kotlin-horizontalization-check",
+      "canonicalPath": "hooks/kotlin-horizontalization-check.hook.json",
+      "sourceRoot": "examplar-hooks",
+      "sourcePath": "../examplar/hooks/copilot/kotlin-horizontalization-check.py",
+      "sourceResolvedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
+      "supportingSources": [
+        {
+          "sourceRoot": "examplar-skills",
+          "sourcePath": "../examplar/skills/kotlin-standards/references/horizontalization-heuristic.md",
+          "sourceResolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards/references/horizontalization-heuristic.md",
+          "notes": "Policy reference used by the promoted hook and Kotlin standards skill."
+        }
+      ],
+      "status": "PROMOTED",
+      "notes": "Imported the Copilot Kotlin layout gate as provider-neutral hook metadata plus Codex adapter, with changed-file autodetection added to the canonical script."
+    }
+  ]
+}

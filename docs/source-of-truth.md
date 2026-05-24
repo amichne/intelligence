@@ -11,12 +11,16 @@ and rollback path.
 ## Source Graph
 
 - `marketplace.json` exposes the local marketplace catalog.
+- `agents/` contains independent reusable agent profiles.
+- `skills/` contains independent reusable skills.
 - `plugins/*/plugin.json` defines composed plugin sets by reference.
 - `concepts/` currently holds portable instruction primitives.
 - `hooks/` holds provider-neutral hook metadata, implementations, and provider
   adapter configs.
 - `manifests/source-roots.json` lists local roots that may contain source
   primitives.
+- `manifests/promotions.json` records primitives copied into this repository and
+  the source paths they came from.
 - `manifests/discovered-primitives.json` is generated inventory evidence.
 - `manifests/consolidation-report.json` is the generated review queue derived
   from inventory evidence.
@@ -40,7 +44,8 @@ not owned source for this repository.
 4. Promote one canonical primitive at a time into this repository.
 5. Add the promoted primitive to `marketplace.json` and any composed
    `plugins/*/plugin.json` files.
-6. Record cleanup intent in `manifests/cleanup-ledger.json` only after the
+6. Record the source of promoted primitives in `manifests/promotions.json`.
+7. Record cleanup intent in `manifests/cleanup-ledger.json` only after the
    canonical replacement is verified.
 
 Plugins remain composition surfaces. The primitive must be useful without the

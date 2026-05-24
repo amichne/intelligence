@@ -97,7 +97,7 @@
     "byBucket": {
       "authored-local": 76,
       "backup": 33,
-      "canonical": 8,
+      "canonical": 23,
       "installed-marketplace": 608,
       "runtime": 49
     },
@@ -114,9 +114,11 @@
         "SKILL": 25
       },
       "canonical": {
-        "HOOK": 3,
-        "INSTRUCTION": 4,
-        "PLUGIN": 1
+        "AGENT": 5,
+        "HOOK": 6,
+        "INSTRUCTION": 7,
+        "PLUGIN": 3,
+        "SKILL": 2
       },
       "installed-marketplace": {
         "AGENT": 231,
@@ -131,15 +133,15 @@
       }
     },
     "byType": {
-      "AGENT": 296,
-      "HOOK": 35,
-      "INSTRUCTION": 8,
-      "PLUGIN": 134,
-      "SKILL": 301
+      "AGENT": 301,
+      "HOOK": 38,
+      "INSTRUCTION": 11,
+      "PLUGIN": 136,
+      "SKILL": 303
     },
     "digestReviewGroups": 24,
-    "nameReviewGroups": 30,
-    "totalEntries": 774
+    "nameReviewGroups": 36,
+    "totalEntries": 789
   },
   "digestReviewQueue": [
     {
@@ -1010,8 +1012,132 @@
     }
   ],
   "inventory": "manifests/discovered-primitives.json",
-  "inventoryGeneratedAt": "2026-05-24T05:04:04.044220+00:00",
+  "inventoryGeneratedAt": "2026-05-24T05:24:33.227106+00:00",
   "nameReviewQueue": [
+    {
+      "action": "SYNTHESIZE",
+      "buckets": [
+        "authored-local",
+        "canonical"
+      ],
+      "digests": 2,
+      "entries": [
+        {
+          "bucket": "authored-local",
+          "name": "kotlin-boundary-contract-reviewer",
+          "path": "kotlin-boundary-contract-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
+          "sha256": "sha256:47428c1826d5ed716bb2bda9457f9eee78fb22183ddbf2626a53c8478e347a60",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-boundary-contract-reviewer",
+          "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "name": "kotlin-boundary-contract-reviewer",
+      "priority": 1,
+      "type": "AGENT"
+    },
+    {
+      "action": "SYNTHESIZE",
+      "buckets": [
+        "authored-local",
+        "canonical"
+      ],
+      "digests": 2,
+      "entries": [
+        {
+          "bucket": "authored-local",
+          "name": "kotlin-package-cohesion-reviewer",
+          "path": "kotlin-package-cohesion-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
+          "sha256": "sha256:a9383c5b37ccbb5f8d560c71b7e6fd6d906f3ff347d12e58c759cd6dd4879f07",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-package-cohesion-reviewer",
+          "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "name": "kotlin-package-cohesion-reviewer",
+      "priority": 1,
+      "type": "AGENT"
+    },
+    {
+      "action": "SYNTHESIZE",
+      "buckets": [
+        "authored-local",
+        "canonical"
+      ],
+      "digests": 2,
+      "entries": [
+        {
+          "bucket": "authored-local",
+          "name": "kotlin-review-captain",
+          "path": "kotlin-review-captain.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
+          "sha256": "sha256:b1092a1c89e766b106b27ebff911376c9b3610e6ebbaa7a00725bb51b19fd712",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-review-captain",
+          "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+          "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "name": "kotlin-review-captain",
+      "priority": 1,
+      "type": "AGENT"
+    },
+    {
+      "action": "SYNTHESIZE",
+      "buckets": [
+        "authored-local",
+        "canonical"
+      ],
+      "digests": 2,
+      "entries": [
+        {
+          "bucket": "authored-local",
+          "name": "kotlin-type-safety-reviewer",
+          "path": "kotlin-type-safety-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
+          "sha256": "sha256:d902b3c5b6c94bd89c1aa3e9ce4ad48041336dfe33b3c3362be1f0c62c95d948",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-type-safety-reviewer",
+          "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "name": "kotlin-type-safety-reviewer",
+      "priority": 1,
+      "type": "AGENT"
+    },
     {
       "action": "SYNTHESIZE",
       "buckets": [
@@ -1039,6 +1165,37 @@
         }
       ],
       "name": "routing-improvement",
+      "priority": 1,
+      "type": "AGENT"
+    },
+    {
+      "action": "SYNTHESIZE",
+      "buckets": [
+        "authored-local",
+        "canonical"
+      ],
+      "digests": 2,
+      "entries": [
+        {
+          "bucket": "authored-local",
+          "name": "schema-type-enforcer",
+          "path": "schema-type-enforcer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
+          "sha256": "sha256:7d9b375234bfb426feabd6bfce62ae3cd0ed60de7985198cc3e45c9ba78efea6",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "bucket": "canonical",
+          "name": "schema-type-enforcer",
+          "path": "agents/schema-type-enforcer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+          "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "name": "schema-type-enforcer",
       "priority": 1,
       "type": "AGENT"
     },
@@ -1190,6 +1347,55 @@
         }
       ],
       "name": "hooks",
+      "priority": 1,
+      "type": "HOOK"
+    },
+    {
+      "action": "SYNTHESIZE",
+      "buckets": [
+        "authored-local",
+        "canonical"
+      ],
+      "digests": 4,
+      "entries": [
+        {
+          "bucket": "authored-local",
+          "name": "kotlin-horizontalization-check",
+          "path": "copilot/kotlin-horizontalization-check.py",
+          "resolvedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
+          "sha256": "sha256:7d40494fc877f233f7a45e92550ba34a28fe6fd7684fcd935c22a4a5f4e45836",
+          "sourceRoot": "examplar-hooks",
+          "type": "HOOK"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-horizontalization-check",
+          "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/kotlin-horizontalization-check.hooks.json",
+          "sha256": "sha256:287b758f0af60bc380fd7ab44eb9f10c9a8a13f592bdac0cc887d79fc9beac49",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-horizontalization-check",
+          "path": "hooks/kotlin-horizontalization-check.hook.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.hook.json",
+          "sha256": "sha256:84fd559699d2b6fac4497fac2db7d5675ea01c9c5067900867421296bd589d10",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-horizontalization-check",
+          "path": "hooks/kotlin-horizontalization-check.py",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+          "sha256": "sha256:fccb8b56894574d55d7f170e027d861a00733f65c957f2236b631f2f18e7c478",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        }
+      ],
+      "name": "kotlin-horizontalization-check",
       "priority": 1,
       "type": "HOOK"
     },
@@ -2115,9 +2321,10 @@
       "action": "RECONCILE_RUNTIME_COPY",
       "buckets": [
         "authored-local",
+        "canonical",
         "runtime"
       ],
-      "digests": 3,
+      "digests": 4,
       "entries": [
         {
           "bucket": "authored-local",
@@ -2135,6 +2342,15 @@
           "resolvedPath": "/Users/amichne/code/examplar/skills/kotlin-standards/SKILL.md",
           "sha256": "sha256:0628e172d411987f024ec68c05bdc94343fef16a712074e1203ab2b6fee7b318",
           "sourceRoot": "examplar-skills",
+          "type": "SKILL"
+        },
+        {
+          "bucket": "canonical",
+          "name": "kotlin-standards",
+          "path": "skills/kotlin-standards",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+          "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
+          "sourceRoot": "intelligence",
           "type": "SKILL"
         },
         {
@@ -2164,9 +2380,10 @@
       "action": "RECONCILE_RUNTIME_COPY",
       "buckets": [
         "authored-local",
+        "canonical",
         "runtime"
       ],
-      "digests": 2,
+      "digests": 3,
       "entries": [
         {
           "bucket": "authored-local",
@@ -2175,6 +2392,15 @@
           "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/SKILL.md",
           "sha256": "sha256:ca24fb7ba2d80085b7c2f9dc099cad26539841dddd50525578419fd3e52bdc8c",
           "sourceRoot": "examplar-skills",
+          "type": "SKILL"
+        },
+        {
+          "bucket": "canonical",
+          "name": "manage-json-schemas",
+          "path": "skills/manage-json-schemas",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+          "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
+          "sourceRoot": "intelligence",
           "type": "SKILL"
         },
         {
@@ -2715,6 +2941,16 @@
       "type": "AGENT"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-boundary-contract-reviewer",
+      "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
+      "sourceRoot": "intelligence",
+      "type": "AGENT"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "kotlin-package-cohesion-reviewer",
@@ -2722,6 +2958,16 @@
       "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
       "sha256": "sha256:a9383c5b37ccbb5f8d560c71b7e6fd6d906f3ff347d12e58c759cd6dd4879f07",
       "sourceRoot": "examplar-agents",
+      "type": "AGENT"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-package-cohesion-reviewer",
+      "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
+      "sourceRoot": "intelligence",
       "type": "AGENT"
     },
     {
@@ -2735,6 +2981,16 @@
       "type": "AGENT"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-review-captain",
+      "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+      "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
+      "sourceRoot": "intelligence",
+      "type": "AGENT"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "kotlin-type-safety-reviewer",
@@ -2742,6 +2998,16 @@
       "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
       "sha256": "sha256:d902b3c5b6c94bd89c1aa3e9ce4ad48041336dfe33b3c3362be1f0c62c95d948",
       "sourceRoot": "examplar-agents",
+      "type": "AGENT"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-type-safety-reviewer",
+      "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
+      "sourceRoot": "intelligence",
       "type": "AGENT"
     },
     {
@@ -2925,6 +3191,16 @@
       "type": "AGENT"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "schema-type-enforcer",
+      "path": "agents/schema-type-enforcer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+      "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+      "sourceRoot": "intelligence",
+      "type": "AGENT"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "schemas",
@@ -3035,6 +3311,36 @@
       "type": "HOOK"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-horizontalization-check",
+      "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/kotlin-horizontalization-check.hooks.json",
+      "sha256": "sha256:287b758f0af60bc380fd7ab44eb9f10c9a8a13f592bdac0cc887d79fc9beac49",
+      "sourceRoot": "intelligence",
+      "type": "HOOK"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-horizontalization-check",
+      "path": "hooks/kotlin-horizontalization-check.hook.json",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.hook.json",
+      "sha256": "sha256:84fd559699d2b6fac4497fac2db7d5675ea01c9c5067900867421296bd589d10",
+      "sourceRoot": "intelligence",
+      "type": "HOOK"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-horizontalization-check",
+      "path": "hooks/kotlin-horizontalization-check.py",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+      "sha256": "sha256:fccb8b56894574d55d7f170e027d861a00733f65c957f2236b631f2f18e7c478",
+      "sourceRoot": "intelligence",
+      "type": "HOOK"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "record-paths",
@@ -3097,10 +3403,30 @@
     {
       "action": "KEEP_CANONICAL",
       "bucket": "canonical",
+      "name": "agents-agents-instructions",
+      "path": "agents/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/AGENTS.md",
+      "sha256": "sha256:162cd0729d1c4b9b8ff9b2c28069277b1672a6622b0421fa5fc9c83a5f5231c8",
+      "sourceRoot": "intelligence",
+      "type": "INSTRUCTION"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
       "name": "concepts-agents-instructions",
       "path": "concepts/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/concepts/AGENTS.md",
       "sha256": "sha256:15ec5bbd2d65d1eec188e37f8cdc676bc37ecb3e3851dc7f12c62965729347bf",
+      "sourceRoot": "intelligence",
+      "type": "INSTRUCTION"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "hooks-agents-instructions",
+      "path": "hooks/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
+      "sha256": "sha256:586eed5155127c9e62536c1c65f486419c20f1b3c11ae6c484edcad3f2637217",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3120,7 +3446,7 @@
       "name": "intelligence-agents-instructions",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:7dc61ba6e842ed1171c2efe72cec5447cd195968d00a2c6b0491b9714527fe8d",
+      "sha256": "sha256:c69530995622f5946e9ac9f78a6bf569988ac386c4d9288dff0055643ae9f83a",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3141,6 +3467,16 @@
       "path": "concepts/schema-driven-design/core.md",
       "resolvedPath": "/Users/amichne/code/intelligence/concepts/schema-driven-design/core.md",
       "sha256": "sha256:11614657993dabe4c555d38647713d9d26015750d7bbfa87c301fa22d482950c",
+      "sourceRoot": "intelligence",
+      "type": "INSTRUCTION"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "skills-agents-instructions",
+      "path": "skills/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
+      "sha256": "sha256:e32bff6f4ee8d7dde83a3f3f3cda0a3bc35e66e9f756ec3efdce3cff60d1d858",
       "sourceRoot": "intelligence",
       "type": "INSTRUCTION"
     },
@@ -3185,6 +3521,16 @@
       "type": "PLUGIN"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-review",
+      "path": "plugins/kotlin-review",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/kotlin-review/plugin.json",
+      "sha256": "sha256:5e752560b1c45846c905712eba39d407410c0e9d5197e2f2f2f60cc6c79b59b1",
+      "sourceRoot": "intelligence",
+      "type": "PLUGIN"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "plugin-eval",
@@ -3192,6 +3538,16 @@
       "resolvedPath": "/Users/amichne/code/examplar/plugins/plugin-eval/plugin.json",
       "sha256": "sha256:c00cccd19ff7c7e4867a02a84b1c1d758a994a95db850dbf363ccce5b91a4ecf",
       "sourceRoot": "examplar-plugins",
+      "type": "PLUGIN"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "schema-governance",
+      "path": "plugins/schema-governance",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/schema-governance/plugin.json",
+      "sha256": "sha256:125783c411bdcd0cc8a82ee17b370a0c60d080dd2145ee8d9c17a6615b15b698",
+      "sourceRoot": "intelligence",
       "type": "PLUGIN"
     },
     {
@@ -3285,6 +3641,16 @@
       "type": "SKILL"
     },
     {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "kotlin-standards",
+      "path": "skills/kotlin-standards",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
+      "sourceRoot": "intelligence",
+      "type": "SKILL"
+    },
+    {
       "action": "REVIEW_PROMOTE",
       "bucket": "authored-local",
       "name": "llm-wiki",
@@ -3302,6 +3668,16 @@
       "resolvedPath": "/Users/amichne/code/examplar/skills/manage-json-schemas/SKILL.md",
       "sha256": "sha256:ca24fb7ba2d80085b7c2f9dc099cad26539841dddd50525578419fd3e52bdc8c",
       "sourceRoot": "examplar-skills",
+      "type": "SKILL"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
+      "name": "manage-json-schemas",
+      "path": "skills/manage-json-schemas",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
+      "sourceRoot": "intelligence",
       "type": "SKILL"
     },
     {

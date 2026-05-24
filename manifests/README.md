@@ -11,6 +11,8 @@ This directory separates current facts from future cleanup decisions.
   `python3 scripts/analyze-consolidation.py`. It separates canonical,
   authored-local, runtime, backup, and installed-marketplace entries into a
   review queue.
+- `promotions.json` is hand-authored. It records primitives copied into this
+  repository and the source paths they came from.
 - `cleanup-ledger.json` stays empty until a source has been promoted,
   verified, backed up, and is ready for removal or replacement with a symlink.
 

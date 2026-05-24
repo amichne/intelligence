@@ -1,0 +1,54 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "schema-governance",
+  "version": "0.1.0",
+  "description": "Schema contract workflow composed from independent schema skill, review agent, and concept primitives.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/manage-json-schemas",
+      "name": "manage-json-schemas"
+    }
+  ],
+  "agents": [
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/schema-type-enforcer.agent.md",
+      "name": "schema-type-enforcer"
+    }
+  ],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/type-safety/core.md",
+      "name": "type-safety"
+    }
+  ],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "promotionManifest": "manifests/promotions.json"
+  }
+}

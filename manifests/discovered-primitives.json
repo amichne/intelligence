@@ -93,11 +93,11 @@
     }
   ],
   "counts": {
-    "AGENT": 296,
-    "HOOK": 35,
-    "INSTRUCTION": 8,
-    "PLUGIN": 134,
-    "SKILL": 301
+    "AGENT": 301,
+    "HOOK": 38,
+    "INSTRUCTION": 11,
+    "PLUGIN": 136,
+    "SKILL": 303
   },
   "digestDuplicates": [
     {
@@ -4287,6 +4287,21 @@
       "type": "AGENT"
     },
     {
+      "description": "Use this review agent after Kotlin changes to public APIs, adapters, CLI commands, serialization, persistence, HTTP, messaging, or interop boundaries. It enforces parse-don't-validate and explicit boundary failures.",
+      "entryFile": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "name": "kotlin-boundary-contract-reviewer",
+      "observedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+      "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Kotlin Boundary Contract Reviewer",
+      "type": "AGENT"
+    },
+    {
       "description": "Use this review agent after Kotlin code changes when you need to prevent flat packages, prefix-heavy directories, multi-member files, or horizontal layer buckets. It reviews package/file layout and proposes subpackage boundaries using measurable heuristics.",
       "entryFile": "kotlin-package-cohesion-reviewer.agent.md",
       "name": "kotlin-package-cohesion-reviewer",
@@ -4297,6 +4312,21 @@
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
+      "symlink": false,
+      "title": "Kotlin Package Cohesion Reviewer",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this review agent after Kotlin code changes when you need to prevent flat packages, prefix-heavy directories, multi-member files, or horizontal layer buckets. It reviews package and file layout and proposes subpackage boundaries using measurable heuristics.",
+      "entryFile": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "name": "kotlin-package-cohesion-reviewer",
+      "observedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Kotlin Package Cohesion Reviewer",
       "type": "AGENT"
@@ -4317,6 +4347,21 @@
       "type": "AGENT"
     },
     {
+      "description": "Use this agent at the end of a Kotlin coding turn to coordinate focused review. It routes changed Kotlin work to type-safety, boundary-contract, and package-cohesion review, then returns one prioritized finding list.",
+      "entryFile": "agents/kotlin-review/kotlin-review-captain.agent.md",
+      "name": "kotlin-review-captain",
+      "observedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+      "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+      "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Kotlin Review Captain",
+      "type": "AGENT"
+    },
+    {
       "description": "Use this review agent after Kotlin code changes when you need a focused type-safety audit. It reviews changed Kotlin APIs, domain models, parser boundaries, nullable state, primitive strings/ids, expected failures, and visibility choices. It does not implement broad refactors unless explicitly asked.",
       "entryFile": "kotlin-type-safety-reviewer.agent.md",
       "name": "kotlin-type-safety-reviewer",
@@ -4327,6 +4372,21 @@
       "sourceRoot": "examplar-agents",
       "sourceRootPath": "../examplar/agents",
       "sourceRootRole": "local-repo-source",
+      "symlink": false,
+      "title": "Kotlin Type Safety Reviewer",
+      "type": "AGENT"
+    },
+    {
+      "description": "Use this review agent after Kotlin code changes when you need a focused type-safety audit. It reviews changed Kotlin APIs, domain models, parser boundaries, nullable state, primitive strings or ids, expected failures, and visibility choices.",
+      "entryFile": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "name": "kotlin-type-safety-reviewer",
+      "observedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+      "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Kotlin Type Safety Reviewer",
       "type": "AGENT"
@@ -5480,6 +5540,21 @@
       "type": "AGENT"
     },
     {
+      "description": "Use this review agent after changes to schemas, API contracts, serialized payloads, configuration formats, persistence records, generated models, or code that transforms boundary data into internal types.",
+      "entryFile": "agents/schema-type-enforcer.agent.md",
+      "name": "schema-type-enforcer",
+      "observedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+      "path": "agents/schema-type-enforcer.agent.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+      "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Schema Type Enforcer",
+      "type": "AGENT"
+    },
+    {
       "entryFile": "skill-creator/references/schemas.md",
       "name": "schemas",
       "observedPath": "/Users/amichne/code/kast/.agents/skills/skill-creator/references/schemas.md",
@@ -6556,6 +6631,45 @@
       "type": "HOOK"
     },
     {
+      "entryFile": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+      "name": "kotlin-horizontalization-check",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/codex/kotlin-horizontalization-check.hooks.json",
+      "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/kotlin-horizontalization-check.hooks.json",
+      "sha256": "sha256:287b758f0af60bc380fd7ab44eb9f10c9a8a13f592bdac0cc887d79fc9beac49",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "HOOK"
+    },
+    {
+      "entryFile": "hooks/kotlin-horizontalization-check.hook.json",
+      "name": "kotlin-horizontalization-check",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.hook.json",
+      "path": "hooks/kotlin-horizontalization-check.hook.json",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.hook.json",
+      "sha256": "sha256:84fd559699d2b6fac4497fac2db7d5675ea01c9c5067900867421296bd589d10",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "HOOK"
+    },
+    {
+      "entryFile": "hooks/kotlin-horizontalization-check.py",
+      "name": "kotlin-horizontalization-check",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+      "path": "hooks/kotlin-horizontalization-check.py",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+      "sha256": "sha256:fccb8b56894574d55d7f170e027d861a00733f65c957f2236b631f2f18e7c478",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "HOOK"
+    },
+    {
       "entryFile": "cache/claude-plugins-official/hookify/unknown/hooks/posttooluse.py",
       "name": "posttooluse",
       "observedPath": "/Users/amichne/.claude/plugins/cache/claude-plugins-official/hookify/unknown/hooks/posttooluse.py",
@@ -6764,6 +6878,20 @@
       "type": "HOOK"
     },
     {
+      "entryFile": "agents/AGENTS.md",
+      "name": "agents-agents-instructions",
+      "observedPath": "/Users/amichne/code/intelligence/agents/AGENTS.md",
+      "path": "agents/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/agents/AGENTS.md",
+      "sha256": "sha256:162cd0729d1c4b9b8ff9b2c28069277b1672a6622b0421fa5fc9c83a5f5231c8",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Agent Primitive Instructions",
+      "type": "INSTRUCTION"
+    },
+    {
       "entryFile": "marketplaces/claude-code-workflows/CLAUDE.md",
       "name": "claude-code-workflows-claude-instructions",
       "observedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/CLAUDE.md",
@@ -6792,6 +6920,20 @@
       "type": "INSTRUCTION"
     },
     {
+      "entryFile": "hooks/AGENTS.md",
+      "name": "hooks-agents-instructions",
+      "observedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
+      "path": "hooks/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
+      "sha256": "sha256:586eed5155127c9e62536c1c65f486419c20f1b3c11ae6c484edcad3f2637217",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Hook Primitive Instructions",
+      "type": "INSTRUCTION"
+    },
+    {
       "entryFile": "AGENTS.md",
       "name": "instructions-agents-instructions",
       "observedPath": "/Users/amichne/code/examplar/instructions/AGENTS.md",
@@ -6811,7 +6953,7 @@
       "observedPath": "/Users/amichne/code/intelligence/AGENTS.md",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:7dc61ba6e842ed1171c2efe72cec5447cd195968d00a2c6b0491b9714527fe8d",
+      "sha256": "sha256:c69530995622f5946e9ac9f78a6bf569988ac386c4d9288dff0055643ae9f83a",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -6845,6 +6987,20 @@
       "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Schema-Driven Design Standard",
+      "type": "INSTRUCTION"
+    },
+    {
+      "entryFile": "skills/AGENTS.md",
+      "name": "skills-agents-instructions",
+      "observedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
+      "path": "skills/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/AGENTS.md",
+      "sha256": "sha256:e32bff6f4ee8d7dde83a3f3f3cda0a3bc35e66e9f756ec3efdce3cff60d1d858",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Skill Primitive Instructions",
       "type": "INSTRUCTION"
     },
     {
@@ -8059,6 +8215,19 @@
       "type": "PLUGIN"
     },
     {
+      "entryFile": "plugins/kotlin-review/plugin.json",
+      "name": "kotlin-review",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/kotlin-review/plugin.json",
+      "path": "plugins/kotlin-review",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/kotlin-review/plugin.json",
+      "sha256": "sha256:5e752560b1c45846c905712eba39d407410c0e9d5197e2f2f2f60cc6c79b59b1",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
       "entryFile": "marketplaces/claude-code-workflows/plugins/kubernetes-operations/.claude-plugin/plugin.json",
       "name": "kubernetes-operations",
       "observedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/kubernetes-operations/.claude-plugin/plugin.json",
@@ -8367,6 +8536,19 @@
       "sourceRoot": "claude-plugins",
       "sourceRootPath": "~/.claude/plugins",
       "sourceRootRole": "runtime-source",
+      "symlink": false,
+      "type": "PLUGIN"
+    },
+    {
+      "entryFile": "plugins/schema-governance/plugin.json",
+      "name": "schema-governance",
+      "observedPath": "/Users/amichne/code/intelligence/plugins/schema-governance/plugin.json",
+      "path": "plugins/schema-governance",
+      "resolvedPath": "/Users/amichne/code/intelligence/plugins/schema-governance/plugin.json",
+      "sha256": "sha256:125783c411bdcd0cc8a82ee17b370a0c60d080dd2145ee8d9c17a6615b15b698",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "type": "PLUGIN"
     },
@@ -11653,6 +11835,39 @@
       "type": "SKILL"
     },
     {
+      "description": ">",
+      "entryFile": "skills/kotlin-standards/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/api-builders-and-configuration.md",
+        "references/api-dsl-choices.md",
+        "references/api-extensions-and-factories.md",
+        "references/api-parameter-selection.md",
+        "references/api-review-guides.md",
+        "references/api-surface-stability.md",
+        "references/horizontalization-heuristic.md",
+        "references/idioms.md",
+        "references/kotlin-antipatterns.md",
+        "references/layout-package-code-style.md",
+        "references/parse-dont-validate-examples.md",
+        "references/type-safety-patterns.md",
+        "references/types-domain-modeling.md",
+        "references/types-dsls-and-generics.md",
+        "references/types-errors-and-testing.md"
+      ],
+      "name": "kotlin-standards",
+      "observedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "path": "skills/kotlin-standards",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+      "sha256": "sha256:cd2382e7b346bf4da856edbe74d7f10695a943276f9e69f4b6e0d0fe82205453",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Kotlin Standards",
+      "type": "SKILL"
+    },
+    {
       "description": "Design effective KPI dashboards with metrics selection, visualization best practices, and real-time monitoring patterns. Use this skill when building an executive SaaS metrics dashboard tracking MRR, churn, and LTV/CAC ratios; designing an operations center with live service health and request throughput; creating a cohort retention analysis view for a product team; or debugging a dashboard where metrics contradict each other due to inconsistent calculation methodology.",
       "entryFile": "marketplaces/claude-code-workflows/plugins/business-analytics/skills/kpi-dashboard-design/SKILL.md",
       "expectedResources": [
@@ -11855,6 +12070,36 @@
       "sourceRoot": "global-agent-skills",
       "sourceRootPath": "~/.agents/skills",
       "sourceRootRole": "runtime-source",
+      "symlink": false,
+      "title": "Manage JSON Schemas",
+      "type": "SKILL"
+    },
+    {
+      "description": "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment.",
+      "entryFile": "skills/manage-json-schemas/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/enforcement.md",
+        "references/hierarchical-schema-layout.md",
+        "references/schema-examples.md",
+        "references/schema-policy.md",
+        "references/schema-profile.md",
+        "references/schema-profile/schema-profile.schema.json",
+        "references/schemas/order/created.schema.json",
+        "references/schemas/order/order.schema.json",
+        "references/schemas/upload/command.schema.json",
+        "references/schemas/upload/manifest.schema.json",
+        "references/schemas/upload/upload.schema.json",
+        "scripts/schema-contracts.js"
+      ],
+      "name": "manage-json-schemas",
+      "observedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "path": "skills/manage-json-schemas",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+      "sha256": "sha256:80061ac5e778189a67c7353af5a0e81015d0f421026f42b1f4801a13b82a6ac9",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Manage JSON Schemas",
       "type": "SKILL"
@@ -15135,7 +15380,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T05:04:04.044220+00:00",
+  "generatedAt": "2026-05-24T05:24:33.227106+00:00",
   "generator": "scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [
@@ -16002,6 +16247,94 @@
     {
       "entries": [
         {
+          "name": "kotlin-boundary-contract-reviewer",
+          "path": "kotlin-boundary-contract-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-boundary-contract-reviewer.agent.md",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-boundary-contract-reviewer",
+          "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "key": {
+        "name": "kotlin-boundary-contract-reviewer",
+        "type": "AGENT"
+      }
+    },
+    {
+      "entries": [
+        {
+          "name": "kotlin-package-cohesion-reviewer",
+          "path": "kotlin-package-cohesion-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-package-cohesion-reviewer.agent.md",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-package-cohesion-reviewer",
+          "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "key": {
+        "name": "kotlin-package-cohesion-reviewer",
+        "type": "AGENT"
+      }
+    },
+    {
+      "entries": [
+        {
+          "name": "kotlin-review-captain",
+          "path": "kotlin-review-captain.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-review-captain.agent.md",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-review-captain",
+          "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-review-captain.agent.md",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "key": {
+        "name": "kotlin-review-captain",
+        "type": "AGENT"
+      }
+    },
+    {
+      "entries": [
+        {
+          "name": "kotlin-type-safety-reviewer",
+          "path": "kotlin-type-safety-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/kotlin-type-safety-reviewer.agent.md",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-type-safety-reviewer",
+          "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "key": {
+        "name": "kotlin-type-safety-reviewer",
+        "type": "AGENT"
+      }
+    },
+    {
+      "entries": [
+        {
           "name": "kubernetes-architect",
           "path": "cache/claude-code-workflows/cicd-automation/1.2.1/agents/kubernetes-architect.md",
           "resolvedPath": "/Users/amichne/.claude/plugins/cache/claude-code-workflows/cicd-automation/1.2.1/agents/kubernetes-architect.md",
@@ -16437,6 +16770,28 @@
     {
       "entries": [
         {
+          "name": "schema-type-enforcer",
+          "path": "schema-type-enforcer.agent.md",
+          "resolvedPath": "/Users/amichne/code/examplar/agents/schema-type-enforcer.agent.md",
+          "sourceRoot": "examplar-agents",
+          "type": "AGENT"
+        },
+        {
+          "name": "schema-type-enforcer",
+          "path": "agents/schema-type-enforcer.agent.md",
+          "resolvedPath": "/Users/amichne/code/intelligence/agents/schema-type-enforcer.agent.md",
+          "sourceRoot": "intelligence",
+          "type": "AGENT"
+        }
+      ],
+      "key": {
+        "name": "schema-type-enforcer",
+        "type": "AGENT"
+      }
+    },
+    {
+      "entries": [
+        {
           "name": "security-auditor",
           "path": "marketplaces/claude-code-workflows/plugins/backend-development/agents/security-auditor.md",
           "resolvedPath": "/Users/amichne/.claude/plugins/marketplaces/claude-code-workflows/plugins/backend-development/agents/security-auditor.md",
@@ -16835,6 +17190,42 @@
       ],
       "key": {
         "name": "init",
+        "type": "HOOK"
+      }
+    },
+    {
+      "entries": [
+        {
+          "name": "kotlin-horizontalization-check",
+          "path": "copilot/kotlin-horizontalization-check.py",
+          "resolvedPath": "/Users/amichne/code/examplar/hooks/copilot/kotlin-horizontalization-check.py",
+          "sourceRoot": "examplar-hooks",
+          "type": "HOOK"
+        },
+        {
+          "name": "kotlin-horizontalization-check",
+          "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/codex/kotlin-horizontalization-check.hooks.json",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        },
+        {
+          "name": "kotlin-horizontalization-check",
+          "path": "hooks/kotlin-horizontalization-check.hook.json",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.hook.json",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        },
+        {
+          "name": "kotlin-horizontalization-check",
+          "path": "hooks/kotlin-horizontalization-check.py",
+          "resolvedPath": "/Users/amichne/code/intelligence/hooks/kotlin-horizontalization-check.py",
+          "sourceRoot": "intelligence",
+          "type": "HOOK"
+        }
+      ],
+      "key": {
+        "name": "kotlin-horizontalization-check",
         "type": "HOOK"
       }
     },
@@ -17760,6 +18151,13 @@
           "resolvedPath": "/Users/amichne/code/apollo/skills/kotlin-standards/SKILL.md",
           "sourceRoot": "global-codex-skills",
           "type": "SKILL"
+        },
+        {
+          "name": "kotlin-standards",
+          "path": "skills/kotlin-standards",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/kotlin-standards/SKILL.md",
+          "sourceRoot": "intelligence",
+          "type": "SKILL"
         }
       ],
       "key": {
@@ -17803,6 +18201,13 @@
           "path": "manage-json-schemas",
           "resolvedPath": "/Users/amichne/.agents/skills/manage-json-schemas/SKILL.md",
           "sourceRoot": "global-agent-skills",
+          "type": "SKILL"
+        },
+        {
+          "name": "manage-json-schemas",
+          "path": "skills/manage-json-schemas",
+          "resolvedPath": "/Users/amichne/code/intelligence/skills/manage-json-schemas/SKILL.md",
+          "sourceRoot": "intelligence",
           "type": "SKILL"
         }
       ],

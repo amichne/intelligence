@@ -21,12 +21,14 @@ not justified.
 ## Repository Map
 
 - `marketplace.json` is the local provider-neutral marketplace catalog.
+- `agents/` contains independent reusable agent profiles.
+- `skills/` contains independent reusable skills.
 - `concepts/` contains portable concept primitives meant to be copied, linked,
   or projected into other projects.
 - `hooks/` contains reusable hook assets and provider adapter configs.
 - `plugins/` is reserved for plugin composition manifests.
 - `manifests/` contains source-root inventory, generated discovery output, and
-  the cleanup ledger.
+  promotion and cleanup ledgers.
 - `scripts/` contains local validation and inventory tooling.
 - `docs/` contains current-state source graph documentation.
 - `concordance` is a local schema-reference symlink, not owned source for this

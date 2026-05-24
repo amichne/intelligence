@@ -1,7 +1,7 @@
 # Consolidation Queue
 
 Inventory source: `manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-24T05:04:04.044220+00:00`
+Inventory generated at: `2026-05-24T05:24:33.227106+00:00`
 
 ## Counts
 
@@ -9,17 +9,17 @@ Inventory generated at: `2026-05-24T05:04:04.044220+00:00`
 |---|---:|
 | `authored-local` | 76 |
 | `backup` | 33 |
-| `canonical` | 8 |
+| `canonical` | 23 |
 | `installed-marketplace` | 608 |
 | `runtime` | 49 |
 
 | Type | Count |
 |---|---:|
-| `AGENT` | 296 |
-| `HOOK` | 35 |
-| `INSTRUCTION` | 8 |
-| `PLUGIN` | 134 |
-| `SKILL` | 301 |
+| `AGENT` | 301 |
+| `HOOK` | 38 |
+| `INSTRUCTION` | 11 |
+| `PLUGIN` | 136 |
+| `SKILL` | 303 |
 
 ## Promotion Candidates
 
@@ -43,9 +43,13 @@ These are canonical or local-authored entries. They are the first review set bef
 | `AGENT` | `interface-metadata` | `authored-local` | `kast-agent-skills` | `skill-creator/references/interface_metadata.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `kast-orchestrator` | `authored-local` | `kast-github-agents` | `kast-orchestrator.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `kotlin-boundary-contract-reviewer` | `authored-local` | `examplar-agents` | `kotlin-boundary-contract-reviewer.agent.md` | `REVIEW_PROMOTE` |
+| `AGENT` | `kotlin-boundary-contract-reviewer` | `canonical` | `intelligence` | `agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md` | `KEEP_CANONICAL` |
 | `AGENT` | `kotlin-package-cohesion-reviewer` | `authored-local` | `examplar-agents` | `kotlin-package-cohesion-reviewer.agent.md` | `REVIEW_PROMOTE` |
+| `AGENT` | `kotlin-package-cohesion-reviewer` | `canonical` | `intelligence` | `agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md` | `KEEP_CANONICAL` |
 | `AGENT` | `kotlin-review-captain` | `authored-local` | `examplar-agents` | `kotlin-review-captain.agent.md` | `REVIEW_PROMOTE` |
+| `AGENT` | `kotlin-review-captain` | `canonical` | `intelligence` | `agents/kotlin-review/kotlin-review-captain.agent.md` | `KEEP_CANONICAL` |
 | `AGENT` | `kotlin-type-safety-reviewer` | `authored-local` | `examplar-agents` | `kotlin-type-safety-reviewer.agent.md` | `REVIEW_PROMOTE` |
+| `AGENT` | `kotlin-type-safety-reviewer` | `canonical` | `intelligence` | `agents/kotlin-review/kotlin-type-safety-reviewer.agent.md` | `KEEP_CANONICAL` |
 | `AGENT` | `openai` | `authored-local` | `apollo-skills` | `.system/imagegen/agents/openai.yaml` | `REVIEW_PROMOTE` |
 | `AGENT` | `openai` | `authored-local` | `apollo-skills` | `.system/openai-docs/agents/openai.yaml` | `REVIEW_PROMOTE` |
 | `AGENT` | `openai` | `authored-local` | `apollo-skills` | `.system/plugin-creator/agents/openai.yaml` | `REVIEW_PROMOTE` |
@@ -64,6 +68,7 @@ These are canonical or local-authored entries. They are the first review set bef
 | `AGENT` | `routing-improvement` | `authored-local` | `kast-agent-skills` | `kast/fixtures/maintenance/references/routing-improvement.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `routing-improvement` | `authored-local` | `kast-agent-skills` | `kast/references/routing-improvement.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `schema-type-enforcer` | `authored-local` | `examplar-agents` | `schema-type-enforcer.agent.md` | `REVIEW_PROMOTE` |
+| `AGENT` | `schema-type-enforcer` | `canonical` | `intelligence` | `agents/schema-type-enforcer.agent.md` | `KEEP_CANONICAL` |
 | `AGENT` | `schemas` | `authored-local` | `kast-agent-skills` | `skill-creator/references/schemas.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `system-prompt-design` | `authored-local` | `kast-agent-skills` | `agent-development/references/system-prompt-design.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `triggering-examples` | `authored-local` | `kast-agent-skills` | `agent-development/references/triggering-examples.md` | `REVIEW_PROMOTE` |
@@ -75,39 +80,34 @@ These are canonical or local-authored entries. They are the first review set bef
 | `HOOK` | `hook-state` | `authored-local` | `kast-github-hooks` | `hook-state.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `hooks` | `authored-local` | `kast-github-hooks` | `hooks.json` | `REVIEW_PROMOTE` |
 | `HOOK` | `kotlin-horizontalization-check` | `authored-local` | `examplar-hooks` | `copilot/kotlin-horizontalization-check.py` | `REVIEW_PROMOTE` |
+| `HOOK` | `kotlin-horizontalization-check` | `canonical` | `intelligence` | `hooks/codex/kotlin-horizontalization-check.hooks.json` | `KEEP_CANONICAL` |
+| `HOOK` | `kotlin-horizontalization-check` | `canonical` | `intelligence` | `hooks/kotlin-horizontalization-check.hook.json` | `KEEP_CANONICAL` |
+| `HOOK` | `kotlin-horizontalization-check` | `canonical` | `intelligence` | `hooks/kotlin-horizontalization-check.py` | `KEEP_CANONICAL` |
 | `HOOK` | `record-paths` | `authored-local` | `kast-github-hooks` | `record-paths.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `require-skills` | `authored-local` | `kast-github-hooks` | `require-skills.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `resolve-kast-path` | `authored-local` | `kast-github-hooks` | `resolve-kast-path.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `session-end` | `authored-local` | `kast-github-hooks` | `session-end.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `session-start` | `authored-local` | `kast-github-hooks` | `session-start.sh` | `REVIEW_PROMOTE` |
 | `HOOK` | `skill-shadowing` | `authored-local` | `kast-github-hooks` | `skill-shadowing.json` | `REVIEW_PROMOTE` |
+| `INSTRUCTION` | `agents-agents-instructions` | `canonical` | `intelligence` | `agents/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `concepts-agents-instructions` | `canonical` | `intelligence` | `concepts/AGENTS.md` | `KEEP_CANONICAL` |
+| `INSTRUCTION` | `hooks-agents-instructions` | `canonical` | `intelligence` | `hooks/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `instructions-agents-instructions` | `authored-local` | `examplar-instructions` | `AGENTS.md` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `intelligence-agents-instructions` | `canonical` | `intelligence` | `AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `schema-driven-design` | `authored-local` | `examplar-instructions` | `schema-driven-design.md` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `schema-driven-design` | `canonical` | `intelligence` | `concepts/schema-driven-design/core.md` | `KEEP_CANONICAL` |
+| `INSTRUCTION` | `skills-agents-instructions` | `canonical` | `intelligence` | `skills/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `type-safety` | `authored-local` | `examplar-instructions` | `type-safety.md` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `type-safety` | `canonical` | `intelligence` | `concepts/type-safety/core.md` | `KEEP_CANONICAL` |
 | `PLUGIN` | `agentic-coding` | `authored-local` | `examplar-plugins` | `agentic-coding` | `REVIEW_PROMOTE` |
 | `PLUGIN` | `intelligence-core` | `canonical` | `intelligence` | `plugins/intelligence-core` | `KEEP_CANONICAL` |
+| `PLUGIN` | `kotlin-review` | `canonical` | `intelligence` | `plugins/kotlin-review` | `KEEP_CANONICAL` |
 | `PLUGIN` | `plugin-eval` | `authored-local` | `examplar-plugins` | `plugin-eval` | `REVIEW_PROMOTE` |
+| `PLUGIN` | `schema-governance` | `canonical` | `intelligence` | `plugins/schema-governance` | `KEEP_CANONICAL` |
 | `SKILL` | `agent-development` | `authored-local` | `kast-agent-skills` | `agent-development` | `REVIEW_PROMOTE` |
 | `SKILL` | `define-goal` | `authored-local` | `apollo-skills` | `define-goal` | `REVIEW_PROMOTE` |
 | `SKILL` | `doc-coauthoring` | `authored-local` | `apollo-skills` | `doc-coauthoring` | `REVIEW_PROMOTE` |
-| `SKILL` | `imagegen` | `authored-local` | `apollo-skills` | `.system/imagegen` | `REVIEW_PROMOTE` |
-| `SKILL` | `jira-resolve-ticket` | `authored-local` | `apollo-skills` | `jira-resolve-ticket` | `REVIEW_PROMOTE` |
-| `SKILL` | `kast` | `authored-local` | `kast-agent-skills` | `kast` | `REVIEW_PROMOTE` |
-| `SKILL` | `kotlin-gradle-loop` | `authored-local` | `apollo-skills` | `kotlin-gradle-loop` | `REVIEW_PROMOTE` |
-| `SKILL` | `kotlin-standards` | `authored-local` | `apollo-skills` | `kotlin-standards` | `REVIEW_PROMOTE` |
-| `SKILL` | `kotlin-standards` | `authored-local` | `examplar-skills` | `kotlin-standards` | `REVIEW_PROMOTE` |
-| `SKILL` | `llm-wiki` | `authored-local` | `kast-agent-skills` | `llm-wiki` | `REVIEW_PROMOTE` |
-| `SKILL` | `manage-json-schemas` | `authored-local` | `examplar-skills` | `manage-json-schemas` | `REVIEW_PROMOTE` |
-| `SKILL` | `openai-docs` | `authored-local` | `apollo-skills` | `.system/openai-docs` | `REVIEW_PROMOTE` |
-| `SKILL` | `plugin-creator` | `authored-local` | `apollo-skills` | `.system/plugin-creator` | `REVIEW_PROMOTE` |
-| `SKILL` | `refresh-affected-agents` | `authored-local` | `kast-agent-skills` | `refresh-affected-agents` | `REVIEW_PROMOTE` |
-| `SKILL` | `segment-codebase-agents-md` | `authored-local` | `apollo-skills` | `segment-codebase-agents-md` | `REVIEW_PROMOTE` |
-| `SKILL` | `skill-creator` | `authored-local` | `apollo-skills` | `.system/skill-creator` | `REVIEW_PROMOTE` |
-| | | | | plus 4 more in the JSON report | |
+| | | | | plus 19 more in the JSON report | |
 
 ## Name Review Queue
 
@@ -115,9 +115,15 @@ Name collisions need semantic review unless every entry has the same digest.
 
 | Priority | Type | Name | Action | Buckets | Entries |
 |---:|---|---|---|---|---:|
+| 1 | `AGENT` | `kotlin-boundary-contract-reviewer` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
+| 1 | `AGENT` | `kotlin-package-cohesion-reviewer` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
+| 1 | `AGENT` | `kotlin-review-captain` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
+| 1 | `AGENT` | `kotlin-type-safety-reviewer` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
 | 1 | `AGENT` | `routing-improvement` | `SYNTHESIZE` | `authored-local` | 2 |
+| 1 | `AGENT` | `schema-type-enforcer` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
 | 1 | `HOOK` | `agents-md-turn-refresh` | `SYNTHESIZE` | `canonical` | 3 |
 | 1 | `HOOK` | `hooks` | `SYNTHESIZE` | `authored-local, installed-marketplace` | 11 |
+| 1 | `HOOK` | `kotlin-horizontalization-check` | `SYNTHESIZE` | `authored-local, canonical` | 4 |
 | 1 | `INSTRUCTION` | `schema-driven-design` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
 | 1 | `INSTRUCTION` | `type-safety` | `SYNTHESIZE` | `authored-local, canonical` | 2 |
 | 1 | `PLUGIN` | `plugin-eval` | `SYNTHESIZE` | `authored-local, installed-marketplace` | 2 |
@@ -135,8 +141,8 @@ Name collisions need semantic review unless every entry has the same digest.
 | 2 | `SKILL` | `jira-resolve-ticket` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |
 | 2 | `SKILL` | `kotlin-architect` | `DEDUP_IDENTICAL_NAME` | `backup` | 2 |
 | 2 | `SKILL` | `kotlin-gradle-loop` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |
-| 2 | `SKILL` | `kotlin-standards` | `RECONCILE_RUNTIME_COPY` | `authored-local, runtime` | 4 |
-| 2 | `SKILL` | `manage-json-schemas` | `RECONCILE_RUNTIME_COPY` | `authored-local, runtime` | 2 |
+| 2 | `SKILL` | `kotlin-standards` | `RECONCILE_RUNTIME_COPY` | `authored-local, canonical, runtime` | 5 |
+| 2 | `SKILL` | `manage-json-schemas` | `RECONCILE_RUNTIME_COPY` | `authored-local, canonical, runtime` | 3 |
 | 2 | `SKILL` | `openai-docs` | `RECONCILE_RUNTIME_COPY` | `authored-local, backup, runtime` | 4 |
 | 2 | `SKILL` | `plugin-creator` | `RECONCILE_RUNTIME_COPY` | `authored-local, backup, runtime` | 3 |
 | 2 | `SKILL` | `segment-codebase-agents-md` | `DEDUP_IDENTICAL_NAME` | `authored-local, runtime` | 2 |

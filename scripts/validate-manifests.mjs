@@ -47,6 +47,7 @@ for (const [schemaId, filePath] of checks) {
   const data = readJson(filePath);
   if (validate(data)) {
     console.log(`OK ${path.relative(repoRoot, filePath)}`);
+    failures += validateLocalReferences(filePath, data);
     continue;
   }
 
@@ -56,7 +57,8 @@ for (const [schemaId, filePath] of checks) {
 }
 
 for (const manifest of listJsonFiles(path.join(repoRoot, "manifests"))) {
-  readJson(manifest);
+  const data = readJson(manifest);
+  failures += validateManifestReferences(manifest, data);
   console.log(`OK ${path.relative(repoRoot, manifest)}`);
 }
 
@@ -97,4 +99,82 @@ function listJsonFiles(directory) {
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
+}
+
+function validateLocalReferences(filePath, data) {
+  let failures = 0;
+  if (data.type === "MARKETPLACE") {
+    for (const entry of data.plugins ?? []) {
+      failures += requireLocalPath(filePath, entry.plugin?.source?.path, `plugin ${entry.name}`);
+    }
+  }
+  for (const primitive of [
+    ...(data.skills ?? []),
+    ...(data.agents ?? []),
+    ...(data.instructions ?? []),
+    ...(data.hooks ?? [])
+  ]) {
+    failures += validatePrimitiveReference(filePath, primitive);
+  }
+  if (isPrimitiveReference(data)) {
+    failures += validatePrimitiveReference(filePath, data);
+  }
+  return failures;
+}
+
+function validateManifestReferences(filePath, data) {
+  if (!filePath.endsWith(path.join("manifests", "promotions.json"))) {
+    return 0;
+  }
+
+  let failures = 0;
+  for (const entry of data.entries ?? []) {
+    failures += requireLocalPath(filePath, entry.canonicalPath, `promotion ${entry.name} canonicalPath`);
+    if (entry.sourceResolvedPath && !fs.existsSync(entry.sourceResolvedPath)) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, filePath)}: missing promotion sourceResolvedPath for ${entry.name}: ${entry.sourceResolvedPath}`
+      );
+      failures += 1;
+    }
+    for (const source of entry.supportingSources ?? []) {
+      if (source.sourceResolvedPath && !fs.existsSync(source.sourceResolvedPath)) {
+        console.error(
+          `FAIL ${path.relative(repoRoot, filePath)}: missing promotion supporting sourceResolvedPath for ${entry.name}: ${source.sourceResolvedPath}`
+        );
+        failures += 1;
+      }
+    }
+  }
+  return failures;
+}
+
+function validatePrimitiveReference(filePath, primitive) {
+  let failures = requirePrimitivePath(filePath, primitive);
+  for (const dependency of primitive?.dependsOn ?? []) {
+    failures += requirePrimitivePath(filePath, dependency);
+  }
+  return failures;
+}
+
+function requirePrimitivePath(filePath, primitive) {
+  if (primitive?.source?.type !== "LOCAL_SOURCE") {
+    return 0;
+  }
+  return requireLocalPath(filePath, primitive.path, `${primitive.type} ${primitive.name}`);
+}
+
+function isPrimitiveReference(data) {
+  return ["SKILL", "AGENT", "INSTRUCTION", "HOOK"].includes(data?.type);
+}
+
+function requireLocalPath(filePath, localPath, label) {
+  if (!localPath) {
+    return 0;
+  }
+  const target = path.resolve(repoRoot, localPath);
+  if (fs.existsSync(target)) {
+    return 0;
+  }
+  console.error(`FAIL ${path.relative(repoRoot, filePath)}: missing ${label} path: ${localPath}`);
+  return 1;
 }
