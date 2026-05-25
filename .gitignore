@@ -30,3 +30,4 @@ replay_pid*
 .agent-turn/
 .idea/
 node_modules/
+dist/

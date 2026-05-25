@@ -27,6 +27,10 @@ not justified.
   or projected into other projects.
 - `hooks/` contains reusable hook assets and runtime adapter configs.
 - `plugins/` is reserved for plugin composition manifests.
+- `profiles/` contains schema-validated workflow profiles that select existing
+  marketplace plugins, hooks, runtime links, and validation commands.
+- `templates/` contains primitive scaffold templates used by local tooling.
+- `bin/` contains thin local command wrappers for repository tooling.
 - `garden/` contains isolated spring-cleaning inventory, generated reports,
   review ledgers, runtime activation plans, and the scripts that produce them.
 - `schemas/` contains public-facing JSON Schema contracts for primitive,

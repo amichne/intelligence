@@ -2,6 +2,8 @@
   "name": "intelligence",
   "private": true,
   "scripts": {
+    "intelligence": "python3 scripts/intelligence.py",
+    "package:cli": "python3 scripts/package-intelligence.py --out dist",
     "validate:manifests": "node scripts/validate-manifests.mjs",
     "marketplace:materialize": "python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace",
     "marketplace:publish:preview": "python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push",

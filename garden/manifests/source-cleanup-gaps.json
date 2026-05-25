@@ -394,7 +394,7 @@
         "type": "SOURCE_CLEANUP_PRIMITIVE"
       },
       "reason": "This entry is already in the canonical source root.",
-      "sha256": "sha256:e609cb384e59a912fa0959b2232893cadb92fbd9cea9e9cef09408e605a6468a",
+      "sha256": "sha256:e43f0fa662826ad45816f4abc439c3377b2791b72552e7fa3cca734bff964608",
       "sourcePath": "AGENTS.md",
       "sourceRoot": "intelligence",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
