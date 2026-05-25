@@ -6,12 +6,12 @@ This generated report checks whether each discovered primitive entry has a decis
 
 | Measure | Value |
 |---|---:|
-| Total entries | 869 |
-| Canonical owner | 56 |
+| Total entries | 871 |
+| Canonical owner | 57 |
 | Canonical runtime alias | 48 |
 | Source review decision | 126 |
 | Digest review decision | 0 |
-| Source root decision | 639 |
+| Source root decision | 640 |
 | Unreviewed singleton | 0 |
 | All entries covered | `true` |
 
@@ -27,9 +27,9 @@ Next action: All discovered primitive entries have a decision path.
 
 | State | Count |
 |---|---:|
-| `CANONICAL_OWNER` | 56 |
+| `CANONICAL_OWNER` | 57 |
 | `CANONICAL_RUNTIME_ALIAS` | 48 |
 | `SOURCE_REVIEW_DECISION` | 126 |
 | `DIGEST_REVIEW_DECISION` | 0 |
-| `SOURCE_ROOT_DECISION` | 639 |
+| `SOURCE_ROOT_DECISION` | 640 |
 | `UNREVIEWED_SINGLETON` | 0 |

@@ -7,7 +7,7 @@ This generated report summarizes which scanned roots can be retained, reviewed, 
 | Measure | Value |
 |---|---:|
 | Total roots | 18 |
-| Total observed entries | 869 |
+| Total observed entries | 871 |
 | Canonical owners | 1 |
 | Partial replacement ready | 3 |
 | Runtime dependency mapped | 0 |
@@ -25,7 +25,7 @@ Next action: Review PARTIAL_REPLACEMENT_READY roots and their activation approva
 
 | State | Root | Role | Entries | Covered | Retained | Proposed | Ready | Review | Mapped | Next Action |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| `CANONICAL_OWNER` | `intelligence` | `canonical-candidate` | 56 | 29 | 0 | 0 | 0 | 0 | 0 | Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links. |
+| `CANONICAL_OWNER` | `intelligence` | `canonical-candidate` | 57 | 29 | 0 | 0 | 0 | 0 | 0 | Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links. |
 | `CLEANUP_RECORDED` | `claude-agents` | `runtime-source` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | Keep the cleanup ledger as the source of truth for completed cleanup and rerun inventory to detect drift. |
 | `COVERED_NO_REPLACEMENT_PLAN` | `examplar-agents` | `local-repo-source` | 5 | 5 | 0 | 0 | 0 | 0 | 0 | Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal. |
 | `COVERED_NO_REPLACEMENT_PLAN` | `examplar-hooks` | `local-repo-source` | 1 | 1 | 0 | 0 | 0 | 0 | 0 | Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal. |
@@ -36,7 +36,7 @@ Next action: Review PARTIAL_REPLACEMENT_READY roots and their activation approva
 | `MIXED_RETAIN_AND_COVERED` | `examplar-instructions` | `local-repo-source` | 3 | 2 | 1 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `global-codex-backups` | `backup-source` | 5 | 3 | 1 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `global-codex-skills-backup` | `backup-source` | 28 | 4 | 11 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
-| `MIXED_RETAIN_AND_COVERED` | `kast-agent-skills` | `local-repo-source` | 23 | 2 | 9 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
+| `MIXED_RETAIN_AND_COVERED` | `kast-agent-skills` | `local-repo-source` | 24 | 2 | 9 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `PARTIAL_REPLACEMENT_READY` | `apollo-skills` | `local-repo-source` | 33 | 21 | 19 | 13 | 0 | 0 | 0 | Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement. |
 | `PARTIAL_REPLACEMENT_READY` | `global-agent-skills` | `runtime-source` | 46 | 1 | 16 | 0 | 1 | 0 | 0 | Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement. |
 | `PARTIAL_REPLACEMENT_READY` | `global-codex-skills` | `runtime-source` | 33 | 0 | 19 | 0 | 1 | 0 | 0 | Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement. |

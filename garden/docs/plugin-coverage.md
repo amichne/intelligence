@@ -10,7 +10,7 @@ All canonical primitives routed: `false`
 |---|---:|
 | `MARKETPLACE_EXPOSED` | 9 |
 | `PLUGIN_COMPOSED` | 32 |
-| `SCOPED_INSTRUCTION` | 6 |
+| `SCOPED_INSTRUCTION` | 7 |
 | `STANDALONE_ONLY` | 3 |
 
 ## Primitive Types
@@ -19,7 +19,7 @@ All canonical primitives routed: `false`
 |---|---:|
 | `AGENT` | 5 |
 | `HOOK` | 4 |
-| `INSTRUCTION` | 8 |
+| `INSTRUCTION` | 9 |
 | `PLUGIN` | 11 |
 | `SKILL` | 22 |
 
@@ -38,6 +38,7 @@ All canonical primitives routed: `false`
 | `STANDALONE_ONLY` | `HOOK` | `skill-requirements-schema` | `schemas/hooks/skill-requirements.schema.json` | - |
 | `SCOPED_INSTRUCTION` | `INSTRUCTION` | `agents-agents-instructions` | `agents/AGENTS.md` | - |
 | `SCOPED_INSTRUCTION` | `INSTRUCTION` | `concepts-agents-instructions` | `concepts/AGENTS.md` | - |
+| `SCOPED_INSTRUCTION` | `INSTRUCTION` | `docs-agents-instructions` | `docs/AGENTS.md` | - |
 | `SCOPED_INSTRUCTION` | `INSTRUCTION` | `hooks-agents-instructions` | `hooks/AGENTS.md` | - |
 | `SCOPED_INSTRUCTION` | `INSTRUCTION` | `intelligence-agents-instructions` | `AGENTS.md` | - |
 | `PLUGIN_COMPOSED` | `INSTRUCTION` | `schema-driven-design` | `concepts/schema-driven-design/core.md` | `intelligence-core`, `kotlin-review`, `primitive-authoring`, `primitive-governance`, `runtime-activation`, `schema-governance`, `tdd-workflow` |

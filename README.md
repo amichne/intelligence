@@ -5,6 +5,26 @@ Au naturel (some additives)
 
 toolkit for my outsourcing of "intelligence"
 
+## Documentation
+
+The repository now has a Zensical documentation site under `docs/`.
+`zensical.toml` owns navigation, Markdown features, and theme configuration.
+
+Build it locally with:
+
+```sh
+zensical build --clean
+```
+
+If Zensical is not installed:
+
+```sh
+python3 -m venv .venv-docs
+. .venv-docs/bin/activate
+python -m pip install -r requirements-docs.txt
+zensical build --clean
+```
+
 ## Current Shape
 
 This repo is becoming the source graph for personal AI tooling primitives:
