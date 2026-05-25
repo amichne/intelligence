@@ -16,7 +16,7 @@ from typing import Any
 
 CODEX_PLUGIN_DIR = ".codex-plugin"
 CODEX_PROVIDER_DIR = "codex"
-GITHUB_COPILOT_PROVIDER_DIR = "github-copilot"
+GITHUB_COPILOT_PROVIDER_PATH = Path(".github") / "plugin"
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -93,7 +93,7 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
     owner = marketplace.get("owner", {})
     owner_name = owner.get("name", "Local developer")
     codex_root = out_root / CODEX_PROVIDER_DIR
-    github_copilot_root = out_root / GITHUB_COPILOT_PROVIDER_DIR
+    github_copilot_root = out_root / GITHUB_COPILOT_PROVIDER_PATH
     codex_marketplace = {
         "name": marketplace["name"],
         "interface": {"displayName": title_case(marketplace["name"])},
@@ -204,10 +204,10 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
     (out_root / "README.md").write_text(
         "# Intelligence Marketplace\n\n"
         "This branch is generated from the referential source graph on `main`.\n\n"
-        "Provider-specific marketplace projections are scoped under their provider directories:\n\n"
+        "Provider-native marketplace projections are scoped under their expected entrypoints:\n\n"
         "- `codex/marketplace.json`\n"
-        "- `github-copilot/marketplace.json`\n\n"
-        "Each provider directory owns its own `plugins/` payloads so marketplace-relative "
+        "- `.github/plugin/marketplace.json`\n\n"
+        "Each provider entrypoint owns its own `plugins/` payloads so marketplace-relative "
         "paths stay provider-native.\n",
         encoding="utf-8",
     )

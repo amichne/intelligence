@@ -17,7 +17,7 @@ python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-
 
 The materialized output contains provider-native entrypoints. Codex consumers
 use `codex/marketplace.json`; GitHub Copilot consumers use
-`github-copilot/marketplace.json`.
+`.github/plugin/marketplace.json`.
 
 ## Published Shape
 
@@ -29,7 +29,7 @@ The generated branch publishes only the plugin families listed in
 | `marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
 | `scripts/publish-marketplace.py` | Generator | Hydrates provider-native payloads. |
 | `codex/marketplace.json` | Generated branch output | Codex marketplace entrypoint. |
-| `github-copilot/marketplace.json` | Generated branch output | GitHub Copilot marketplace entrypoint. |
+| `.github/plugin/marketplace.json` | Generated branch output | GitHub Copilot marketplace entrypoint. |
 
 ## Publication Gate
 
