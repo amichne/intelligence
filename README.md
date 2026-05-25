@@ -26,6 +26,9 @@ skills, agents, hooks, instructions, and referential plugins.
 - `plugins/primitive-governance/plugin.json` and
   `plugins/runtime-activation/plugin.json` remain repo-local cleanup,
   source-graph, and runtime-linking utilities unless explicitly published.
+- `profiles/` contains schema-validated workflow profiles that select existing
+  plugin families, hooks, runtime links, and validation commands.
+- `templates/` contains primitive scaffold templates used by `bin/intelligence`.
 - `garden/manifests/source-roots.json` lists the local places currently scanned.
 - `garden/manifests/promotions.json` records copied-in canonical primitives and their
   original sources.
@@ -141,6 +144,70 @@ covers garden manifests. The Ajv dependencies are pinned in the root
 `package-lock.json`. Marketplace publishing uses `--portable` in CI so host-local
 runtime and sibling-repo references are schema-checked without requiring the
 same filesystem layout as this machine.
+
+## Workflow CLI
+
+`bin/intelligence` is the local orchestration entrypoint. It does not create a
+new source-of-truth format for primitives; it wires existing marketplace,
+plugin, hook, runtime-link, and validation contracts together.
+
+Create a checked-in workflow profile and marketplace reference in a target repo:
+
+```sh
+bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default
+```
+
+Dry-run install for Codex:
+
+```sh
+bin/intelligence install --repo /path/to/repo \
+  --profile .agents/intelligence-profile.json \
+  --runtime codex
+```
+
+Apply only after reviewing the dry run. Marketplace imports can be opened during
+`--apply`; runtime path mutations still require explicit packet approval:
+
+```sh
+bin/intelligence install --repo /path/to/repo \
+  --profile .agents/intelligence-profile.json \
+  --runtime codex \
+  --apply \
+  --approve-runtime-link codex-hook-adapters
+```
+
+Scaffold a new primitive from the repo templates and optionally update a plugin
+or marketplace reference:
+
+```sh
+bin/intelligence primitive new skill example-skill \
+  --plugin primitive-authoring \
+  --marketplace
+```
+
+Run the validation gates directly:
+
+```sh
+bin/intelligence validate
+```
+
+Build local distribution archives:
+
+```sh
+npm run package:cli -- --version local
+```
+
+The packager writes `dist/intelligence-<version>.tar.gz`,
+`dist/intelligence-<version>.zip`, and `dist/SHA256SUMS`. It packages the source
+graph and CLI entrypoint without local dependency directories such as
+`node_modules/`; run `npm ci` inside an unpacked archive before running
+manifest validation.
+
+`.github/workflows/distribute-intelligence.yml` runs the same packaging path in
+GitHub Actions. Pull requests and pushes upload the archive set as a workflow
+artifact. Version tags matching `v*` also publish those files to the matching
+GitHub Release; manual dispatch can publish a release when `version` is set and
+`publish_release` is enabled.
 
 ## Publish Marketplace
 

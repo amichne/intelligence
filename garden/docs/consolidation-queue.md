@@ -1,7 +1,7 @@
 # Consolidation Queue
 
 Inventory source: `garden/manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-24T21:29:10.172713+00:00`
+Inventory generated at: `2026-05-25T13:38:53.197584+00:00`
 
 ## Counts
 

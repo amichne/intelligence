@@ -64,6 +64,7 @@ for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJs
 
 const checks = [
   ["marketplace.schema.json", path.join(repoRoot, "marketplace.json")],
+  ...listJsonFiles(path.join(repoRoot, "profiles")).map((file) => ["workflow-profile.schema.json", file]),
   ...listPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
   ...listCodexPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["codex-plugin.schema.json", file]),
   ...hydratedChecks(hydratedRoot),
@@ -354,6 +355,53 @@ function validateLocalReferences(filePath, data) {
       failures += requireLocalPath(filePath, skill.skillPath, `required skill ${skill.id}`);
     }
   }
+  if (data.type === "WORKFLOW_PROFILE") {
+    failures += validateWorkflowProfileReferences(filePath, data);
+  }
+  return failures;
+}
+
+function validateWorkflowProfileReferences(filePath, data) {
+  const marketplace = readJson(path.join(repoRoot, "marketplace.json"));
+  const runtimeLinks = readJson(manifestPath("runtime-links.json"));
+  const pluginNames = new Set((marketplace.plugins ?? []).map((entry) => entry.name));
+  const hookNames = new Set((marketplace.hooks ?? []).map((entry) => entry.name));
+  const runtimeLinkNames = new Set((runtimeLinks.entries ?? []).map((entry) => entry.name));
+  let failures = 0;
+
+  for (const pluginName of data.plugins ?? []) {
+    if (!pluginNames.has(pluginName)) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, filePath)}: workflow profile references unknown plugin ${pluginName}`
+      );
+      failures += 1;
+    }
+  }
+
+  for (const hook of data.hooks ?? []) {
+    if (!hookNames.has(hook.name)) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, filePath)}: workflow profile references unknown hook ${hook.name}`
+      );
+      failures += 1;
+      continue;
+    }
+    failures += requireLocalPath(
+      filePath,
+      `hooks/${hook.adapter}/${hook.name}.hooks.json`,
+      `workflow profile hook adapter ${hook.name}@${hook.adapter}`
+    );
+  }
+
+  for (const runtimeLinkName of data.runtimeLinks ?? []) {
+    if (!runtimeLinkNames.has(runtimeLinkName)) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, filePath)}: workflow profile references unknown runtime link ${runtimeLinkName}`
+      );
+      failures += 1;
+    }
+  }
+
   return failures;
 }
 
@@ -2717,7 +2765,7 @@ function validateJsonCoverage() {
 
 function listJsonFilesRecursive(directory) {
   const results = [];
-  const skippedDirectories = new Set([".git", ".idea", ".agent-turn", ".migration-backups", "node_modules"]);
+  const skippedDirectories = new Set([".git", ".idea", ".agent-turn", ".migration-backups", "dist", "node_modules"]);
 
   function visit(current) {
     if (!fs.existsSync(current)) {

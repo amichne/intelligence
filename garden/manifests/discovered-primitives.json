@@ -6741,7 +6741,7 @@
       "observedPath": "/Users/amichne/code/intelligence/AGENTS.md",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:e609cb384e59a912fa0959b2232893cadb92fbd9cea9e9cef09408e605a6468a",
+      "sha256": "sha256:e43f0fa662826ad45816f4abc439c3377b2791b72552e7fa3cca734bff964608",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -16675,7 +16675,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T21:29:10.172713+00:00",
+  "generatedAt": "2026-05-25T13:38:53.197584+00:00",
   "generator": "garden/scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [
