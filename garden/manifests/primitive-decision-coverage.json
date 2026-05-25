@@ -241,6 +241,20 @@
     {
       "coverageState": "CANONICAL_OWNER",
       "evidence": "Entry is inside the canonical candidate source root.",
+      "path": "docs/AGENTS.md",
+      "primitive": {
+        "name": "docs-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_REFERENCE"
+      },
+      "sha256": "sha256:d1566041c81df124a5c1660756e1eb5976be0b823718ac26b7c6af8bdd6b5bd8",
+      "sourceRoot": "intelligence",
+      "sourceRootRole": "canonical-candidate",
+      "type": "PRIMITIVE_DECISION_COVERAGE_ENTRY"
+    },
+    {
+      "coverageState": "CANONICAL_OWNER",
+      "evidence": "Entry is inside the canonical candidate source root.",
       "path": "hooks/AGENTS.md",
       "primitive": {
         "name": "hooks-agents-instructions",
@@ -11881,7 +11895,21 @@
         "primitiveType": "AGENT",
         "type": "PRIMITIVE_REFERENCE"
       },
-      "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631",
+      "sha256": "sha256:1fd3e587d0fd559f44ca03bc4b8e0ee03787f2a21bb121ea96314b890fea3fc0",
+      "sourceRoot": "kast-agent-skills",
+      "sourceRootRole": "local-repo-source",
+      "type": "PRIMITIVE_DECISION_COVERAGE_ENTRY"
+    },
+    {
+      "coverageState": "SOURCE_ROOT_DECISION",
+      "evidence": "Entry is covered by a hand-authored source-root decision.",
+      "path": "kast/references/commands.schema.json",
+      "primitive": {
+        "name": "commands-schema",
+        "primitiveType": "AGENT",
+        "type": "PRIMITIVE_REFERENCE"
+      },
+      "sha256": "sha256:6f64a8a4042bf0788c7b6fbabfd27a1bf5246080c15c5c930329715eec5f630c",
       "sourceRoot": "kast-agent-skills",
       "sourceRootRole": "local-repo-source",
       "type": "PRIMITIVE_DECISION_COVERAGE_ENTRY"
@@ -12007,7 +12035,7 @@
         "primitiveType": "SKILL",
         "type": "PRIMITIVE_REFERENCE"
       },
-      "sha256": "sha256:145f5d4db9b6a995bd601f0d11983e0add3ecbf941858adbc8a07c9ad64f9317",
+      "sha256": "sha256:9f8ae359b5a9a35c59cee307b16971bb5fac0ba87708f70708839fd8edb6c101",
       "sourceRoot": "kast-agent-skills",
       "sourceRootRole": "local-repo-source",
       "type": "PRIMITIVE_DECISION_COVERAGE_ENTRY"
@@ -12178,13 +12206,13 @@
   "schemaVersion": 1,
   "summary": {
     "allEntriesCovered": true,
-    "canonicalOwner": 56,
+    "canonicalOwner": 57,
     "canonicalRuntimeAlias": 48,
     "digestReviewDecision": 0,
     "nextAction": "All discovered primitive entries have a decision path.",
     "sourceReviewDecision": 126,
-    "sourceRootDecision": 639,
-    "totalEntries": 869,
+    "sourceRootDecision": 640,
+    "totalEntries": 871,
     "type": "PRIMITIVE_DECISION_COVERAGE_SUMMARY",
     "unreviewedSingleton": 0
   },

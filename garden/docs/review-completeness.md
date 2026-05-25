@@ -6,11 +6,11 @@ This generated report compares canonical primitive coverage with durable audit e
 
 | Measure | Value |
 |---|---:|
-| Total canonical | 50 |
-| Audited | 49 |
+| Total canonical | 51 |
+| Audited | 50 |
 | Needs audit | 1 |
 | Promoted | 30 |
-| Native canonical | 20 |
+| Native canonical | 21 |
 | All canonical audited | `false` |
 
 ## Needs Audit
@@ -33,6 +33,7 @@ This generated report compares canonical primitive coverage with durable audit e
 | `HOOK` | `required-skill-read` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |
 | `INSTRUCTION` | `agents-agents-instructions` | `PROMOTE_READY` | `SCOPED_INSTRUCTION` | `NATIVE_CANONICAL` |
 | `INSTRUCTION` | `concepts-agents-instructions` | `PROMOTE_READY` | `SCOPED_INSTRUCTION` | `NATIVE_CANONICAL` |
+| `INSTRUCTION` | `docs-agents-instructions` | `PROMOTE_READY` | `SCOPED_INSTRUCTION` | `NATIVE_CANONICAL` |
 | `INSTRUCTION` | `hooks-agents-instructions` | `PROMOTE_READY` | `SCOPED_INSTRUCTION` | `NATIVE_CANONICAL` |
 | `INSTRUCTION` | `intelligence-agents-instructions` | `PROMOTE_READY` | `SCOPED_INSTRUCTION` | `NATIVE_CANONICAL` |
 | `INSTRUCTION` | `schema-driven-design` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `NATIVE_CANONICAL` |

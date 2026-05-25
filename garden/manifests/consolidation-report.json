@@ -3,16 +3,16 @@
   "counts": {
     "brokenSymlinks": 0,
     "byBucket": {
-      "authored-local": 87,
+      "authored-local": 88,
       "backup": 33,
-      "canonical": 56,
+      "canonical": 57,
       "installed-marketplace": 608,
       "runtime": 37,
       "runtime-alias": 48
     },
     "byBucketAndType": {
       "authored-local": {
-        "AGENT": 37,
+        "AGENT": 38,
         "HOOK": 10,
         "INSTRUCTION": 3,
         "PLUGIN": 2,
@@ -25,7 +25,7 @@
       "canonical": {
         "AGENT": 5,
         "HOOK": 10,
-        "INSTRUCTION": 8,
+        "INSTRUCTION": 9,
         "PLUGIN": 11,
         "SKILL": 22
       },
@@ -47,9 +47,9 @@
       }
     },
     "byType": {
-      "AGENT": 299,
+      "AGENT": 300,
       "HOOK": 42,
-      "INSTRUCTION": 13,
+      "INSTRUCTION": 14,
       "PLUGIN": 144,
       "SKILL": 371
     },
@@ -57,7 +57,7 @@
     "firstPartyDigestMatches": 0,
     "firstPartyNameCollisions": 0,
     "nameReviewGroups": 50,
-    "totalEntries": 869
+    "totalEntries": 871
   },
   "digestReviewQueue": [
     {
@@ -659,7 +659,7 @@
   "firstPartyDigestMatches": [],
   "firstPartyNameCollisions": [],
   "inventory": "garden/manifests/discovered-primitives.json",
-  "inventoryGeneratedAt": "2026-05-25T13:38:53.197584+00:00",
+  "inventoryGeneratedAt": "2026-05-25T14:33:13.109854+00:00",
   "nameReviewQueue": [
     {
       "action": "SYNTHESIZE",
@@ -2861,7 +2861,17 @@
       "name": "commands",
       "path": "kast/references/commands.json",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
-      "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631",
+      "sha256": "sha256:1fd3e587d0fd559f44ca03bc4b8e0ee03787f2a21bb121ea96314b890fea3fc0",
+      "sourceRoot": "kast-agent-skills",
+      "type": "AGENT"
+    },
+    {
+      "action": "REVIEW_PROMOTE",
+      "bucket": "authored-local",
+      "name": "commands-schema",
+      "path": "kast/references/commands.schema.json",
+      "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.schema.json",
+      "sha256": "sha256:6f64a8a4042bf0788c7b6fbabfd27a1bf5246080c15c5c930329715eec5f630c",
       "sourceRoot": "kast-agent-skills",
       "type": "AGENT"
     },
@@ -3428,6 +3438,16 @@
     {
       "action": "KEEP_CANONICAL",
       "bucket": "canonical",
+      "name": "docs-agents-instructions",
+      "path": "docs/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/docs/AGENTS.md",
+      "sha256": "sha256:d1566041c81df124a5c1660756e1eb5976be0b823718ac26b7c6af8bdd6b5bd8",
+      "sourceRoot": "intelligence",
+      "type": "INSTRUCTION"
+    },
+    {
+      "action": "KEEP_CANONICAL",
+      "bucket": "canonical",
       "name": "hooks-agents-instructions",
       "path": "hooks/AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
@@ -3781,7 +3801,7 @@
       "name": "kast",
       "path": "kast",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
-      "sha256": "sha256:145f5d4db9b6a995bd601f0d11983e0add3ecbf941858adbc8a07c9ad64f9317",
+      "sha256": "sha256:9f8ae359b5a9a35c59cee307b16971bb5fac0ba87708f70708839fd8edb6c101",
       "sourceRoot": "kast-agent-skills",
       "type": "SKILL"
     },

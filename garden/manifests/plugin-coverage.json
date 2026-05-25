@@ -220,6 +220,20 @@
     },
     {
       "canonicalPaths": [
+        "docs/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "marketplaceReferences": [],
+      "pluginReferences": [],
+      "primitive": {
+        "name": "docs-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "type": "PLUGIN_COVERAGE_ENTRY"
+    },
+    {
+      "canonicalPaths": [
         "hooks/AGENTS.md"
       ],
       "coverageStatus": "SCOPED_INSTRUCTION",
@@ -1059,7 +1073,7 @@
         "type": "COVERAGE_COUNT"
       },
       {
-        "count": 6,
+        "count": 7,
         "name": "SCOPED_INSTRUCTION",
         "type": "COVERAGE_COUNT"
       },
@@ -1081,7 +1095,7 @@
         "type": "COVERAGE_COUNT"
       },
       {
-        "count": 8,
+        "count": 9,
         "name": "INSTRUCTION",
         "type": "COVERAGE_COUNT"
       },
@@ -1096,7 +1110,7 @@
         "type": "COVERAGE_COUNT"
       }
     ],
-    "totalPrimitives": 50,
+    "totalPrimitives": 51,
     "type": "PLUGIN_COVERAGE_SUMMARY"
   },
   "type": "PLUGIN_COVERAGE_REPORT"

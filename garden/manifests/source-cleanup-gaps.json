@@ -366,6 +366,27 @@
           "type": "SOURCE_CLEANUP_GAP_EVIDENCE"
         }
       ],
+      "observedPath": "/Users/amichne/code/intelligence/docs/AGENTS.md",
+      "primitive": {
+        "name": "docs-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "SOURCE_CLEANUP_PRIMITIVE"
+      },
+      "reason": "This entry is already in the canonical source root.",
+      "sha256": "sha256:d1566041c81df124a5c1660756e1eb5976be0b823718ac26b7c6af8bdd6b5bd8",
+      "sourcePath": "docs/AGENTS.md",
+      "sourceRoot": "intelligence",
+      "type": "SOURCE_CLEANUP_GAP_ENTRY"
+    },
+    {
+      "cleanupState": "CANONICAL_OWNER",
+      "evidence": [
+        {
+          "decision": "CANONICAL_OWNER",
+          "source": "source-root-decision",
+          "type": "SOURCE_CLEANUP_GAP_EVIDENCE"
+        }
+      ],
       "observedPath": "/Users/amichne/code/intelligence/hooks/AGENTS.md",
       "primitive": {
         "name": "hooks-agents-instructions",
@@ -17131,8 +17152,29 @@
         "type": "SOURCE_CLEANUP_PRIMITIVE"
       },
       "reason": "Source-root decision retains this root under its external owner.",
-      "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631",
+      "sha256": "sha256:1fd3e587d0fd559f44ca03bc4b8e0ee03787f2a21bb121ea96314b890fea3fc0",
       "sourcePath": "kast/references/commands.json",
+      "sourceRoot": "kast-agent-skills",
+      "type": "SOURCE_CLEANUP_GAP_ENTRY"
+    },
+    {
+      "cleanupState": "ROOT_RETAINED",
+      "evidence": [
+        {
+          "decision": "RETAIN_EXTERNAL_OWNER",
+          "source": "source-root-decision",
+          "type": "SOURCE_CLEANUP_GAP_EVIDENCE"
+        }
+      ],
+      "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.schema.json",
+      "primitive": {
+        "name": "commands-schema",
+        "primitiveType": "AGENT",
+        "type": "SOURCE_CLEANUP_PRIMITIVE"
+      },
+      "reason": "Source-root decision retains this root under its external owner.",
+      "sha256": "sha256:6f64a8a4042bf0788c7b6fbabfd27a1bf5246080c15c5c930329715eec5f630c",
+      "sourcePath": "kast/references/commands.schema.json",
       "sourceRoot": "kast-agent-skills",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
     },
@@ -17446,7 +17488,7 @@
         "type": "SOURCE_CLEANUP_PRIMITIVE"
       },
       "reason": "Source-root decision retains this root under its external owner.",
-      "sha256": "sha256:145f5d4db9b6a995bd601f0d11983e0add3ecbf941858adbc8a07c9ad64f9317",
+      "sha256": "sha256:9f8ae359b5a9a35c59cee307b16971bb5fac0ba87708f70708839fd8edb6c101",
       "sourcePath": "kast",
       "sourceRoot": "kast-agent-skills",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
@@ -18324,16 +18366,16 @@
   },
   "schemaVersion": 1,
   "summary": {
-    "canonicalOwner": 56,
+    "canonicalOwner": 57,
     "cleanupLedgerEntry": 79,
     "digestRetained": 0,
     "needsCleanupProposal": 0,
     "nextAction": "No generated cleanup proposal gaps remain; use cleanup-ledger approval packets for future source turnoff.",
     "noCleanupAction": 7,
-    "rootRetained": 702,
+    "rootRetained": 703,
     "rootReviewRequired": 0,
     "sourceRetained": 25,
-    "totalEntries": 869,
+    "totalEntries": 871,
     "type": "SOURCE_CLEANUP_GAP_SUMMARY"
   },
   "type": "SOURCE_CLEANUP_GAP_REPORT"

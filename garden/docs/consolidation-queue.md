@@ -1,24 +1,24 @@
 # Consolidation Queue
 
 Inventory source: `garden/manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-25T13:38:53.197584+00:00`
+Inventory generated at: `2026-05-25T14:33:13.109854+00:00`
 
 ## Counts
 
 | Bucket | Count |
 |---|---:|
-| `authored-local` | 87 |
+| `authored-local` | 88 |
 | `backup` | 33 |
-| `canonical` | 56 |
+| `canonical` | 57 |
 | `installed-marketplace` | 608 |
 | `runtime` | 37 |
 | `runtime-alias` | 48 |
 
 | Type | Count |
 |---|---:|
-| `AGENT` | 299 |
+| `AGENT` | 300 |
 | `HOOK` | 42 |
-| `INSTRUCTION` | 13 |
+| `INSTRUCTION` | 14 |
 | `PLUGIN` | 144 |
 | `SKILL` | 371 |
 
@@ -36,6 +36,7 @@ These are canonical or local-authored entries. They are the first review set bef
 | `AGENT` | `chatmode` | `authored-local` | `apollo-agents` | `codebase-navigator/copilot/chatmode.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `codebase-navigator` | `authored-local` | `apollo-agents` | `codebase-navigator/AGENT.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `commands` | `authored-local` | `kast-agent-skills` | `kast/references/commands.json` | `REVIEW_PROMOTE` |
+| `AGENT` | `commands-schema` | `authored-local` | `kast-agent-skills` | `kast/references/commands.schema.json` | `REVIEW_PROMOTE` |
 | `AGENT` | `comparator` | `authored-local` | `kast-agent-skills` | `skill-creator/agents/comparator.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `complete-agent-examples` | `authored-local` | `kast-agent-skills` | `agent-development/examples/complete-agent-examples.md` | `REVIEW_PROMOTE` |
 | `AGENT` | `evaluation-scaffold` | `authored-local` | `kast-agent-skills` | `skill-creator/references/evaluation_scaffold.md` | `REVIEW_PROMOTE` |
@@ -92,6 +93,7 @@ These are canonical or local-authored entries. They are the first review set bef
 | `HOOK` | `skill-shadowing` | `authored-local` | `kast-github-hooks` | `skill-shadowing.json` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `agents-agents-instructions` | `canonical` | `intelligence` | `agents/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `concepts-agents-instructions` | `canonical` | `intelligence` | `concepts/AGENTS.md` | `KEEP_CANONICAL` |
+| `INSTRUCTION` | `docs-agents-instructions` | `canonical` | `intelligence` | `docs/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `hooks-agents-instructions` | `canonical` | `intelligence` | `hooks/AGENTS.md` | `KEEP_CANONICAL` |
 | `INSTRUCTION` | `instructions-agents-instructions` | `authored-local` | `examplar-instructions` | `AGENTS.md` | `REVIEW_PROMOTE` |
 | `INSTRUCTION` | `intelligence-agents-instructions` | `canonical` | `intelligence` | `AGENTS.md` | `KEEP_CANONICAL` |
@@ -106,9 +108,7 @@ These are canonical or local-authored entries. They are the first review set bef
 | `PLUGIN` | `intelligence-core` | `canonical` | `intelligence` | `plugins/intelligence-core` | `KEEP_CANONICAL` |
 | `PLUGIN` | `kotlin-review` | `canonical` | `intelligence` | `plugins/kotlin-review` | `KEEP_CANONICAL` |
 | `PLUGIN` | `planning-and-docs` | `canonical` | `intelligence` | `plugins/planning-and-docs` | `KEEP_CANONICAL` |
-| `PLUGIN` | `plugin-eval` | `authored-local` | `examplar-plugins` | `plugin-eval` | `REVIEW_PROMOTE` |
-| `PLUGIN` | `primitive-authoring` | `canonical` | `intelligence` | `plugins/primitive-authoring` | `KEEP_CANONICAL` |
-| | | | | plus 63 more in the JSON report | |
+| | | | | plus 65 more in the JSON report | |
 
 ## Name Review Queue
 

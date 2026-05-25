@@ -170,6 +170,22 @@
       "auditDecision": "PROMOTE_READY",
       "auditState": "AUDITED",
       "canonicalPaths": [
+        "docs/AGENTS.md"
+      ],
+      "coverageStatus": "SCOPED_INSTRUCTION",
+      "notes": "Primitive has a durable audit entry in garden/manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "docs-agents-instructions",
+        "primitiveType": "INSTRUCTION",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
         "hooks/AGENTS.md"
       ],
       "coverageStatus": "SCOPED_INSTRUCTION",
@@ -815,11 +831,11 @@
   "schemaVersion": 1,
   "summary": {
     "allCanonicalAudited": false,
-    "audited": 49,
-    "nativeCanonical": 20,
+    "audited": 50,
+    "nativeCanonical": 21,
     "needsAudit": 1,
     "promoted": 30,
-    "totalCanonical": 50,
+    "totalCanonical": 51,
     "type": "REVIEW_COMPLETENESS_SUMMARY"
   },
   "type": "REVIEW_COMPLETENESS_REPORT"

@@ -1,9 +1,9 @@
 {
   "brokenSymlinks": [],
   "counts": {
-    "AGENT": 299,
+    "AGENT": 300,
     "HOOK": 42,
-    "INSTRUCTION": 13,
+    "INSTRUCTION": 14,
     "PLUGIN": 144,
     "SKILL": 371
   },
@@ -2803,7 +2803,20 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
       "path": "kast/references/commands.json",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.json",
-      "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631",
+      "sha256": "sha256:1fd3e587d0fd559f44ca03bc4b8e0ee03787f2a21bb121ea96314b890fea3fc0",
+      "sourceRoot": "kast-agent-skills",
+      "sourceRootPath": "../kast/.agents/skills",
+      "sourceRootRole": "local-repo-source",
+      "symlink": false,
+      "type": "AGENT"
+    },
+    {
+      "entryFile": "kast/references/commands.schema.json",
+      "name": "commands-schema",
+      "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.schema.json",
+      "path": "kast/references/commands.schema.json",
+      "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/references/commands.schema.json",
+      "sha256": "sha256:6f64a8a4042bf0788c7b6fbabfd27a1bf5246080c15c5c930329715eec5f630c",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -6705,6 +6718,20 @@
       "sourceRootRole": "canonical-candidate",
       "symlink": false,
       "title": "Concept Plugout Instructions",
+      "type": "INSTRUCTION"
+    },
+    {
+      "entryFile": "docs/AGENTS.md",
+      "name": "docs-agents-instructions",
+      "observedPath": "/Users/amichne/code/intelligence/docs/AGENTS.md",
+      "path": "docs/AGENTS.md",
+      "resolvedPath": "/Users/amichne/code/intelligence/docs/AGENTS.md",
+      "sha256": "sha256:d1566041c81df124a5c1660756e1eb5976be0b823718ac26b7c6af8bdd6b5bd8",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Docs Agent Guide",
       "type": "INSTRUCTION"
     },
     {
@@ -11794,6 +11821,7 @@
         "fixtures/maintenance/references/routing-improvement.md",
         "fixtures/maintenance/scripts/build-routing-corpus.py",
         "references/commands.json",
+        "references/commands.schema.json",
         "references/quickstart.md",
         "references/routing-improvement.md",
         "scripts/build-routing-corpus.py",
@@ -11804,7 +11832,7 @@
       "observedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
       "path": "kast",
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills/kast/SKILL.md",
-      "sha256": "sha256:145f5d4db9b6a995bd601f0d11983e0add3ecbf941858adbc8a07c9ad64f9317",
+      "sha256": "sha256:9f8ae359b5a9a35c59cee307b16971bb5fac0ba87708f70708839fd8edb6c101",
       "sourceRoot": "kast-agent-skills",
       "sourceRootPath": "../kast/.agents/skills",
       "sourceRootRole": "local-repo-source",
@@ -16675,7 +16703,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-25T13:38:53.197584+00:00",
+  "generatedAt": "2026-05-25T14:33:13.109854+00:00",
   "generator": "garden/scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [

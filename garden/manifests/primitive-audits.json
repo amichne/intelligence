@@ -2322,6 +2322,46 @@
       "primitive": {
         "type": "PRIMITIVE_REFERENCE",
         "primitiveType": "INSTRUCTION",
+        "name": "docs-agents-instructions",
+        "path": "docs/AGENTS.md"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "scoped-instruction",
+          "status": "PASS",
+          "evidence": "The docs instruction file is scoped to the Zensical documentation site and keeps docs authoring rules next to the docs source."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "site-boundary",
+          "status": "PASS",
+          "evidence": "It identifies zensical.toml as the navigation and Markdown-feature source of truth while preserving generated garden report boundaries."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "docs/AGENTS.md exists as the scoped documentation-site instruction primitive."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "GENERATED_REPORT",
+          "status": "PASS",
+          "summary": "garden/manifests/plugin-coverage.json routes the instruction as SCOPED_INSTRUCTION."
+        }
+      ],
+      "notes": "Documentation instruction review is complete. It is not a marketplace payload or runtime activation authority."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "INSTRUCTION",
         "name": "hooks-agents-instructions",
         "path": "hooks/AGENTS.md"
       },

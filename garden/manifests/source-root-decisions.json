@@ -198,7 +198,7 @@
       "decision": "RETAIN_EXTERNAL_OWNER",
       "status": "DECIDED",
       "coverageMode": "ALL_DISCOVERED_ENTRIES",
-      "observedEntryCount": 23,
+      "observedEntryCount": 24,
       "primitiveEvidence": [
         {
           "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
@@ -212,7 +212,14 @@
           "primitiveType": "AGENT",
           "name": "commands",
           "path": "kast/references/commands.json",
-          "sha256": "sha256:c6485f1e2bc22f41d35f85c471c1babd6a2b0c17d9d6c6a0957f0ad37ad2e631"
+          "sha256": "sha256:1fd3e587d0fd559f44ca03bc4b8e0ee03787f2a21bb121ea96314b890fea3fc0"
+        },
+        {
+          "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",
+          "primitiveType": "AGENT",
+          "name": "commands-schema",
+          "path": "kast/references/commands.schema.json",
+          "sha256": "sha256:6f64a8a4042bf0788c7b6fbabfd27a1bf5246080c15c5c930329715eec5f630c"
         },
         {
           "type": "SOURCE_ROOT_PRIMITIVE_EVIDENCE",

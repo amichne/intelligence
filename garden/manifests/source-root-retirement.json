@@ -43,7 +43,7 @@
         "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
       ],
       "nextAction": "Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links.",
-      "observedEntries": 56,
+      "observedEntries": 57,
       "resolvedPath": "/Users/amichne/code/intelligence",
       "retirementState": "CANONICAL_OWNER",
       "role": "canonical-candidate",
@@ -494,7 +494,7 @@
         "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
       ],
       "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
-      "observedEntries": 23,
+      "observedEntries": 24,
       "resolvedPath": "/Users/amichne/code/kast/.agents/skills",
       "retirementState": "MIXED_RETAIN_AND_COVERED",
       "role": "local-repo-source",
@@ -762,7 +762,7 @@
     "retainExternalOwners": 3,
     "runtimeDependencyMapped": 0,
     "runtimeReviewRequired": 0,
-    "totalObservedEntries": 869,
+    "totalObservedEntries": 871,
     "totalRoots": 18,
     "type": "SOURCE_ROOT_RETIREMENT_SUMMARY"
   },

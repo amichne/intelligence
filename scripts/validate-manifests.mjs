@@ -2484,7 +2484,17 @@ function digestPath(filePath) {
 
 function listDigestFiles(root) {
   const results = [];
-  const skippedDirectories = new Set([".git", ".gradle", ".idea", "__pycache__", "build", "dist", "node_modules", "target"]);
+  const skippedDirectories = new Set([
+    ".git",
+    ".gradle",
+    ".idea",
+    "__pycache__",
+    "build",
+    "dist",
+    "node_modules",
+    "site",
+    "target"
+  ]);
 
   function visit(current) {
     const stat = fs.statSync(current);
@@ -2765,7 +2775,15 @@ function validateJsonCoverage() {
 
 function listJsonFilesRecursive(directory) {
   const results = [];
-  const skippedDirectories = new Set([".git", ".idea", ".agent-turn", ".migration-backups", "dist", "node_modules"]);
+  const skippedDirectories = new Set([
+    ".git",
+    ".idea",
+    ".agent-turn",
+    ".migration-backups",
+    "dist",
+    "node_modules",
+    "site"
+  ]);
 
   function visit(current) {
     if (!fs.existsSync(current)) {
