@@ -16,6 +16,7 @@ These families are exposed through `marketplace.json`.
 | `planning-and-docs` | Goal-definition and reference-document workflows. |
 | `documentation-workflow` | MkDocs, Zensical, and docs-as-code site authoring workflows. |
 | `schema-governance` | Schema contract workflow, schema review, and type-safety concepts. |
+| `openapi-authoring-best-practices` | OpenAPI authoring, schema modeling, and contract rating workflows. |
 | `tdd-workflow` | Language-agnostic test-driven workflow with design concepts. |
 | `version-control` | Git process, GitHub CI, Actions workflow, and release operations. |
 

@@ -161,6 +161,28 @@
     },
     {
       "type": "PLUGIN_ENTRY",
+      "name": "openapi-authoring-best-practices",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "openapi-authoring-best-practices",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/openapi-authoring-best-practices"
+        },
+        "version": "0.1.0"
+      },
+      "description": "OpenAPI authoring, schema modeling, and contract rating workflows composed from independent primitives.",
+      "tags": [
+        "agents",
+        "api",
+        "openapi",
+        "schemas",
+        "skills",
+        "validation"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
       "name": "tdd-workflow",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
@@ -360,6 +382,33 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
+      "path": "skills/openapi-schema-modeling",
+      "name": "openapi-schema-modeling"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/openapi-contract-authoring",
+      "name": "openapi-contract-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/openapi-contract-rating",
+      "name": "openapi-contract-rating"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
       "path": "skills/tdd",
       "name": "tdd"
     }
@@ -409,6 +458,15 @@
       },
       "path": "agents/schema-type-enforcer.agent.md",
       "name": "schema-type-enforcer"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/openapi/openapi-contract-rater.agent.md",
+      "name": "openapi-contract-rater"
     }
   ],
   "instructions": [

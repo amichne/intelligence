@@ -35,6 +35,13 @@ def main() -> int:
     materialize = subparsers.add_parser("materialize")
     materialize.add_argument("--out", required=True, help="Output directory to replace.")
 
+    sync_github = subparsers.add_parser("sync-github-plugin")
+    sync_github.add_argument(
+        "--check",
+        action="store_true",
+        help="Fail if .github/plugin does not match generated output.",
+    )
+
     publish = subparsers.add_parser("publish-branch")
     publish.add_argument("--branch", default="marketplace")
     publish.add_argument("--no-push", action="store_true")
@@ -44,6 +51,10 @@ def main() -> int:
 
     if args.command == "materialize":
         materialize_marketplace(repo_root, Path(args.out).resolve())
+        return 0
+
+    if args.command == "sync-github-plugin":
+        sync_github_plugin(repo_root, check=args.check)
         return 0
 
     with tempfile.TemporaryDirectory(prefix="intelligence-marketplace-") as temp:
@@ -212,6 +223,26 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
         encoding="utf-8",
     )
     print(f"materialized marketplace at {out_root}")
+
+
+def sync_github_plugin(repo_root: Path, *, check: bool) -> None:
+    target = repo_root / GITHUB_COPILOT_PROVIDER_PATH
+    with tempfile.TemporaryDirectory(prefix="intelligence-github-plugin-") as temp:
+        materialized = Path(temp) / "marketplace"
+        materialize_marketplace(repo_root, materialized)
+        source = materialized / GITHUB_COPILOT_PROVIDER_PATH
+
+        if check:
+            if target.exists() and sync_digest_path(source) == sync_digest_path(target):
+                print(f"OK {GITHUB_COPILOT_PROVIDER_PATH.as_posix()} is in sync")
+                return
+            raise SystemExit(
+                f"{GITHUB_COPILOT_PROVIDER_PATH.as_posix()} is not in sync; "
+                "run `python3 scripts/publish-marketplace.py sync-github-plugin`"
+            )
+
+        copy_path(source, target)
+    print(f"synced GitHub plugin marketplace at {GITHUB_COPILOT_PROVIDER_PATH.as_posix()}")
 
 
 def person_for(owner: dict[str, Any], fallback_name: str) -> dict[str, str]:
@@ -503,6 +534,29 @@ def digest_path(path: Path) -> str:
             hasher.update(child.read_bytes())
             hasher.update(b"\0")
     else:
+        hasher.update(path.read_bytes())
+    return f"sha256:{hasher.hexdigest()}"
+
+
+def sync_digest_path(path: Path) -> str:
+    import hashlib
+    import stat
+
+    hasher = hashlib.sha256()
+    if path.is_dir():
+        for child in sorted(item for item in path.rglob("*") if item.is_file()):
+            relative = child.relative_to(path).as_posix()
+            mode = stat.S_IMODE(child.stat().st_mode)
+            hasher.update(relative.encode())
+            hasher.update(b"\0")
+            hasher.update(f"{mode:o}".encode())
+            hasher.update(b"\0")
+            hasher.update(child.read_bytes())
+            hasher.update(b"\0")
+    else:
+        mode = stat.S_IMODE(path.stat().st_mode)
+        hasher.update(f"{mode:o}".encode())
+        hasher.update(b"\0")
         hasher.update(path.read_bytes())
     return f"sha256:{hasher.hexdigest()}"
 

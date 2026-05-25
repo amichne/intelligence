@@ -14,6 +14,7 @@ templates, or examples next to the entrypoint.
 | Repository orientation | `repo-instruction-topology`, `repository-signature-indexing`, `local-repository-navigation`. |
 | Documentation and planning | `define-goal`, `reference-doc-workflow`, `site-docs-authoring`. |
 | Kotlin and validation | `kotlin-standards`, `kotlin-gradle-validation`, `manage-json-schemas`, `tdd`. |
+| OpenAPI | `openapi-schema-modeling`, `openapi-contract-authoring`, `openapi-contract-rating`. |
 | Version control | `git-change-flow`, `github-ci-operations`. |
 
 ## Agent Profiles
@@ -28,6 +29,7 @@ surfaces that plugins can compose.
 | `kotlin-type-safety-reviewer` | Kotlin type-safety review. |
 | `kotlin-boundary-contract-reviewer` | Kotlin module and boundary contract review. |
 | `kotlin-package-cohesion-reviewer` | Kotlin package layout and cohesion review. |
+| `openapi-contract-rater` | OpenAPI contract quality review. |
 
 ## Hooks
 

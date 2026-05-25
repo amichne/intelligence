@@ -59,5 +59,6 @@ Preview marketplace publication with:
 ```sh
 python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
+python3 scripts/publish-marketplace.py sync-github-plugin --check
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```

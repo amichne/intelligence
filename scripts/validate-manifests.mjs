@@ -7,6 +7,10 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const coreSchemaDir = path.join(repoRoot, "schemas", "core");
 const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
+const githubPluginMarketplace = path.join(repoRoot, ".github", "plugin", "marketplace.json");
+const generatedJsonRoots = [
+  path.join(repoRoot, ".github", "plugin")
+].map(normalizePath);
 const options = parseArguments(process.argv.slice(2));
 
 const requireFromRepo = createRequire(import.meta.url);
@@ -54,6 +58,7 @@ for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJs
 
 const checks = [
   ["marketplace.schema.json", path.join(repoRoot, "marketplace.json")],
+  ...optionalChecks("github-marketplace.schema.json", githubPluginMarketplace),
   ...listJsonFiles(path.join(repoRoot, "profiles")).map((file) => ["workflow-profile.schema.json", file]),
   ...listPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
   ...listCodexPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["codex-plugin.schema.json", file]),
@@ -357,6 +362,10 @@ function validateJsonCoverage() {
   return failures;
 }
 
+function optionalChecks(schemaId, filePath) {
+  return fs.existsSync(filePath) ? [[schemaId, filePath]] : [];
+}
+
 function requireJsonValue(filePath, field, actual, expected) {
   if (actual === expected) {
     return 0;
@@ -441,6 +450,9 @@ function listJsonFilesRecursive(directory) {
     if (stat.isDirectory()) {
       const name = path.basename(current);
       if (skippedDirectories.has(name)) {
+        return;
+      }
+      if (generatedJsonRoots.includes(normalizePath(current))) {
         return;
       }
       for (const entry of fs.readdirSync(current).sort()) {
