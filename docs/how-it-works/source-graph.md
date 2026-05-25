@@ -1,7 +1,7 @@
 # Source Graph
 
-The source graph records where reusable AI tooling lives, how it is composed,
-what evidence supports it, and which runtime outputs are generated from it.
+The source graph records where reusable AI tooling lives and how it is composed
+for public distribution.
 
 ## Authored Sources
 
@@ -18,37 +18,20 @@ Authored sources are the files humans intentionally maintain.
 | `profiles/*.json` | Workflow profiles for target repositories. |
 | `schemas/` | Public core and adapter schema contracts. |
 
-## Generated Evidence
+## Composition Flow
 
-Generated evidence lives under `garden/manifests/` and `garden/docs/`. It is
-produced by scripts under `garden/scripts/`.
-
-Do not hand-edit generated evidence to make a check pass. Update the source or
-generator, then rebuild the evidence.
-
-```sh
-python3 garden/scripts/check-source-graph.py --refresh
-python3 garden/scripts/check-source-graph.py
-```
-
-## Review Flow
-
-Promotion and cleanup decisions move through evidence before mutation.
+Primitives are authored first. Plugins compose them by reference, and the
+marketplace exposes only the curated public subset.
 
 ```mermaid
 flowchart TD
-  scan[Scan source roots]
-  inventory[Generated inventory]
-  review[Review and audit decisions]
-  promote[Canonical primitive]
+  author[Author primitive]
+  validate[Schema validation]
   compose[Referential plugin]
   publish[Marketplace exposure]
-  activate[Runtime activation plan]
-  approve[Named approval packet]
 
-  scan --> inventory --> review --> promote --> compose --> publish
-  promote --> activate --> approve
+  author --> validate --> compose --> publish
 ```
 
-This flow is deliberately explicit. It keeps the repository from confusing
-"we found a useful file" with "we can replace every runtime copy now."
+This flow keeps plugin payloads from becoming the only copy of reusable
+behavior.

@@ -20,24 +20,22 @@ not justified.
 
 ## Repository Map
 
-- `marketplace.json` is the local provider-neutral marketplace catalog.
+- `marketplace.json` is the provider-neutral curated marketplace catalog.
 - `agents/` contains independent reusable agent profiles.
 - `skills/` contains independent reusable skills.
 - `concepts/` contains portable concept primitives meant to be copied, linked,
   or projected into other projects.
 - `hooks/` contains reusable hook assets and runtime adapter configs.
-- `plugins/` is reserved for plugin composition manifests.
+- `plugins/` contains plugin composition manifests.
 - `profiles/` contains schema-validated workflow profiles that select existing
-  marketplace plugins, hooks, runtime links, and validation commands.
+  marketplace plugins, hooks, and validation commands.
 - `templates/` contains primitive scaffold templates used by local tooling.
 - `bin/` contains thin local command wrappers for repository tooling.
-- `garden/` contains isolated spring-cleaning inventory, generated reports,
-  review ledgers, runtime activation plans, and the scripts that produce them.
 - `schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
-- `scripts/` contains root validation and marketplace publication tooling.
-- `package.json` and `package-lock.json` pin the local validator dependencies
-  used by source and marketplace publication checks.
+- `scripts/` contains root validation, packaging, and marketplace publication
+  tooling.
+- `package.json` and `package-lock.json` pin local validator dependencies.
 
 ## Terminology
 
@@ -46,21 +44,13 @@ not justified.
 - A plugin is a composition surface for primitives. Do not use plugin payloads
   as the only source of truth for a primitive.
 - Marketplace exposure is curated to generally useful, project-agnostic
-  primitives and plugin families. Keep cleanup, runtime-linking, and source
-  graph maintenance utilities repo-local unless the user explicitly asks to
-  publish them.
+  primitives and plugin families. Private cleanup and migration material is not
+  public repository content.
 
-## Source Graph Rules
+## Source Rules
 
 - Keep primitives useful outside plugins. Plugins compose existing primitives;
   they do not own the only copy of a primitive.
-- Do not delete or replace scattered originals until `garden/manifests/cleanup-ledger.json`
-  records the canonical replacement and verification evidence.
-- Record durable quality and readiness decisions in
-  `garden/manifests/primitive-audits.json` before using them to justify runtime
-  activation or cleanup.
-- Treat `garden/manifests/source-roots.json` as the hand-authored scan boundary and
-  `garden/manifests/discovered-primitives.json` as generated evidence.
 - Keep root marketplace and plugin manifests aligned with `schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
@@ -83,12 +73,8 @@ not justified.
 
 - Run `bash -n hooks/*.sh` after editing shell hook entrypoints.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
-- Run `python3 garden/scripts/inventory-primitives.py --check` after changing source
-  roots, primitive locations, or the generated inventory.
-- Run `python3 garden/scripts/analyze-consolidation.py --check` after changing the
-  generated inventory or consolidation report.
 - Run `node scripts/validate-manifests.mjs` after changing `marketplace.json`,
-  `plugins/*/plugin.json`, hooks, schemas, or any JSON manifest.
+  `plugins/*/plugin.json`, hooks, schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
   `schemas/core/hook.schema.json`.

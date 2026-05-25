@@ -103,7 +103,6 @@
     }
   ],
   "metadata": {
-    "composition": "referential",
-    "promotionManifest": "garden/manifests/promotions.json"
+    "composition": "referential"
   }
 }

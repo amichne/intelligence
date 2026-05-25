@@ -2,11 +2,9 @@
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import json
 import os
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -17,7 +15,6 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 PROFILE_DIR = REPO_ROOT / "profiles"
 TEMPLATE_DIR = REPO_ROOT / "templates" / "primitives"
 MARKETPLACE_PATH = REPO_ROOT / "marketplace.json"
-RUNTIME_LINKS_PATH = REPO_ROOT / "garden" / "manifests" / "runtime-links.json"
 
 PRIMITIVE_COLLECTIONS = {
     "skill": "skills",
@@ -29,7 +26,7 @@ PRIMITIVE_COLLECTIONS = {
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="intelligence",
-        description="Orchestrate Intelligence workflow profiles, runtime links, primitive scaffolds, and validation.",
+        description="Orchestrate Intelligence workflow profiles, primitive scaffolds, and validation.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
@@ -41,7 +38,6 @@ def main(argv: list[str] | None = None) -> int:
     profile_init.add_argument("--out", default=".agents/intelligence-profile.json", help="Profile path to write relative to --repo.")
     profile_init.add_argument("--plugin", action="append", default=[], help="Additional marketplace plugin name. Repeatable.")
     profile_init.add_argument("--hook", action="append", default=[], help="Additional hook selection as NAME or NAME@ADAPTER. Repeatable.")
-    profile_init.add_argument("--runtime-link", action="append", default=[], help="Additional runtime link packet name. Repeatable.")
     profile_init.add_argument("--dry-run", action="store_true", help="Print planned writes without changing files.")
     profile_init.add_argument("--no-marketplaces-doc", action="store_true", help="Do not create or update .agents/marketplaces.md.")
     profile_init.set_defaults(func=cmd_profile_init)
@@ -49,10 +45,7 @@ def main(argv: list[str] | None = None) -> int:
     install = subparsers.add_parser("install", help="Install or dry-run a workflow profile for a target repo.")
     add_repo_arg(install)
     install.add_argument("--profile", default=".agents/intelligence-profile.json", help="Target repo profile path or built-in profile name.")
-    install.add_argument("--runtime", action="append", default=[], help="Runtime filter such as codex, agents, or claude. Repeatable.")
     install.add_argument("--apply", action="store_true", help="Perform approved writes. Omit for dry-run.")
-    install.add_argument("--approve-runtime-link", action="append", default=[], help="Runtime link packet name approved for mutation. Repeatable.")
-    install.add_argument("--no-open", action="store_true", help="Do not open marketplace import URLs during --apply.")
     install.add_argument("--skip-validation", action="store_true", help="Skip source validation after --apply.")
     install.set_defaults(func=cmd_install)
 
@@ -66,10 +59,10 @@ def main(argv: list[str] | None = None) -> int:
     primitive_new.add_argument("--marketplace", action="store_true", help="Add the new plugin or primitive to marketplace.json.")
     primitive_new.add_argument("--dry-run", action="store_true", help="Print planned writes without changing files.")
     primitive_new.add_argument("--force", action="store_true", help="Overwrite scaffold target files if they already exist.")
-    primitive_new.add_argument("--validate", action="store_true", help="Run manifest and source-graph validation after writing.")
+    primitive_new.add_argument("--validate", action="store_true", help="Run manifest validation after writing.")
     primitive_new.set_defaults(func=cmd_primitive_new)
 
-    validate = subparsers.add_parser("validate", help="Run the Intelligence manifest and source-graph validation gates.")
+    validate = subparsers.add_parser("validate", help="Run the Intelligence manifest validation gates.")
     validate.add_argument("--manifests-only", action="store_true", help="Run only node scripts/validate-manifests.mjs.")
     validate.set_defaults(func=cmd_validate)
 
@@ -92,7 +85,7 @@ class IntelligenceError(Exception):
 def cmd_profile_init(args: argparse.Namespace) -> int:
     target_repo = target_repo_path(args.repo)
     profile = load_profile(args.profile, target_repo)
-    profile = merge_profile_overrides(profile, args.plugin, args.hook, args.runtime_link)
+    profile = merge_profile_overrides(profile, args.plugin, args.hook)
     validate_profile_references(profile)
 
     profile_out = resolve_target_path(target_repo, args.out)
@@ -129,22 +122,7 @@ def cmd_install(args: argparse.Namespace) -> int:
     else:
         print(f"would update {marketplaces_path}")
 
-    selected_links = runtime_link_entries(profile, args.runtime)
-    approvals = set(args.approve_runtime_link)
     failures = 0
-    for entry in selected_links:
-        if entry["strategy"] == "MARKETPLACE_IMPORT":
-            failures += handle_marketplace_import(entry, apply, args.no_open)
-            continue
-        approved = entry["name"] in approvals
-        if not apply:
-            print_runtime_link_dry_run(entry)
-            continue
-        if not approved:
-            print(f"skipping {entry['name']}: pass --approve-runtime-link {entry['name']} to mutate runtime paths")
-            continue
-        apply_runtime_link(entry)
-
     if apply and not args.skip_validation:
         failures += run_validation(manifests_only=False)
     return 1 if failures else 0
@@ -222,7 +200,6 @@ def merge_profile_overrides(
     profile: dict[str, Any],
     plugins: list[str],
     hooks: list[str],
-    runtime_links: list[str],
 ) -> dict[str, Any]:
     merged = json.loads(json.dumps(profile))
     merged["plugins"] = dedupe([*merged.get("plugins", []), *[slug(item) for item in plugins]])
@@ -235,7 +212,6 @@ def merge_profile_overrides(
             hook_values.append(hook)
             hook_keys.add(key)
     merged["hooks"] = hook_values
-    merged["runtimeLinks"] = dedupe([*merged.get("runtimeLinks", []), *[slug(item) for item in runtime_links]])
     return merged
 
 
@@ -255,7 +231,6 @@ def validate_profile_references(profile: dict[str, Any]) -> None:
     marketplace = read_json(MARKETPLACE_PATH)
     plugin_names = {entry["name"] for entry in marketplace.get("plugins", [])}
     hook_names = {entry["name"] for entry in marketplace.get("hooks", [])}
-    runtime_names = {entry["name"] for entry in read_json(RUNTIME_LINKS_PATH).get("entries", [])}
 
     missing_plugins = sorted(set(profile.get("plugins", [])) - plugin_names)
     if missing_plugins:
@@ -264,10 +239,6 @@ def validate_profile_references(profile: dict[str, Any]) -> None:
     missing_hooks = sorted({hook["name"] for hook in profile.get("hooks", [])} - hook_names)
     if missing_hooks:
         raise IntelligenceError(f"profile references unknown hooks: {', '.join(missing_hooks)}")
-
-    missing_links = sorted(set(profile.get("runtimeLinks", [])) - runtime_names)
-    if missing_links:
-        raise IntelligenceError(f"profile references unknown runtime links: {', '.join(missing_links)}")
 
 
 def updated_marketplaces_markdown(path: Path, profile: dict[str, Any], status: str) -> str:
@@ -288,12 +259,11 @@ def updated_marketplaces_markdown(path: Path, profile: dict[str, Any], status: s
 def render_marketplaces_section(profile: dict[str, Any], status: str) -> str:
     marketplace = read_json(MARKETPLACE_PATH)
     plugin_descriptions = {entry["name"]: entry.get("description", "") for entry in marketplace.get("plugins", [])}
-    runtime_descriptions = {entry["name"]: entry.get("notes", "") for entry in read_json(RUNTIME_LINKS_PATH).get("entries", [])}
     lines = [
         "<!-- intelligence:marketplaces:start -->",
         "# Agent Marketplaces",
         "",
-        "This repository consumes agent tooling from configured marketplaces. Installed plugin payloads and runtime caches are not source-of-truth files.",
+        "This repository consumes agent tooling from configured marketplaces. Installed plugin payloads are not source-of-truth files.",
         "",
         f"Profile: `{profile['name']}`",
         "",
@@ -333,17 +303,6 @@ def render_marketplaces_section(profile: dict[str, Any], status: str) -> str:
     lines.extend(
         [
             "",
-            "## Runtime Links",
-            "",
-            "| Packet | Purpose | Status |",
-            "|---|---|---|",
-        ]
-    )
-    for link_name in profile.get("runtimeLinks", []):
-        lines.append(f"| {link_name} | {runtime_descriptions.get(link_name, '')} | {status} |")
-    lines.extend(
-        [
-            "",
             "## Refresh",
             "",
             "- Run `bin/intelligence profile init --repo . --profile "
@@ -361,130 +320,6 @@ def render_marketplaces_section(profile: dict[str, Any], status: str) -> str:
     lines.append("<!-- intelligence:marketplaces:end -->")
     lines.append("")
     return "\n".join(lines)
-
-
-def runtime_link_entries(profile: dict[str, Any], runtime_filters: list[str]) -> list[dict[str, Any]]:
-    runtime_links = read_json(RUNTIME_LINKS_PATH)
-    entries = {entry["name"]: entry for entry in runtime_links.get("entries", [])}
-    selected = []
-    for name in profile.get("runtimeLinks", []):
-        entry = entries.get(name)
-        if not entry:
-            raise IntelligenceError(f"missing runtime link entry: {name}")
-        if runtime_matches(entry["runtime"], runtime_filters):
-            selected.append(entry)
-    return selected
-
-
-def runtime_matches(runtime: str, filters: list[str]) -> bool:
-    if not filters:
-        return True
-    normalized = {item.strip().upper().replace("-", "_") for item in filters}
-    if "CODEX" in normalized and runtime in {"CODEX", "CODEX_APP"}:
-        return True
-    return runtime in normalized
-
-
-def handle_marketplace_import(entry: dict[str, Any], apply: bool, no_open: bool) -> int:
-    source = resolve_repo_path(entry["sourcePath"])
-    target = entry["targetPath"]
-    if not source.exists():
-        print(f"missing marketplace source for {entry['name']}: {source}", file=sys.stderr)
-        return 1
-    if not apply:
-        print(f"would open marketplace import for {entry['name']}: {target}")
-        return 0
-    if no_open:
-        print(f"marketplace import ready for {entry['name']}: {target}")
-        return 0
-    opener = shutil.which("open")
-    if not opener:
-        print(f"cannot open marketplace import URL because `open` is unavailable: {target}", file=sys.stderr)
-        return 1
-    result = subprocess.run([opener, target], cwd=REPO_ROOT, check=False)
-    if result.returncode == 0:
-        print(f"opened marketplace import for {entry['name']}: {target}")
-    return result.returncode
-
-
-def print_runtime_link_dry_run(entry: dict[str, Any]) -> None:
-    source = resolve_repo_path(entry["sourcePath"])
-    target = expand_target_path(entry["targetPath"])
-    print(f"would activate runtime link {entry['name']}: {entry['strategy']}")
-    print(f"  source: {source}")
-    print(f"  target: {target}")
-    if entry["strategy"] == "SYMLINK_CHILDREN" and source.is_dir():
-        for child in eligible_runtime_children(entry, source):
-            print(f"  would link child: {Path(target) / child.name} -> {child}")
-    print(f"  approve with: --apply --approve-runtime-link {entry['name']}")
-
-
-def apply_runtime_link(entry: dict[str, Any]) -> None:
-    source = resolve_repo_path(entry["sourcePath"])
-    target = expand_target_path(entry["targetPath"])
-    if not source.exists():
-        raise IntelligenceError(f"runtime link source does not exist for {entry['name']}: {source}")
-    if target.startswith("codex://"):
-        raise IntelligenceError(f"virtual runtime link cannot be symlinked: {entry['name']}")
-
-    target_path = Path(target)
-    strategy = entry["strategy"]
-    if strategy == "SYMLINK_CHILDREN":
-        if not source.is_dir():
-            raise IntelligenceError(f"SYMLINK_CHILDREN source must be a directory: {source}")
-        if not os.path.lexists(target_path):
-            target_path.mkdir(parents=True, exist_ok=True)
-        if not target_path.is_dir():
-            raise IntelligenceError(f"runtime link target is not a directory: {target_path}")
-        for child in eligible_runtime_children(entry, source):
-            link_child(child, target_path / child.name, entry)
-        return
-    if strategy in {"SYMLINK_FILE", "SYMLINK_TREE"}:
-        link_child(source, target_path, entry)
-        return
-    raise IntelligenceError(f"unsupported runtime link strategy for mutation: {strategy}")
-
-
-def eligible_runtime_children(entry: dict[str, Any], source: Path) -> list[Path]:
-    primitive_types = set(entry.get("primitiveTypes", []))
-    children = sorted(source.iterdir(), key=lambda item: item.name)
-    if primitive_types == {"SKILL"}:
-        return [child for child in children if child.is_dir() and (child / "SKILL.md").is_file()]
-    if primitive_types == {"HOOK"}:
-        return [child for child in children if child.is_file() and child.name.endswith(".hooks.json")]
-    if primitive_types == {"AGENT"}:
-        return [child for child in children if child.is_dir() or child.name.endswith(".agent.md")]
-    return [child for child in children if child.name != "AGENTS.md"]
-
-
-def link_child(source: Path, target: Path, entry: dict[str, Any]) -> None:
-    source_resolved = source.resolve(strict=False)
-    if os.path.lexists(target):
-        if target.is_symlink() and target.resolve(strict=False) == source_resolved:
-            print(f"already linked {target} -> {source_resolved}")
-            return
-        policy = entry["collisionPolicy"]
-        if policy == "SKIP_EXISTING":
-            print(f"skipping existing target for {entry['name']}: {target}")
-            return
-        if policy == "FAIL_IF_EXISTS":
-            raise IntelligenceError(f"target exists for {entry['name']}: {target}")
-        if policy == "BACKUP_THEN_LINK":
-            backup = backup_path(entry["name"], target)
-            backup.parent.mkdir(parents=True, exist_ok=True)
-            shutil.move(str(target), str(backup))
-            print(f"backed up {target} -> {backup}")
-        else:
-            raise IntelligenceError(f"unknown collision policy for {entry['name']}: {policy}")
-    target.parent.mkdir(parents=True, exist_ok=True)
-    target.symlink_to(source_resolved)
-    print(f"linked {target} -> {source_resolved}")
-
-
-def backup_path(entry_name: str, target: Path) -> Path:
-    stamp = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    safe_target = slug(str(target).replace(str(Path.home()), "home"))
-    return REPO_ROOT / ".migration-backups" / "runtime-links" / stamp / entry_name / safe_target
 
 
 def scaffold_plan(kind: str, name: str, description: str) -> list[tuple[Path, str, bool]]:
@@ -574,8 +409,6 @@ def primitive_reference(kind: str, name: str) -> dict[str, Any]:
 
 def run_validation(manifests_only: bool) -> int:
     commands = [["node", "scripts/validate-manifests.mjs"]]
-    if not manifests_only:
-        commands.append(["python3", "garden/scripts/check-source-graph.py"])
     failures = 0
     for command in commands:
         print("$ " + " ".join(command))

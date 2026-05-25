@@ -1,4 +1,0 @@
-interface:
-  display_name: "Manage JSON Schemas"
-  short_description: "Create, persist, validate, and evolve JSON Schema contracts"
-  default_prompt: "Use $manage-json-schemas to create and validate JSON Schema contracts for incoming data."

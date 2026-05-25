@@ -10,7 +10,5 @@ This file applies to `schemas/`.
   `schemas/`.
 - Keep provider-neutral contracts in `schemas/core/` and runtime-specific
   projections under `schemas/adapters/<adapter>/`.
-- Keep private garden cleanup and inventory schemas under
-  `garden/schemas/intelligence/`.
 - Add or update the schema before changing the persisted JSON shape it owns.
 - Run `node scripts/validate-manifests.mjs` after changing schemas or JSON data.

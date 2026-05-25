@@ -20,16 +20,17 @@ EXCLUDED_PATH_PARTS = {
     ".git",
     ".gradle",
     ".idea",
-    ".migration-backups",
     ".mypy_cache",
     ".pytest_cache",
     ".ruff_cache",
     ".venv",
+    ".venv-docs",
     "__pycache__",
     "build",
     "dist",
     "node_modules",
     "out",
+    "site",
     "target",
 }
 

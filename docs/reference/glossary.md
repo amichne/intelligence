@@ -12,8 +12,6 @@ editing docs, manifests, or primitives.
 | Concept | Portable instruction or principle document under `concepts/`. |
 | Plugin | Referential composition manifest that assembles existing primitives. |
 | Marketplace | Curated distribution catalog for generally useful plugin families and primitives. |
-| Workflow profile | Target-repository contract selecting marketplaces, plugins, hooks, runtime links, and validation commands. |
-| Source graph | The authored and generated map of primitives, provenance, plugin coverage, review decisions, and runtime activation plans. |
-| Garden | Repository area for inventory, generated evidence, review ledgers, scripts, and local schemas. |
-| Runtime activation | Approval-gated projection of canonical primitives into runtime paths. |
+| Workflow profile | Target-repository contract selecting marketplaces, plugins, hooks, and validation commands. |
+| Source graph | The authored map of primitives, plugin composition, schemas, and marketplace exposure. |
 | Hydrated marketplace | Generated provider-native marketplace output built from the provider-neutral source catalog. |

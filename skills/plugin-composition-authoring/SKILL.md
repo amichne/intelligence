@@ -1,6 +1,6 @@
 ---
 name: plugin-composition-authoring
-description: Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into source-root references.
+description: Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into direct primitive references.
 ---
 
 # Plugin Composition Authoring
@@ -19,8 +19,8 @@ the primitive remains usable without the plugin.
   repo-local schemas. Shape changes require schema changes or validation
   evidence, not prose-only agreement.
 - Add marketplace entries only after the plugin manifest exists.
-- Record promoted source primitives in `garden/manifests/promotions.json`; the plugin
-  itself should not be the only place provenance lives.
+- Keep source provenance public-safe; the plugin itself should not be the only
+  place provenance lives.
 - Validate against the repository schema and local reference checks.
 
 ## Workflow
@@ -35,14 +35,14 @@ the primitive remains usable without the plugin.
 
 3. Write `plugins/<name>/plugin.json`.
    Use local references to existing primitives. Keep metadata limited to
-   composition, version, description, and promotion manifest pointers.
+   composition, version, and description.
 
 4. Update `marketplace.json`.
    Add or update one plugin entry and any newly promoted primitive entries.
    Preserve existing ordering unless a new order is part of the request.
 
-5. Refresh evidence.
-   Regenerate inventory and consolidation report, then run manifest validation.
+5. Validate.
+   Run manifest validation.
 
 ## Reference Routing
 
@@ -56,5 +56,4 @@ the primitive remains usable without the plugin.
 - The plugin references only existing independent primitives.
 - No plugin-payload copy is introduced.
 - `marketplace.json` and plugin manifest references validate.
-- Inventory and consolidation outputs are current.
 - First-party source handling remains clean.

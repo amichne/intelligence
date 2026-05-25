@@ -75,7 +75,6 @@
   "hooks": [],
   "metadata": {
     "composition": "referential",
-    "promotionManifest": "garden/manifests/promotions.json",
     "schemaReference": "schemas/core"
   }
 }

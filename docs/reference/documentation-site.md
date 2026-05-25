@@ -36,10 +36,7 @@ zensical build --clean
 ## Authoring Rules
 
 Add a page and its navigation entry together. Prefer stable conceptual pages
-over copying generated tables from `garden/docs/`.
-
-When a docs page needs current generated state, point readers to the owning
-manifest or generated report and include the regeneration command.
+over copying generated or environment-specific output.
 
 ## Verification
 

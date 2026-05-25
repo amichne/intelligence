@@ -1,8 +1,8 @@
 # Validation
 
-Validation is the contract that keeps the source graph usable. The repository
-uses schema-backed checks, generator freshness checks, Python and shell syntax
-checks, and documentation builds.
+Validation is the contract that keeps the public source graph usable. The
+repository uses schema-backed checks, focused syntax checks, and documentation
+builds.
 
 ## Main Gate
 
@@ -12,18 +12,10 @@ Use the CLI gate for ordinary changes.
 bin/intelligence validate
 ```
 
-The underlying source graph gate is:
+The underlying manifest gate is:
 
 ```sh
-python3 garden/scripts/check-source-graph.py
-```
-
-Refresh generated evidence before checking it when source roots, primitives,
-plugin coverage, runtime plans, or review decisions changed.
-
-```sh
-python3 garden/scripts/check-source-graph.py --refresh
-python3 garden/scripts/check-source-graph.py
+node scripts/validate-manifests.mjs
 ```
 
 ## Structured Data Gate
@@ -51,8 +43,6 @@ Run the narrow check that matches the changed surface.
 |---|---|
 | Hook shell entrypoints | `bash -n hooks/*.sh` |
 | JSON hook assets | `python3 -m json.tool hooks/name.hook.json` |
-| Source roots or primitive locations | `python3 garden/scripts/inventory-primitives.py --check` |
-| Consolidation report | `python3 garden/scripts/analyze-consolidation.py --check` |
 | Marketplace or plugin manifests | `node scripts/validate-manifests.mjs` |
 | Documentation site | `zensical build --clean` |
 

@@ -35,15 +35,10 @@
       "adapter": "codex"
     }
   ],
-  "runtimeLinks": [
-    "codex-app-marketplace",
-    "codex-hook-adapters"
-  ],
   "validation": {
     "type": "WORKFLOW_VALIDATION",
     "commands": [
-      "node scripts/validate-manifests.mjs",
-      "python3 garden/scripts/check-source-graph.py"
+      "node scripts/validate-manifests.mjs"
     ]
   }
 }

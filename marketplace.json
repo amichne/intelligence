@@ -461,7 +461,6 @@
     }
   ],
   "metadata": {
-    "exposurePolicy": "project-agnostic-primitives",
-    "repoLocalOnly": "cleanup runtime-linking source-graph-governance"
+    "exposurePolicy": "project-agnostic-primitives"
   }
 }

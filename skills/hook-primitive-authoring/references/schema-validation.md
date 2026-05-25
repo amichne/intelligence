@@ -21,10 +21,9 @@ node scripts/validate-manifests.mjs
 ```
 
 Adapter projections under `hooks/<adapter>/` validate against the matching
-schema in `schemas/adapters/<adapter>/`. Repository-owned manifest and
-generated-report JSON validates against `garden/schemas/intelligence/*.schema.json`.
-The same command also checks local primitive references, promotion source paths,
-and rejects any JSON file that is not covered by a schema validation path.
+schema in `schemas/adapters/<adapter>/`. The same command also checks local
+primitive references and rejects any JSON file that is not covered by a schema
+validation path.
 
 This is mandatory for every structured hook or plugin data change. If a new
 structured hook artifact does not fit an existing schema, add or update the
@@ -40,7 +39,8 @@ owning schema before treating the artifact as accepted.
 - Every `dependsOn` reference points at a canonical primitive.
 - Any plugin that composes the hook references it from `hooks/*`, not from a
   plugin-local payload copy.
-- `garden/manifests/promotions.json` records source provenance for promoted hooks.
+- Public-safe provenance is recorded when a hook is promoted from another
+  source.
 
 ## Extra Checks
 

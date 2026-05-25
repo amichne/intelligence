@@ -21,12 +21,10 @@ This file applies to reusable skills under `skills/`.
   first-party text.
 - Do not point a skill at a runtime cache, installed plugin copy, or generated
   bundle as its authority.
-- If a skill came from another local source, record that source in
-  `garden/manifests/promotions.json`.
+- If a skill came from another source, keep public-safe provenance in the skill
+  or plugin documentation.
 
 ## Verify
 
-- Run `python3 garden/scripts/inventory-primitives.py --check` after changing skill
-  files.
 - Run `node scripts/validate-manifests.mjs` after adding promoted skills to a
   plugin or marketplace manifest.

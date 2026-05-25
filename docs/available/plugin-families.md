@@ -19,16 +19,6 @@ These families are exposed through `marketplace.json`.
 | `tdd-workflow` | Language-agnostic test-driven workflow with design concepts. |
 | `version-control` | Git process, GitHub CI, Actions workflow, and release operations. |
 
-## Repo-Local Families
-
-These families remain useful in this repository, but they are not exposed
-through the curated marketplace unless the publishing boundary changes.
-
-| Plugin | Why It Stays Local |
-|---|---|
-| `primitive-governance` | Operates on this repository's audit, routing, consolidation, and schema evidence. |
-| `runtime-activation` | Plans runtime links and source activation with local filesystem approval packets. |
-
 ## How To Inspect A Plugin
 
 Open the plugin manifest and follow its primitive references.

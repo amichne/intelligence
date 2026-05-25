@@ -15,8 +15,8 @@ This file applies to reusable hook assets under `hooks/`.
   metadata rather than embedding their full guidance.
 - Do not point hook metadata at runtime caches, installed plugin copies, or
   generated bundles as authority.
-- If a hook came from another local source, record that source in
-  `garden/manifests/promotions.json`.
+- If a hook came from another source, keep public-safe provenance in the hook or
+  plugin documentation.
 
 ## Verify
 

@@ -1,8 +1,8 @@
 # Workflow Profiles
 
 Workflow profiles are checked-in target-repository contracts. A profile selects
-the marketplace, plugin families, hooks, runtime links, and validation commands
-that should apply to a repository.
+the marketplace, plugin families, hooks, and validation commands that should
+apply to a repository.
 
 ## Create A Profile
 
@@ -22,30 +22,20 @@ Inspect the planned writes before applying anything.
 
 ```sh
 bin/intelligence install --repo /path/to/repo \
-  --profile .agents/intelligence-profile.json \
-  --runtime codex
+  --profile .agents/intelligence-profile.json
 ```
 
-The dry run shows the marketplace and runtime changes implied by the profile.
-It is the default mode because runtime paths can point outside the current
-repository.
+The dry run shows the marketplace reference changes implied by the profile.
 
-## Apply Approved Changes
+## Apply Changes
 
-Apply only after reviewing the dry run. Marketplace imports can be opened during
-`--apply`; runtime path mutations still require explicit packet approval.
+Apply only after reviewing the dry run.
 
 ```sh
 bin/intelligence install --repo /path/to/repo \
   --profile .agents/intelligence-profile.json \
-  --runtime codex \
-  --apply \
-  --approve-runtime-link codex-hook-adapters
+  --apply
 ```
-
-!!! warning "Runtime mutation boundary"
-    `--apply` is not blanket permission to rewrite runtime paths. Runtime link
-    packets must be approved by name so the activation boundary stays explicit.
 
 ## Profile Shape
 
@@ -59,5 +49,4 @@ The profile shape answers these questions:
 | `marketplaces` | Where provider-native marketplace payloads come from. |
 | `plugins` | Which plugin families the target repo should use. |
 | `hooks` | Which hook primitives and adapters should be active. |
-| `runtimeLinks` | Which runtime activation packets are in scope. |
 | `validation` | Which commands should prove the profile remains valid. |

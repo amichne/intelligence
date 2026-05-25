@@ -19,7 +19,7 @@ boundaries, and output contract.
   quality bars, edge cases, and output shape.
 - Limit tools when a narrower tool set reduces risk.
 - Validate that the profile does not overlap confusingly with existing agents.
-- Record promoted source material in `garden/manifests/promotions.json`.
+- Keep source provenance public-safe when material comes from another source.
 
 ## Workflow
 
@@ -28,8 +28,7 @@ boundaries, and output contract.
    what evidence it should return.
 
 2. Check existing agents.
-   Search `agents/`, source roots, and the consolidation report for overlapping
-   names, triggers, or responsibilities.
+   Search `agents/` for overlapping names, triggers, or responsibilities.
 
 3. Draft the profile.
    Use frontmatter for stable metadata and the body for the operating prompt.

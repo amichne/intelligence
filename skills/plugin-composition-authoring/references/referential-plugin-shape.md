@@ -20,8 +20,7 @@ The manifest shape is governed by
   "instructions": [],
   "hooks": [],
   "metadata": {
-    "composition": "referential",
-    "promotionManifest": "garden/manifests/promotions.json"
+    "composition": "referential"
   }
 }
 ```

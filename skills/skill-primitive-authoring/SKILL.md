@@ -21,8 +21,8 @@ on the plugin to explain its behavior.
   generator, parser, or validation command before persisting the data.
 - Avoid first-party or installed-skill name collisions when synthesizing from
   OpenAI, Anthropic, or other distributed sources.
-- Record provenance in `garden/manifests/promotions.json` when promoting a skill into
-  this repository.
+- Keep source provenance public-safe when promoting a skill into this
+  repository.
 
 ## Workflow
 
@@ -31,9 +31,8 @@ on the plugin to explain its behavior.
    what success means, and what source material proves the workflow.
 
 2. Check overlap.
-   Search existing `skills/`, source roots, and the generated consolidation
-   report. Prefer improving or synthesizing an existing skill over adding a
-   narrow duplicate.
+   Search existing `skills/`. Prefer improving or synthesizing an existing skill
+   over adding a narrow duplicate.
 
 3. Design the shape.
    Use a compact `SKILL.md` plus one-level references. Add scripts only when a
@@ -51,10 +50,9 @@ on the plugin to explain its behavior.
    skill folder.
 
 6. Promote.
-   Add the skill to `marketplace.json`, any referential plugin that should
-   compose it, and `garden/manifests/promotions.json`. If promotion changes any JSON
-   shape, update the owning schema first. Regenerate inventory and run manifest
-   validation.
+   Add the skill to `marketplace.json` and any referential plugin that should
+   compose it. If promotion changes any JSON shape, update the owning schema
+   first and run manifest validation.
 
 ## Reference Routing
 
@@ -70,7 +68,8 @@ on the plugin to explain its behavior.
 - The skill has a clear trigger, workflow, and success contract.
 - Related details are discoverable without loading unnecessary context.
 - Existing overlap was checked and either avoided or intentionally synthesized.
-- Source provenance and first-party handling are recorded when applicable.
+- Source provenance and first-party handling are recorded in public-safe form
+  when applicable.
 - Structured data created or changed by the skill has an owning schema,
   generator, parser, or validation command.
-- Inventory and manifest validation pass after promotion.
+- Manifest validation passes after promotion.

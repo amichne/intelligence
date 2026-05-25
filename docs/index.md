@@ -1,13 +1,12 @@
 # Intelligence
 
-Intelligence is a source graph and marketplace for reusable AI tooling
-primitives: skills, agents, hooks, instruction concepts, workflow profiles,
-schemas, and referential plugin families.
+Intelligence is a public source repository and marketplace for reusable AI
+tooling primitives: skills, agents, hooks, instruction concepts, workflow
+profiles, schemas, and referential plugin families.
 
-It exists to turn scattered local agent behavior into durable source. A
+It exists to make reusable agent behavior inspectable and installable. A
 primitive remains useful on its own, a plugin composes primitives by reference,
-and generated evidence records what is promoted, reviewed, published, or still
-blocked.
+and the marketplace exposes the project-agnostic subset.
 
 ```mermaid
 flowchart LR
@@ -16,15 +15,12 @@ flowchart LR
   marketplace[Curated marketplace]
   profile[Workflow profiles]
   runtime[Target runtimes]
-  evidence[Garden evidence]
   schemas[Schema gates]
 
-  primitive --> plugin --> marketplace --> profile --> runtime
+  primitive --> plugin --> marketplace --> profile
   schemas --> primitive
   schemas --> plugin
   schemas --> marketplace
-  primitive --> evidence
-  evidence --> profile
 ```
 
 ## Start Here
@@ -39,8 +35,8 @@ zensical build --clean
 ```
 
 The first command installs pinned validation dependencies. The second runs the
-repository's manifest and source graph gates. The third builds this
-documentation site with Zensical.
+repository manifest gate. The third builds this documentation site with
+Zensical.
 
 ## What You Can Do
 
@@ -52,7 +48,7 @@ The repository supports several related workflows.
 | Add Intelligence to another repo | [Workflow profiles](getting-started/workflow-profiles.md) | A checked-in profile and dry-run install path. |
 | Import curated plugins | [Marketplace](getting-started/marketplace.md) | Provider-native marketplace payloads from the generated branch. |
 | Create a new building block | [Author a primitive](getting-started/author-a-primitive.md) | A scaffolded skill, agent, hook, concept, or plugin reference. |
-| Keep the source graph honest | [Validation](how-it-works/validation.md) | Schema-backed and generator-backed checks. |
+| Keep the source graph honest | [Validation](how-it-works/validation.md) | Schema-backed checks. |
 
 ## Why Care
 

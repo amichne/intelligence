@@ -18,16 +18,15 @@ or local cache copies.
   `.agents/marketplaces.md` unless the repo already has a documented equivalent.
 - Treat installed plugin directories and local caches as observations, not
   source.
-- Keep cleanup, consolidation, and runtime-linking utilities out of newly
-  onboarded repo references unless the repo explicitly needs source-graph
-  maintenance.
+- Keep private cleanup and migration utilities out of newly onboarded repo
+  references.
 - If the repo needs JSON, TOML, YAML, or another structured setup file, name the
   owning schema, parser, generator, or validation command before committing it.
 
 ## Workflow
 
 1. Read repository policy.
-   Inspect root instructions, existing `.agents/`, `.codex/`, docs, plugin
+   Inspect root instructions, existing agent-tooling setup, docs, plugin
    manifests, and hook configuration before adding setup files.
 
 2. Discover configured marketplaces.
@@ -65,5 +64,4 @@ or local cache copies.
   payloads.
 - Structured setup data has an owning schema, parser, generator, or validation
   command.
-- Cleanup and source-graph maintenance utilities are absent unless the repo
-  explicitly requested them.
+- Private cleanup and migration utilities are absent.

@@ -35,12 +35,11 @@ Check the primitive against these questions before publishing it:
 ## Validate
 
 Run the repository gate after changing primitives, plugin manifests, schemas,
-hooks, marketplace entries, or generated source graph files.
+hooks, marketplace entries, or workflow profiles.
 
 ```sh
 bin/intelligence validate
 ```
 
-When a primitive comes from another local source, record provenance and review
-evidence in the garden manifests before using it to justify cleanup or runtime
-activation.
+When a primitive comes from another source, keep provenance in the primitive or
+plugin documentation that is safe for the public repository.

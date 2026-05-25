@@ -30,12 +30,10 @@ nav = [
   { "How it works" = [
     { "Source graph" = "how-it-works/source-graph.md" },
     { "Validation" = "how-it-works/validation.md" },
-    { "Runtime activation" = "how-it-works/runtime-activation.md" },
   ]},
   { "Reference" = [
     { "Repository map" = "reference/repository-map.md" },
     { "Commands" = "reference/commands.md" },
-    { "Generated evidence" = "reference/generated-evidence.md" },
     { "Documentation site" = "reference/documentation-site.md" },
     { "Glossary" = "reference/glossary.md" },
   ]},

@@ -1,8 +1,7 @@
 # Getting Started
 
-Start by choosing the job you need. The same repository can act as a local
-source graph, a marketplace publisher, a workflow-profile author, and a
-primitive scaffolder.
+Start by choosing the job you need. The same repository can act as a marketplace
+publisher, a workflow-profile author, and a primitive scaffolder.
 
 ## Prerequisites
 
@@ -35,9 +34,9 @@ Each path has a dry-run or validation command before it mutates anything.
 
 | Path | Command | Use When |
 |---|---|---|
-| Validate this repository | `bin/intelligence validate` | You changed manifests, hooks, schemas, or source graph files. |
+| Validate this repository | `bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
 | Create a repo profile | `bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default` | A target repo should declare which Intelligence plugins and hooks it uses. |
-| Dry-run install | `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json --runtime codex` | You want to inspect runtime and marketplace changes first. |
+| Dry-run install | `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json` | You want to inspect marketplace reference changes first. |
 | Scaffold a primitive | `bin/intelligence primitive new skill example-skill --plugin primitive-authoring` | You are adding a reusable building block. |
 | Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
 
@@ -49,6 +48,6 @@ Run the repo gate before trusting local state.
 bin/intelligence validate
 ```
 
-This wraps the source graph and manifest validation path. Use the expanded
-commands in [Validation](../how-it-works/validation.md) when you need to isolate
-a failing generator or schema check.
+This wraps the manifest validation path. Use the expanded commands in
+[Validation](../how-it-works/validation.md) when you need to isolate a failing
+schema check.

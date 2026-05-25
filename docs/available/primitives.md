@@ -11,7 +11,6 @@ templates, or examples next to the entrypoint.
 | Group | Examples |
 |---|---|
 | Authoring | `skill-primitive-authoring`, `agent-profile-authoring`, `hook-primitive-authoring`, `plugin-composition-authoring`. |
-| Governance | `primitive-quality-audit`, `primitive-routing-evaluation`, `source-graph-consolidation`, `runtime-linking`. |
 | Repository orientation | `repo-instruction-topology`, `repository-signature-indexing`, `local-repository-navigation`. |
 | Documentation and planning | `define-goal`, `reference-doc-workflow`, `site-docs-authoring`. |
 | Kotlin and validation | `kotlin-standards`, `kotlin-gradle-validation`, `manage-json-schemas`, `tdd`. |
@@ -52,5 +51,4 @@ Concept primitives live under `concepts/`. They hold portable principles such
 as `type-safety` and `schema-driven-design`.
 
 Public provider-neutral schemas live under `schemas/core/`. Adapter schemas
-live under `schemas/adapters/`. Repository-specific garden schemas live under
-`garden/schemas/intelligence/`.
+live under `schemas/adapters/`.
