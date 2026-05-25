@@ -5,7 +5,7 @@
   "owner": {
     "name": "Amichne"
   },
-  "description": "Personal source graph for AI tooling primitives.",
+  "description": "Curated marketplace for project-agnostic AI tooling primitives.",
   "management": {
     "type": "MANAGEMENT_POLICY",
     "mode": "CURATED"
@@ -23,11 +23,13 @@
         },
         "version": "0.1.0"
       },
-      "description": "Core portable instructions and hook primitives.",
+      "description": "Core repository onboarding, portable principles, and hook primitives.",
       "tags": [
         "core",
         "hooks",
-        "instructions"
+        "instructions",
+        "onboarding",
+        "skills"
       ]
     },
     {
@@ -65,38 +67,14 @@
         },
         "version": "0.1.0"
       },
-      "description": "Skill, agent, hook, shell script, schema, source-graph consolidation, and referential plugin authoring workflows composed by reference.",
+      "description": "Skill, agent, hook, shell script, schema, and referential plugin authoring workflows composed by reference.",
       "tags": [
         "agents",
-        "consolidation",
         "hooks",
         "plugins",
         "schemas",
         "shell",
-        "skills",
-        "source-graph"
-      ]
-    },
-    {
-      "type": "PLUGIN_ENTRY",
-      "name": "primitive-governance",
-      "plugin": {
-        "type": "PLUGIN_REFERENCE",
-        "name": "primitive-governance",
-        "source": {
-          "type": "LOCAL_SOURCE",
-          "path": "./plugins/primitive-governance"
-        },
-        "version": "0.1.0"
-      },
-      "description": "Quality audit, routing evaluation, source-graph governance, runtime readiness, and schema validation workflows composed by reference.",
-      "tags": [
-        "audit",
-        "governance",
-        "quality",
-        "routing",
-        "schemas",
-        "source-graph"
+        "skills"
       ]
     },
     {
@@ -118,27 +96,6 @@
         "repository",
         "signatures",
         "skills"
-      ]
-    },
-    {
-      "type": "PLUGIN_ENTRY",
-      "name": "runtime-activation",
-      "plugin": {
-        "type": "PLUGIN_REFERENCE",
-        "name": "runtime-activation",
-        "source": {
-          "type": "LOCAL_SOURCE",
-          "path": "./plugins/runtime-activation"
-        },
-        "version": "0.1.0"
-      },
-      "description": "Runtime linking and activation workflows for exposing canonical primitives without mutating targets by default.",
-      "tags": [
-        "activation",
-        "runtime",
-        "skills",
-        "source-graph",
-        "symlinks"
       ]
     },
     {
@@ -250,6 +207,15 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
+      "path": "skills/repository-onboarding",
+      "name": "repository-onboarding"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
       "path": "skills/define-goal",
       "name": "define-goal"
     },
@@ -304,44 +270,8 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
-      "path": "skills/source-graph-consolidation",
-      "name": "source-graph-consolidation"
-    },
-    {
-      "type": "SKILL",
-      "source": {
-        "type": "LOCAL_SOURCE",
-        "path": "./"
-      },
-      "path": "skills/primitive-quality-audit",
-      "name": "primitive-quality-audit"
-    },
-    {
-      "type": "SKILL",
-      "source": {
-        "type": "LOCAL_SOURCE",
-        "path": "./"
-      },
-      "path": "skills/primitive-routing-evaluation",
-      "name": "primitive-routing-evaluation"
-    },
-    {
-      "type": "SKILL",
-      "source": {
-        "type": "LOCAL_SOURCE",
-        "path": "./"
-      },
       "path": "skills/shell-script-safety",
       "name": "shell-script-safety"
-    },
-    {
-      "type": "SKILL",
-      "source": {
-        "type": "LOCAL_SOURCE",
-        "path": "./"
-      },
-      "path": "skills/runtime-linking",
-      "name": "runtime-linking"
     },
     {
       "type": "SKILL",
@@ -360,6 +290,15 @@
       },
       "path": "skills/repository-signature-indexing",
       "name": "repository-signature-indexing"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/local-repository-navigation",
+      "name": "local-repository-navigation"
     },
     {
       "type": "SKILL",
@@ -522,7 +461,7 @@
     }
   ],
   "metadata": {
-    "inventory": "garden/manifests/discovered-primitives.json",
-    "sources": "garden/manifests/source-roots.json"
+    "exposurePolicy": "project-agnostic-primitives",
+    "repoLocalOnly": "cleanup runtime-linking source-graph-governance"
   }
 }

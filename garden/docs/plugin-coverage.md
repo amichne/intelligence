@@ -8,10 +8,10 @@ All canonical primitives routed: `false`
 
 | Status | Count |
 |---|---:|
-| `MARKETPLACE_EXPOSED` | 11 |
-| `PLUGIN_COMPOSED` | 31 |
+| `MARKETPLACE_EXPOSED` | 9 |
+| `PLUGIN_COMPOSED` | 32 |
 | `SCOPED_INSTRUCTION` | 6 |
-| `STANDALONE_ONLY` | 1 |
+| `STANDALONE_ONLY` | 3 |
 
 ## Primitive Types
 
@@ -21,7 +21,7 @@ All canonical primitives routed: `false`
 | `HOOK` | 4 |
 | `INSTRUCTION` | 8 |
 | `PLUGIN` | 11 |
-| `SKILL` | 21 |
+| `SKILL` | 22 |
 
 ## Entries
 
@@ -49,9 +49,9 @@ All canonical primitives routed: `false`
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `kotlin-review` | `plugins/kotlin-review` | `marketplace:kotlin-review` |
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `planning-and-docs` | `plugins/planning-and-docs` | `marketplace:planning-and-docs` |
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `primitive-authoring` | `plugins/primitive-authoring` | `marketplace:primitive-authoring` |
-| `MARKETPLACE_EXPOSED` | `PLUGIN` | `primitive-governance` | `plugins/primitive-governance` | `marketplace:primitive-governance` |
+| `STANDALONE_ONLY` | `PLUGIN` | `primitive-governance` | `plugins/primitive-governance` | - |
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `repository-orientation` | `plugins/repository-orientation` | `marketplace:repository-orientation` |
-| `MARKETPLACE_EXPOSED` | `PLUGIN` | `runtime-activation` | `plugins/runtime-activation` | `marketplace:runtime-activation` |
+| `STANDALONE_ONLY` | `PLUGIN` | `runtime-activation` | `plugins/runtime-activation` | - |
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `schema-governance` | `plugins/schema-governance` | `marketplace:schema-governance` |
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `tdd-workflow` | `plugins/tdd-workflow` | `marketplace:tdd-workflow` |
 | `MARKETPLACE_EXPOSED` | `PLUGIN` | `version-control` | `plugins/version-control` | `marketplace:version-control` |
@@ -69,10 +69,11 @@ All canonical primitives routed: `false`
 | `PLUGIN_COMPOSED` | `SKILL` | `primitive-routing-evaluation` | `skills/primitive-routing-evaluation` | `primitive-governance` |
 | `PLUGIN_COMPOSED` | `SKILL` | `reference-doc-workflow` | `skills/reference-doc-workflow` | `documentation-workflow`, `planning-and-docs`, `repository-orientation` |
 | `PLUGIN_COMPOSED` | `SKILL` | `repo-instruction-topology` | `skills/repo-instruction-topology` | `repository-orientation` |
+| `PLUGIN_COMPOSED` | `SKILL` | `repository-onboarding` | `skills/repository-onboarding` | `intelligence-core` |
 | `PLUGIN_COMPOSED` | `SKILL` | `repository-signature-indexing` | `skills/repository-signature-indexing` | `repository-orientation` |
 | `PLUGIN_COMPOSED` | `SKILL` | `runtime-linking` | `skills/runtime-linking` | `primitive-governance`, `runtime-activation` |
 | `PLUGIN_COMPOSED` | `SKILL` | `shell-script-safety` | `skills/shell-script-safety` | `primitive-authoring` |
 | `PLUGIN_COMPOSED` | `SKILL` | `site-docs-authoring` | `skills/site-docs-authoring` | `documentation-workflow` |
 | `PLUGIN_COMPOSED` | `SKILL` | `skill-primitive-authoring` | `skills/skill-primitive-authoring` | `primitive-authoring` |
-| `PLUGIN_COMPOSED` | `SKILL` | `source-graph-consolidation` | `skills/source-graph-consolidation` | `primitive-authoring`, `primitive-governance`, `runtime-activation` |
+| `PLUGIN_COMPOSED` | `SKILL` | `source-graph-consolidation` | `skills/source-graph-consolidation` | `primitive-governance`, `runtime-activation` |
 | `PLUGIN_COMPOSED` | `SKILL` | `tdd` | `skills/tdd` | `tdd-workflow` |

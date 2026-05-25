@@ -6,8 +6,8 @@ This generated report classifies every discovered primitive entry by cleanup cov
 
 | Measure | Value |
 |---|---:|
-| Total entries | 868 |
-| Canonical owner | 55 |
+| Total entries | 869 |
+| Canonical owner | 56 |
 | Cleanup ledger entry | 79 |
 | Source retained | 25 |
 | Digest retained | 0 |
@@ -28,7 +28,7 @@ Next action: No generated cleanup proposal gaps remain; use cleanup-ledger appro
 
 | State | Count |
 |---|---:|
-| `CANONICAL_OWNER` | 55 |
+| `CANONICAL_OWNER` | 56 |
 | `CLEANUP_LEDGER_ENTRY` | 79 |
 | `NO_CLEANUP_ACTION` | 7 |
 | `ROOT_RETAINED` | 702 |

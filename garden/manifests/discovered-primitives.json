@@ -5,7 +5,7 @@
     "HOOK": 42,
     "INSTRUCTION": 13,
     "PLUGIN": 144,
-    "SKILL": 370
+    "SKILL": 371
   },
   "digestDuplicates": [
     {
@@ -6741,7 +6741,7 @@
       "observedPath": "/Users/amichne/code/intelligence/AGENTS.md",
       "path": "AGENTS.md",
       "resolvedPath": "/Users/amichne/code/intelligence/AGENTS.md",
-      "sha256": "sha256:9778af6a8b476f41413c8fe42acec3b8e92173e115fde92f459fe4ed557abf3a",
+      "sha256": "sha256:e609cb384e59a912fa0959b2232893cadb92fbd9cea9e9cef09408e605a6468a",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -7959,7 +7959,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/intelligence-core/plugin.json",
       "path": "plugins/intelligence-core",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/intelligence-core/plugin.json",
-      "sha256": "sha256:6068bed4f9c4c451823ed6c77b71a15ab5e4eef03bf65f03c30b5e37d62e3260",
+      "sha256": "sha256:3bd77189afabf0a61f60ca51cd971ae8d20072e4bc2d97a8f2c0f20a90ed7d4a",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -8310,7 +8310,7 @@
       "observedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
       "path": "plugins/primitive-authoring",
       "resolvedPath": "/Users/amichne/code/intelligence/plugins/primitive-authoring/plugin.json",
-      "sha256": "sha256:df4738c0304595ac79b680824400f09c6535b76918097708d3abf875db5e9982",
+      "sha256": "sha256:60e1a8e52652e94eba100e3d47cb013754fe3d627509a112c7ef53920db10975",
       "sourceRoot": "intelligence",
       "sourceRootPath": ".",
       "sourceRootRole": "canonical-candidate",
@@ -14519,6 +14519,25 @@
       "type": "SKILL"
     },
     {
+      "description": "Set up a repository for marketplace-driven AI tooling. Use when onboarding a new repo, refreshing a checked-in marketplace reference, installing core marketplace plugins, or documenting which configured marketplaces should be available by default.",
+      "entryFile": "skills/repository-onboarding/SKILL.md",
+      "expectedResources": [
+        "SKILL.md",
+        "references/checked-in-marketplace-reference.md"
+      ],
+      "name": "repository-onboarding",
+      "observedPath": "/Users/amichne/code/intelligence/skills/repository-onboarding/SKILL.md",
+      "path": "skills/repository-onboarding",
+      "resolvedPath": "/Users/amichne/code/intelligence/skills/repository-onboarding/SKILL.md",
+      "sha256": "sha256:d8b6ea39b92c2776b4870f8d1b5660a8cf985ed9feee5b17bea1206820e1a32a",
+      "sourceRoot": "intelligence",
+      "sourceRootPath": ".",
+      "sourceRootRole": "canonical-candidate",
+      "symlink": false,
+      "title": "Repository Onboarding",
+      "type": "SKILL"
+    },
+    {
       "description": "Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation.",
       "entryFile": "repository-signature-indexing/SKILL.md",
       "expectedResources": [
@@ -16656,7 +16675,7 @@
       "type": "SKILL"
     }
   ],
-  "generatedAt": "2026-05-24T19:32:51.700675+00:00",
+  "generatedAt": "2026-05-24T21:29:10.172713+00:00",
   "generator": "garden/scripts/inventory-primitives.py",
   "missingRoots": [],
   "nameCollisions": [

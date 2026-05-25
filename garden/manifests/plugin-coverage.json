@@ -463,14 +463,8 @@
       "canonicalPaths": [
         "plugins/primitive-governance"
       ],
-      "coverageStatus": "MARKETPLACE_EXPOSED",
-      "marketplaceReferences": [
-        {
-          "pluginName": "primitive-governance",
-          "pluginPath": "plugins/primitive-governance",
-          "type": "MARKETPLACE_COVERAGE_REFERENCE"
-        }
-      ],
+      "coverageStatus": "STANDALONE_ONLY",
+      "marketplaceReferences": [],
       "pluginReferences": [],
       "primitive": {
         "name": "primitive-governance",
@@ -503,14 +497,8 @@
       "canonicalPaths": [
         "plugins/runtime-activation"
       ],
-      "coverageStatus": "MARKETPLACE_EXPOSED",
-      "marketplaceReferences": [
-        {
-          "pluginName": "runtime-activation",
-          "pluginPath": "plugins/runtime-activation",
-          "type": "MARKETPLACE_COVERAGE_REFERENCE"
-        }
-      ],
+      "coverageStatus": "STANDALONE_ONLY",
+      "marketplaceReferences": [],
       "pluginReferences": [],
       "primitive": {
         "name": "runtime-activation",
@@ -881,6 +869,26 @@
     },
     {
       "canonicalPaths": [
+        "skills/repository-onboarding"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "marketplaceReferences": [],
+      "pluginReferences": [
+        {
+          "pluginName": "intelligence-core",
+          "primitivePath": "skills/repository-onboarding",
+          "type": "PLUGIN_COVERAGE_REFERENCE"
+        }
+      ],
+      "primitive": {
+        "name": "repository-onboarding",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "type": "PLUGIN_COVERAGE_ENTRY"
+    },
+    {
+      "canonicalPaths": [
         "skills/repository-signature-indexing"
       ],
       "coverageStatus": "PLUGIN_COMPOSED",
@@ -992,11 +1000,6 @@
       "marketplaceReferences": [],
       "pluginReferences": [
         {
-          "pluginName": "primitive-authoring",
-          "primitivePath": "skills/source-graph-consolidation",
-          "type": "PLUGIN_COVERAGE_REFERENCE"
-        },
-        {
           "pluginName": "primitive-governance",
           "primitivePath": "skills/source-graph-consolidation",
           "type": "PLUGIN_COVERAGE_REFERENCE"
@@ -1046,12 +1049,12 @@
     "allCanonicalRouted": false,
     "byStatus": [
       {
-        "count": 11,
+        "count": 9,
         "name": "MARKETPLACE_EXPOSED",
         "type": "COVERAGE_COUNT"
       },
       {
-        "count": 31,
+        "count": 32,
         "name": "PLUGIN_COMPOSED",
         "type": "COVERAGE_COUNT"
       },
@@ -1061,7 +1064,7 @@
         "type": "COVERAGE_COUNT"
       },
       {
-        "count": 1,
+        "count": 3,
         "name": "STANDALONE_ONLY",
         "type": "COVERAGE_COUNT"
       }
@@ -1088,12 +1091,12 @@
         "type": "COVERAGE_COUNT"
       },
       {
-        "count": 21,
+        "count": 22,
         "name": "SKILL",
         "type": "COVERAGE_COUNT"
       }
     ],
-    "totalPrimitives": 49,
+    "totalPrimitives": 50,
     "type": "PLUGIN_COVERAGE_SUMMARY"
   },
   "type": "PLUGIN_COVERAGE_REPORT"

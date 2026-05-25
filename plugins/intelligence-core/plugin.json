@@ -3,8 +3,18 @@
   "schemaVersion": 1,
   "name": "intelligence-core",
   "version": "0.1.0",
-  "description": "Core portable instructions and hooks from the intelligence source graph.",
-  "skills": [],
+  "description": "Core repository onboarding, portable principles, and hooks from the intelligence source graph.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repository-onboarding",
+      "name": "repository-onboarding"
+    }
+  ],
   "agents": [],
   "instructions": [
     {

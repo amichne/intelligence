@@ -18,59 +18,6 @@
         "status": "PLANNED",
         "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
       },
-      "name": "agent-skill-children",
-      "notes": "Ready for explicit approval to add missing intelligence skill children as symlinks while leaving external runtime skills and non-skill artifacts untouched.",
-      "operationType": "ACTIVATE_RUNTIME_LINK",
-      "planStatus": "WAITING_APPROVAL",
-      "preflightReasons": [
-        "Runtime target already links every source child to the canonical source."
-      ],
-      "preflightStatus": "ALREADY_ACTIVE",
-      "primitiveTypes": [
-        "SKILL"
-      ],
-      "requiresApproval": true,
-      "riskLevel": "MEDIUM",
-      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
-      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
-      "sourceKind": "DIRECTORY",
-      "sourcePath": "/Users/amichne/code/intelligence/skills",
-      "stepPreviews": [
-        {
-          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
-          "description": "Verify source directory exists",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "ls -la /Users/amichne/.agents/skills 2>/dev/null || true",
-          "description": "Review target directory before linking children",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "mkdir -p /Users/amichne/.agents/skills",
-          "description": "Prepare target directory after approval if needed",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "find /Users/amichne/code/intelligence/skills -mindepth 1 -maxdepth 1 -type d -exec sh -c 'test -f \"$1/SKILL.md\" && echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.agents/skills ';'",
-          "description": "Link eligible primitive children only after approval",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        }
-      ],
-      "targetKind": "DIRECTORY",
-      "targetPath": "/Users/amichne/.agents/skills",
-      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
-    },
-    {
-      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
-      "approvalState": "ALREADY_ACTIVE",
-      "collisionPolicy": "BACKUP_THEN_LINK",
-      "evidence": {
-        "manifest": "garden/manifests/runtime-links.json",
-        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
-        "status": "PLANNED",
-        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
-      },
       "name": "claude-agent-children",
       "notes": "Future activation still requires explicit approval before linking agent profiles.",
       "operationType": "ACTIVATE_RUNTIME_LINK",
@@ -165,106 +112,6 @@
       ],
       "targetKind": "DIRECTORY",
       "targetPath": "/Users/amichne/.codex/hooks",
-      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
-    },
-    {
-      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
-      "approvalState": "ALREADY_ACTIVE",
-      "collisionPolicy": "BACKUP_THEN_LINK",
-      "evidence": {
-        "manifest": "garden/manifests/runtime-links.json",
-        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
-        "status": "PLANNED",
-        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
-      },
-      "name": "codex-skill-children",
-      "notes": "Ready for explicit approval to add missing canonical intelligence skill children into the Apollo-backed Codex skill home as symlinks; approval remains required because the target is ~/.codex/skills -> /Users/amichne/code/apollo/skills.",
-      "operationType": "ACTIVATE_RUNTIME_LINK",
-      "planStatus": "WAITING_APPROVAL",
-      "preflightReasons": [
-        "Runtime target already links every source child to the canonical source."
-      ],
-      "preflightStatus": "ALREADY_ACTIVE",
-      "primitiveTypes": [
-        "SKILL"
-      ],
-      "requiresApproval": true,
-      "riskLevel": "MEDIUM",
-      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
-      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
-      "sourceKind": "DIRECTORY",
-      "sourcePath": "/Users/amichne/code/intelligence/skills",
-      "stepPreviews": [
-        {
-          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
-          "description": "Verify source directory exists",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "ls -la /Users/amichne/.codex/skills 2>/dev/null || true",
-          "description": "Review target directory before linking children",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "mkdir -p /Users/amichne/.codex/skills",
-          "description": "Prepare target directory after approval if needed",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "find /Users/amichne/code/intelligence/skills -mindepth 1 -maxdepth 1 -type d -exec sh -c 'test -f \"$1/SKILL.md\" && echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.codex/skills ';'",
-          "description": "Link eligible primitive children only after approval",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        }
-      ],
-      "targetKind": "SYMLINK",
-      "targetPath": "/Users/amichne/.codex/skills",
-      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
-    },
-    {
-      "approvalBoundary": "Requires explicit user action in the Codex app or an explicit instruction to open the import URL; this repo only records the import target.",
-      "approvalState": "ALREADY_ACTIVE",
-      "collisionPolicy": "SKIP_EXISTING",
-      "evidence": {
-        "manifest": "garden/manifests/runtime-links.json",
-        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
-        "status": "READY",
-        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
-      },
-      "name": "codex-app-marketplace",
-      "notes": "Primary activation path for referential plugins. User action still controls installation from the Codex app.",
-      "operationType": "IMPORT_MARKETPLACE",
-      "planStatus": "READY_FOR_MANUAL_IMPORT",
-      "preflightReasons": [
-        "Marketplace source is already configured in Codex."
-      ],
-      "preflightStatus": "ALREADY_ACTIVE",
-      "primitiveTypes": [
-        "PLUGIN",
-        "SKILL",
-        "AGENT",
-        "HOOK",
-        "INSTRUCTION"
-      ],
-      "requiresApproval": true,
-      "riskLevel": "LOW",
-      "rollback": "Remove or disable the imported marketplace/plugin entry through the runtime UI if activation is no longer wanted.",
-      "runtimeLinkStrategy": "MARKETPLACE_IMPORT",
-      "sourceKind": "FILE",
-      "sourcePath": "/Users/amichne/code/intelligence/marketplace.json",
-      "stepPreviews": [
-        {
-          "commandPreview": "test -e /Users/amichne/code/intelligence/marketplace.json",
-          "description": "Verify marketplace catalog exists",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        },
-        {
-          "commandPreview": "open 'codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json'",
-          "description": "Open marketplace import URL manually after approval",
-          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
-        }
-      ],
-      "targetKind": "VIRTUAL",
-      "targetPath": "codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json",
       "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
     },
     {
@@ -1059,16 +906,169 @@
       "targetKind": "SYMLINK",
       "targetPath": "/Users/amichne/code/apollo/skills/source-graph-consolidation",
       "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
+      "approvalState": "READY_FOR_APPROVAL",
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "PLANNED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "agent-skill-children",
+      "notes": "Ready for explicit approval to add missing intelligence skill children as symlinks while leaving external runtime skills and non-skill artifacts untouched.",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Runtime source and target directory exist; approval is still required before linking children."
+      ],
+      "preflightStatus": "READY_FOR_APPROVAL",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "MEDIUM",
+      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
+          "description": "Verify source directory exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ls -la /Users/amichne/.agents/skills 2>/dev/null || true",
+          "description": "Review target directory before linking children",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.agents/skills",
+          "description": "Prepare target directory after approval if needed",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "find /Users/amichne/code/intelligence/skills -mindepth 1 -maxdepth 1 -type d -exec sh -c 'test -f \"$1/SKILL.md\" && echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.agents/skills ';'",
+          "description": "Link eligible primitive children only after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "DIRECTORY",
+      "targetPath": "/Users/amichne/.agents/skills",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user approval after reviewing target contents, collision policy, and preflight reasons.",
+      "approvalState": "READY_FOR_APPROVAL",
+      "collisionPolicy": "BACKUP_THEN_LINK",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "PLANNED",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "codex-skill-children",
+      "notes": "Ready for explicit approval to add missing canonical intelligence skill children into the Apollo-backed Codex skill home as symlinks; approval remains required because the target is ~/.codex/skills -> /Users/amichne/code/apollo/skills.",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "planStatus": "WAITING_APPROVAL",
+      "preflightReasons": [
+        "Runtime source exists and target resolves through a symlinked directory; approval is still required before linking children into the resolved target."
+      ],
+      "preflightStatus": "READY_FOR_APPROVAL",
+      "primitiveTypes": [
+        "SKILL"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "MEDIUM",
+      "rollback": "Remove links created during activation and restore any backed-up runtime paths before rerunning preflight.",
+      "runtimeLinkStrategy": "SYMLINK_CHILDREN",
+      "sourceKind": "DIRECTORY",
+      "sourcePath": "/Users/amichne/code/intelligence/skills",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -d /Users/amichne/code/intelligence/skills",
+          "description": "Verify source directory exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "ls -la /Users/amichne/.codex/skills 2>/dev/null || true",
+          "description": "Review target directory before linking children",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "mkdir -p /Users/amichne/.codex/skills",
+          "description": "Prepare target directory after approval if needed",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "find /Users/amichne/code/intelligence/skills -mindepth 1 -maxdepth 1 -type d -exec sh -c 'test -f \"$1/SKILL.md\" && echo ln -s \"$1\" \"$2/$(basename \"$1\")\"' sh '{}' /Users/amichne/.codex/skills ';'",
+          "description": "Link eligible primitive children only after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "SYMLINK",
+      "targetPath": "/Users/amichne/.codex/skills",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
+    },
+    {
+      "approvalBoundary": "Requires explicit user action in the Codex app or an explicit instruction to open the import URL; this repo only records the import target.",
+      "approvalState": "READY_FOR_MANUAL_IMPORT",
+      "collisionPolicy": "SKIP_EXISTING",
+      "evidence": {
+        "manifest": "garden/manifests/runtime-links.json",
+        "preflightReport": "garden/manifests/runtime-activation-preflight.json",
+        "status": "READY",
+        "type": "RUNTIME_ACTIVATION_APPROVAL_EVIDENCE"
+      },
+      "name": "codex-app-marketplace",
+      "notes": "Primary activation path for referential plugins. User action still controls installation from the Codex app.",
+      "operationType": "IMPORT_MARKETPLACE",
+      "planStatus": "READY_FOR_MANUAL_IMPORT",
+      "preflightReasons": [
+        "Marketplace file exists; manual import still requires user action."
+      ],
+      "preflightStatus": "READY_FOR_APPROVAL",
+      "primitiveTypes": [
+        "PLUGIN",
+        "SKILL",
+        "AGENT",
+        "HOOK",
+        "INSTRUCTION"
+      ],
+      "requiresApproval": true,
+      "riskLevel": "LOW",
+      "rollback": "Remove or disable the imported marketplace/plugin entry through the runtime UI if activation is no longer wanted.",
+      "runtimeLinkStrategy": "MARKETPLACE_IMPORT",
+      "sourceKind": "FILE",
+      "sourcePath": "/Users/amichne/code/intelligence/marketplace.json",
+      "stepPreviews": [
+        {
+          "commandPreview": "test -e /Users/amichne/code/intelligence/marketplace.json",
+          "description": "Verify marketplace catalog exists",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        },
+        {
+          "commandPreview": "open 'codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json'",
+          "description": "Open marketplace import URL manually after approval",
+          "type": "RUNTIME_ACTIVATION_APPROVAL_STEP"
+        }
+      ],
+      "targetKind": "VIRTUAL",
+      "targetPath": "codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json",
+      "type": "RUNTIME_ACTIVATION_APPROVAL_PACKET"
     }
   ],
   "schemaVersion": 1,
   "summary": {
-    "alreadyActive": 18,
+    "alreadyActive": 15,
     "approvalRequired": true,
     "blocked": 0,
-    "nextAction": "No activation approval action is pending.",
-    "readyForApproval": 0,
-    "readyForManualImport": 0,
+    "nextAction": "Approve READY_FOR_APPROVAL packets by name only when the backup and symlink previews are acceptable; REVIEW_REQUIRED packets still need inspection.",
+    "readyForApproval": 2,
+    "readyForManualImport": 1,
     "reviewRequired": 0,
     "runtimeMutationAllowed": false,
     "sourceTurnoffStatus": "NOT_READY",

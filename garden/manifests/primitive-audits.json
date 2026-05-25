@@ -2572,13 +2572,13 @@
           "type": "AUDIT_CRITERION",
           "name": "referential-plugin",
           "status": "PASS",
-          "evidence": "The plugin composes core instruction and hook primitives by reference."
+          "evidence": "The plugin composes repository onboarding, core instruction, and hook primitives by reference."
         },
         {
           "type": "AUDIT_CRITERION",
           "name": "marketplace-exposed",
           "status": "PASS",
-          "evidence": "marketplace.json exposes the plugin as the core local bundle."
+          "evidence": "marketplace.json exposes this plugin as part of the curated project-agnostic primitive bundle."
         }
       ],
       "evidence": [
@@ -2586,7 +2586,7 @@
           "type": "AUDIT_EVIDENCE",
           "kind": "FILE",
           "status": "PASS",
-          "summary": "plugins/intelligence-core/plugin.json exists and references canonical primitives."
+          "summary": "plugins/intelligence-core/plugin.json exists and references repository-onboarding, core concepts, and core hooks."
         },
         {
           "type": "AUDIT_EVIDENCE",
@@ -2596,6 +2596,58 @@
         }
       ],
       "notes": "Plugin review is complete as a composition surface. Runtime activation remains separately gated."
+    },
+    {
+      "type": "PRIMITIVE_AUDIT",
+      "primitive": {
+        "type": "PRIMITIVE_REFERENCE",
+        "primitiveType": "SKILL",
+        "name": "repository-onboarding",
+        "path": "skills/repository-onboarding"
+      },
+      "scope": "REVIEW",
+      "decision": "PROMOTE_READY",
+      "criteria": [
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "independent-skill",
+          "status": "PASS",
+          "evidence": "The skill defines repository onboarding without relying on plugin-local README text or runtime cache state."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "checked-in-reference",
+          "status": "PASS",
+          "evidence": "The workflow requires a checked-in marketplace reference and defaults to the full configured marketplace set unless explicitly narrowed."
+        },
+        {
+          "type": "AUDIT_CRITERION",
+          "name": "source-boundary",
+          "status": "PASS",
+          "evidence": "The skill keeps marketplace payloads remote and excludes cleanup, consolidation, and runtime-linking utilities unless a repo explicitly needs them."
+        }
+      ],
+      "evidence": [
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/repository-onboarding/SKILL.md defines the trigger, workflow, and completion criteria."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "FILE",
+          "status": "PASS",
+          "summary": "skills/repository-onboarding/references/checked-in-marketplace-reference.md provides the checked-in reference template."
+        },
+        {
+          "type": "AUDIT_EVIDENCE",
+          "kind": "SCHEMA_VALIDATION",
+          "status": "PASS",
+          "summary": "node scripts/validate-manifests.mjs validates the plugin and marketplace references."
+        }
+      ],
+      "notes": "Native repository skill is ready for marketplace composition through intelligence-core."
     },
     {
       "type": "PRIMITIVE_AUDIT",
@@ -2698,7 +2750,7 @@
           "type": "AUDIT_CRITERION",
           "name": "schema-driven-workflow",
           "status": "PASS",
-          "evidence": "The plugin includes schema and source-graph authoring primitives without bypassing manifest validation."
+          "evidence": "The plugin includes schema and primitive authoring workflows without bypassing manifest validation."
         }
       ],
       "evidence": [

@@ -10,33 +10,22 @@ toolkit for my outsourcing of "intelligence"
 This repo is becoming the source graph for personal AI tooling primitives:
 skills, agents, hooks, instructions, and referential plugins.
 
-- `marketplace.json` exposes the local catalog.
+- `marketplace.json` exposes the curated remote marketplace surface for
+  generally useful, project-agnostic primitives.
 - `agents/` contains independent agent profiles.
 - `skills/` contains independent skill primitives.
-- `plugins/intelligence-core/plugin.json` composes the first portable instruction
-  and hook primitives by reference.
-- `plugins/kotlin-review/plugin.json` composes Kotlin standards, Gradle
-  validation, review agents, and layout hook by reference.
-- `plugins/primitive-authoring/plugin.json` composes skill, agent, hook, shell
-  script, schema, source-graph consolidation, and plugin authoring workflows by
-  reference.
-- `plugins/primitive-governance/plugin.json` composes quality audit, routing
-  evaluation, source-graph governance, runtime readiness, and schema validation
-  workflows by reference.
-- `plugins/repository-orientation/plugin.json` composes repository boundary,
-  scoped instruction authoring, and signature indexing workflows by reference.
-- `plugins/runtime-activation/plugin.json` composes runtime linking and
-  source-graph activation workflows by reference.
-- `plugins/planning-and-docs/plugin.json` composes goal definition and
-  reference-document workflow skills by reference.
-- `plugins/documentation-workflow/plugin.json` composes reference-document and
-  MkDocs/Zensical site-authoring skills by reference.
-- `plugins/schema-governance/plugin.json` composes the schema contract skill,
-  schema review agent, and schema/type concepts by reference.
-- `plugins/tdd-workflow/plugin.json` composes the TDD workflow skill with the
-  type/schema concepts by reference.
-- `plugins/version-control/plugin.json` composes Git process and GitHub
-  CI/workflow skills by reference.
+- `plugins/intelligence-core/plugin.json` composes repository onboarding,
+  portable principles, and hook primitives by reference.
+- `plugins/kotlin-review/plugin.json`, `plugins/primitive-authoring/plugin.json`,
+  `plugins/repository-orientation/plugin.json`,
+  `plugins/planning-and-docs/plugin.json`,
+  `plugins/documentation-workflow/plugin.json`,
+  `plugins/schema-governance/plugin.json`, `plugins/tdd-workflow/plugin.json`,
+  and `plugins/version-control/plugin.json` compose generally useful primitive
+  families by reference.
+- `plugins/primitive-governance/plugin.json` and
+  `plugins/runtime-activation/plugin.json` remain repo-local cleanup,
+  source-graph, and runtime-linking utilities unless explicitly published.
 - `garden/manifests/source-roots.json` lists the local places currently scanned.
 - `garden/manifests/promotions.json` records copied-in canonical primitives and their
   original sources.
@@ -167,7 +156,8 @@ node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-mark
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```
 
-The generated branch scopes provider projections under provider directories:
+The generated branch publishes only the plugin families listed in
+`marketplace.json`. It scopes provider projections under provider directories:
 `codex/marketplace.json` is the Codex-native entrypoint and
 `github-copilot/marketplace.json` is the GitHub Copilot marketplace projection.
 Each provider directory owns its own `plugins/` payloads so marketplace-relative

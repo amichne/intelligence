@@ -18,7 +18,7 @@ Next action: Resolve blocked coverage, audit-completeness, or review-decision ga
 | Approved replacements | 0 |
 | Executed cleanup entries | 33 |
 | Retained external groups | 28 |
-| Runtime links requiring approval | 0 |
+| Runtime links requiring approval | 3 |
 
 ## Gates
 
@@ -30,7 +30,7 @@ Next action: Resolve blocked coverage, audit-completeness, or review-decision ga
 | `digest-review-decisions` | `PASS` | 0 digest-review entries remain open. | Keep every generated duplicate-content group synchronized with digest-review decisions. |
 | `cleanup-ledger-approval` | `REVIEW_REQUIRED` | 13 proposed replacements and 0 approved replacements are recorded. | Treat PROPOSED entries as review records only; execute nothing until explicit approval changes status. |
 | `external-retention` | `PASS` | 28 generated review groups are intentionally retained in external owners. | Do not replace RETAIN_EXTERNAL groups from this repository unless a new canonical promotion is reviewed. |
-| `runtime-activation-approval` | `PASS` | 0 inactive runtime link or marketplace import plans still require explicit approval. | Use runtime-links.json as activation planning evidence, not as permission to write runtime paths. |
+| `runtime-activation-approval` | `REVIEW_REQUIRED` | 3 inactive runtime link or marketplace import plans still require explicit approval. | Use runtime-links.json as activation planning evidence, not as permission to write runtime paths. |
 
 ## Proposed Replacements
 

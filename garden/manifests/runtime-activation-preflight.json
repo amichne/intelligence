@@ -1,29 +1,6 @@
 {
   "entries": [
     {
-      "operationName": "agent-skill-children",
-      "operationType": "ACTIVATE_RUNTIME_LINK",
-      "reasons": [
-        "Runtime target already links every source child to the canonical source."
-      ],
-      "source": {
-        "exists": true,
-        "kind": "DIRECTORY",
-        "path": "/Users/amichne/code/intelligence/skills",
-        "resolvedPath": "/Users/amichne/code/intelligence/skills",
-        "type": "FILESYSTEM_PATH_CHECK"
-      },
-      "status": "ALREADY_ACTIVE",
-      "target": {
-        "exists": true,
-        "kind": "DIRECTORY",
-        "path": "/Users/amichne/.agents/skills",
-        "resolvedPath": "/Users/amichne/.agents/skills",
-        "type": "FILESYSTEM_PATH_CHECK"
-      },
-      "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
-    },
-    {
       "operationName": "claude-agent-children",
       "operationType": "ACTIVATE_RUNTIME_LINK",
       "reasons": [
@@ -65,51 +42,6 @@
         "kind": "DIRECTORY",
         "path": "/Users/amichne/.codex/hooks",
         "resolvedPath": "/Users/amichne/.codex/hooks",
-        "type": "FILESYSTEM_PATH_CHECK"
-      },
-      "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
-    },
-    {
-      "operationName": "codex-skill-children",
-      "operationType": "ACTIVATE_RUNTIME_LINK",
-      "reasons": [
-        "Runtime target already links every source child to the canonical source."
-      ],
-      "source": {
-        "exists": true,
-        "kind": "DIRECTORY",
-        "path": "/Users/amichne/code/intelligence/skills",
-        "resolvedPath": "/Users/amichne/code/intelligence/skills",
-        "type": "FILESYSTEM_PATH_CHECK"
-      },
-      "status": "ALREADY_ACTIVE",
-      "target": {
-        "exists": true,
-        "kind": "SYMLINK",
-        "path": "/Users/amichne/.codex/skills",
-        "resolvedPath": "/Users/amichne/code/apollo/skills",
-        "type": "FILESYSTEM_PATH_CHECK"
-      },
-      "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
-    },
-    {
-      "operationName": "codex-app-marketplace",
-      "operationType": "IMPORT_MARKETPLACE",
-      "reasons": [
-        "Marketplace source is already configured in Codex."
-      ],
-      "source": {
-        "exists": true,
-        "kind": "FILE",
-        "path": "/Users/amichne/code/intelligence/marketplace.json",
-        "resolvedPath": "/Users/amichne/code/intelligence/marketplace.json",
-        "type": "FILESYSTEM_PATH_CHECK"
-      },
-      "status": "ALREADY_ACTIVE",
-      "target": {
-        "exists": true,
-        "kind": "VIRTUAL",
-        "path": "codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json",
         "type": "FILESYSTEM_PATH_CHECK"
       },
       "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
@@ -490,6 +422,74 @@
         "type": "FILESYSTEM_PATH_CHECK"
       },
       "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
+    },
+    {
+      "operationName": "agent-skill-children",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "reasons": [
+        "Runtime source and target directory exist; approval is still required before linking children."
+      ],
+      "source": {
+        "exists": true,
+        "kind": "DIRECTORY",
+        "path": "/Users/amichne/code/intelligence/skills",
+        "resolvedPath": "/Users/amichne/code/intelligence/skills",
+        "type": "FILESYSTEM_PATH_CHECK"
+      },
+      "status": "READY_FOR_APPROVAL",
+      "target": {
+        "exists": true,
+        "kind": "DIRECTORY",
+        "path": "/Users/amichne/.agents/skills",
+        "resolvedPath": "/Users/amichne/.agents/skills",
+        "type": "FILESYSTEM_PATH_CHECK"
+      },
+      "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
+    },
+    {
+      "operationName": "codex-skill-children",
+      "operationType": "ACTIVATE_RUNTIME_LINK",
+      "reasons": [
+        "Runtime source exists and target resolves through a symlinked directory; approval is still required before linking children into the resolved target."
+      ],
+      "source": {
+        "exists": true,
+        "kind": "DIRECTORY",
+        "path": "/Users/amichne/code/intelligence/skills",
+        "resolvedPath": "/Users/amichne/code/intelligence/skills",
+        "type": "FILESYSTEM_PATH_CHECK"
+      },
+      "status": "READY_FOR_APPROVAL",
+      "target": {
+        "exists": true,
+        "kind": "SYMLINK",
+        "path": "/Users/amichne/.codex/skills",
+        "resolvedPath": "/Users/amichne/code/apollo/skills",
+        "type": "FILESYSTEM_PATH_CHECK"
+      },
+      "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
+    },
+    {
+      "operationName": "codex-app-marketplace",
+      "operationType": "IMPORT_MARKETPLACE",
+      "reasons": [
+        "Marketplace file exists; manual import still requires user action."
+      ],
+      "source": {
+        "exists": true,
+        "kind": "FILE",
+        "path": "/Users/amichne/code/intelligence/marketplace.json",
+        "resolvedPath": "/Users/amichne/code/intelligence/marketplace.json",
+        "type": "FILESYSTEM_PATH_CHECK"
+      },
+      "status": "READY_FOR_APPROVAL",
+      "target": {
+        "exists": true,
+        "kind": "VIRTUAL",
+        "path": "codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json",
+        "type": "FILESYSTEM_PATH_CHECK"
+      },
+      "type": "RUNTIME_ACTIVATION_PREFLIGHT_ENTRY"
     }
   ],
   "generatedFrom": {
@@ -498,9 +498,9 @@
   },
   "schemaVersion": 1,
   "summary": {
-    "alreadyActive": 18,
+    "alreadyActive": 15,
     "blocked": 0,
-    "readyForApproval": 0,
+    "readyForApproval": 3,
     "reviewRequired": 0,
     "runtimeMutationAllowed": false,
     "totalEntries": 18,

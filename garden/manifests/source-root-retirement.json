@@ -12,11 +12,11 @@
   "roots": [
     {
       "approvalSummary": {
-        "alreadyActive": 2,
+        "alreadyActive": 1,
         "blocked": 0,
         "dependencyMapped": 0,
         "readyForApproval": 0,
-        "readyForManualImport": 0,
+        "readyForManualImport": 1,
         "reviewRequired": 0,
         "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
       },
@@ -43,7 +43,7 @@
         "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
       ],
       "nextAction": "Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links.",
-      "observedEntries": 55,
+      "observedEntries": 56,
       "resolvedPath": "/Users/amichne/code/intelligence",
       "retirementState": "CANONICAL_OWNER",
       "role": "canonical-candidate",
@@ -381,47 +381,6 @@
     },
     {
       "approvalSummary": {
-        "alreadyActive": 1,
-        "blocked": 0,
-        "dependencyMapped": 0,
-        "readyForApproval": 0,
-        "readyForManualImport": 0,
-        "reviewRequired": 0,
-        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
-      },
-      "cleanupSummary": {
-        "approved": 0,
-        "executed": 6,
-        "proposed": 0,
-        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
-      },
-      "decisionSummary": {
-        "digestCoveredByCanonical": 0,
-        "digestRetainedExternal": 7,
-        "rootPromoteCandidates": 0,
-        "rootRetainedExternal": 1,
-        "rootReviewRequired": 0,
-        "sourceCoveredByCanonical": 1,
-        "sourceKeepCanonical": 0,
-        "sourceRetainedExternal": 8,
-        "type": "SOURCE_ROOT_DECISION_SUMMARY"
-      },
-      "evidence": [
-        "garden/manifests/discovered-primitives.json records entries for sourceRoot global-agent-skills.",
-        "garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=1 and retained=16 review groups.",
-        "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=6, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
-      ],
-      "nextAction": "Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.",
-      "observedEntries": 46,
-      "resolvedPath": "/Users/amichne/.agents/skills",
-      "retirementState": "MIXED_RETAIN_AND_COVERED",
-      "role": "runtime-source",
-      "sourcePath": "~/.agents/skills",
-      "sourceRoot": "global-agent-skills",
-      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
-    },
-    {
-      "approvalSummary": {
         "alreadyActive": 0,
         "blocked": 0,
         "dependencyMapped": 0,
@@ -589,6 +548,88 @@
         "alreadyActive": 0,
         "blocked": 0,
         "dependencyMapped": 0,
+        "readyForApproval": 1,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 6,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 7,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 1,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 1,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 8,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "garden/manifests/discovered-primitives.json records entries for sourceRoot global-agent-skills.",
+        "garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=1 and retained=16 review groups.",
+        "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=6, readyForApproval=1, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement.",
+      "observedEntries": 46,
+      "resolvedPath": "/Users/amichne/.agents/skills",
+      "retirementState": "PARTIAL_REPLACEMENT_READY",
+      "role": "runtime-source",
+      "sourcePath": "~/.agents/skills",
+      "sourceRoot": "global-agent-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
+        "readyForApproval": 1,
+        "readyForManualImport": 0,
+        "reviewRequired": 0,
+        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
+      },
+      "cleanupSummary": {
+        "approved": 0,
+        "executed": 0,
+        "proposed": 0,
+        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
+      },
+      "decisionSummary": {
+        "digestCoveredByCanonical": 0,
+        "digestRetainedExternal": 12,
+        "rootPromoteCandidates": 0,
+        "rootRetainedExternal": 0,
+        "rootReviewRequired": 0,
+        "sourceCoveredByCanonical": 0,
+        "sourceKeepCanonical": 0,
+        "sourceRetainedExternal": 7,
+        "type": "SOURCE_ROOT_DECISION_SUMMARY"
+      },
+      "evidence": [
+        "garden/manifests/discovered-primitives.json records entries for sourceRoot global-codex-skills.",
+        "garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=0 and retained=19 review groups.",
+        "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=1, reviewRequired=0, dependencyMapped=0."
+      ],
+      "nextAction": "Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement.",
+      "observedEntries": 33,
+      "resolvedPath": "/Users/amichne/.codex/skills",
+      "retirementState": "PARTIAL_REPLACEMENT_READY",
+      "role": "runtime-source",
+      "sourcePath": "~/.codex/skills",
+      "sourceRoot": "global-codex-skills",
+      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
+    },
+    {
+      "approvalSummary": {
+        "alreadyActive": 0,
+        "blocked": 0,
+        "dependencyMapped": 0,
         "readyForApproval": 0,
         "readyForManualImport": 0,
         "reviewRequired": 0,
@@ -623,47 +664,6 @@
       "role": "local-repo-source",
       "sourcePath": "../examplar/plugins",
       "sourceRoot": "examplar-plugins",
-      "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
-    },
-    {
-      "approvalSummary": {
-        "alreadyActive": 1,
-        "blocked": 0,
-        "dependencyMapped": 0,
-        "readyForApproval": 0,
-        "readyForManualImport": 0,
-        "reviewRequired": 0,
-        "type": "SOURCE_ROOT_APPROVAL_SUMMARY"
-      },
-      "cleanupSummary": {
-        "approved": 0,
-        "executed": 0,
-        "proposed": 0,
-        "type": "SOURCE_ROOT_CLEANUP_SUMMARY"
-      },
-      "decisionSummary": {
-        "digestCoveredByCanonical": 0,
-        "digestRetainedExternal": 12,
-        "rootPromoteCandidates": 0,
-        "rootRetainedExternal": 0,
-        "rootReviewRequired": 0,
-        "sourceCoveredByCanonical": 0,
-        "sourceKeepCanonical": 0,
-        "sourceRetainedExternal": 7,
-        "type": "SOURCE_ROOT_DECISION_SUMMARY"
-      },
-      "evidence": [
-        "garden/manifests/discovered-primitives.json records entries for sourceRoot global-codex-skills.",
-        "garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=0 and retained=19 review groups.",
-        "garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0."
-      ],
-      "nextAction": "Leave this source root under its current owner unless a future review promotes a canonical replacement.",
-      "observedEntries": 33,
-      "resolvedPath": "/Users/amichne/.codex/skills",
-      "retirementState": "RETAIN_EXTERNAL_OWNER",
-      "role": "runtime-source",
-      "sourcePath": "~/.codex/skills",
-      "sourceRoot": "global-codex-skills",
       "type": "SOURCE_ROOT_RETIREMENT_ENTRY"
     },
     {
@@ -755,14 +755,14 @@
     "cleanupRecorded": 1,
     "coveredNoReplacementPlan": 3,
     "emptySourceRoots": 1,
-    "mixedRetainAndCovered": 7,
+    "mixedRetainAndCovered": 6,
     "nextAction": "Review PARTIAL_REPLACEMENT_READY roots and their activation approval packets before any source turnoff execution.",
     "noActionRecorded": 0,
-    "partialReplacementReady": 1,
-    "retainExternalOwners": 4,
+    "partialReplacementReady": 3,
+    "retainExternalOwners": 3,
     "runtimeDependencyMapped": 0,
     "runtimeReviewRequired": 0,
-    "totalObservedEntries": 868,
+    "totalObservedEntries": 869,
     "totalRoots": 18,
     "type": "SOURCE_ROOT_RETIREMENT_SUMMARY"
   },

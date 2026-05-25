@@ -43,10 +43,10 @@
       "type": "SOURCE_TURNOFF_GATE"
     },
     {
-      "evidence": "0 inactive runtime link or marketplace import plans still require explicit approval.",
+      "evidence": "3 inactive runtime link or marketplace import plans still require explicit approval.",
       "name": "runtime-activation-approval",
       "nextAction": "Use runtime-links.json as activation planning evidence, not as permission to write runtime paths.",
-      "status": "PASS",
+      "status": "REVIEW_REQUIRED",
       "type": "SOURCE_TURNOFF_GATE"
     }
   ],
@@ -190,7 +190,7 @@
     "readinessStatus": "NOT_READY",
     "retainedExternalGroups": 28,
     "reviewCompletenessOpen": 1,
-    "runtimeLinksRequiringApproval": 0,
+    "runtimeLinksRequiringApproval": 3,
     "sourceReviewOpen": 0,
     "type": "SOURCE_TURNOFF_READINESS_SUMMARY"
   },

@@ -1,7 +1,7 @@
 # Consolidation Queue
 
 Inventory source: `garden/manifests/discovered-primitives.json`
-Inventory generated at: `2026-05-24T19:32:51.700675+00:00`
+Inventory generated at: `2026-05-24T21:29:10.172713+00:00`
 
 ## Counts
 
@@ -9,7 +9,7 @@ Inventory generated at: `2026-05-24T19:32:51.700675+00:00`
 |---|---:|
 | `authored-local` | 87 |
 | `backup` | 33 |
-| `canonical` | 55 |
+| `canonical` | 56 |
 | `installed-marketplace` | 608 |
 | `runtime` | 37 |
 | `runtime-alias` | 48 |
@@ -20,7 +20,7 @@ Inventory generated at: `2026-05-24T19:32:51.700675+00:00`
 | `HOOK` | 42 |
 | `INSTRUCTION` | 13 |
 | `PLUGIN` | 144 |
-| `SKILL` | 370 |
+| `SKILL` | 371 |
 
 ## Promotion Candidates
 
@@ -108,7 +108,7 @@ These are canonical or local-authored entries. They are the first review set bef
 | `PLUGIN` | `planning-and-docs` | `canonical` | `intelligence` | `plugins/planning-and-docs` | `KEEP_CANONICAL` |
 | `PLUGIN` | `plugin-eval` | `authored-local` | `examplar-plugins` | `plugin-eval` | `REVIEW_PROMOTE` |
 | `PLUGIN` | `primitive-authoring` | `canonical` | `intelligence` | `plugins/primitive-authoring` | `KEEP_CANONICAL` |
-| | | | | plus 62 more in the JSON report | |
+| | | | | plus 63 more in the JSON report | |
 
 ## Name Review Queue
 

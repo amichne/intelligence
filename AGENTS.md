@@ -35,6 +35,17 @@ not justified.
 - `package.json` and `package-lock.json` pin the local validator dependencies
   used by source and marketplace publication checks.
 
+## Terminology
+
+- A primitive is an independent building block that can compose a plugin:
+  skills, agents, hooks, instructions, and concept/principle documents.
+- A plugin is a composition surface for primitives. Do not use plugin payloads
+  as the only source of truth for a primitive.
+- Marketplace exposure is curated to generally useful, project-agnostic
+  primitives and plugin families. Keep cleanup, runtime-linking, and source
+  graph maintenance utilities repo-local unless the user explicitly asks to
+  publish them.
+
 ## Source Graph Rules
 
 - Keep primitives useful outside plugins. Plugins compose existing primitives;

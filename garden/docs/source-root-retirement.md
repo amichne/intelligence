@@ -7,14 +7,14 @@ This generated report summarizes which scanned roots can be retained, reviewed, 
 | Measure | Value |
 |---|---:|
 | Total roots | 18 |
-| Total observed entries | 868 |
+| Total observed entries | 869 |
 | Canonical owners | 1 |
-| Partial replacement ready | 1 |
+| Partial replacement ready | 3 |
 | Runtime dependency mapped | 0 |
 | Runtime review required | 0 |
 | Covered, no replacement plan | 3 |
-| Mixed retain and covered | 7 |
-| Retain external owners | 4 |
+| Mixed retain and covered | 6 |
+| Retain external owners | 3 |
 | Cleanup recorded | 1 |
 | Empty source roots | 1 |
 | No action recorded | 0 |
@@ -25,7 +25,7 @@ Next action: Review PARTIAL_REPLACEMENT_READY roots and their activation approva
 
 | State | Root | Role | Entries | Covered | Retained | Proposed | Ready | Review | Mapped | Next Action |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---|
-| `CANONICAL_OWNER` | `intelligence` | `canonical-candidate` | 55 | 29 | 0 | 0 | 0 | 0 | 0 | Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links. |
+| `CANONICAL_OWNER` | `intelligence` | `canonical-candidate` | 56 | 29 | 0 | 0 | 0 | 0 | 0 | Keep this repository as the source of truth; expose primitives only through referential plugins and approved runtime links. |
 | `CLEANUP_RECORDED` | `claude-agents` | `runtime-source` | 6 | 0 | 0 | 0 | 0 | 0 | 0 | Keep the cleanup ledger as the source of truth for completed cleanup and rerun inventory to detect drift. |
 | `COVERED_NO_REPLACEMENT_PLAN` | `examplar-agents` | `local-repo-source` | 5 | 5 | 0 | 0 | 0 | 0 | 0 | Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal. |
 | `COVERED_NO_REPLACEMENT_PLAN` | `examplar-hooks` | `local-repo-source` | 1 | 1 | 0 | 0 | 0 | 0 | 0 | Decide whether this covered source should stay as provenance or receive a cleanup-ledger replacement proposal. |
@@ -34,13 +34,13 @@ Next action: Review PARTIAL_REPLACEMENT_READY roots and their activation approva
 | `MIXED_RETAIN_AND_COVERED` | `apollo-agents` | `local-repo-source` | 7 | 1 | 1 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `claude-plugins` | `runtime-source` | 608 | 2 | 11 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `examplar-instructions` | `local-repo-source` | 3 | 2 | 1 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
-| `MIXED_RETAIN_AND_COVERED` | `global-agent-skills` | `runtime-source` | 46 | 1 | 16 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `global-codex-backups` | `backup-source` | 5 | 3 | 1 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `global-codex-skills-backup` | `backup-source` | 28 | 4 | 11 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `MIXED_RETAIN_AND_COVERED` | `kast-agent-skills` | `local-repo-source` | 23 | 2 | 9 | 0 | 0 | 0 | 0 | Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence. |
 | `PARTIAL_REPLACEMENT_READY` | `apollo-skills` | `local-repo-source` | 33 | 21 | 19 | 13 | 0 | 0 | 0 | Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement. |
+| `PARTIAL_REPLACEMENT_READY` | `global-agent-skills` | `runtime-source` | 46 | 1 | 16 | 0 | 1 | 0 | 0 | Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement. |
+| `PARTIAL_REPLACEMENT_READY` | `global-codex-skills` | `runtime-source` | 33 | 0 | 19 | 0 | 1 | 0 | 0 | Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement. |
 | `RETAIN_EXTERNAL_OWNER` | `examplar-plugins` | `local-repo-source` | 2 | 0 | 2 | 0 | 0 | 0 | 0 | Leave this source root under its current owner unless a future review promotes a canonical replacement. |
-| `RETAIN_EXTERNAL_OWNER` | `global-codex-skills` | `runtime-source` | 33 | 0 | 19 | 0 | 0 | 0 | 0 | Leave this source root under its current owner unless a future review promotes a canonical replacement. |
 | `RETAIN_EXTERNAL_OWNER` | `kast-github-agents` | `local-repo-source` | 1 | 0 | 1 | 0 | 0 | 0 | 0 | Leave this source root under its current owner unless a future review promotes a canonical replacement. |
 | `RETAIN_EXTERNAL_OWNER` | `kast-github-hooks` | `local-repo-source` | 9 | 0 | 2 | 0 | 0 | 0 | 0 | Leave this source root under its current owner unless a future review promotes a canonical replacement. |
 
@@ -163,19 +163,6 @@ Evidence:
 - garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=2 and retained=1 review groups.
 - garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=2, readyForApproval=0, reviewRequired=0, dependencyMapped=0.
 
-### `global-agent-skills`
-
-- Path: `~/.agents/skills`
-- Resolved path: `/Users/amichne/.agents/skills`
-- State: `MIXED_RETAIN_AND_COVERED`
-- Next action: Retain external groups and create replacement plans only for covered canonical groups that have explicit approval evidence.
-
-Evidence:
-
-- garden/manifests/discovered-primitives.json records entries for sourceRoot global-agent-skills.
-- garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=1 and retained=16 review groups.
-- garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=6, readyForApproval=0, reviewRequired=0, dependencyMapped=0.
-
 ### `global-codex-backups`
 
 - Path: `~/.codex/backups`
@@ -228,6 +215,32 @@ Evidence:
 - garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=21 and retained=19 review groups.
 - garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=13, executed=6, readyForApproval=0, reviewRequired=0, dependencyMapped=0.
 
+### `global-agent-skills`
+
+- Path: `~/.agents/skills`
+- Resolved path: `/Users/amichne/.agents/skills`
+- State: `PARTIAL_REPLACEMENT_READY`
+- Next action: Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement.
+
+Evidence:
+
+- garden/manifests/discovered-primitives.json records entries for sourceRoot global-agent-skills.
+- garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=1 and retained=16 review groups.
+- garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=6, readyForApproval=1, reviewRequired=0, dependencyMapped=0.
+
+### `global-codex-skills`
+
+- Path: `~/.codex/skills`
+- Resolved path: `/Users/amichne/.codex/skills`
+- State: `PARTIAL_REPLACEMENT_READY`
+- Next action: Review approval packets by name before changing cleanup-ledger status or executing any symlink replacement.
+
+Evidence:
+
+- garden/manifests/discovered-primitives.json records entries for sourceRoot global-codex-skills.
+- garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=0 and retained=19 review groups.
+- garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=1, reviewRequired=0, dependencyMapped=0.
+
 ### `examplar-plugins`
 
 - Path: `../examplar/plugins`
@@ -239,19 +252,6 @@ Evidence:
 
 - garden/manifests/discovered-primitives.json records entries for sourceRoot examplar-plugins.
 - garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=0 and retained=2 review groups.
-- garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0.
-
-### `global-codex-skills`
-
-- Path: `~/.codex/skills`
-- Resolved path: `/Users/amichne/.codex/skills`
-- State: `RETAIN_EXTERNAL_OWNER`
-- Next action: Leave this source root under its current owner unless a future review promotes a canonical replacement.
-
-Evidence:
-
-- garden/manifests/discovered-primitives.json records entries for sourceRoot global-codex-skills.
-- garden/manifests/source-review-decisions.json and garden/manifests/digest-review-decisions.json record covered=0 and retained=19 review groups.
 - garden/manifests/cleanup-ledger.json and garden/manifests/runtime-activation-approvals.json record proposed=0, executed=0, readyForApproval=0, reviewRequired=0, dependencyMapped=0.
 
 ### `kast-github-agents`

@@ -6,11 +6,11 @@ This generated report compares canonical primitive coverage with durable audit e
 
 | Measure | Value |
 |---|---:|
-| Total canonical | 49 |
-| Audited | 48 |
+| Total canonical | 50 |
+| Audited | 49 |
 | Needs audit | 1 |
 | Promoted | 30 |
-| Native canonical | 19 |
+| Native canonical | 20 |
 | All canonical audited | `false` |
 
 ## Needs Audit
@@ -44,9 +44,9 @@ This generated report compares canonical primitive coverage with durable audit e
 | `PLUGIN` | `kotlin-review` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
 | `PLUGIN` | `planning-and-docs` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
 | `PLUGIN` | `primitive-authoring` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
-| `PLUGIN` | `primitive-governance` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `PROMOTED` |
+| `PLUGIN` | `primitive-governance` | `PROMOTE_READY` | `STANDALONE_ONLY` | `PROMOTED` |
 | `PLUGIN` | `repository-orientation` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
-| `PLUGIN` | `runtime-activation` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `PROMOTED` |
+| `PLUGIN` | `runtime-activation` | `PROMOTE_READY` | `STANDALONE_ONLY` | `PROMOTED` |
 | `PLUGIN` | `schema-governance` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
 | `PLUGIN` | `tdd-workflow` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
 | `PLUGIN` | `version-control` | `PROMOTE_READY` | `MARKETPLACE_EXPOSED` | `NATIVE_CANONICAL` |
@@ -64,6 +64,7 @@ This generated report compares canonical primitive coverage with durable audit e
 | `SKILL` | `primitive-routing-evaluation` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |
 | `SKILL` | `reference-doc-workflow` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |
 | `SKILL` | `repo-instruction-topology` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |
+| `SKILL` | `repository-onboarding` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `NATIVE_CANONICAL` |
 | `SKILL` | `repository-signature-indexing` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |
 | `SKILL` | `runtime-linking` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |
 | `SKILL` | `shell-script-safety` | `PROMOTE_READY` | `PLUGIN_COMPOSED` | `PROMOTED` |

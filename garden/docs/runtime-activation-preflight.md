@@ -7,9 +7,9 @@ This generated report inspects dry-run activation operations against the current
 | Measure | Value |
 |---|---:|
 | Total entries | 18 |
-| Already active | 18 |
+| Already active | 15 |
 | Blocked | 0 |
-| Ready for approval | 0 |
+| Ready for approval | 3 |
 | Review required | 0 |
 | Runtime mutation allowed | `false` |
 
@@ -17,11 +17,8 @@ This generated report inspects dry-run activation operations against the current
 
 | Status | Type | Name | Source | Target | Reasons |
 |---|---|---|---|---|---|
-| `ALREADY_ACTIVE` | `ACTIVATE_RUNTIME_LINK` | `agent-skill-children` | `/Users/amichne/code/intelligence/skills` | `/Users/amichne/.agents/skills` | Runtime target already links every source child to the canonical source. |
 | `ALREADY_ACTIVE` | `ACTIVATE_RUNTIME_LINK` | `claude-agent-children` | `/Users/amichne/code/intelligence/agents` | `/Users/amichne/.claude/agents` | Runtime target already links every source child to the canonical source. |
 | `ALREADY_ACTIVE` | `ACTIVATE_RUNTIME_LINK` | `codex-hook-adapters` | `/Users/amichne/code/intelligence/hooks/codex` | `/Users/amichne/.codex/hooks` | Runtime target already links every source child to the canonical source. |
-| `ALREADY_ACTIVE` | `ACTIVATE_RUNTIME_LINK` | `codex-skill-children` | `/Users/amichne/code/intelligence/skills` | `/Users/amichne/.codex/skills` | Runtime target already links every source child to the canonical source. |
-| `ALREADY_ACTIVE` | `IMPORT_MARKETPLACE` | `codex-app-marketplace` | `/Users/amichne/code/intelligence/marketplace.json` | `codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json` | Marketplace source is already configured in Codex. |
 | `ALREADY_ACTIVE` | `REPLACE_SOURCE_WITH_SYMLINK` | `replace-apollo-skills-agent-profile-authoring` | `/Users/amichne/code/intelligence/skills/agent-profile-authoring` | `/Users/amichne/code/apollo/skills/agent-profile-authoring` | Replacement target already resolves to the canonical source. |
 | `ALREADY_ACTIVE` | `REPLACE_SOURCE_WITH_SYMLINK` | `replace-apollo-skills-github-ci-operations` | `/Users/amichne/code/intelligence/skills/github-ci-operations` | `/Users/amichne/code/apollo/skills/github-ci-operations` | Replacement target already resolves to the canonical source. |
 | `ALREADY_ACTIVE` | `REPLACE_SOURCE_WITH_SYMLINK` | `replace-apollo-skills-hook-primitive-authoring` | `/Users/amichne/code/intelligence/skills/hook-primitive-authoring` | `/Users/amichne/code/apollo/skills/hook-primitive-authoring` | Replacement target already resolves to the canonical source. |
@@ -35,16 +32,16 @@ This generated report inspects dry-run activation operations against the current
 | `ALREADY_ACTIVE` | `REPLACE_SOURCE_WITH_SYMLINK` | `replace-apollo-skills-site-docs-authoring` | `/Users/amichne/code/intelligence/skills/site-docs-authoring` | `/Users/amichne/code/apollo/skills/site-docs-authoring` | Replacement target already resolves to the canonical source. |
 | `ALREADY_ACTIVE` | `REPLACE_SOURCE_WITH_SYMLINK` | `replace-apollo-skills-skill-primitive-authoring` | `/Users/amichne/code/intelligence/skills/skill-primitive-authoring` | `/Users/amichne/code/apollo/skills/skill-primitive-authoring` | Replacement target already resolves to the canonical source. |
 | `ALREADY_ACTIVE` | `REPLACE_SOURCE_WITH_SYMLINK` | `replace-apollo-skills-source-graph-consolidation` | `/Users/amichne/code/intelligence/skills/source-graph-consolidation` | `/Users/amichne/code/apollo/skills/source-graph-consolidation` | Replacement target already resolves to the canonical source. |
+| `READY_FOR_APPROVAL` | `ACTIVATE_RUNTIME_LINK` | `agent-skill-children` | `/Users/amichne/code/intelligence/skills` | `/Users/amichne/.agents/skills` | Runtime source and target directory exist; approval is still required before linking children. |
+| `READY_FOR_APPROVAL` | `ACTIVATE_RUNTIME_LINK` | `codex-skill-children` | `/Users/amichne/code/intelligence/skills` | `/Users/amichne/.codex/skills` | Runtime source exists and target resolves through a symlinked directory; approval is still required before linking children into the resolved target. |
+| `READY_FOR_APPROVAL` | `IMPORT_MARKETPLACE` | `codex-app-marketplace` | `/Users/amichne/code/intelligence/marketplace.json` | `codex://plugins?marketplacePath=/Users/amichne/code/intelligence/marketplace.json` | Marketplace file exists; manual import still requires user action. |
 
 ## Path Details
 
 | Name | Source Kind | Target Kind | Backup Kind |
 |---|---|---|---|
-| `agent-skill-children` | `DIRECTORY` | `DIRECTORY` | `-` |
 | `claude-agent-children` | `DIRECTORY` | `DIRECTORY` | `-` |
 | `codex-hook-adapters` | `DIRECTORY` | `DIRECTORY` | `-` |
-| `codex-skill-children` | `DIRECTORY` | `SYMLINK` | `-` |
-| `codex-app-marketplace` | `FILE` | `VIRTUAL` | `-` |
 | `replace-apollo-skills-agent-profile-authoring` | `DIRECTORY` | `SYMLINK` | `MISSING` |
 | `replace-apollo-skills-github-ci-operations` | `DIRECTORY` | `SYMLINK` | `MISSING` |
 | `replace-apollo-skills-hook-primitive-authoring` | `DIRECTORY` | `SYMLINK` | `MISSING` |
@@ -58,3 +55,6 @@ This generated report inspects dry-run activation operations against the current
 | `replace-apollo-skills-site-docs-authoring` | `DIRECTORY` | `SYMLINK` | `MISSING` |
 | `replace-apollo-skills-skill-primitive-authoring` | `DIRECTORY` | `SYMLINK` | `MISSING` |
 | `replace-apollo-skills-source-graph-consolidation` | `DIRECTORY` | `SYMLINK` | `MISSING` |
+| `agent-skill-children` | `DIRECTORY` | `DIRECTORY` | `-` |
+| `codex-skill-children` | `DIRECTORY` | `SYMLINK` | `-` |
+| `codex-app-marketplace` | `FILE` | `VIRTUAL` | `-` |

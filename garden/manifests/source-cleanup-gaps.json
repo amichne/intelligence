@@ -394,7 +394,7 @@
         "type": "SOURCE_CLEANUP_PRIMITIVE"
       },
       "reason": "This entry is already in the canonical source root.",
-      "sha256": "sha256:9778af6a8b476f41413c8fe42acec3b8e92173e115fde92f459fe4ed557abf3a",
+      "sha256": "sha256:e609cb384e59a912fa0959b2232893cadb92fbd9cea9e9cef09408e605a6468a",
       "sourcePath": "AGENTS.md",
       "sourceRoot": "intelligence",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
@@ -520,7 +520,7 @@
         "type": "SOURCE_CLEANUP_PRIMITIVE"
       },
       "reason": "This entry is already in the canonical source root.",
-      "sha256": "sha256:6068bed4f9c4c451823ed6c77b71a15ab5e4eef03bf65f03c30b5e37d62e3260",
+      "sha256": "sha256:3bd77189afabf0a61f60ca51cd971ae8d20072e4bc2d97a8f2c0f20a90ed7d4a",
       "sourcePath": "plugins/intelligence-core",
       "sourceRoot": "intelligence",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
@@ -583,7 +583,7 @@
         "type": "SOURCE_CLEANUP_PRIMITIVE"
       },
       "reason": "This entry is already in the canonical source root.",
-      "sha256": "sha256:df4738c0304595ac79b680824400f09c6535b76918097708d3abf875db5e9982",
+      "sha256": "sha256:60e1a8e52652e94eba100e3d47cb013754fe3d627509a112c7ef53920db10975",
       "sourcePath": "plugins/primitive-authoring",
       "sourceRoot": "intelligence",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
@@ -1005,6 +1005,27 @@
       "reason": "This entry is already in the canonical source root.",
       "sha256": "sha256:d626a5c56e54391d1d407559e1ab596053094fbe0a1e32439eb672dd19d756a9",
       "sourcePath": "skills/repo-instruction-topology",
+      "sourceRoot": "intelligence",
+      "type": "SOURCE_CLEANUP_GAP_ENTRY"
+    },
+    {
+      "cleanupState": "CANONICAL_OWNER",
+      "evidence": [
+        {
+          "decision": "CANONICAL_OWNER",
+          "source": "source-root-decision",
+          "type": "SOURCE_CLEANUP_GAP_EVIDENCE"
+        }
+      ],
+      "observedPath": "/Users/amichne/code/intelligence/skills/repository-onboarding/SKILL.md",
+      "primitive": {
+        "name": "repository-onboarding",
+        "primitiveType": "SKILL",
+        "type": "SOURCE_CLEANUP_PRIMITIVE"
+      },
+      "reason": "This entry is already in the canonical source root.",
+      "sha256": "sha256:d8b6ea39b92c2776b4870f8d1b5660a8cf985ed9feee5b17bea1206820e1a32a",
+      "sourcePath": "skills/repository-onboarding",
       "sourceRoot": "intelligence",
       "type": "SOURCE_CLEANUP_GAP_ENTRY"
     },
@@ -18303,7 +18324,7 @@
   },
   "schemaVersion": 1,
   "summary": {
-    "canonicalOwner": 55,
+    "canonicalOwner": 56,
     "cleanupLedgerEntry": 79,
     "digestRetained": 0,
     "needsCleanupProposal": 0,
@@ -18312,7 +18333,7 @@
     "rootRetained": 702,
     "rootReviewRequired": 0,
     "sourceRetained": 25,
-    "totalEntries": 868,
+    "totalEntries": 869,
     "type": "SOURCE_CLEANUP_GAP_SUMMARY"
   },
   "type": "SOURCE_CLEANUP_GAP_REPORT"

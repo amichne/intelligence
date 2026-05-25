@@ -348,7 +348,7 @@
       "canonicalPaths": [
         "plugins/primitive-governance"
       ],
-      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "coverageStatus": "STANDALONE_ONLY",
       "notes": "Primitive has a durable audit entry in garden/manifests/primitive-audits.json.",
       "primitive": {
         "name": "primitive-governance",
@@ -380,7 +380,7 @@
       "canonicalPaths": [
         "plugins/runtime-activation"
       ],
-      "coverageStatus": "MARKETPLACE_EXPOSED",
+      "coverageStatus": "STANDALONE_ONLY",
       "notes": "Primitive has a durable audit entry in garden/manifests/primitive-audits.json.",
       "primitive": {
         "name": "runtime-activation",
@@ -666,6 +666,22 @@
       "auditDecision": "PROMOTE_READY",
       "auditState": "AUDITED",
       "canonicalPaths": [
+        "skills/repository-onboarding"
+      ],
+      "coverageStatus": "PLUGIN_COMPOSED",
+      "notes": "Primitive has a durable audit entry in garden/manifests/primitive-audits.json.",
+      "primitive": {
+        "name": "repository-onboarding",
+        "primitiveType": "SKILL",
+        "type": "PRIMITIVE_TARGET"
+      },
+      "promotionState": "NATIVE_CANONICAL",
+      "type": "REVIEW_COMPLETENESS_ENTRY"
+    },
+    {
+      "auditDecision": "PROMOTE_READY",
+      "auditState": "AUDITED",
+      "canonicalPaths": [
         "skills/repository-signature-indexing"
       ],
       "coverageStatus": "PLUGIN_COMPOSED",
@@ -799,11 +815,11 @@
   "schemaVersion": 1,
   "summary": {
     "allCanonicalAudited": false,
-    "audited": 48,
-    "nativeCanonical": 19,
+    "audited": 49,
+    "nativeCanonical": 20,
     "needsAudit": 1,
     "promoted": 30,
-    "totalCanonical": 49,
+    "totalCanonical": 50,
     "type": "REVIEW_COMPLETENESS_SUMMARY"
   },
   "type": "REVIEW_COMPLETENESS_REPORT"
