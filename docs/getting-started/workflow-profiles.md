@@ -13,8 +13,10 @@ bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default
 ```
 
 The default profile uses the generated marketplace branch and selects
-`intelligence-core`, `kotlin-review`, and `version-control` with Codex hook
-adapters.
+`intelligence-core` plus `kotlin-tdd-development` with Codex hook adapters. That
+pulls in Kotlin standards, TDD, Gradle validation, type-safety and
+schema-driven-design concepts, PR lifecycle guidance, and the Kotlin layout and
+Gradle green-check hooks.
 
 ## Dry-Run Installation
 

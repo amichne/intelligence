@@ -1,0 +1,29 @@
+{
+  "type": "HOOK",
+  "source": {
+    "type": "LOCAL_SOURCE",
+    "path": "./"
+  },
+  "path": "hooks/codex/gradle-check-green.hooks.json",
+  "name": "gradle-check-green",
+  "dependsOn": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-gradle-validation",
+      "name": "kotlin-gradle-validation"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/tdd",
+      "name": "tdd"
+    }
+  ]
+}

@@ -15,7 +15,7 @@ templates, or examples next to the entrypoint.
 | Documentation and planning | `define-goal`, `reference-doc-workflow`, `site-docs-authoring`. |
 | Kotlin and validation | `kotlin-standards`, `kotlin-gradle-validation`, `manage-json-schemas`, `tdd`. |
 | OpenAPI | `openapi-schema-modeling`, `openapi-contract-authoring`, `openapi-contract-rating`. |
-| Version control | `git-change-flow`, `github-ci-operations`. |
+| Version control | `git-change-flow`, `github-ci-operations`, `pull-request-lifecycle`. |
 
 ## Agent Profiles
 
@@ -41,6 +41,7 @@ live under provider folders such as `hooks/codex/`.
 | `agents-md-turn-refresh` | Refreshes scoped agent instructions at turn boundaries. |
 | `required-skill-read` | Checks that required skill instructions were read when configured. |
 | `kotlin-horizontalization-check` | Guards Kotlin layout and package horizontalization expectations. |
+| `gradle-check-green` | Runs the repository Gradle wrapper when Kotlin or Gradle-owned files changed. |
 
 !!! note "Provider boundary"
     Keep provider-neutral hook metadata separate from adapter-specific matcher

@@ -57,6 +57,32 @@
     },
     {
       "type": "PLUGIN_ENTRY",
+      "name": "kotlin-tdd-development",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "kotlin-tdd-development",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/kotlin-tdd-development"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Kotlin TDD, strict type and schema boundaries, Gradle green checks, and PR lifecycle workflows.",
+      "tags": [
+        "agents",
+        "ci",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "pull-requests",
+        "schemas",
+        "skills",
+        "tdd",
+        "validation"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
       "name": "primitive-authoring",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
@@ -355,6 +381,15 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
+      "path": "skills/pull-request-lifecycle",
+      "name": "pull-request-lifecycle"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
       "path": "skills/kotlin-standards",
       "name": "kotlin-standards"
     },
@@ -516,6 +551,15 @@
       },
       "path": "hooks/kotlin-horizontalization-check.hook.json",
       "name": "kotlin-horizontalization-check"
+    },
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/gradle-check-green.hook.json",
+      "name": "gradle-check-green"
     }
   ],
   "metadata": {
