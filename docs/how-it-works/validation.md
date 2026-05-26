@@ -35,6 +35,10 @@ node scripts/validate-manifests.mjs --portable
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
 ```
 
+Hydrated validation also checks runtime adapter files that are not JSON schemas.
+Codex plugin payloads that contain bundled agent profiles or instruction
+primitives must include a generated `AGENTS.md` adapter.
+
 ## Focused Checks
 
 Run the narrow check that matches the changed surface.

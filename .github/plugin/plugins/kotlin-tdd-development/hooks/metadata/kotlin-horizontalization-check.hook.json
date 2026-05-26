@@ -1,0 +1,29 @@
+{
+  "type": "HOOK",
+  "source": {
+    "type": "LOCAL_SOURCE",
+    "path": "./"
+  },
+  "path": "hooks/codex/kotlin-horizontalization-check.hooks.json",
+  "name": "kotlin-horizontalization-check",
+  "dependsOn": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-standards",
+      "name": "kotlin-standards"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+      "name": "kotlin-package-cohesion-reviewer"
+    }
+  ]
+}

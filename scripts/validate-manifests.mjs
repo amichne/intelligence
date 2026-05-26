@@ -86,6 +86,7 @@ if (options.portable) {
 
 failures += validateNodeDependencyManifests();
 failures += validateSchemaDocuments();
+failures += validateHydratedInstructionAdapters(options.hydrated);
 failures += validateJsonCoverage();
 
 if (failures > 0) {
@@ -346,6 +347,72 @@ function validateSchemaDocuments() {
     }
   }
   return failures;
+}
+
+function validateHydratedInstructionAdapters(directory) {
+  if (!directory) {
+    return 0;
+  }
+
+  const pluginRoot = path.join(directory, "codex", "plugins");
+  if (!fs.existsSync(pluginRoot)) {
+    return 0;
+  }
+
+  let failures = 0;
+  for (const pluginDir of fs.readdirSync(pluginRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(pluginRoot, entry.name))
+    .sort()) {
+    const hasAgentProfiles = hasFilesRecursive(path.join(pluginDir, "agents"));
+    const hasInstructions = hasFilesRecursive(path.join(pluginDir, "instructions"));
+    if (!hasAgentProfiles && !hasInstructions) {
+      continue;
+    }
+
+    const agentsPath = path.join(pluginDir, "AGENTS.md");
+    if (!fs.existsSync(agentsPath)) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, pluginDir)}: missing AGENTS.md adapter for hydrated agents/instructions`
+      );
+      failures += 1;
+      continue;
+    }
+
+    const content = fs.readFileSync(agentsPath, "utf8");
+    if (!content.includes("generated adapter") || !content.includes("Runtime Boundary")) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, agentsPath)}: AGENTS.md adapter must identify its generated runtime boundary`
+      );
+      failures += 1;
+      continue;
+    }
+
+    console.log(`OK ${path.relative(repoRoot, agentsPath)}`);
+  }
+  return failures;
+}
+
+function hasFilesRecursive(directory) {
+  if (!fs.existsSync(directory)) {
+    return false;
+  }
+
+  const stack = [directory];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    for (const entry of fs.readdirSync(current, { withFileTypes: true })) {
+      const entryPath = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(entryPath);
+        continue;
+      }
+      if (entry.isFile()) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 function validateJsonCoverage() {

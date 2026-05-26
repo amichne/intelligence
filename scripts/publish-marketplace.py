@@ -151,6 +151,13 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
             github_copilot_plugin_out,
             plugin_manifest,
         )
+        render_agents_md_adapter(codex_plugin_out, plugin_name, description, codex_hydrated)
+        render_agents_md_adapter(
+            github_copilot_plugin_out,
+            plugin_name,
+            description,
+            github_copilot_hydrated,
+        )
 
         codex_marketplace["plugins"].append(
             {
@@ -314,6 +321,79 @@ def hydrate_plugin(repo_root: Path, plugin_out: Path, plugin_manifest: dict[str,
         hydrated[key] = sorted(hydrated[key])
     hydrated["references"].sort(key=lambda item: (item["type"], item["sourcePath"], item["targetPath"]))
     return hydrated
+
+
+def render_agents_md_adapter(
+    plugin_out: Path,
+    plugin_name: str,
+    description: str,
+    hydrated: dict[str, Any],
+) -> None:
+    if not hydrated["agents"] and not hydrated["instructions"]:
+        return
+
+    references_by_type: dict[str, list[dict[str, Any]]] = {
+        primitive_type: [
+            reference
+            for reference in hydrated["references"]
+            if reference["type"] == primitive_type
+        ]
+        for primitive_type in ("INSTRUCTION", "AGENT", "SKILL", "HOOK")
+    }
+
+    lines = [
+        f"# {title_case(plugin_name)} Plugin Instructions",
+        "",
+        "## Scope",
+        "",
+        (
+            f"This generated adapter applies to the `{plugin_name}` plugin payload. "
+            "Do not edit it directly; update the provider-neutral primitives or "
+            "plugin manifest, then regenerate the marketplace output."
+        ),
+        "",
+        "## Runtime Boundary",
+        "",
+        (
+            "The source graph keeps skills, agent profiles, instructions, concepts, "
+            "and hooks as independent primitives. This `AGENTS.md` adapts bundled "
+            "agent and instruction primitives into a plain instruction file for "
+            "runtimes that do not expose those primitive kinds directly."
+        ),
+        "",
+        "## Plugin Intent",
+        "",
+        description,
+        "",
+        "## Operating Rules",
+        "",
+        "- Treat this file as an adapter, not a new source of truth.",
+        "- Use bundled skills for step-by-step workflows.",
+        "- Apply bundled instructions as normative guidance when their scope matches the task.",
+        "- Treat bundled agent profiles as review criteria or focused review passes.",
+        "- Keep hook behavior in bundled hook files and runtime adapter configs.",
+        "- When guidance conflicts with the target repository's nearest `AGENTS.md`, follow the target repository unless the user explicitly chooses this plugin's rule.",
+        "",
+    ]
+
+    append_reference_section(lines, "Instruction Primitives", references_by_type["INSTRUCTION"])
+    append_reference_section(lines, "Agent Profile Primitives", references_by_type["AGENT"])
+    append_reference_section(lines, "Skill Primitives", references_by_type["SKILL"])
+    append_reference_section(lines, "Hook Primitives", references_by_type["HOOK"])
+
+    (plugin_out / "AGENTS.md").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
+
+
+def append_reference_section(lines: list[str], title: str, references: list[dict[str, Any]]) -> None:
+    if not references:
+        return
+    lines.extend([f"## {title}", ""])
+    for reference in references:
+        lines.append(
+            f"- `{reference['name']}`: `{reference['targetPath']}` "
+            f"(source: `{reference['sourcePath']}`)"
+        )
+    lines.append("")
 
 
 def copy_primitive(
@@ -599,7 +679,22 @@ def short_description(description: str) -> str:
 
 
 def title_case(value: str) -> str:
-    return " ".join(part.capitalize() for part in value.replace("_", "-").split("-") if part)
+    acronyms = {
+        "api": "API",
+        "ci": "CI",
+        "cli": "CLI",
+        "github": "GitHub",
+        "json": "JSON",
+        "pr": "PR",
+        "prs": "PRs",
+        "tdd": "TDD",
+        "yaml": "YAML",
+    }
+    return " ".join(
+        acronyms.get(part.lower(), part.capitalize())
+        for part in value.replace("_", "-").split("-")
+        if part
+    )
 
 
 if __name__ == "__main__":

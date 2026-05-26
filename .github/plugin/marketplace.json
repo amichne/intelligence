@@ -73,6 +73,46 @@
       "version": "0.1.0"
     },
     {
+      "agents": "./agents",
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Kotlin TDD, strict type and schema boundaries, Gradle green checks, and PR lifecycle workflows composed from independent primitives.",
+      "hooks": "./hooks",
+      "keywords": [
+        "agents",
+        "ci",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "kotlin-tdd-development",
+        "pull-requests",
+        "schemas",
+        "skills",
+        "tdd",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "kotlin-tdd-development",
+      "skills": "./skills",
+      "source": "./plugins/kotlin-tdd-development",
+      "strict": true,
+      "tags": [
+        "agents",
+        "ci",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "pull-requests",
+        "schemas",
+        "skills",
+        "tdd",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
       "author": {
         "name": "Amichne"
       },

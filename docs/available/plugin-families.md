@@ -11,6 +11,7 @@ These families are exposed through `marketplace.json`.
 |---|---|
 | `intelligence-core` | Repository onboarding, portable principles, and core hook primitives. |
 | `kotlin-review` | Kotlin standards, Gradle validation, review agents, and layout checks. |
+| `kotlin-tdd-development` | Kotlin TDD, strict type/schema boundaries, Gradle green checks, and PR lifecycle workflows. |
 | `primitive-authoring` | Skill, agent, hook, shell script, schema, and plugin authoring workflows. |
 | `repository-orientation` | Repository boundary mapping, scoped instruction authoring, and signature indexing. |
 | `planning-and-docs` | Goal-definition and reference-document workflows. |

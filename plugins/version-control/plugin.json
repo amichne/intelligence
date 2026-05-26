@@ -22,6 +22,15 @@
       },
       "path": "skills/github-ci-operations",
       "name": "github-ci-operations"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/pull-request-lifecycle",
+      "name": "pull-request-lifecycle"
     }
   ],
   "agents": [],

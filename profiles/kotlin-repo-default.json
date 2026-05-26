@@ -2,7 +2,7 @@
   "type": "WORKFLOW_PROFILE",
   "schemaVersion": 1,
   "name": "kotlin-repo-default",
-  "description": "Default Kotlin repository workflow using Intelligence onboarding, review, version-control, and Codex hook adapters.",
+  "description": "Default Kotlin repository workflow using Intelligence onboarding, Kotlin TDD development, PR lifecycle, and Codex hook adapters.",
   "marketplaces": [
     {
       "type": "WORKFLOW_MARKETPLACE",
@@ -15,8 +15,7 @@
   ],
   "plugins": [
     "intelligence-core",
-    "kotlin-review",
-    "version-control"
+    "kotlin-tdd-development"
   ],
   "hooks": [
     {
@@ -32,6 +31,11 @@
     {
       "type": "WORKFLOW_HOOK",
       "name": "kotlin-horizontalization-check",
+      "adapter": "codex"
+    },
+    {
+      "type": "WORKFLOW_HOOK",
+      "name": "gradle-check-green",
       "adapter": "codex"
     }
   ],
