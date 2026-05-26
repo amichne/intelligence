@@ -1,6 +1,6 @@
 ---
-name: skill-primitive-authoring
-description: Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills.
+name: "skill-primitive-authoring"
+description: "Create, revise, consolidate, or evaluate reusable skill primitives while keeping them host-neutral, compact, reference-driven, and independently useful without any plugin. Use when turning repeated agent work into a skill, splitting skill details into references/scripts, evaluating skill usefulness, or reducing overlap between existing skills."
 ---
 
 # Skill Primitive Authoring

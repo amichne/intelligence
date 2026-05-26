@@ -1,11 +1,6 @@
 ---
-name: tdd
-description: >
-  Language-agnostic test-driven development with red-green-refactor and
-  evidence-based handoff discipline. Use when the user wants to build features
-  or fix bugs using TDD, mentions red-green-refactor, wants integration tests,
-  asks for test-first development, says "write tests first", or wants a
-  resumable implementation loop with clear proof artifacts.
+name: "tdd"
+description: "Language-agnostic test-driven development with red-green-refactor and evidence-based handoff discipline. Use when the user wants to build features or fix bugs using TDD, mentions red-green-refactor, wants integration tests, asks for test-first development, says \"write tests first\", or wants a resumable implementation loop with clear proof artifacts."
 ---
 
 # Test-Driven Development

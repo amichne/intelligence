@@ -1,13 +1,6 @@
 ---
-name: kotlin-standards
-description: >
-  Use when writing, reviewing, or refactoring Kotlin code that benefits from
-  type-driven design, parse-don't-validate boundaries, scoped package/file
-  layout, Kotlin-native expression style, immutable state, explicit errors,
-  coroutine safety, API design, or correctness-focused tests. Trigger for
-  Kotlin implementation work, domain modeling, API review, primitive
-  obsession, null-heavy logic, boolean flags, validation-heavy code, or package
-  cohesion concerns.
+name: "kotlin-standards"
+description: "Use when writing, reviewing, or refactoring Kotlin code that benefits from type-driven design, parse-don't-validate boundaries, scoped package/file layout, Kotlin-native expression style, immutable state, explicit errors, coroutine safety, API design, or correctness-focused tests. Trigger for Kotlin implementation work, domain modeling, API review, primitive obsession, null-heavy logic, boolean flags, validation-heavy code, or package cohesion concerns."
 ---
 
 # Kotlin Standards

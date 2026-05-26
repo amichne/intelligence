@@ -1,6 +1,6 @@
 ---
-name: repository-signature-indexing
-description: Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation.
+name: "repository-signature-indexing"
+description: "Create or maintain compact repository signature indexes that help agents route source reads without opening every file. Use when a codebase needs generated type or symbol summaries, JVM fully qualified names, deterministic source maps, or drift checks for signature-level documentation."
 ---
 
 # Repository Signature Indexing

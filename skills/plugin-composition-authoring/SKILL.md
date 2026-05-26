@@ -1,6 +1,6 @@
 ---
-name: plugin-composition-authoring
-description: Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into direct primitive references.
+name: "plugin-composition-authoring"
+description: "Create, revise, or validate referential plugin manifests that compose existing skills, agents, hooks, and concepts without owning those primitives. Use when adding a plugin family, updating marketplace entries, checking plugin references, or converting payload-style plugin bundles into direct primitive references."
 ---
 
 # Plugin Composition Authoring

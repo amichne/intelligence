@@ -1,6 +1,6 @@
 ---
-name: reference-doc-workflow
-description: Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name.
+name: "reference-doc-workflow"
+description: "Guide users through a structured workflow for shaping documentation, proposals, technical specs, decision docs, RFCs, and other agent-readable reference material. Use when the user wants to write, revise, organize, or reader-test a substantial document with a local non-first-party skill name."
 ---
 
 # Reference Doc Workflow

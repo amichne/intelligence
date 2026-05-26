@@ -1,6 +1,6 @@
 ---
-name: github-ci-operations
-description: Triage and fix GitHub Actions failures, maintain GitHub workflow files, inspect PR checks with gh, design CI jobs, and handle release-oriented GitHub automation. Use for GitHub CI, Actions YAML, failing PR checks, workflow dispatch, caches, artifacts, secrets, permissions, and release pipelines.
+name: "github-ci-operations"
+description: "Triage and fix GitHub Actions failures, maintain GitHub workflow files, inspect PR checks with gh, design CI jobs, and handle release-oriented GitHub automation. Use for GitHub CI, Actions YAML, failing PR checks, workflow dispatch, caches, artifacts, secrets, permissions, and release pipelines."
 ---
 
 # GitHub CI Operations

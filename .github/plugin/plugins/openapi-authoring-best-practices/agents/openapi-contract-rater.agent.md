@@ -37,6 +37,8 @@ admits invalid, ambiguous, under-described, or untyped API states.
   the contract when a schema or generator should own the boundary.
 - Do not broaden a schema to match incidental producer behavior unless a real
   compatibility boundary is named.
+- Do not accept `null` as a domain signal in a final OpenAPI contract. Require
+  omission, explicit variants, enums, or typed commands instead.
 - Do not claim full correctness when validation, generation, or published
   baseline evidence is unavailable.
 - Stay on OpenAPI contract quality. Defer unrelated implementation,
@@ -49,6 +51,9 @@ admits invalid, ambiguous, under-described, or untyped API states.
   authority.
 - Prefer required fields, closed objects, named constrained primitives,
   examples, and discriminated variants over loose objects and prose-only rules.
+- Treat `nullable`, `default: null`, `type` arrays containing `null`, examples
+  with `null`, and descriptions that assign meaning to `null` as contract
+  weaknesses.
 - Use `type` as the discriminator field unless an existing external contract
   requires a different tag.
 - Prefer OpenAPI 3.1 or newer schema semantics when the local toolchain supports
@@ -85,6 +90,8 @@ admits invalid, ambiguous, under-described, or untyped API states.
    - Objects are closed unless extension is intentional and typed.
    - Identifiers, modes, statuses, cursors, and error codes are named and
      constrained.
+   - No final request, response, schema default, or example uses `null` to mean
+     unknown, cleared, inherited, pending, not applicable, or use default.
 
 4. Variant modeling
    - Finite families use `oneOf` with a required discriminator.

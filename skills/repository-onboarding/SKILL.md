@@ -1,6 +1,6 @@
 ---
-name: repository-onboarding
-description: Set up a repository for marketplace-driven AI tooling. Use when onboarding a new repo, refreshing a checked-in marketplace reference, installing core marketplace plugins, or documenting which configured marketplaces should be available by default.
+name: "repository-onboarding"
+description: "Set up a repository for marketplace-driven AI tooling. Use when onboarding a new repo, refreshing a checked-in marketplace reference, installing core marketplace plugins, or documenting which configured marketplaces should be available by default."
 ---
 
 # Repository Onboarding

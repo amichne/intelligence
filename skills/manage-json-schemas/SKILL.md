@@ -1,6 +1,6 @@
 ---
-name: manage-json-schemas
-description: Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment.
+name: "manage-json-schemas"
+description: "Create, extract, persist, validate, update, and lifecycle JSON Schema contracts with granular examples and validator-backed checks. Use when Codex needs one authoritative workflow for schema assets, incoming JSON payload shape assertions, schema evolution, custom formats, discriminator conventions, schema-tree policy, hook enforcement, or type-safety-driven JSON contract design. Enforces `type` as the discriminator field, discriminator schemas as `enum`, discriminator values as CAPS_CASE, hierarchical discriminator nesting, and schema file-tree alignment."
 ---
 
 # Manage JSON Schemas

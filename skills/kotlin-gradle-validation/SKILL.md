@@ -1,6 +1,6 @@
 ---
-name: kotlin-gradle-validation
-description: Iterate on Kotlin, JVM, and Gradle projects with structured build evidence. Use when running Gradle tasks, fixing failing tests, reading JUnit or JaCoCo reports, diagnosing Kotlin compilation or incremental-build problems, improving coverage, or getting a Kotlin/Gradle build green.
+name: "kotlin-gradle-validation"
+description: "Iterate on Kotlin, JVM, and Gradle projects with structured build evidence. Use when running Gradle tasks, fixing failing tests, reading JUnit or JaCoCo reports, diagnosing Kotlin compilation or incremental-build problems, improving coverage, or getting a Kotlin/Gradle build green."
 ---
 
 # Kotlin Gradle Validation

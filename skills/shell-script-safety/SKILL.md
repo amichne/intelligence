@@ -1,6 +1,6 @@
 ---
-name: shell-script-safety
-description: Write, review, or harden Bash and shell automation used by hooks, CI, release scripts, installers, and local developer tooling. Use when shell scripts need predictable failure handling, quoting, dry-run boundaries, temporary-file cleanup, argument parsing, or safer destructive-operation guardrails.
+name: "shell-script-safety"
+description: "Write, review, or harden Bash and shell automation used by hooks, CI, release scripts, installers, and local developer tooling. Use when shell scripts need predictable failure handling, quoting, dry-run boundaries, temporary-file cleanup, argument parsing, or safer destructive-operation guardrails."
 ---
 
 # Shell Script Safety

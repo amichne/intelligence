@@ -1,6 +1,6 @@
 ---
-name: site-docs-authoring
-description: Create, revise, or restructure technical documentation sites that use MkDocs, Zensical, Material-style Markdown features, or similar docs-as-code navigation. Use when documentation work needs site config awareness, page structure, nav updates, generated-doc boundaries, or consistent prose across docs pages.
+name: "site-docs-authoring"
+description: "Create, revise, or restructure technical documentation sites that use MkDocs, Zensical, Material-style Markdown features, or similar docs-as-code navigation. Use when documentation work needs site config awareness, page structure, nav updates, generated-doc boundaries, or consistent prose across docs pages."
 ---
 
 # Site Docs Authoring

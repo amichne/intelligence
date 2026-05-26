@@ -1,6 +1,6 @@
 ---
-name: repo-instruction-topology
-description: Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces.
+name: "repo-instruction-topology"
+description: "Map a repository's working boundaries and create or revise scoped agent instruction files such as AGENTS.md. Use when introducing repo guidance, splitting a monolithic instruction file, documenting generated/manual edit boundaries, or aligning local instructions with build, test, codegen, docs, plugin, hook, schema, or deployment surfaces."
 ---
 
 # Repo Instruction Topology

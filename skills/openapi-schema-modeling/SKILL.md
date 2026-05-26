@@ -1,6 +1,6 @@
 ---
-name: openapi-schema-modeling
-description: Design OpenAPI component schemas with discriminated variants, constrained primitives, subtype/composition choices, nullability, examples, and invalid-state prevention.
+name: "openapi-schema-modeling"
+description: "Design OpenAPI component schemas with discriminated variants, constrained primitives, subtype/composition choices, nullability, examples, and invalid-state prevention."
 ---
 
 # OpenAPI Schema Modeling

@@ -1,10 +1,6 @@
 ---
-name: pull-request-lifecycle
-description: >
-  Manage a change from local branch through pull request and green checks. Use
-  when the user asks to create a feature branch, commit and push work, open or
-  raise a pull request, convert a draft PR to ready for review, monitor checks,
-  babysit CI until green, or repair a PR after failed checks.
+name: "pull-request-lifecycle"
+description: "Manage a change from local branch through pull request and green checks. Use when the user asks to create a feature branch, commit and push work, open or raise a pull request, convert a draft PR to ready for review, monitor checks, babysit CI until green, or repair a PR after failed checks."
 ---
 
 # Pull Request Lifecycle
