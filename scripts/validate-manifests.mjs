@@ -417,7 +417,11 @@ function validateHydratedInstructionAdapters(directory) {
 }
 
 function hydratedPluginDirs(directory) {
-  return [path.join(directory, "codex", "plugins"), path.join(directory, "plugins")]
+  return [
+    path.join(directory, "codex", "plugins"),
+    path.join(directory, ".github", "plugin", "plugins"),
+    path.join(directory, "plugins")
+  ]
     .filter((pluginRoot) => fs.existsSync(pluginRoot))
     .flatMap((pluginRoot) =>
       fs.readdirSync(pluginRoot, { withFileTypes: true })

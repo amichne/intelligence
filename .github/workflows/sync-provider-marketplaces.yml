@@ -68,3 +68,9 @@ jobs:
 
       - name: Validate Codex marketplace payload
         run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
+
+      - name: Materialize GitHub marketplace
+        run: python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
+
+      - name: Validate GitHub marketplace payload
+        run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace

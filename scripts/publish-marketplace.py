@@ -20,6 +20,8 @@ CODEX_BRANCH_MARKETPLACE_PATH = Path(".agents") / "plugins" / "marketplace.json"
 CODEX_BRANCH_PLUGINS_PATH = Path("plugins")
 CODEX_BRANCH_LOCK_PATH = Path("marketplace-lock.json")
 GITHUB_COPILOT_PROVIDER_PATH = Path(".github") / "plugin"
+GITHUB_BRANCH_MARKETPLACE_PATH = GITHUB_COPILOT_PROVIDER_PATH / "marketplace.json"
+GITHUB_BRANCH_PLUGINS_PATH = GITHUB_COPILOT_PROVIDER_PATH / "plugins"
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -39,18 +41,18 @@ def main() -> int:
     materialize.add_argument("--out", required=True, help="Output directory to replace.")
     materialize.add_argument(
         "--provider",
-        choices=["all", "codex"],
+        choices=["all", "codex", "github"],
         default="codex",
-        help="Materialize all provider projections or only the Codex marketplace root.",
+        help="Materialize all provider projections or one provider marketplace root.",
     )
 
     publish = subparsers.add_parser("publish-branch")
-    publish.add_argument("--branch", default="codex")
+    publish.add_argument("--branch")
     publish.add_argument(
         "--provider",
-        choices=["all", "codex"],
+        choices=["all", "codex", "github"],
         default="codex",
-        help="Publish all provider projections or only the Codex marketplace root.",
+        help="Publish all provider projections or one provider marketplace root.",
     )
     publish.add_argument("--no-push", action="store_true")
 
@@ -61,6 +63,7 @@ def main() -> int:
         materialize_marketplace(repo_root, Path(args.out).resolve(), provider=args.provider)
         return 0
 
+    branch = args.branch or default_branch_for_provider(args.provider)
     with tempfile.TemporaryDirectory(prefix="intelligence-marketplace-") as temp:
         temp_root = Path(temp)
         materialized = temp_root / "materialized"
@@ -85,15 +88,15 @@ def main() -> int:
             run(["git", "add", "-A"], worktree)
             run(["git", "commit", "-m", "Publish Intelligence Marketplace"], worktree)
             if not args.no_push:
-                run(["git", "push", "--force", "origin", f"HEAD:{args.branch}"], worktree)
+                run(["git", "push", "--force", "origin", f"HEAD:{branch}"], worktree)
         finally:
             subprocess.run(["git", "worktree", "remove", "--force", str(worktree)], cwd=repo_root)
             subprocess.run(["git", "worktree", "prune"], cwd=repo_root)
             subprocess.run(["git", "branch", "-D", local_branch], cwd=repo_root)
         if args.no_push:
-            print(f"prepared marketplace branch {args.branch} without pushing")
+            print(f"prepared marketplace branch {branch} without pushing")
         else:
-            print(f"published marketplace branch {args.branch}")
+            print(f"published marketplace branch {branch}")
         return 0
 
 
@@ -107,6 +110,14 @@ def materialize_marketplace(
 ) -> None:
     if provider == "codex":
         materialize_codex_marketplace(
+            repo_root,
+            out_root,
+            generated_at=generated_at,
+            source_sha=source_sha,
+        )
+        return
+    if provider == "github":
+        materialize_github_marketplace(
             repo_root,
             out_root,
             generated_at=generated_at,
@@ -329,6 +340,77 @@ def materialize_codex_marketplace(
         encoding="utf-8",
     )
     print(f"materialized Codex marketplace at {out_root}")
+
+
+def materialize_github_marketplace(
+    repo_root: Path,
+    out_root: Path,
+    *,
+    generated_at: str | None = None,
+    source_sha: str | None = None,
+) -> None:
+    if out_root == repo_root:
+        raise SystemExit("refusing to materialize over repository root")
+    if out_root.exists():
+        shutil.rmtree(out_root)
+    out_root.mkdir(parents=True)
+
+    marketplace = read_json(repo_root / ADAPTABLE_MARKETPLACE_PATH)
+    owner = marketplace.get("owner", {})
+    owner_name = owner.get("name", "Local developer")
+    marketplace_path = out_root / GITHUB_BRANCH_MARKETPLACE_PATH
+    plugins_root = out_root / GITHUB_BRANCH_PLUGINS_PATH
+    github_marketplace = {
+        "$schema": "github-marketplace.schema.json",
+        "name": marketplace["name"],
+        "owner": person_for(owner, owner_name),
+        "metadata": {
+            "description": marketplace.get("description", ""),
+            "pluginRoot": "./plugins",
+        },
+        "plugins": [],
+    }
+
+    for entry in marketplace.get("plugins", []):
+        plugin_ref = entry["plugin"]
+        source_path = Path(plugin_ref["source"]["path"])
+        plugin_manifest = read_json(repo_root / source_path / "plugin.json")
+        plugin_name = plugin_manifest["name"]
+        plugin_out = plugins_root / plugin_name
+        plugin_out.mkdir(parents=True, exist_ok=True)
+
+        description = (
+            plugin_manifest.get("description")
+            or entry.get("description")
+            or f"{plugin_name} plugin."
+        )
+        tags = entry.get("tags", [])
+        category = category_for(tags)
+        hydrated = hydrate_plugin(repo_root, plugin_out, plugin_manifest)
+        render_agents_md_adapter(plugin_out, plugin_name, description, hydrated)
+        github_marketplace["plugins"].append(
+            github_copilot_plugin_entry(
+                plugin_name=plugin_name,
+                description=description,
+                version=plugin_manifest.get("version", plugin_ref.get("version", "0.1.0")),
+                owner=person_for(owner, owner_name),
+                tags=tags,
+                category=category,
+                hydrated=hydrated,
+            )
+        )
+
+    write_json(marketplace_path, github_marketplace)
+    (out_root / "README.md").write_text(
+        "# Intelligence GitHub Marketplace\n\n"
+        "This branch is generated from the referential source graph on `main`.\n\n"
+        "GitHub marketplace consumers expect the marketplace manifest at "
+        "`.github/plugin/marketplace.json` and plugin payloads under "
+        "`.github/plugin/plugins/`. Each plugin payload is fully hydrated from "
+        "the provider-neutral primitives.\n",
+        encoding="utf-8",
+    )
+    print(f"materialized GitHub marketplace at {out_root}")
 
 
 def person_for(owner: dict[str, Any], fallback_name: str) -> dict[str, str]:
@@ -758,6 +840,14 @@ def digest_path(path: Path) -> str:
     else:
         hasher.update(path.read_bytes())
     return f"sha256:{hasher.hexdigest()}"
+
+
+def default_branch_for_provider(provider: str) -> str:
+    if provider == "github":
+        return "github"
+    if provider == "all":
+        return "marketplace"
+    return "codex"
 
 
 def category_for(tags: list[str]) -> str:
