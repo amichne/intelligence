@@ -7,18 +7,13 @@ on:
       - ".github/workflows/sync-provider-marketplaces.yml"
       - ".agents/**"
       - ".github/plugin/**"
-      - "agents/**"
-      - "concepts/**"
-      - "hooks/**"
-      - "adaptable.marketplace.json"
+      - "marketplace-lock.json"
       - "package-lock.json"
       - "package.json"
       - "plugins/**"
-      - "profiles/**"
-      - "schemas/**"
+      - "source/**"
       - "scripts/publish-marketplace.py"
       - "scripts/validate-manifests.mjs"
-      - "skills/**"
   push:
     branches:
       - main
@@ -27,22 +22,17 @@ on:
       - ".github/workflows/sync-provider-marketplaces.yml"
       - ".agents/**"
       - ".github/plugin/**"
-      - "agents/**"
-      - "concepts/**"
-      - "hooks/**"
-      - "adaptable.marketplace.json"
+      - "marketplace-lock.json"
       - "package-lock.json"
       - "package.json"
       - "plugins/**"
-      - "profiles/**"
-      - "schemas/**"
+      - "source/**"
       - "scripts/publish-marketplace.py"
       - "scripts/validate-manifests.mjs"
-      - "skills/**"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: verify-marketplace-publication-${{ github.ref }}
@@ -79,5 +69,21 @@ jobs:
       - name: Validate GitHub marketplace payload
         run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
 
+      - name: Synchronize main adapted marketplaces on same-repository pull requests
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          paths=".agents/plugins/marketplace.json marketplace-lock.json plugins .github/plugin/marketplace.json .github/plugin/plugins"
+          python3 scripts/publish-marketplace.py sync-main-marketplaces
+          if [ -z "$(git status --porcelain -- ${paths})" ]; then
+            echo "main adapted marketplaces already current"
+            exit 0
+          fi
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add -A -- ${paths}
+          git commit -m "Publish adapted marketplace manifests"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
       - name: Verify main adapted marketplaces
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
         run: python3 scripts/publish-marketplace.py sync-main-marketplaces --check

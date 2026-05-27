@@ -45,8 +45,8 @@ Run the narrow check that matches the changed surface.
 
 | Changed Surface | Check |
 |---|---|
-| Hook shell entrypoints | `bash -n hooks/*.sh` |
-| JSON hook assets | `python3 -m json.tool hooks/name.hook.json` |
+| Hook shell entrypoints | `bash -n source/hooks/*.sh` |
+| JSON hook assets | `python3 -m json.tool source/hooks/name.hook.json` |
 | Marketplace or plugin manifests | `node scripts/validate-manifests.mjs` |
 | Documentation site | `zensical build --clean` |
 

@@ -12,9 +12,10 @@ from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-PROFILE_DIR = REPO_ROOT / "profiles"
-TEMPLATE_DIR = REPO_ROOT / "templates" / "primitives"
-MARKETPLACE_PATH = REPO_ROOT / "adaptable.marketplace.json"
+SOURCE_ROOT = REPO_ROOT / "source"
+PROFILE_DIR = SOURCE_ROOT / "profiles"
+TEMPLATE_DIR = SOURCE_ROOT / "templates" / "primitives"
+MARKETPLACE_PATH = SOURCE_ROOT / "adaptable.marketplace.json"
 
 PRIMITIVE_COLLECTIONS = {
     "skill": "skills",
@@ -56,7 +57,7 @@ def main(argv: list[str] | None = None) -> int:
     primitive_new.add_argument("name", help="Kebab-case primitive or plugin name.")
     primitive_new.add_argument("--description", default=None, help="Short description for metadata and docs.")
     primitive_new.add_argument("--plugin", action="append", default=[], help="Plugin manifest to update with this primitive. Repeatable.")
-    primitive_new.add_argument("--marketplace", action="store_true", help="Add the new plugin or primitive to adaptable.marketplace.json.")
+    primitive_new.add_argument("--marketplace", action="store_true", help="Add the new plugin or primitive to source/adaptable.marketplace.json.")
     primitive_new.add_argument("--dry-run", action="store_true", help="Print planned writes without changing files.")
     primitive_new.add_argument("--force", action="store_true", help="Overwrite scaffold target files if they already exist.")
     primitive_new.add_argument("--validate", action="store_true", help="Run manifest validation after writing.")
@@ -146,9 +147,9 @@ def cmd_primitive_new(args: argparse.Namespace) -> int:
             print(f"{action} {path}")
             print(indent_preview(content))
         for plugin_name in plugin_updates:
-            print(f"would add {args.kind} {name} to plugins/{plugin_name}/plugin.json")
+            print(f"would add {args.kind} {name} to source/plugins/{plugin_name}/plugin.json")
         if marketplace_update:
-            print(f"would add {args.kind} {name} to adaptable.marketplace.json")
+            print(f"would add {args.kind} {name} to source/adaptable.marketplace.json")
         return 0
 
     for path, content, executable in planned:
@@ -161,10 +162,10 @@ def cmd_primitive_new(args: argparse.Namespace) -> int:
 
     for plugin_name in plugin_updates:
         add_primitive_to_plugin(plugin_name, args.kind, name)
-        print(f"updated plugins/{plugin_name}/plugin.json")
+        print(f"updated source/plugins/{plugin_name}/plugin.json")
     if marketplace_update:
         add_to_marketplace(args.kind, name, description)
-        print("updated adaptable.marketplace.json")
+        print("updated source/adaptable.marketplace.json")
 
     if args.validate:
         return run_validation(manifests_only=False)
@@ -330,17 +331,17 @@ def scaffold_plan(kind: str, name: str, description: str) -> list[tuple[Path, st
         "{{title}}": title,
     }
     if kind == "skill":
-        return [(REPO_ROOT / "skills" / name / "SKILL.md", render_template("skill/SKILL.md.tmpl", replacements), False)]
+        return [(SOURCE_ROOT / "skills" / name / "SKILL.md", render_template("skill/SKILL.md.tmpl", replacements), False)]
     if kind == "agent":
-        return [(REPO_ROOT / "agents" / f"{name}.agent.md", render_template("agent/agent.md.tmpl", replacements), False)]
+        return [(SOURCE_ROOT / "agents" / f"{name}.agent.md", render_template("agent/agent.md.tmpl", replacements), False)]
     if kind == "hook":
         return [
-            (REPO_ROOT / "hooks" / f"{name}.hook.json", render_template("hook/hook.json.tmpl", replacements), False),
-            (REPO_ROOT / "hooks" / f"{name}.py", render_template("hook/hook.py.tmpl", replacements), True),
-            (REPO_ROOT / "hooks" / "codex" / f"{name}.hooks.json", render_template("hook/codex.hooks.json.tmpl", replacements), False),
+            (SOURCE_ROOT / "hooks" / f"{name}.hook.json", render_template("hook/hook.json.tmpl", replacements), False),
+            (SOURCE_ROOT / "hooks" / f"{name}.py", render_template("hook/hook.py.tmpl", replacements), True),
+            (SOURCE_ROOT / "hooks" / "codex" / f"{name}.hooks.json", render_template("hook/codex.hooks.json.tmpl", replacements), False),
         ]
     if kind == "plugin":
-        return [(REPO_ROOT / "plugins" / name / "plugin.json", render_template("plugin/plugin.json.tmpl", replacements), False)]
+        return [(SOURCE_ROOT / "plugins" / name / "plugin.json", render_template("plugin/plugin.json.tmpl", replacements), False)]
     raise IntelligenceError(f"unsupported primitive kind: {kind}")
 
 
@@ -348,7 +349,7 @@ def add_primitive_to_plugin(plugin_name: str, kind: str, name: str) -> None:
     collection = PRIMITIVE_COLLECTIONS.get(kind)
     if not collection:
         raise IntelligenceError(f"cannot add {kind} to plugin references")
-    plugin_path = REPO_ROOT / "plugins" / plugin_name / "plugin.json"
+    plugin_path = SOURCE_ROOT / "plugins" / plugin_name / "plugin.json"
     if not plugin_path.is_file():
         raise IntelligenceError(f"plugin manifest not found: {plugin_path}")
     manifest = read_json(plugin_path)

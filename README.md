@@ -27,16 +27,19 @@ zensical build --clean
 
 ## Repository Shape
 
-- `adaptable.marketplace.json` is the curated provider-neutral marketplace catalog.
-- `agents/` contains independent reusable agent profiles.
-- `skills/` contains independent reusable skills.
-- `concepts/` contains portable instruction and principle documents.
-- `hooks/` contains hook metadata, implementations, requirements, and provider
+- `source/adaptable.marketplace.json` is the curated provider-neutral marketplace catalog.
+- `source/agents/` contains independent reusable agent profiles.
+- `source/skills/` contains independent reusable skills.
+- `source/concepts/` contains portable instruction and principle documents.
+- `source/hooks/` contains hook metadata, implementations, requirements, and provider
   adapters.
-- `plugins/` contains referential plugin composition manifests.
-- `profiles/` contains workflow profiles for target repositories.
-- `templates/` contains primitive scaffold templates used by `bin/intelligence`.
-- `schemas/` contains public provider-neutral and adapter schema contracts.
+- `source/plugins/` contains referential plugin composition manifests.
+- `source/profiles/` contains workflow profiles for target repositories.
+- `source/templates/` contains primitive scaffold templates used by `bin/intelligence`.
+- `source/schemas/` contains public provider-neutral and adapter schema contracts.
+- `plugins/`, `marketplace-lock.json`, `.agents/plugins/marketplace.json`, and
+  `.github/plugin/` are materialized publication outputs generated from
+  `source/`.
 - `scripts/` contains root validation, packaging, and marketplace publication
   tooling.
 - `docs/` contains the public documentation site source.
@@ -64,12 +67,14 @@ zensical build --clean
 
 ## Marketplace Publication
 
-`adaptable.marketplace.json` keeps the provider-neutral source catalog. The
-generated `codex` and `github` branches are materialized from that source.
+`source/adaptable.marketplace.json` keeps the provider-neutral source catalog.
+The generated `codex` and `github` branches are materialized from that source.
 `main` also keeps the adapted marketplace manifests at
-`.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json`, plus
-the fully materialized GitHub payloads under `.github/plugin/plugins/`. The
-root `plugins/` tree remains the referential source graph.
+`.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json`, the
+root `marketplace-lock.json`, the resolved Codex plugin payloads under
+`plugins/`, and the fully materialized GitHub payloads under
+`.github/plugin/plugins/`. The referential plugin manifests live under
+`source/plugins/`.
 
 Preview the branch output locally:
 

@@ -6,8 +6,8 @@ editing docs, manifests, or primitives.
 | Term | Meaning |
 |---|---|
 | Primitive | Independent building block that can compose a plugin: skill, agent, hook, instruction, or concept. |
-| Skill | Agent-facing workflow instructions rooted at `skills/<name>/SKILL.md`. |
-| Agent profile | Focused reviewer or operator profile under `agents/`. |
+| Skill | Agent-facing workflow instructions rooted at `source/skills/<name>/SKILL.md`. |
+| Agent profile | Focused reviewer or operator profile under `source/agents/`. |
 | Hook | Provider-neutral hook metadata plus implementation and adapter configs. |
 | Concept | Portable instruction or principle document under `concepts/`. |
 | Plugin | Referential composition manifest that assembles existing primitives. |

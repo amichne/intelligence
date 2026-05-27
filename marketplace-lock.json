@@ -1,0 +1,351 @@
+{
+  "generatedAt": "2026-05-27T10:08:27-04:00",
+  "plugins": [
+    {
+      "name": "typed-design-discipline",
+      "references": [
+        {
+          "name": "agents-md-turn-refresh",
+          "sha256": "sha256:08b8270637614a5c8cbc176a22a636fa28c3be9d5474fa16b73b4f1534cee5ab",
+          "sourcePath": "source/hooks/agents-md-turn-refresh.hook.json",
+          "targetPath": "hooks/agents-md-turn-refresh.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "required-skill-read",
+          "sha256": "sha256:19091b15a9c0808d815885c0dc5682e26aa8bf8b28ac9201063e11e60128867d",
+          "sourcePath": "source/hooks/required-skill-read.hook.json",
+          "targetPath": "hooks/required-skill-read.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "schema-driven-design",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
+          "sourcePath": "source/concepts/schema-driven-design/core.md",
+          "targetPath": "instructions/schema-driven-design.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "type-safety",
+          "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
+          "sourcePath": "source/concepts/type-safety/core.md",
+          "targetPath": "instructions/type-safety.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "repository-onboarding",
+          "sha256": "sha256:94a318d0a6a7ef6a75c435b51c52018dfa8a65ecf4941c85736965cd5ef96eb7",
+          "sourcePath": "source/skills/repository-onboarding",
+          "targetPath": "skills/repository-onboarding",
+          "type": "SKILL"
+        }
+      ],
+      "sourceManifest": "source/plugins/typed-design-discipline/plugin.json",
+      "version": "0.1.0"
+    },
+    {
+      "name": "contract-governance",
+      "references": [
+        {
+          "name": "openapi-contract-rater",
+          "sha256": "sha256:eed34ea78a4f36118a3702cd8a45a36948245f8f22013f09fa2899af38aa86c3",
+          "sourcePath": "source/agents/openapi/openapi-contract-rater.agent.md",
+          "targetPath": "agents/openapi-contract-rater.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "schema-type-enforcer",
+          "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+          "sourcePath": "source/agents/schema-type-enforcer.agent.md",
+          "targetPath": "agents/schema-type-enforcer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "schema-driven-design",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
+          "sourcePath": "source/concepts/schema-driven-design/core.md",
+          "targetPath": "instructions/schema-driven-design.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "type-safety",
+          "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
+          "sourcePath": "source/concepts/type-safety/core.md",
+          "targetPath": "instructions/type-safety.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "manage-json-schemas",
+          "sha256": "sha256:b609aa32947f17c8aafd7f6047944539c65af01e2d46173997a23714368f1348",
+          "sourcePath": "source/skills/manage-json-schemas",
+          "targetPath": "skills/manage-json-schemas",
+          "type": "SKILL"
+        },
+        {
+          "name": "openapi-contract-authoring",
+          "sha256": "sha256:12de2df158665bc77789833b5dacddcbd9f7b342255e37926f4a9867ed279218",
+          "sourcePath": "source/skills/openapi-contract-authoring",
+          "targetPath": "skills/openapi-contract-authoring",
+          "type": "SKILL"
+        },
+        {
+          "name": "openapi-contract-rating",
+          "sha256": "sha256:77eb7225c48f301abb018da20b1f7565d2db768bc5f737b825d149fbcc6c186d",
+          "sourcePath": "source/skills/openapi-contract-rating",
+          "targetPath": "skills/openapi-contract-rating",
+          "type": "SKILL"
+        },
+        {
+          "name": "openapi-schema-modeling",
+          "sha256": "sha256:185354c9bae16ff0402106af4592d867b3178cce2991e1d31ccc554d12196b24",
+          "sourcePath": "source/skills/openapi-schema-modeling",
+          "targetPath": "skills/openapi-schema-modeling",
+          "type": "SKILL"
+        }
+      ],
+      "sourceManifest": "source/plugins/contract-governance/plugin.json",
+      "version": "0.1.0"
+    },
+    {
+      "name": "kotlin-correctness",
+      "references": [
+        {
+          "name": "kotlin-boundary-contract-reviewer",
+          "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
+          "sourcePath": "source/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "targetPath": "agents/kotlin-boundary-contract-reviewer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-package-cohesion-reviewer",
+          "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
+          "sourcePath": "source/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "targetPath": "agents/kotlin-package-cohesion-reviewer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-review-captain",
+          "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
+          "sourcePath": "source/agents/kotlin-review/kotlin-review-captain.agent.md",
+          "targetPath": "agents/kotlin-review-captain.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-type-safety-reviewer",
+          "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
+          "sourcePath": "source/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "targetPath": "agents/kotlin-type-safety-reviewer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "schema-type-enforcer",
+          "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+          "sourcePath": "source/agents/schema-type-enforcer.agent.md",
+          "targetPath": "agents/schema-type-enforcer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "gradle-check-green",
+          "sha256": "sha256:ea899f5220836c6b9f3a9c4b9791f855e57712f2a5e59dadda9bacdc13253ae6",
+          "sourcePath": "source/hooks/gradle-check-green.hook.json",
+          "targetPath": "hooks/gradle-check-green.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "kotlin-horizontalization-check",
+          "sha256": "sha256:287b758f0af60bc380fd7ab44eb9f10c9a8a13f592bdac0cc887d79fc9beac49",
+          "sourcePath": "source/hooks/kotlin-horizontalization-check.hook.json",
+          "targetPath": "hooks/kotlin-horizontalization-check.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "schema-driven-design",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
+          "sourcePath": "source/concepts/schema-driven-design/core.md",
+          "targetPath": "instructions/schema-driven-design.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "type-safety",
+          "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
+          "sourcePath": "source/concepts/type-safety/core.md",
+          "targetPath": "instructions/type-safety.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "kotlin-gradle-validation",
+          "sha256": "sha256:cd541aa4ac2e11c78df923fd039dbd295ec78c47fcae459342e3270c2a767d8d",
+          "sourcePath": "source/skills/kotlin-gradle-validation",
+          "targetPath": "skills/kotlin-gradle-validation",
+          "type": "SKILL"
+        },
+        {
+          "name": "kotlin-standards",
+          "sha256": "sha256:934538021afc46240b3622c5c46dfc18371b093c3f351daaede933a42e3ad5be",
+          "sourcePath": "source/skills/kotlin-standards",
+          "targetPath": "skills/kotlin-standards",
+          "type": "SKILL"
+        }
+      ],
+      "sourceManifest": "source/plugins/kotlin-correctness/plugin.json",
+      "version": "0.1.0"
+    },
+    {
+      "name": "evidence-driven-delivery",
+      "references": [
+        {
+          "name": "schema-driven-design",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
+          "sourcePath": "source/concepts/schema-driven-design/core.md",
+          "targetPath": "instructions/schema-driven-design.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "type-safety",
+          "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
+          "sourcePath": "source/concepts/type-safety/core.md",
+          "targetPath": "instructions/type-safety.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "define-goal",
+          "sha256": "sha256:ebe782dba012c41482ce19f34cba0de3f5d7e7cd89f21806d3034d8333b8a0c4",
+          "sourcePath": "source/skills/define-goal",
+          "targetPath": "skills/define-goal",
+          "type": "SKILL"
+        },
+        {
+          "name": "git-change-flow",
+          "sha256": "sha256:4fa7b20a61c7cb8ab36f1d99dddbe3818e8d1c6bc35dd9487358cedc43ac2c9c",
+          "sourcePath": "source/skills/git-change-flow",
+          "targetPath": "skills/git-change-flow",
+          "type": "SKILL"
+        },
+        {
+          "name": "github-ci-operations",
+          "sha256": "sha256:0e76df72d3874a19a1e07f577c7b6c87e9834bf4e1cc119c7ec6cb3b1f2e3cec",
+          "sourcePath": "source/skills/github-ci-operations",
+          "targetPath": "skills/github-ci-operations",
+          "type": "SKILL"
+        },
+        {
+          "name": "pull-request-lifecycle",
+          "sha256": "sha256:8442d2e53942a76bbf5c59c0988e679ed397d27edd059f6f603c83fea50ca155",
+          "sourcePath": "source/skills/pull-request-lifecycle",
+          "targetPath": "skills/pull-request-lifecycle",
+          "type": "SKILL"
+        },
+        {
+          "name": "tdd",
+          "sha256": "sha256:ae85ef87b82e3ac2f4abaf97511eb0e6c011381fd5165ab75c5a2546fff89f17",
+          "sourcePath": "source/skills/tdd",
+          "targetPath": "skills/tdd",
+          "type": "SKILL"
+        }
+      ],
+      "sourceManifest": "source/plugins/evidence-driven-delivery/plugin.json",
+      "version": "0.1.0"
+    },
+    {
+      "name": "primitive-systems-authoring",
+      "references": [
+        {
+          "name": "schema-driven-design",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
+          "sourcePath": "source/concepts/schema-driven-design/core.md",
+          "targetPath": "instructions/schema-driven-design.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "type-safety",
+          "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
+          "sourcePath": "source/concepts/type-safety/core.md",
+          "targetPath": "instructions/type-safety.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "agent-profile-authoring",
+          "sha256": "sha256:683090ef0936a7dae1ee959d17ae7be3a865039a7db2e6d597603bd5334eeca4",
+          "sourcePath": "source/skills/agent-profile-authoring",
+          "targetPath": "skills/agent-profile-authoring",
+          "type": "SKILL"
+        },
+        {
+          "name": "hook-primitive-authoring",
+          "sha256": "sha256:85bbbe901068b34cfd62222e4452505b107fd0bffedeeaae9915e7e7b2aecd56",
+          "sourcePath": "source/skills/hook-primitive-authoring",
+          "targetPath": "skills/hook-primitive-authoring",
+          "type": "SKILL"
+        },
+        {
+          "name": "local-repository-navigation",
+          "sha256": "sha256:9dcfe28d3104fd90226287be1a2820b0d703fb8755744042cb5fd0832f9cf334",
+          "sourcePath": "source/skills/local-repository-navigation",
+          "targetPath": "skills/local-repository-navigation",
+          "type": "SKILL"
+        },
+        {
+          "name": "manage-json-schemas",
+          "sha256": "sha256:b609aa32947f17c8aafd7f6047944539c65af01e2d46173997a23714368f1348",
+          "sourcePath": "source/skills/manage-json-schemas",
+          "targetPath": "skills/manage-json-schemas",
+          "type": "SKILL"
+        },
+        {
+          "name": "plugin-composition-authoring",
+          "sha256": "sha256:c781f831cb4461dce592c83c26d6ee0c7a857b1edfaaf5c657b58cb6dcb16419",
+          "sourcePath": "source/skills/plugin-composition-authoring",
+          "targetPath": "skills/plugin-composition-authoring",
+          "type": "SKILL"
+        },
+        {
+          "name": "reference-doc-workflow",
+          "sha256": "sha256:ceb1ae27634f8036acdb46ae7e3fabeab6ace315c6bda6f1a4587d7d0edba20d",
+          "sourcePath": "source/skills/reference-doc-workflow",
+          "targetPath": "skills/reference-doc-workflow",
+          "type": "SKILL"
+        },
+        {
+          "name": "repo-instruction-topology",
+          "sha256": "sha256:d68b0e358b1e1d8122b829de4d28ad537420fb3bfa14a746c0e63a0c25da998a",
+          "sourcePath": "source/skills/repo-instruction-topology",
+          "targetPath": "skills/repo-instruction-topology",
+          "type": "SKILL"
+        },
+        {
+          "name": "repository-signature-indexing",
+          "sha256": "sha256:997856503528635205d0a07abe6d6a2cead66a4dd53eebad7c925064999bb40e",
+          "sourcePath": "source/skills/repository-signature-indexing",
+          "targetPath": "skills/repository-signature-indexing",
+          "type": "SKILL"
+        },
+        {
+          "name": "shell-script-safety",
+          "sha256": "sha256:d59aa6e0a5e74eb494e8310feb4949993f2f96d5df64946936eaf4788a3c739b",
+          "sourcePath": "source/skills/shell-script-safety",
+          "targetPath": "skills/shell-script-safety",
+          "type": "SKILL"
+        },
+        {
+          "name": "site-docs-authoring",
+          "sha256": "sha256:02256bdc784cadb464ed5a0bd6dc6d6e0c3f39595d6d1a9da48cd6aadc7f8ab1",
+          "sourcePath": "source/skills/site-docs-authoring",
+          "targetPath": "skills/site-docs-authoring",
+          "type": "SKILL"
+        },
+        {
+          "name": "skill-primitive-authoring",
+          "sha256": "sha256:8d79a09d2ddef88bd99ab57e883f97ba2bfae7a068921b9ff547bbde1e7485a3",
+          "sourcePath": "source/skills/skill-primitive-authoring",
+          "targetPath": "skills/skill-primitive-authoring",
+          "type": "SKILL"
+        }
+      ],
+      "sourceManifest": "source/plugins/primitive-systems-authoring/plugin.json",
+      "version": "0.1.0"
+    }
+  ],
+  "schemaVersion": 1,
+  "sourceSha": "ee27cfc374f92e2d5a9b44f2764196b7cfdc714f",
+  "type": "HYDRATED_MARKETPLACE"
+}
