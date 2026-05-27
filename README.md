@@ -66,7 +66,8 @@ zensical build --clean
 
 `marketplace.json` keeps the provider-neutral source catalog. The generated
 `marketplace` branch is materialized from that source, and `main` also carries
-the generated GitHub Copilot entrypoint under `.github/plugin/`.
+the generated Codex and GitHub Copilot entrypoints under `codex/` and
+`.github/plugin/`.
 
 Preview the branch output locally:
 
@@ -74,15 +75,15 @@ Preview the branch output locally:
 npm ci
 python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
-python3 scripts/publish-marketplace.py sync-github-plugin --check
+python3 scripts/publish-marketplace.py sync-main-projections --check
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```
 
 Merges to `main` run `.github/workflows/publish-marketplace.yml`, which
 validates source contracts, materializes the marketplace, and force-updates
-`marketplace`. `.github/workflows/sync-github-plugin-marketplace.yml` keeps the
-checked-in GitHub Copilot marketplace on `main` synchronized with the same
-generator.
+`marketplace`. `.github/workflows/sync-provider-marketplaces.yml` keeps the
+checked-in Codex and GitHub Copilot marketplaces on `main` synchronized with
+the same generator.
 
 ## CLI Archives
 

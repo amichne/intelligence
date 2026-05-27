@@ -4,7 +4,7 @@
     "description": "Curated marketplace for project-agnostic AI tooling primitives.",
     "pluginRoot": "./plugins"
   },
-  "name": "intelligence",
+  "name": "amichne-intelligence",
   "owner": {
     "name": "Amichne"
   },
@@ -13,27 +13,31 @@
       "author": {
         "name": "Amichne"
       },
-      "category": "Productivity",
-      "description": "Core repository onboarding, portable principles, and hooks from the intelligence source graph.",
+      "category": "Engineering",
+      "description": "Core type-safety, schema-driven design, onboarding, and turn-time hooks for rigorous repository work.",
       "hooks": "./hooks",
       "keywords": [
         "core",
+        "design",
         "hooks",
         "instructions",
-        "intelligence-core",
         "onboarding",
-        "skills"
+        "schemas",
+        "skills",
+        "typed-design-discipline"
       ],
       "license": "UNLICENSED",
-      "name": "intelligence-core",
+      "name": "typed-design-discipline",
       "skills": "./skills",
-      "source": "./plugins/intelligence-core",
+      "source": "./plugins/typed-design-discipline",
       "strict": true,
       "tags": [
         "core",
+        "design",
         "hooks",
         "instructions",
         "onboarding",
+        "schemas",
         "skills"
       ],
       "version": "0.1.0"
@@ -43,238 +47,27 @@
       "author": {
         "name": "Amichne"
       },
-      "category": "Coding",
-      "description": "Kotlin standards, Gradle validation, review agents, and layout gate composed from independent skill, agent, hook, and concept primitives.",
-      "hooks": "./hooks",
-      "keywords": [
-        "agents",
-        "gradle",
-        "hooks",
-        "kotlin",
-        "kotlin-review",
-        "review",
-        "skills",
-        "validation"
-      ],
-      "license": "UNLICENSED",
-      "name": "kotlin-review",
-      "skills": "./skills",
-      "source": "./plugins/kotlin-review",
-      "strict": true,
-      "tags": [
-        "agents",
-        "gradle",
-        "hooks",
-        "kotlin",
-        "review",
-        "skills",
-        "validation"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "agents": "./agents",
-      "author": {
-        "name": "Amichne"
-      },
       "category": "Engineering",
-      "description": "Kotlin TDD, strict type and schema boundaries, Gradle green checks, and PR lifecycle workflows composed from independent primitives.",
-      "hooks": "./hooks",
-      "keywords": [
-        "agents",
-        "ci",
-        "gradle",
-        "hooks",
-        "kotlin",
-        "kotlin-tdd-development",
-        "pull-requests",
-        "schemas",
-        "skills",
-        "tdd",
-        "validation"
-      ],
-      "license": "UNLICENSED",
-      "name": "kotlin-tdd-development",
-      "skills": "./skills",
-      "source": "./plugins/kotlin-tdd-development",
-      "strict": true,
-      "tags": [
-        "agents",
-        "ci",
-        "gradle",
-        "hooks",
-        "kotlin",
-        "pull-requests",
-        "schemas",
-        "skills",
-        "tdd",
-        "validation"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "author": {
-        "name": "Amichne"
-      },
-      "category": "Engineering",
-      "description": "Skill, agent, hook, shell script, schema, and referential plugin authoring workflows composed from independent primitives.",
-      "keywords": [
-        "agents",
-        "hooks",
-        "plugins",
-        "primitive-authoring",
-        "schemas",
-        "shell",
-        "skills"
-      ],
-      "license": "UNLICENSED",
-      "name": "primitive-authoring",
-      "skills": "./skills",
-      "source": "./plugins/primitive-authoring",
-      "strict": true,
-      "tags": [
-        "agents",
-        "hooks",
-        "plugins",
-        "schemas",
-        "shell",
-        "skills"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "author": {
-        "name": "Amichne"
-      },
-      "category": "Productivity",
-      "description": "Repository boundary mapping, scoped instruction authoring, and signature indexing composed from independent skills.",
-      "keywords": [
-        "docs",
-        "instructions",
-        "repository",
-        "repository-orientation",
-        "signatures",
-        "skills"
-      ],
-      "license": "UNLICENSED",
-      "name": "repository-orientation",
-      "skills": "./skills",
-      "source": "./plugins/repository-orientation",
-      "strict": true,
-      "tags": [
-        "docs",
-        "instructions",
-        "repository",
-        "signatures",
-        "skills"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "author": {
-        "name": "Amichne"
-      },
-      "category": "Productivity",
-      "description": "Goal-definition and reference-document workflows composed from independent skills.",
-      "keywords": [
-        "docs",
-        "planning",
-        "planning-and-docs",
-        "skills",
-        "workflow"
-      ],
-      "license": "UNLICENSED",
-      "name": "planning-and-docs",
-      "skills": "./skills",
-      "source": "./plugins/planning-and-docs",
-      "strict": true,
-      "tags": [
-        "docs",
-        "planning",
-        "skills",
-        "workflow"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "author": {
-        "name": "Amichne"
-      },
-      "category": "Productivity",
-      "description": "Documentation planning and site-authoring workflows composed from independent skills.",
-      "keywords": [
-        "docs",
-        "documentation-workflow",
-        "mkdocs",
-        "skills",
-        "workflow",
-        "zensical"
-      ],
-      "license": "UNLICENSED",
-      "name": "documentation-workflow",
-      "skills": "./skills",
-      "source": "./plugins/documentation-workflow",
-      "strict": true,
-      "tags": [
-        "docs",
-        "mkdocs",
-        "skills",
-        "workflow",
-        "zensical"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "agents": "./agents",
-      "author": {
-        "name": "Amichne"
-      },
-      "category": "Engineering",
-      "description": "Schema contract workflow composed from independent schema skill, review agent, and concept primitives.",
-      "keywords": [
-        "agents",
-        "schema-governance",
-        "schemas",
-        "skills",
-        "validation"
-      ],
-      "license": "UNLICENSED",
-      "name": "schema-governance",
-      "skills": "./skills",
-      "source": "./plugins/schema-governance",
-      "strict": true,
-      "tags": [
-        "agents",
-        "schemas",
-        "skills",
-        "validation"
-      ],
-      "version": "0.1.0"
-    },
-    {
-      "agents": "./agents",
-      "author": {
-        "name": "Amichne"
-      },
-      "category": "Engineering",
-      "description": "OpenAPI authoring, schema modeling, and contract rating workflows composed from independent primitives.",
+      "description": "Strict JSON Schema and OpenAPI contract work with typed boundary assertions, explicit variants, and contract review.",
       "keywords": [
         "agents",
         "api",
+        "contract-governance",
+        "contracts",
         "openapi",
-        "openapi-authoring-best-practices",
         "schemas",
         "skills",
         "validation"
       ],
       "license": "UNLICENSED",
-      "name": "openapi-authoring-best-practices",
+      "name": "contract-governance",
       "skills": "./skills",
-      "source": "./plugins/openapi-authoring-best-practices",
+      "source": "./plugins/contract-governance",
       "strict": true,
       "tags": [
         "agents",
         "api",
+        "contracts",
         "openapi",
         "schemas",
         "skills",
@@ -283,24 +76,70 @@
       "version": "0.1.0"
     },
     {
+      "agents": "./agents",
       "author": {
         "name": "Amichne"
       },
-      "category": "Coding",
-      "description": "Test-driven workflow composed from an independent TDD skill and source-of-truth design concepts.",
+      "category": "Engineering",
+      "description": "Kotlin type modeling, package cohesion, Gradle proof loops, and review agents for correctness-oriented code.",
+      "hooks": "./hooks",
       "keywords": [
+        "agents",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "kotlin-correctness",
+        "schemas",
         "skills",
-        "tdd-workflow",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "kotlin-correctness",
+      "skills": "./skills",
+      "source": "./plugins/kotlin-correctness",
+      "strict": true,
+      "tags": [
+        "agents",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Goal definition, test-driven implementation, Git hygiene, CI triage, and PR lifecycle procedures with explicit proof.",
+      "keywords": [
+        "ci",
+        "evidence-driven-delivery",
+        "git",
+        "github",
+        "planning",
+        "pull-requests",
+        "skills",
+        "tdd",
         "testing",
         "workflow"
       ],
       "license": "UNLICENSED",
-      "name": "tdd-workflow",
+      "name": "evidence-driven-delivery",
       "skills": "./skills",
-      "source": "./plugins/tdd-workflow",
+      "source": "./plugins/evidence-driven-delivery",
       "strict": true,
       "tags": [
+        "ci",
+        "git",
+        "github",
+        "planning",
+        "pull-requests",
         "skills",
+        "tdd",
         "testing",
         "workflow"
       ],
@@ -311,24 +150,32 @@
         "name": "Amichne"
       },
       "category": "Engineering",
-      "description": "Git process, GitHub CI, workflow, and release operations composed from independent skills.",
+      "description": "Authoring procedures for independent skills, agents, hooks, schemas, plugins, repository maps, and documentation systems.",
       "keywords": [
-        "ci",
-        "git",
-        "github",
+        "agents",
+        "docs",
+        "hooks",
+        "plugins",
+        "primitive-systems-authoring",
+        "repository",
+        "schemas",
+        "shell",
         "skills",
-        "version-control",
         "workflow"
       ],
       "license": "UNLICENSED",
-      "name": "version-control",
+      "name": "primitive-systems-authoring",
       "skills": "./skills",
-      "source": "./plugins/version-control",
+      "source": "./plugins/primitive-systems-authoring",
       "strict": true,
       "tags": [
-        "ci",
-        "git",
-        "github",
+        "agents",
+        "docs",
+        "hooks",
+        "plugins",
+        "repository",
+        "schemas",
+        "shell",
         "skills",
         "workflow"
       ],

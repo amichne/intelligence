@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import json
 import os
 import re
@@ -17,6 +16,10 @@ from typing import Any
 CODEX_PLUGIN_DIR = ".codex-plugin"
 CODEX_PROVIDER_DIR = "codex"
 GITHUB_COPILOT_PROVIDER_PATH = Path(".github") / "plugin"
+MAIN_BRANCH_PROVIDER_PATHS = [
+    Path(CODEX_PROVIDER_DIR),
+    GITHUB_COPILOT_PROVIDER_PATH,
+]
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -42,6 +45,13 @@ def main() -> int:
         help="Fail if .github/plugin does not match generated output.",
     )
 
+    sync_main = subparsers.add_parser("sync-main-projections")
+    sync_main.add_argument(
+        "--check",
+        action="store_true",
+        help="Fail if codex/ and .github/plugin do not match generated output.",
+    )
+
     publish = subparsers.add_parser("publish-branch")
     publish.add_argument("--branch", default="marketplace")
     publish.add_argument("--no-push", action="store_true")
@@ -55,6 +65,10 @@ def main() -> int:
 
     if args.command == "sync-github-plugin":
         sync_github_plugin(repo_root, check=args.check)
+        return 0
+
+    if args.command == "sync-main-projections":
+        sync_main_projections(repo_root, check=args.check)
         return 0
 
     with tempfile.TemporaryDirectory(prefix="intelligence-marketplace-") as temp:
@@ -123,7 +137,7 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
     lock = {
         "type": "HYDRATED_MARKETPLACE",
         "schemaVersion": 1,
-        "generatedAt": dt.datetime.now(dt.timezone.utc).isoformat(),
+        "generatedAt": current_source_timestamp(repo_root),
         "sourceSha": current_sha(repo_root),
         "plugins": [],
     }
@@ -233,23 +247,52 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
 
 
 def sync_github_plugin(repo_root: Path, *, check: bool) -> None:
-    target = repo_root / GITHUB_COPILOT_PROVIDER_PATH
-    with tempfile.TemporaryDirectory(prefix="intelligence-github-plugin-") as temp:
+    sync_provider_paths(
+        repo_root,
+        paths=[GITHUB_COPILOT_PROVIDER_PATH],
+        check=check,
+        command="sync-github-plugin",
+    )
+
+
+def sync_main_projections(repo_root: Path, *, check: bool) -> None:
+    sync_provider_paths(
+        repo_root,
+        paths=MAIN_BRANCH_PROVIDER_PATHS,
+        check=check,
+        command="sync-main-projections",
+    )
+
+
+def sync_provider_paths(
+    repo_root: Path,
+    *,
+    paths: list[Path],
+    check: bool,
+    command: str,
+) -> None:
+    with tempfile.TemporaryDirectory(prefix="intelligence-provider-projections-") as temp:
         materialized = Path(temp) / "marketplace"
         materialize_marketplace(repo_root, materialized)
-        source = materialized / GITHUB_COPILOT_PROVIDER_PATH
 
         if check:
-            if target.exists() and sync_digest_path(source) == sync_digest_path(target):
-                print(f"OK {GITHUB_COPILOT_PROVIDER_PATH.as_posix()} is in sync")
-                return
-            raise SystemExit(
-                f"{GITHUB_COPILOT_PROVIDER_PATH.as_posix()} is not in sync; "
-                "run `python3 scripts/publish-marketplace.py sync-github-plugin`"
-            )
+            missing_or_changed = []
+            for provider_path in paths:
+                source = materialized / provider_path
+                target = repo_root / provider_path
+                if not target.exists() or sync_digest_path(source) != sync_digest_path(target):
+                    missing_or_changed.append(provider_path.as_posix())
+            if missing_or_changed:
+                changed = ", ".join(missing_or_changed)
+                raise SystemExit(
+                    f"{changed} not in sync; run `python3 scripts/publish-marketplace.py {command}`"
+                )
+            print(f"OK {', '.join(path.as_posix() for path in paths)} in sync")
+            return
 
-        copy_path(source, target)
-    print(f"synced GitHub plugin marketplace at {GITHUB_COPILOT_PROVIDER_PATH.as_posix()}")
+        for provider_path in paths:
+            copy_path(materialized / provider_path, repo_root / provider_path)
+            print(f"synced provider marketplace at {provider_path.as_posix()}")
 
 
 def person_for(owner: dict[str, Any], fallback_name: str) -> dict[str, str]:
@@ -589,6 +632,20 @@ def current_sha(repo_root: Path) -> str | None:
     )
     if result.returncode != 0:
         return None
+    return result.stdout.strip()
+
+
+def current_source_timestamp(repo_root: Path) -> str:
+    result = subprocess.run(
+        ["git", "show", "-s", "--format=%cI", "HEAD"],
+        cwd=repo_root,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.DEVNULL,
+        check=False,
+    )
+    if result.returncode != 0:
+        return "1970-01-01T00:00:00+00:00"
     return result.stdout.strip()
 
 

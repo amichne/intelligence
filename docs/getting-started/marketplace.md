@@ -2,8 +2,9 @@
 
 The marketplace is the curated distribution surface for project-agnostic
 plugin families. The source of truth is `marketplace.json` on `main`; provider
-payloads are generated into the orphan `marketplace` branch, and the GitHub
-Copilot projection is also checked in under `.github/plugin/` on `main`.
+payloads are generated into the orphan `marketplace` branch, and the Codex and
+GitHub Copilot projections are also checked in under `codex/` and
+`.github/plugin/` on `main`.
 
 ## Local Preview
 
@@ -13,7 +14,7 @@ Preview the hydrated marketplace before publishing.
 npm ci
 python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
-python3 scripts/publish-marketplace.py sync-github-plugin --check
+python3 scripts/publish-marketplace.py sync-main-projections --check
 python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
 ```
 
@@ -30,7 +31,7 @@ The generated branch publishes only the plugin families listed in
 |---|---|---|
 | `marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
 | `scripts/publish-marketplace.py` | Generator | Hydrates provider-native payloads. |
-| `codex/marketplace.json` | Generated branch output | Codex marketplace entrypoint. |
+| `codex/marketplace.json` | Generated branch output and checked-in `main` copy | Codex marketplace entrypoint. |
 | `.github/plugin/marketplace.json` | Generated branch output and checked-in `main` copy | GitHub Copilot marketplace entrypoint. |
 
 ## Publication Gate
@@ -39,8 +40,8 @@ Merges to `main` run `.github/workflows/publish-marketplace.yml`. The workflow
 validates source contracts, materializes the marketplace, validates the
 hydrated output, and force-updates the generated branch.
 
-`.github/workflows/sync-github-plugin-marketplace.yml` checks pull requests for
-GitHub Copilot marketplace drift and commits refreshed `.github/plugin/` output
-on `main` when source changes require it.
+`.github/workflows/sync-provider-marketplaces.yml` checks pull requests for
+provider marketplace drift and commits refreshed `codex/` and `.github/plugin/`
+output on `main` when source changes require it.
 
 Run the same checks locally when changing marketplace exposure.

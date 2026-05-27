@@ -9,24 +9,18 @@ These families are exposed through `marketplace.json`.
 
 | Plugin | What It Provides |
 |---|---|
-| `intelligence-core` | Repository onboarding, portable principles, and core hook primitives. |
-| `kotlin-review` | Kotlin standards, Gradle validation, review agents, and layout checks. |
-| `kotlin-tdd-development` | Kotlin TDD, strict type/schema boundaries, Gradle green checks, and PR lifecycle workflows. |
-| `primitive-authoring` | Skill, agent, hook, shell script, schema, and plugin authoring workflows. |
-| `repository-orientation` | Repository boundary mapping, scoped instruction authoring, and signature indexing. |
-| `planning-and-docs` | Goal-definition and reference-document workflows. |
-| `documentation-workflow` | MkDocs, Zensical, and docs-as-code site authoring workflows. |
-| `schema-governance` | Schema contract workflow, schema review, and type-safety concepts. |
-| `openapi-authoring-best-practices` | OpenAPI authoring, schema modeling, and contract rating workflows. |
-| `tdd-workflow` | Language-agnostic test-driven workflow with design concepts. |
-| `version-control` | Git process, GitHub CI, Actions workflow, and release operations. |
+| `typed-design-discipline` | Type-safety, schema-driven design, onboarding, and turn-time hooks. |
+| `contract-governance` | JSON Schema and OpenAPI contracts, explicit variants, and contract review. |
+| `kotlin-correctness` | Kotlin type modeling, package cohesion, Gradle validation, and review agents. |
+| `evidence-driven-delivery` | Goal definition, TDD, Git hygiene, CI triage, and PR lifecycle procedures. |
+| `primitive-systems-authoring` | Skills, agents, hooks, schemas, plugins, repository maps, and docs-as-code authoring. |
 
 ## How To Inspect A Plugin
 
 Open the plugin manifest and follow its primitive references.
 
 ```sh
-sed -n '1,220p' plugins/kotlin-review/plugin.json
+sed -n '1,220p' plugins/typed-design-discipline/plugin.json
 ```
 
 Validate plugin and marketplace structure after edits.

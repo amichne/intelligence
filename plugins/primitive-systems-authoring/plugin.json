@@ -1,0 +1,134 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "primitive-systems-authoring",
+  "version": "0.1.0",
+  "description": "Authoring procedures for independent skills, agents, hooks, schemas, plugins, repository maps, and documentation systems.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/skill-primitive-authoring",
+      "name": "skill-primitive-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/agent-profile-authoring",
+      "name": "agent-profile-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/plugin-composition-authoring",
+      "name": "plugin-composition-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/hook-primitive-authoring",
+      "name": "hook-primitive-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/shell-script-safety",
+      "name": "shell-script-safety"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/manage-json-schemas",
+      "name": "manage-json-schemas"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repo-instruction-topology",
+      "name": "repo-instruction-topology"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repository-signature-indexing",
+      "name": "repository-signature-indexing"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/local-repository-navigation",
+      "name": "local-repository-navigation"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/reference-doc-workflow",
+      "name": "reference-doc-workflow"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/site-docs-authoring",
+      "name": "site-docs-authoring"
+    }
+  ],
+  "agents": [],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/type-safety/core.md",
+      "name": "type-safety"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "principle": "primitives-remain-independent"
+  }
+}

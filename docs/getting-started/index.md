@@ -37,7 +37,7 @@ Each path has a dry-run or validation command before it mutates anything.
 | Validate this repository | `bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
 | Create a repo profile | `bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default` | A target repo should declare which Intelligence plugins and hooks it uses. |
 | Dry-run install | `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json` | You want to inspect marketplace reference changes first. |
-| Scaffold a primitive | `bin/intelligence primitive new skill example-skill --plugin primitive-authoring` | You are adding a reusable building block. |
+| Scaffold a primitive | `bin/intelligence primitive new skill example-skill --plugin primitive-systems-authoring` | You are adding a reusable building block. |
 | Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
 
 ## First Validation

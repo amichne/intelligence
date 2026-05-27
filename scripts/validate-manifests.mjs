@@ -7,8 +7,11 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const coreSchemaDir = path.join(repoRoot, "schemas", "core");
 const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
+const codexMarketplace = path.join(repoRoot, "codex", "marketplace.json");
+const codexMarketplaceLock = path.join(repoRoot, "codex", "marketplace-lock.json");
 const githubPluginMarketplace = path.join(repoRoot, ".github", "plugin", "marketplace.json");
 const generatedJsonRoots = [
+  path.join(repoRoot, "codex"),
   path.join(repoRoot, ".github", "plugin")
 ].map(normalizePath);
 const options = parseArguments(process.argv.slice(2));
@@ -58,10 +61,13 @@ for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJs
 
 const checks = [
   ["marketplace.schema.json", path.join(repoRoot, "marketplace.json")],
+  ...optionalChecks("codex-marketplace.schema.json", codexMarketplace),
+  ...optionalChecks("codex-marketplace-lock.schema.json", codexMarketplaceLock),
   ...optionalChecks("github-marketplace.schema.json", githubPluginMarketplace),
   ...listJsonFiles(path.join(repoRoot, "profiles")).map((file) => ["workflow-profile.schema.json", file]),
   ...listPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
   ...listCodexPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["codex-plugin.schema.json", file]),
+  ...listCodexPluginManifests(path.join(repoRoot, "codex", "plugins")).map((file) => ["codex-plugin.schema.json", file]),
   ...hydratedChecks(options.hydrated),
   ...listFiles(path.join(repoRoot, "hooks"))
     .filter((file) => file.endsWith(".hook.json"))
@@ -86,6 +92,7 @@ if (options.portable) {
 
 failures += validateNodeDependencyManifests();
 failures += validateSchemaDocuments();
+failures += validateHydratedInstructionAdapters(repoRoot);
 failures += validateHydratedInstructionAdapters(options.hydrated);
 failures += validateJsonCoverage();
 
