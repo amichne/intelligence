@@ -1,0 +1,185 @@
+{
+  "$schema": "github-marketplace.schema.json",
+  "metadata": {
+    "description": "Curated marketplace for project-agnostic AI tooling primitives.",
+    "pluginRoot": ".github/plugin/plugins"
+  },
+  "name": "amichne-intelligence",
+  "owner": {
+    "name": "Amichne"
+  },
+  "plugins": [
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Core type-safety, schema-driven design, onboarding, and turn-time hooks for rigorous repository work.",
+      "hooks": "./hooks",
+      "keywords": [
+        "core",
+        "design",
+        "hooks",
+        "instructions",
+        "onboarding",
+        "schemas",
+        "skills",
+        "typed-design-discipline"
+      ],
+      "license": "UNLICENSED",
+      "name": "typed-design-discipline",
+      "skills": "./skills",
+      "source": "typed-design-discipline",
+      "strict": true,
+      "tags": [
+        "core",
+        "design",
+        "hooks",
+        "instructions",
+        "onboarding",
+        "schemas",
+        "skills"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "agents": "./agents",
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Strict JSON Schema and OpenAPI contract work with typed boundary assertions, explicit variants, and contract review.",
+      "keywords": [
+        "agents",
+        "api",
+        "contract-governance",
+        "contracts",
+        "openapi",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "contract-governance",
+      "skills": "./skills",
+      "source": "contract-governance",
+      "strict": true,
+      "tags": [
+        "agents",
+        "api",
+        "contracts",
+        "openapi",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "agents": "./agents",
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Kotlin type modeling, package cohesion, Gradle proof loops, and review agents for correctness-oriented code.",
+      "hooks": "./hooks",
+      "keywords": [
+        "agents",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "kotlin-correctness",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "kotlin-correctness",
+      "skills": "./skills",
+      "source": "kotlin-correctness",
+      "strict": true,
+      "tags": [
+        "agents",
+        "gradle",
+        "hooks",
+        "kotlin",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Goal definition, test-driven implementation, Git hygiene, CI triage, and PR lifecycle procedures with explicit proof.",
+      "keywords": [
+        "ci",
+        "evidence-driven-delivery",
+        "git",
+        "github",
+        "planning",
+        "pull-requests",
+        "skills",
+        "tdd",
+        "testing",
+        "workflow"
+      ],
+      "license": "UNLICENSED",
+      "name": "evidence-driven-delivery",
+      "skills": "./skills",
+      "source": "evidence-driven-delivery",
+      "strict": true,
+      "tags": [
+        "ci",
+        "git",
+        "github",
+        "planning",
+        "pull-requests",
+        "skills",
+        "tdd",
+        "testing",
+        "workflow"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Authoring procedures for independent skills, agents, hooks, schemas, plugins, repository maps, and documentation systems.",
+      "keywords": [
+        "agents",
+        "docs",
+        "hooks",
+        "plugins",
+        "primitive-systems-authoring",
+        "repository",
+        "schemas",
+        "shell",
+        "skills",
+        "workflow"
+      ],
+      "license": "UNLICENSED",
+      "name": "primitive-systems-authoring",
+      "skills": "./skills",
+      "source": "primitive-systems-authoring",
+      "strict": true,
+      "tags": [
+        "agents",
+        "docs",
+        "hooks",
+        "plugins",
+        "repository",
+        "schemas",
+        "shell",
+        "skills",
+        "workflow"
+      ],
+      "version": "0.1.0"
+    }
+  ]
+}
