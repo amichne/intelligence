@@ -56,12 +56,22 @@ def main() -> int:
     )
     publish.add_argument("--no-push", action="store_true")
 
+    sync_main = subparsers.add_parser("sync-main-marketplaces")
+    sync_main.add_argument(
+        "--check",
+        action="store_true",
+        help="Fail if the checked-in main marketplace manifests are stale.",
+    )
+
     args = parser.parse_args()
     repo_root = Path.cwd().resolve()
 
     if args.command == "materialize":
         materialize_marketplace(repo_root, Path(args.out).resolve(), provider=args.provider)
         return 0
+
+    if args.command == "sync-main-marketplaces":
+        return sync_main_marketplaces(repo_root, check=args.check)
 
     branch = args.branch or default_branch_for_provider(args.provider)
     with tempfile.TemporaryDirectory(prefix="intelligence-marketplace-") as temp:
@@ -97,6 +107,41 @@ def main() -> int:
             print(f"prepared marketplace branch {branch} without pushing")
         else:
             print(f"published marketplace branch {branch}")
+        return 0
+
+
+def sync_main_marketplaces(repo_root: Path, *, check: bool = False) -> int:
+    with tempfile.TemporaryDirectory(prefix="intelligence-main-marketplaces-") as temp:
+        temp_root = Path(temp)
+        codex_root = temp_root / "codex"
+        github_root = temp_root / "github"
+        materialize_codex_marketplace(repo_root, codex_root)
+        materialize_github_marketplace(repo_root, github_root)
+        marketplace_files = [
+            (codex_root / CODEX_BRANCH_MARKETPLACE_PATH, repo_root / CODEX_BRANCH_MARKETPLACE_PATH),
+            (github_root / GITHUB_BRANCH_MARKETPLACE_PATH, repo_root / GITHUB_BRANCH_MARKETPLACE_PATH),
+        ]
+
+        if check:
+            stale = [
+                target.relative_to(repo_root).as_posix()
+                for source, target in marketplace_files
+                if not target.exists() or source.read_bytes() != target.read_bytes()
+            ]
+            if stale:
+                for path in stale:
+                    print(f"out of date: {path}", file=sys.stderr)
+                print(
+                    "run: python3 scripts/publish-marketplace.py sync-main-marketplaces",
+                    file=sys.stderr,
+                )
+                return 1
+            print("OK main adapted marketplaces are current")
+            return 0
+
+        for source, target in marketplace_files:
+            copy_path(source, target)
+        print("updated main adapted marketplaces")
         return 0
 
 

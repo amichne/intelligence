@@ -66,7 +66,9 @@ zensical build --clean
 
 `adaptable.marketplace.json` keeps the provider-neutral source catalog. The
 generated `codex` and `github` branches are materialized from that source.
-`main` keeps only referential plugin manifests and primitive source files.
+`main` also keeps the adapted marketplace manifests at
+`.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json`; the
+hydrated plugin payloads stay on the provider branches.
 
 Preview the branch output locally:
 
@@ -78,11 +80,13 @@ python3 scripts/publish-marketplace.py publish-branch --provider codex --branch 
 python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
 python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
+python3 scripts/publish-marketplace.py sync-main-marketplaces --check
 ```
 
 Merges to `main` run `.github/workflows/publish-marketplace.yml`, which
 validates source contracts, materializes the Codex and GitHub marketplace
-roots, and force-updates `codex` and `github`.
+roots, force-updates `codex` and `github`, then writes the adapted marketplace
+manifests back to `main` if they changed.
 
 ## CLI Archives
 

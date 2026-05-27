@@ -67,4 +67,5 @@ python3 scripts/publish-marketplace.py publish-branch --provider codex --branch 
 python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
 python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
+python3 scripts/publish-marketplace.py sync-main-marketplaces --check
 ```

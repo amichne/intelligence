@@ -5,6 +5,8 @@ on:
     paths:
       - ".github/workflows/publish-marketplace.yml"
       - ".github/workflows/sync-provider-marketplaces.yml"
+      - ".agents/**"
+      - ".github/plugin/**"
       - "agents/**"
       - "concepts/**"
       - "hooks/**"
@@ -23,6 +25,8 @@ on:
     paths:
       - ".github/workflows/publish-marketplace.yml"
       - ".github/workflows/sync-provider-marketplaces.yml"
+      - ".agents/**"
+      - ".github/plugin/**"
       - "agents/**"
       - "concepts/**"
       - "hooks/**"
@@ -74,3 +78,6 @@ jobs:
 
       - name: Validate GitHub marketplace payload
         run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
+
+      - name: Verify main adapted marketplaces
+        run: python3 scripts/publish-marketplace.py sync-main-marketplaces --check

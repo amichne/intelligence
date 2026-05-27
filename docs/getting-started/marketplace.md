@@ -3,7 +3,9 @@
 The marketplace is the curated distribution surface for project-agnostic
 plugin families. The source of truth is `adaptable.marketplace.json` on `main`;
 provider payloads are generated into the orphan `codex` and `github` branches.
-`main` keeps only referential plugin manifests and primitive source files.
+`main` keeps referential plugin manifests, primitive source files, and the
+adapted marketplace manifests for providers that expect them in-place. Hydrated
+plugin payloads stay on the provider branches.
 
 ## Local Preview
 
@@ -17,6 +19,7 @@ python3 scripts/publish-marketplace.py publish-branch --provider codex --branch 
 python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
 python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
+python3 scripts/publish-marketplace.py sync-main-marketplaces --check
 ```
 
 The materialized output is a Codex marketplace root. Codex reads
@@ -29,26 +32,27 @@ The GitHub marketplace branch publishes its runtime entrypoint at
 
 ## Published Shape
 
-The generated branch publishes only the plugin families listed in
+The generated branches publish only the plugin families listed in
 `adaptable.marketplace.json`. It does not make every local primitive public.
 
 | Surface | Owner | Purpose |
 |---|---|---|
 | `adaptable.marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
 | `scripts/publish-marketplace.py` | Generator | Hydrates provider marketplace payloads. |
-| `.agents/plugins/marketplace.json` | Generated `codex` output | Codex marketplace entrypoint. |
+| `.agents/plugins/marketplace.json` | Generated on `main` and `codex` | Codex marketplace entrypoint. |
 | `plugins/<name>/.codex-plugin/plugin.json` | Generated `codex` output | Codex plugin manifest and embedded payload root. |
-| `.github/plugin/marketplace.json` | Generated `github` output | GitHub marketplace entrypoint. |
+| `.github/plugin/marketplace.json` | Generated on `main` and `github` | GitHub marketplace entrypoint. |
 | `.github/plugin/plugins/<name>` | Generated `github` output | GitHub plugin payload root. |
 
 ## Publication Gate
 
 Merges to `main` run `.github/workflows/publish-marketplace.yml`. The workflow
 validates source contracts, materializes the marketplace, validates the
-hydrated output, and force-updates the generated branches.
+hydrated output, force-updates the generated branches, then writes the adapted
+marketplace manifests back to `main`.
 
 `.github/workflows/sync-provider-marketplaces.yml` checks pull requests and
-pushing by materializing the same provider payloads and validating them without
-checking generated payloads into `main`.
+pushing by materializing the same provider payloads, validating them, and
+checking the adapted marketplace manifests on `main` for drift.
 
 Run the same checks locally when changing marketplace exposure.
