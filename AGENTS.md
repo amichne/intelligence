@@ -20,21 +20,24 @@ not justified.
 
 ## Repository Map
 
-- `adaptable.marketplace.json` is the provider-neutral curated marketplace catalog.
-- `agents/` contains independent reusable agent profiles.
-- `skills/` contains independent reusable skills.
-- `concepts/` contains portable concept primitives meant to be copied, linked,
+- `source/adaptable.marketplace.json` is the provider-neutral curated marketplace catalog.
+- `source/agents/` contains independent reusable agent profiles.
+- `source/skills/` contains independent reusable skills.
+- `source/concepts/` contains portable concept primitives meant to be copied, linked,
   or projected into other projects.
-- `hooks/` contains reusable hook assets and runtime adapter configs.
-- `plugins/` contains plugin composition manifests.
-- `profiles/` contains schema-validated workflow profiles that select existing
+- `source/hooks/` contains reusable hook assets and runtime adapter configs.
+- `source/plugins/` contains plugin composition manifests.
+- `source/profiles/` contains schema-validated workflow profiles that select existing
   marketplace plugins, hooks, and validation commands.
-- `templates/` contains primitive scaffold templates used by local tooling.
+- `source/templates/` contains primitive scaffold templates used by local tooling.
 - `bin/` contains thin local command wrappers for repository tooling.
-- `schemas/` contains public-facing JSON Schema contracts for primitive,
+- `source/schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
 - `scripts/` contains root validation, packaging, and marketplace publication
   tooling.
+- `plugins/`, `.agents/plugins/marketplace.json`, `marketplace-lock.json`, and
+  `.github/plugin/` are materialized publication outputs. Regenerate them from
+  `source/`; do not hand-edit them as source.
 - `package.json` and `package-lock.json` pin local validator dependencies.
 
 ## Terminology
@@ -51,8 +54,9 @@ not justified.
 
 - Keep primitives useful outside plugins. Plugins compose existing primitives;
   they do not own the only copy of a primitive.
-- Keep the root adaptable marketplace aligned with `schemas/marketplace/` and
-  provider-neutral definitions in `schemas/core/`.
+- Keep `source/adaptable.marketplace.json` aligned with
+  `source/schemas/marketplace/` and provider-neutral definitions in
+  `source/schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `node scripts/validate-manifests.mjs` is the coverage gate and must reject
@@ -61,9 +65,9 @@ not justified.
 ## Hook Rules
 
 - Keep provider-neutral hook primitive metadata aligned with
-  `schemas/core/hook.schema.json`.
+  `source/schemas/core/hook.schema.json`.
 - Keep runtime event names and matcher syntax in adapter configs such as
-  `hooks/codex/*.json`; do not put adapter-specific behavior into the hook
+  `source/hooks/codex/*.json`; do not put adapter-specific behavior into the hook
   primitive metadata.
 - Keep hook implementations host-portable. Prefer shell entrypoints with narrow,
   typed JSON parsing delegated to Python when the behavior is stateful.
@@ -72,10 +76,11 @@ not justified.
 
 ## Verification
 
-- Run `bash -n hooks/*.sh` after editing shell hook entrypoints.
+- Run `bash -n source/hooks/*.sh` after editing shell hook entrypoints.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
-- Run `node scripts/validate-manifests.mjs` after changing `adaptable.marketplace.json`,
-  `plugins/*/plugin.json`, hooks, schemas, profiles, or any JSON manifest.
+- Run `node scripts/validate-manifests.mjs` after changing
+  `source/adaptable.marketplace.json`, `source/plugins/*/plugin.json`, hooks,
+  schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
-  `schemas/core/hook.schema.json`.
+  `source/schemas/core/hook.schema.json`.

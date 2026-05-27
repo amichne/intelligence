@@ -29,7 +29,7 @@
       "license": "UNLICENSED",
       "name": "typed-design-discipline",
       "skills": "./skills",
-      "source": ".github/plugin/plugins/typed-design-discipline",
+      "source": "typed-design-discipline",
       "strict": true,
       "tags": [
         "core",
@@ -62,7 +62,7 @@
       "license": "UNLICENSED",
       "name": "contract-governance",
       "skills": "./skills",
-      "source": ".github/plugin/plugins/contract-governance",
+      "source": "contract-governance",
       "strict": true,
       "tags": [
         "agents",
@@ -96,7 +96,7 @@
       "license": "UNLICENSED",
       "name": "kotlin-correctness",
       "skills": "./skills",
-      "source": ".github/plugin/plugins/kotlin-correctness",
+      "source": "kotlin-correctness",
       "strict": true,
       "tags": [
         "agents",
@@ -130,7 +130,7 @@
       "license": "UNLICENSED",
       "name": "evidence-driven-delivery",
       "skills": "./skills",
-      "source": ".github/plugin/plugins/evidence-driven-delivery",
+      "source": "evidence-driven-delivery",
       "strict": true,
       "tags": [
         "ci",
@@ -166,7 +166,7 @@
       "license": "UNLICENSED",
       "name": "primitive-systems-authoring",
       "skills": "./skills",
-      "source": ".github/plugin/plugins/primitive-systems-authoring",
+      "source": "primitive-systems-authoring",
       "strict": true,
       "tags": [
         "agents",

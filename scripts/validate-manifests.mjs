@@ -4,18 +4,19 @@ import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const coreSchemaDir = path.join(repoRoot, "schemas", "core");
-const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
-const marketplaceSchemaDir = path.join(repoRoot, "schemas", "marketplace");
-const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
-const adaptableMarketplace = path.join(repoRoot, "adaptable.marketplace.json");
+const sourceRoot = path.join(repoRoot, "source");
+const coreSchemaDir = path.join(sourceRoot, "schemas", "core");
+const adapterSchemaDir = path.join(sourceRoot, "schemas", "adapters");
+const marketplaceSchemaDir = path.join(sourceRoot, "schemas", "marketplace");
+const hookSchemaDir = path.join(sourceRoot, "schemas", "hooks");
+const adaptableMarketplace = path.join(sourceRoot, "adaptable.marketplace.json");
 const codexMarketplace = path.join(repoRoot, "codex", "marketplace.json");
 const codexMarketplaceLock = path.join(repoRoot, "codex", "marketplace-lock.json");
 const codexBranchMarketplace = path.join(repoRoot, ".agents", "plugins", "marketplace.json");
 const codexBranchMarketplaceLock = path.join(repoRoot, "marketplace-lock.json");
 const githubPluginMarketplace = path.join(repoRoot, ".github", "plugin", "marketplace.json");
 const codexMarketplaceFixture = path.join(
-  repoRoot,
+  sourceRoot,
   "schemas",
   "marketplace",
   "fixtures",
@@ -23,7 +24,8 @@ const codexMarketplaceFixture = path.join(
 );
 const generatedJsonRoots = [
   path.join(repoRoot, "codex"),
-  path.join(repoRoot, ".github", "plugin")
+  path.join(repoRoot, ".github", "plugin"),
+  path.join(repoRoot, "plugins")
 ].map(normalizePath);
 const options = parseArguments(process.argv.slice(2));
 
@@ -82,15 +84,15 @@ const checks = [
   ...optionalChecks("codex-marketplace.schema.json", codexBranchMarketplace),
   ...optionalChecks("codex-marketplace-lock.schema.json", codexBranchMarketplaceLock),
   ...optionalChecks("github-marketplace.schema.json", githubPluginMarketplace),
-  ...listJsonFiles(path.join(repoRoot, "profiles")).map((file) => ["workflow-profile.schema.json", file]),
-  ...listPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
+  ...listJsonFiles(path.join(sourceRoot, "profiles")).map((file) => ["workflow-profile.schema.json", file]),
+  ...listPluginManifests(path.join(sourceRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
   ...listCodexPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["codex-plugin.schema.json", file]),
   ...listCodexPluginManifests(path.join(repoRoot, "codex", "plugins")).map((file) => ["codex-plugin.schema.json", file]),
   ...hydratedChecks(options.hydrated),
-  ...listFiles(path.join(repoRoot, "hooks"))
+  ...listFiles(path.join(sourceRoot, "hooks"))
     .filter((file) => file.endsWith(".hook.json"))
     .map((file) => ["hook.schema.json", file]),
-  ...listFiles(path.join(repoRoot, "hooks"))
+  ...listFiles(path.join(sourceRoot, "hooks"))
     .filter((file) => file.endsWith(".requirements.json"))
     .map((file) => ["hook-skill-requirements.schema.json", file])
 ];
@@ -195,7 +197,7 @@ function hydratedChecks(directory) {
 
 function listAdapterHookChecks() {
   return adapterHookSchemas.flatMap(({ adapter, schemaId, validator }) =>
-    listJsonFiles(path.join(repoRoot, "hooks", adapter)).map((file) => [
+    listJsonFiles(path.join(sourceRoot, "hooks", adapter)).map((file) => [
       validator,
       schemaId,
       file
@@ -287,12 +289,20 @@ function requireLocalPath(filePath, localPath, label) {
   if (!localPath) {
     return 0;
   }
-  const target = path.resolve(repoRoot, localPath);
+  const target = path.resolve(localReferenceRoot(filePath), localPath);
   if (fs.existsSync(target)) {
     return 0;
   }
   console.error(`FAIL ${path.relative(repoRoot, filePath)}: missing ${label} path: ${localPath}`);
   return 1;
+}
+
+function localReferenceRoot(filePath) {
+  const normalized = normalizePath(filePath);
+  if (normalized === normalizePath(sourceRoot) || normalized.startsWith(`${normalizePath(sourceRoot)}${path.sep}`)) {
+    return sourceRoot;
+  }
+  return repoRoot;
 }
 
 function validateNodeDependencyManifests() {
@@ -349,7 +359,7 @@ function validateNodeDependencyManifests() {
 function validateSchemaDocuments() {
   let failures = 0;
   const profileSchemaPath = path.join(
-    repoRoot,
+    sourceRoot,
     "skills",
     "manage-json-schemas",
     "references",
@@ -477,7 +487,7 @@ function validateGithubMarketplaceProjection(marketplacePath, rootDirectory) {
   }
 
   for (const plugin of marketplace.plugins ?? []) {
-    const expectedSource = `${expectedPluginRoot}/${plugin.name}`;
+    const expectedSource = plugin.name;
     if (plugin.source !== expectedSource) {
       console.error(
         `FAIL ${path.relative(repoRoot, marketplacePath)}: plugin ${plugin.name} source must be ${expectedSource}`
@@ -486,9 +496,10 @@ function validateGithubMarketplaceProjection(marketplacePath, rootDirectory) {
       continue;
     }
 
-    if (!fs.existsSync(path.resolve(rootDirectory, plugin.source))) {
+    const pluginPath = path.resolve(rootDirectory, expectedPluginRoot, plugin.source);
+    if (!fs.existsSync(pluginPath)) {
       console.error(
-        `FAIL ${path.relative(repoRoot, marketplacePath)}: missing hydrated GitHub plugin payload ${plugin.source}`
+        `FAIL ${path.relative(repoRoot, marketplacePath)}: missing hydrated GitHub plugin payload ${path.join(expectedPluginRoot, plugin.source)}`
       );
       failures += 1;
     }

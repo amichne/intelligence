@@ -15,7 +15,8 @@ from typing import Any
 
 CODEX_PLUGIN_DIR = ".codex-plugin"
 CODEX_PROVIDER_DIR = "codex"
-ADAPTABLE_MARKETPLACE_PATH = Path("adaptable.marketplace.json")
+SOURCE_ROOT = Path("source")
+ADAPTABLE_MARKETPLACE_PATH = SOURCE_ROOT / "adaptable.marketplace.json"
 CODEX_BRANCH_MARKETPLACE_PATH = Path(".agents") / "plugins" / "marketplace.json"
 CODEX_BRANCH_PLUGINS_PATH = Path("plugins")
 CODEX_BRANCH_LOCK_PATH = Path("marketplace-lock.json")
@@ -120,6 +121,8 @@ def sync_main_marketplaces(repo_root: Path, *, check: bool = False) -> int:
         materialize_github_marketplace(repo_root, github_root)
         marketplace_files = [
             (codex_root / CODEX_BRANCH_MARKETPLACE_PATH, repo_root / CODEX_BRANCH_MARKETPLACE_PATH),
+            (codex_root / CODEX_BRANCH_LOCK_PATH, repo_root / CODEX_BRANCH_LOCK_PATH),
+            (codex_root / CODEX_BRANCH_PLUGINS_PATH, repo_root / CODEX_BRANCH_PLUGINS_PATH),
             (github_root / GITHUB_BRANCH_MARKETPLACE_PATH, repo_root / GITHUB_BRANCH_MARKETPLACE_PATH),
             (github_root / GITHUB_BRANCH_PLUGINS_PATH, repo_root / GITHUB_BRANCH_PLUGINS_PATH),
         ]
@@ -225,7 +228,7 @@ def materialize_all_marketplaces(
     for entry in marketplace.get("plugins", []):
         plugin_ref = entry["plugin"]
         source_path = Path(plugin_ref["source"]["path"])
-        plugin_manifest = read_json(repo_root / source_path / "plugin.json")
+        plugin_manifest = read_json(resolve_source_path(repo_root, source_path) / "plugin.json")
         plugin_name = plugin_manifest["name"]
         codex_plugin_out = codex_root / "plugins" / plugin_name
         github_copilot_plugin_out = github_copilot_root / "plugins" / plugin_name
@@ -281,7 +284,7 @@ def materialize_all_marketplaces(
             {
                 "name": plugin_name,
                 "version": codex_manifest["version"],
-                "sourceManifest": f"{source_path.as_posix()}/plugin.json",
+                "sourceManifest": source_display_path(source_path / "plugin.json"),
                 "references": codex_hydrated["references"],
             }
         )
@@ -336,7 +339,7 @@ def materialize_codex_marketplace(
     for entry in marketplace.get("plugins", []):
         plugin_ref = entry["plugin"]
         source_path = Path(plugin_ref["source"]["path"])
-        plugin_manifest = read_json(repo_root / source_path / "plugin.json")
+        plugin_manifest = read_json(resolve_source_path(repo_root, source_path) / "plugin.json")
         plugin_name = plugin_manifest["name"]
         codex_plugin_out = plugins_root / plugin_name
         codex_plugin_out.mkdir(parents=True, exist_ok=True)
@@ -367,7 +370,7 @@ def materialize_codex_marketplace(
             {
                 "name": plugin_name,
                 "version": codex_manifest["version"],
-                "sourceManifest": f"{source_path.as_posix()}/plugin.json",
+                "sourceManifest": source_display_path(source_path / "plugin.json"),
                 "references": hydrated["references"],
             }
         )
@@ -421,7 +424,7 @@ def materialize_github_marketplace(
     for entry in marketplace.get("plugins", []):
         plugin_ref = entry["plugin"]
         source_path = Path(plugin_ref["source"]["path"])
-        plugin_manifest = read_json(repo_root / source_path / "plugin.json")
+        plugin_manifest = read_json(resolve_source_path(repo_root, source_path) / "plugin.json")
         plugin_name = plugin_manifest["name"]
         plugin_out = plugins_root / plugin_name
         plugin_out.mkdir(parents=True, exist_ok=True)
@@ -529,7 +532,7 @@ def github_copilot_plugin_entry(
 ) -> dict[str, Any]:
     plugin_entry: dict[str, Any] = {
         "name": plugin_name,
-        "source": f"{GITHUB_MARKETPLACE_PLUGIN_ROOT}/{plugin_name}",
+        "source": plugin_name,
         "description": description,
         "version": version,
         "author": owner,
@@ -664,7 +667,7 @@ def copy_primitive(
         raise SystemExit(f"unsupported non-local primitive reference: {primitive}")
 
     primitive_type = primitive["type"]
-    source_path = repo_root / primitive["path"]
+    source_path = resolve_source_path(repo_root, primitive["path"])
     if not source_path.exists():
         raise SystemExit(f"missing primitive path: {primitive['path']}")
 
@@ -679,7 +682,7 @@ def copy_primitive(
         {
             "type": primitive_type,
             "name": primitive.get("name"),
-            "sourcePath": primitive["path"],
+            "sourcePath": source_display_path(primitive["path"]),
             "targetPath": target_path.relative_to(plugin_out).as_posix(),
             "sha256": digest_path(target_path),
         }
@@ -697,7 +700,7 @@ def copy_hook(
     hydrated: dict[str, Any],
 ) -> None:
     metadata = read_json(source_path)
-    adapter_source = repo_root / metadata.get("path", primitive["path"])
+    adapter_source = resolve_source_path(repo_root, metadata.get("path", primitive["path"]))
     if not adapter_source.exists():
         raise SystemExit(f"missing hook adapter path: {metadata.get('path')}")
 
@@ -711,7 +714,7 @@ def copy_hook(
         {
             "type": "HOOK",
             "name": primitive.get("name"),
-            "sourcePath": primitive["path"],
+            "sourcePath": source_display_path(primitive["path"]),
             "targetPath": adapter_target.relative_to(plugin_out).as_posix(),
             "sha256": digest_path(adapter_target),
         }
@@ -719,7 +722,7 @@ def copy_hook(
 
     adapter = read_json(adapter_source)
     for command_path in sorted(hook_command_paths(adapter)):
-        source = repo_root / command_path
+        source = resolve_source_path(repo_root, command_path)
         if not source.exists():
             continue
         target = plugin_out / command_path
@@ -861,6 +864,26 @@ def current_source_timestamp(repo_root: Path) -> str:
     if result.returncode != 0:
         return "1970-01-01T00:00:00+00:00"
     return result.stdout.strip()
+
+
+def resolve_source_path(repo_root: Path, path_value: str | Path) -> Path:
+    path = Path(path_value)
+    if path.is_absolute():
+        raise SystemExit(f"source paths must be repository-relative: {path_value}")
+    if path.parts and path.parts[0] == SOURCE_ROOT.as_posix():
+        return repo_root / path
+    return repo_root / SOURCE_ROOT / path
+
+
+def source_display_path(path_value: str | Path) -> str:
+    path = Path(path_value).as_posix()
+    if path.startswith("./"):
+        path = path[2:]
+    if path == ".":
+        return SOURCE_ROOT.as_posix()
+    if path.startswith(f"{SOURCE_ROOT.as_posix()}/"):
+        return path
+    return f"{SOURCE_ROOT.as_posix()}/{path}"
 
 
 def read_json(path: Path) -> dict[str, Any]:

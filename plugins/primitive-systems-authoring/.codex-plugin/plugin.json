@@ -1,0 +1,39 @@
+{
+  "author": {
+    "name": "Amichne"
+  },
+  "description": "Authoring procedures for independent skills, agents, hooks, schemas, plugins, repository maps, and documentation systems.",
+  "interface": {
+    "brandColor": "#0F766E",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "category": "Engineering",
+    "defaultPrompt": [
+      "Use Primitive Systems Authoring for this task.",
+      "Review this repo with Primitive Systems Authoring.",
+      "Show the Primitive Systems Authoring workflow."
+    ],
+    "developerName": "Amichne",
+    "displayName": "Primitive Systems Authoring",
+    "longDescription": "Authoring procedures for independent skills, agents, hooks, schemas, plugins, repository maps, and documentation systems.",
+    "shortDescription": "Authoring procedures for independent skills, agents, hooks, schemas,..."
+  },
+  "keywords": [
+    "agents",
+    "docs",
+    "hooks",
+    "plugins",
+    "primitive-systems-authoring",
+    "repository",
+    "schemas",
+    "shell",
+    "skills",
+    "workflow"
+  ],
+  "license": "UNLICENSED",
+  "name": "primitive-systems-authoring",
+  "skills": "./skills/",
+  "version": "0.1.0"
+}

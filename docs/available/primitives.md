@@ -5,7 +5,7 @@ they can be inspected, tested, reused, and composed independently.
 
 ## Skill Groups
 
-Skills live under `skills/<name>/SKILL.md`. Many include references, scripts,
+Skills live under `source/skills/<name>/SKILL.md`. Many include references, scripts,
 templates, or examples next to the entrypoint.
 
 | Group | Examples |
@@ -19,7 +19,7 @@ templates, or examples next to the entrypoint.
 
 ## Agent Profiles
 
-Agent profiles live under `agents/`. They are focused reviewer or enforcement
+Agent profiles live under `source/agents/`. They are focused reviewer or enforcement
 surfaces that plugins can compose.
 
 | Agent | Focus |
@@ -33,8 +33,8 @@ surfaces that plugins can compose.
 
 ## Hooks
 
-Hook primitive metadata lives at `hooks/*.hook.json`. Runtime adapter configs
-live under provider folders such as `hooks/codex/`.
+Hook primitive metadata lives at `source/hooks/*.hook.json`. Runtime adapter
+configs live under provider folders such as `source/hooks/codex/`.
 
 | Hook | Purpose |
 |---|---|
@@ -46,12 +46,12 @@ live under provider folders such as `hooks/codex/`.
 !!! note "Provider boundary"
     Keep provider-neutral hook metadata separate from adapter-specific matcher
     syntax and runtime event names. Adapter files belong under provider
-    directories such as `hooks/codex/`.
+    directories such as `source/hooks/codex/`.
 
 ## Concepts And Schemas
 
-Concept primitives live under `concepts/`. They hold portable principles such
+Concept primitives live under `source/concepts/`. They hold portable principles such
 as `type-safety` and `schema-driven-design`.
 
-Public provider-neutral schemas live under `schemas/core/`. Adapter schemas
-live under `schemas/adapters/`.
+Public provider-neutral schemas live under `source/schemas/core/`. Adapter
+schemas live under `source/schemas/adapters/`.

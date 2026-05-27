@@ -42,8 +42,8 @@ bin/intelligence install --repo /path/to/repo \
 
 ## Profile Shape
 
-Profiles live under `profiles/` in this repository and are validated against
-`schemas/core/workflow-profile.schema.json`.
+Profiles live under `source/profiles/` in this repository and are validated
+against `source/schemas/core/workflow-profile.schema.json`.
 
 The profile shape answers these questions:
 

@@ -7,16 +7,20 @@ change belongs.
 
 | Path | Owner |
 |---|---|
-| `adaptable.marketplace.json` | Provider-neutral curated marketplace catalog. |
-| `agents/` | Independent reusable agent profiles. |
-| `skills/` | Independent reusable skills. |
-| `concepts/` | Portable concept and principle primitives. |
-| `hooks/` | Hook metadata, implementations, requirements, and provider adapters. |
-| `plugins/` | Referential plugin composition manifests. |
-| `profiles/` | Schema-validated workflow profiles. |
-| `templates/` | Primitive scaffold templates used by `bin/intelligence`. |
+| `source/adaptable.marketplace.json` | Provider-neutral curated marketplace catalog. |
+| `source/agents/` | Independent reusable agent profiles. |
+| `source/skills/` | Independent reusable skills. |
+| `source/concepts/` | Portable concept and principle primitives. |
+| `source/hooks/` | Hook metadata, implementations, requirements, and provider adapters. |
+| `source/plugins/` | Referential plugin composition manifests. |
+| `source/profiles/` | Schema-validated workflow profiles. |
+| `source/templates/` | Primitive scaffold templates used by `bin/intelligence`. |
 | `bin/` | Thin local command wrappers. |
 | `scripts/` | Root validation, packaging, and marketplace publication tooling. |
-| `schemas/` | Public provider-neutral and adapter schema contracts. |
+| `source/schemas/` | Public provider-neutral and adapter schema contracts. |
+| `plugins/` | Materialized Codex plugin payloads generated from `source/`. |
+| `.github/plugin/` | Materialized GitHub marketplace projection generated from `source/`. |
+| `.agents/plugins/marketplace.json` | Materialized Codex marketplace entrypoint on `main`. |
+| `marketplace-lock.json` | Materialized lockfile for root plugin payloads. |
 | `docs/` | Hand-authored Zensical documentation source. |
 | `zensical.toml` | Documentation navigation, theme, and Markdown feature contract. |

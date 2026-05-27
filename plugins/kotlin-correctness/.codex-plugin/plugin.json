@@ -1,0 +1,37 @@
+{
+  "author": {
+    "name": "Amichne"
+  },
+  "description": "Kotlin type modeling, package cohesion, Gradle proof loops, and review agents for correctness-oriented code.",
+  "interface": {
+    "brandColor": "#0F766E",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "category": "Engineering",
+    "defaultPrompt": [
+      "Use Kotlin Correctness for this task.",
+      "Review this repo with Kotlin Correctness.",
+      "Show the Kotlin Correctness workflow."
+    ],
+    "developerName": "Amichne",
+    "displayName": "Kotlin Correctness",
+    "longDescription": "Kotlin type modeling, package cohesion, Gradle proof loops, and review agents for correctness-oriented code.",
+    "shortDescription": "Kotlin type modeling, package cohesion, Gradle proof loops, and revie..."
+  },
+  "keywords": [
+    "agents",
+    "gradle",
+    "hooks",
+    "kotlin",
+    "kotlin-correctness",
+    "schemas",
+    "skills",
+    "validation"
+  ],
+  "license": "UNLICENSED",
+  "name": "kotlin-correctness",
+  "skills": "./skills/",
+  "version": "0.1.0"
+}
