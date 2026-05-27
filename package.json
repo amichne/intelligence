@@ -6,7 +6,7 @@
     "package:cli": "python3 scripts/package-intelligence.py --out dist",
     "validate:manifests": "node scripts/validate-manifests.mjs",
     "marketplace:materialize": "python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace",
-    "marketplace:sync:github-plugin": "python3 scripts/publish-marketplace.py sync-github-plugin",
+    "marketplace:sync:main-projections": "python3 scripts/publish-marketplace.py sync-main-projections",
     "marketplace:publish:preview": "python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push",
     "schema:policy": "node skills/manage-json-schemas/scripts/schema-contracts.js policy-tree --root skills/manage-json-schemas/references/schemas",
     "docs:build": "zensical build --clean",

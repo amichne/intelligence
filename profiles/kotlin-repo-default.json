@@ -2,20 +2,21 @@
   "type": "WORKFLOW_PROFILE",
   "schemaVersion": 1,
   "name": "kotlin-repo-default",
-  "description": "Default Kotlin repository workflow using Intelligence onboarding, Kotlin TDD development, PR lifecycle, and Codex hook adapters.",
+  "description": "Default Kotlin repository workflow using typed design discipline, Kotlin correctness, evidence-driven delivery, and Codex hook adapters.",
   "marketplaces": [
     {
       "type": "WORKFLOW_MARKETPLACE",
-      "name": "intelligence",
+      "name": "amichne-intelligence",
       "provider": "codex",
-      "source": "https://github.com/amichne/intelligence/tree/marketplace",
+      "source": "https://github.com/amichne/intelligence/tree/main",
       "entrypoint": "codex/marketplace.json",
       "scope": "plugins in this workflow profile"
     }
   ],
   "plugins": [
-    "intelligence-core",
-    "kotlin-tdd-development"
+    "typed-design-discipline",
+    "kotlin-correctness",
+    "evidence-driven-delivery"
   ],
   "hooks": [
     {

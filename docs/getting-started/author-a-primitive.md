@@ -10,7 +10,7 @@ Use the repository CLI to create a primitive from the local templates.
 
 ```sh
 bin/intelligence primitive new skill example-skill \
-  --plugin primitive-authoring \
+  --plugin primitive-systems-authoring \
   --marketplace
 ```
 

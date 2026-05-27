@@ -13,7 +13,7 @@ repository.
 | `bin/intelligence validate` | Run manifest validation gates. |
 | `bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default` | Create a target-repository workflow profile. |
 | `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json` | Dry-run profile installation. |
-| `bin/intelligence primitive new skill example-skill --plugin primitive-authoring` | Scaffold a new primitive and optionally reference it. |
+| `bin/intelligence primitive new skill example-skill --plugin primitive-systems-authoring` | Scaffold a new primitive and optionally reference it. |
 
 ## npm Scripts
 
@@ -24,7 +24,7 @@ The root `package.json` pins validator dependencies and exposes common tasks.
 | `npm run intelligence -- --help` | Run the repository CLI through npm. |
 | `npm run validate:manifests` | Run `node scripts/validate-manifests.mjs`. |
 | `npm run marketplace:materialize` | Materialize marketplace output under `/tmp/intelligence-marketplace`. |
-| `npm run marketplace:sync:github-plugin` | Refresh the checked-in `.github/plugin` marketplace output. |
+| `npm run marketplace:sync:main-projections` | Refresh the checked-in `codex/` and `.github/plugin` marketplace outputs. |
 | `npm run marketplace:publish:preview` | Build the generated branch locally without pushing. |
 | `npm run package:cli -- --version local` | Build local CLI archives under `dist/`. |
 
