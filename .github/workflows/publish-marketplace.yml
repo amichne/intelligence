@@ -44,12 +44,12 @@ jobs:
       - name: Publish adapted marketplace manifests to main
         run: |
           python3 scripts/publish-marketplace.py sync-main-marketplaces
-          if [ -z "$(git status --porcelain -- .agents/plugins/marketplace.json .github/plugin/marketplace.json)" ]; then
+          if [ -z "$(git status --porcelain -- .agents/plugins/marketplace.json .github/plugin/marketplace.json .github/plugin/plugins)" ]; then
             echo "main adapted marketplaces already current"
             exit 0
           fi
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add .agents/plugins/marketplace.json .github/plugin/marketplace.json
+          git add -A -- .agents/plugins/marketplace.json .github/plugin/marketplace.json .github/plugin/plugins
           git commit -m "Publish adapted marketplace manifests"
           git push origin HEAD:main

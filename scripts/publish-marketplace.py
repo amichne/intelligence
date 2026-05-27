@@ -22,6 +22,7 @@ CODEX_BRANCH_LOCK_PATH = Path("marketplace-lock.json")
 GITHUB_COPILOT_PROVIDER_PATH = Path(".github") / "plugin"
 GITHUB_BRANCH_MARKETPLACE_PATH = GITHUB_COPILOT_PROVIDER_PATH / "marketplace.json"
 GITHUB_BRANCH_PLUGINS_PATH = GITHUB_COPILOT_PROVIDER_PATH / "plugins"
+GITHUB_MARKETPLACE_PLUGIN_ROOT = GITHUB_BRANCH_PLUGINS_PATH.as_posix()
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -120,13 +121,14 @@ def sync_main_marketplaces(repo_root: Path, *, check: bool = False) -> int:
         marketplace_files = [
             (codex_root / CODEX_BRANCH_MARKETPLACE_PATH, repo_root / CODEX_BRANCH_MARKETPLACE_PATH),
             (github_root / GITHUB_BRANCH_MARKETPLACE_PATH, repo_root / GITHUB_BRANCH_MARKETPLACE_PATH),
+            (github_root / GITHUB_BRANCH_PLUGINS_PATH, repo_root / GITHUB_BRANCH_PLUGINS_PATH),
         ]
 
         if check:
             stale = [
                 target.relative_to(repo_root).as_posix()
                 for source, target in marketplace_files
-                if not target.exists() or source.read_bytes() != target.read_bytes()
+                if not target.exists() or digest_path(source) != digest_path(target)
             ]
             if stale:
                 for path in stale:
@@ -208,7 +210,7 @@ def materialize_all_marketplaces(
         "owner": person_for(owner, owner_name),
         "metadata": {
             "description": marketplace.get("description", ""),
-            "pluginRoot": "./plugins",
+            "pluginRoot": GITHUB_MARKETPLACE_PLUGIN_ROOT,
         },
         "plugins": [],
     }
@@ -411,7 +413,7 @@ def materialize_github_marketplace(
         "owner": person_for(owner, owner_name),
         "metadata": {
             "description": marketplace.get("description", ""),
-            "pluginRoot": "./plugins",
+            "pluginRoot": GITHUB_MARKETPLACE_PLUGIN_ROOT,
         },
         "plugins": [],
     }
@@ -527,7 +529,7 @@ def github_copilot_plugin_entry(
 ) -> dict[str, Any]:
     plugin_entry: dict[str, Any] = {
         "name": plugin_name,
-        "source": f"./plugins/{plugin_name}",
+        "source": f"{GITHUB_MARKETPLACE_PLUGIN_ROOT}/{plugin_name}",
         "description": description,
         "version": version,
         "author": owner,

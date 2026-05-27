@@ -2,7 +2,7 @@
   "$schema": "github-marketplace.schema.json",
   "metadata": {
     "description": "Curated marketplace for project-agnostic AI tooling primitives.",
-    "pluginRoot": "./plugins"
+    "pluginRoot": ".github/plugin/plugins"
   },
   "name": "amichne-intelligence",
   "owner": {
@@ -29,7 +29,7 @@
       "license": "UNLICENSED",
       "name": "typed-design-discipline",
       "skills": "./skills",
-      "source": "./plugins/typed-design-discipline",
+      "source": ".github/plugin/plugins/typed-design-discipline",
       "strict": true,
       "tags": [
         "core",
@@ -62,7 +62,7 @@
       "license": "UNLICENSED",
       "name": "contract-governance",
       "skills": "./skills",
-      "source": "./plugins/contract-governance",
+      "source": ".github/plugin/plugins/contract-governance",
       "strict": true,
       "tags": [
         "agents",
@@ -96,7 +96,7 @@
       "license": "UNLICENSED",
       "name": "kotlin-correctness",
       "skills": "./skills",
-      "source": "./plugins/kotlin-correctness",
+      "source": ".github/plugin/plugins/kotlin-correctness",
       "strict": true,
       "tags": [
         "agents",
@@ -130,7 +130,7 @@
       "license": "UNLICENSED",
       "name": "evidence-driven-delivery",
       "skills": "./skills",
-      "source": "./plugins/evidence-driven-delivery",
+      "source": ".github/plugin/plugins/evidence-driven-delivery",
       "strict": true,
       "tags": [
         "ci",
@@ -166,7 +166,7 @@
       "license": "UNLICENSED",
       "name": "primitive-systems-authoring",
       "skills": "./skills",
-      "source": "./plugins/primitive-systems-authoring",
+      "source": ".github/plugin/plugins/primitive-systems-authoring",
       "strict": true,
       "tags": [
         "agents",

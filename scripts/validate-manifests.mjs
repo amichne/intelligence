@@ -112,6 +112,13 @@ failures += validateNodeDependencyManifests();
 failures += validateSchemaDocuments();
 failures += validateHydratedInstructionAdapters(repoRoot);
 failures += validateHydratedInstructionAdapters(options.hydrated);
+failures += validateGithubMarketplaceProjection(githubPluginMarketplace, repoRoot);
+if (options.hydrated) {
+  failures += validateGithubMarketplaceProjection(
+    path.join(options.hydrated, ".github", "plugin", "marketplace.json"),
+    options.hydrated
+  );
+}
 failures += validateJsonCoverage();
 
 if (failures > 0) {
@@ -451,6 +458,46 @@ function hasFilesRecursive(directory) {
     }
   }
   return false;
+}
+
+function validateGithubMarketplaceProjection(marketplacePath, rootDirectory) {
+  if (!fs.existsSync(marketplacePath)) {
+    return 0;
+  }
+
+  const marketplace = readJson(marketplacePath);
+  const expectedPluginRoot = ".github/plugin/plugins";
+  let failures = 0;
+
+  if (marketplace.metadata?.pluginRoot !== expectedPluginRoot) {
+    console.error(
+      `FAIL ${path.relative(repoRoot, marketplacePath)}: metadata.pluginRoot must be ${expectedPluginRoot}`
+    );
+    failures += 1;
+  }
+
+  for (const plugin of marketplace.plugins ?? []) {
+    const expectedSource = `${expectedPluginRoot}/${plugin.name}`;
+    if (plugin.source !== expectedSource) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, marketplacePath)}: plugin ${plugin.name} source must be ${expectedSource}`
+      );
+      failures += 1;
+      continue;
+    }
+
+    if (!fs.existsSync(path.resolve(rootDirectory, plugin.source))) {
+      console.error(
+        `FAIL ${path.relative(repoRoot, marketplacePath)}: missing hydrated GitHub plugin payload ${plugin.source}`
+      );
+      failures += 1;
+    }
+  }
+
+  if (failures === 0) {
+    console.log(`OK ${path.relative(repoRoot, marketplacePath)} GitHub marketplace projection`);
+  }
+  return failures;
 }
 
 function validateJsonCoverage() {

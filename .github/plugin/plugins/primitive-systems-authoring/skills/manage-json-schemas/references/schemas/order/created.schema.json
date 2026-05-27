@@ -1,0 +1,26 @@
+{
+  "$schema": "../../schema-profile/schema-profile.schema.json",
+  "$id": "references/schemas/order/created.schema.json",
+  "title": "CREATED",
+  "type": "object",
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "CREATED"
+      ],
+      "examples": [
+        "CREATED"
+      ]
+    }
+  },
+  "required": [
+    "type"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "type": "CREATED"
+    }
+  ]
+}
