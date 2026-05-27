@@ -9,6 +9,8 @@ const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
 const codexMarketplace = path.join(repoRoot, "codex", "marketplace.json");
 const codexMarketplaceLock = path.join(repoRoot, "codex", "marketplace-lock.json");
+const codexBranchMarketplace = path.join(repoRoot, ".agents", "plugins", "marketplace.json");
+const codexBranchMarketplaceLock = path.join(repoRoot, "marketplace-lock.json");
 const githubPluginMarketplace = path.join(repoRoot, ".github", "plugin", "marketplace.json");
 const generatedJsonRoots = [
   path.join(repoRoot, "codex"),
@@ -63,6 +65,8 @@ const checks = [
   ["marketplace.schema.json", path.join(repoRoot, "marketplace.json")],
   ...optionalChecks("codex-marketplace.schema.json", codexMarketplace),
   ...optionalChecks("codex-marketplace-lock.schema.json", codexMarketplaceLock),
+  ...optionalChecks("codex-marketplace.schema.json", codexBranchMarketplace),
+  ...optionalChecks("codex-marketplace-lock.schema.json", codexBranchMarketplaceLock),
   ...optionalChecks("github-marketplace.schema.json", githubPluginMarketplace),
   ...listJsonFiles(path.join(repoRoot, "profiles")).map((file) => ["workflow-profile.schema.json", file]),
   ...listPluginManifests(path.join(repoRoot, "plugins")).map((file) => ["plugin.schema.json", file]),
@@ -152,10 +156,16 @@ function hydratedChecks(directory) {
     return [];
   }
   return [
-    ["codex-marketplace.schema.json", path.join(directory, "codex", "marketplace.json")],
-    ["codex-marketplace-lock.schema.json", path.join(directory, "codex", "marketplace-lock.json")],
-    ["github-marketplace.schema.json", path.join(directory, ".github", "plugin", "marketplace.json")],
+    ...optionalChecks("codex-marketplace.schema.json", path.join(directory, "codex", "marketplace.json")),
+    ...optionalChecks("codex-marketplace-lock.schema.json", path.join(directory, "codex", "marketplace-lock.json")),
+    ...optionalChecks("codex-marketplace.schema.json", path.join(directory, ".agents", "plugins", "marketplace.json")),
+    ...optionalChecks("codex-marketplace-lock.schema.json", path.join(directory, "marketplace-lock.json")),
+    ...optionalChecks("github-marketplace.schema.json", path.join(directory, ".github", "plugin", "marketplace.json")),
     ...listCodexPluginManifests(path.join(directory, "codex", "plugins")).map((file) => [
+      "codex-plugin.schema.json",
+      file
+    ]),
+    ...listCodexPluginManifests(path.join(directory, "plugins")).map((file) => [
       "codex-plugin.schema.json",
       file
     ])
@@ -361,16 +371,8 @@ function validateHydratedInstructionAdapters(directory) {
     return 0;
   }
 
-  const pluginRoot = path.join(directory, "codex", "plugins");
-  if (!fs.existsSync(pluginRoot)) {
-    return 0;
-  }
-
   let failures = 0;
-  for (const pluginDir of fs.readdirSync(pluginRoot, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => path.join(pluginRoot, entry.name))
-    .sort()) {
+  for (const pluginDir of hydratedPluginDirs(directory)) {
     const hasAgentProfiles = hasFilesRecursive(path.join(pluginDir, "agents"));
     const hasInstructions = hasFilesRecursive(path.join(pluginDir, "instructions"));
     if (!hasAgentProfiles && !hasInstructions) {
@@ -398,6 +400,17 @@ function validateHydratedInstructionAdapters(directory) {
     console.log(`OK ${path.relative(repoRoot, agentsPath)}`);
   }
   return failures;
+}
+
+function hydratedPluginDirs(directory) {
+  return [path.join(directory, "codex", "plugins"), path.join(directory, "plugins")]
+    .filter((pluginRoot) => fs.existsSync(pluginRoot))
+    .flatMap((pluginRoot) =>
+      fs.readdirSync(pluginRoot, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => path.join(pluginRoot, entry.name))
+    )
+    .sort();
 }
 
 function hasFilesRecursive(directory) {

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "codex-marketplace.schema.json",
   "title": "Codex Marketplace",
-  "description": "Generated Codex-native marketplace projection derived from the provider-neutral marketplace manifest.",
+  "description": "Generated Codex-native marketplace root stored at `.agents/plugins/marketplace.json` on the hydrated Codex marketplace branch.",
   "type": "object",
   "required": [
     "name",

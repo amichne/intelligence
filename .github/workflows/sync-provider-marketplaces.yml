@@ -1,12 +1,11 @@
-name: Sync Provider Marketplaces
+name: Verify Marketplace Publication
 
 on:
   pull_request:
     paths:
-      - ".github/plugin/**"
+      - ".github/workflows/publish-marketplace.yml"
       - ".github/workflows/sync-provider-marketplaces.yml"
       - "agents/**"
-      - "codex/**"
       - "concepts/**"
       - "hooks/**"
       - "marketplace.json"
@@ -22,10 +21,9 @@ on:
     branches:
       - main
     paths:
-      - ".github/plugin/**"
+      - ".github/workflows/publish-marketplace.yml"
       - ".github/workflows/sync-provider-marketplaces.yml"
       - "agents/**"
-      - "codex/**"
       - "concepts/**"
       - "hooks/**"
       - "marketplace.json"
@@ -43,12 +41,11 @@ permissions:
   contents: read
 
 concurrency:
-  group: sync-provider-marketplaces-${{ github.ref }}
+  group: verify-marketplace-publication-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify:
-    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
@@ -66,52 +63,8 @@ jobs:
       - name: Validate source manifests
         run: node scripts/validate-manifests.mjs --portable
 
-      - name: Check committed provider marketplaces
-        run: python3 scripts/publish-marketplace.py sync-main-projections --check
+      - name: Materialize Codex marketplace
+        run: python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
 
-  sync:
-    if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out source
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install validation dependencies
-        run: npm ci
-
-      - name: Validate source manifests
-        run: node scripts/validate-manifests.mjs --portable
-
-      - name: Sync provider marketplaces
-        run: python3 scripts/publish-marketplace.py sync-main-projections
-
-      - name: Validate synchronized manifests
-        run: node scripts/validate-manifests.mjs --portable
-
-      - name: Detect synchronized changes
-        id: diff
-        run: |
-          if git diff --quiet -- codex .github/plugin; then
-            echo "changed=false" >> "${GITHUB_OUTPUT}"
-          else
-            echo "changed=true" >> "${GITHUB_OUTPUT}"
-          fi
-
-      - name: Commit synchronized marketplaces
-        if: steps.diff.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add codex .github/plugin
-          git commit -m "chore: sync provider marketplaces"
-          git push
+      - name: Validate Codex marketplace payload
+        run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace

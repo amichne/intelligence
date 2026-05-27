@@ -2,9 +2,8 @@
 
 The marketplace is the curated distribution surface for project-agnostic
 plugin families. The source of truth is `marketplace.json` on `main`; provider
-payloads are generated into the orphan `marketplace` branch, and the Codex and
-GitHub Copilot projections are also checked in under `codex/` and
-`.github/plugin/` on `main`.
+payloads are generated into the orphan `marketplace/codex` branch. `main` keeps
+only referential plugin manifests and primitive source files.
 
 ## Local Preview
 
@@ -12,15 +11,14 @@ Preview the hydrated marketplace before publishing.
 
 ```sh
 npm ci
-python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
-python3 scripts/publish-marketplace.py sync-main-projections --check
-python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
+python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
+node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
+python3 scripts/publish-marketplace.py publish-branch --provider codex --branch marketplace/codex --no-push
 ```
 
-The materialized output contains provider-native entrypoints. Codex consumers
-use `codex/marketplace.json`; GitHub Copilot consumers use
-`.github/plugin/marketplace.json`.
+The materialized output is a Codex marketplace root. Codex reads
+`.agents/plugins/marketplace.json` and resolves fully hydrated plugin payloads
+from root-level `plugins/<name>` directories.
 
 ## Published Shape
 
@@ -30,9 +28,9 @@ The generated branch publishes only the plugin families listed in
 | Surface | Owner | Purpose |
 |---|---|---|
 | `marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
-| `scripts/publish-marketplace.py` | Generator | Hydrates provider-native payloads. |
-| `codex/marketplace.json` | Generated branch output and checked-in `main` copy | Codex marketplace entrypoint. |
-| `.github/plugin/marketplace.json` | Generated branch output and checked-in `main` copy | GitHub Copilot marketplace entrypoint. |
+| `scripts/publish-marketplace.py` | Generator | Hydrates the Codex marketplace payload. |
+| `.agents/plugins/marketplace.json` | Generated `marketplace/codex` output | Codex marketplace entrypoint. |
+| `plugins/<name>/.codex-plugin/plugin.json` | Generated `marketplace/codex` output | Codex plugin manifest and embedded payload root. |
 
 ## Publication Gate
 
@@ -40,8 +38,8 @@ Merges to `main` run `.github/workflows/publish-marketplace.yml`. The workflow
 validates source contracts, materializes the marketplace, validates the
 hydrated output, and force-updates the generated branch.
 
-`.github/workflows/sync-provider-marketplaces.yml` checks pull requests for
-provider marketplace drift and commits refreshed `codex/` and `.github/plugin/`
-output on `main` when source changes require it.
+`.github/workflows/sync-provider-marketplaces.yml` checks pull requests and
+pushes by materializing the same Codex payload and validating it without
+checking generated payloads into `main`.
 
 Run the same checks locally when changing marketplace exposure.

@@ -23,8 +23,7 @@ The root `package.json` pins validator dependencies and exposes common tasks.
 |---|---|
 | `npm run intelligence -- --help` | Run the repository CLI through npm. |
 | `npm run validate:manifests` | Run `node scripts/validate-manifests.mjs`. |
-| `npm run marketplace:materialize` | Materialize marketplace output under `/tmp/intelligence-marketplace`. |
-| `npm run marketplace:sync:main-projections` | Refresh the checked-in `codex/` and `.github/plugin` marketplace outputs. |
+| `npm run marketplace:materialize` | Materialize Codex marketplace output under `/tmp/intelligence-codex-marketplace`. |
 | `npm run marketplace:publish:preview` | Build the generated branch locally without pushing. |
 | `npm run package:cli -- --version local` | Build local CLI archives under `dist/`. |
 

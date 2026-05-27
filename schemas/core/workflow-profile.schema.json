@@ -108,14 +108,14 @@
           "type": "string",
           "minLength": 1,
           "examples": [
-            "https://github.com/acme/agent-tools/tree/marketplace"
+            "https://github.com/acme/agent-tools/tree/marketplace/codex"
           ]
         },
         "entrypoint": {
           "type": "string",
           "minLength": 1,
           "examples": [
-            "codex/marketplace.json"
+            ".agents/plugins/marketplace.json"
           ]
         },
         "scope": {
@@ -206,8 +206,8 @@
           "type": "WORKFLOW_MARKETPLACE",
           "name": "acme-tools",
           "provider": "codex",
-          "source": "https://github.com/acme/agent-tools/tree/marketplace",
-          "entrypoint": "codex/marketplace.json",
+          "source": "https://github.com/acme/agent-tools/tree/marketplace/codex",
+          "entrypoint": ".agents/plugins/marketplace.json",
           "scope": "plugins in this workflow profile"
         }
       ],

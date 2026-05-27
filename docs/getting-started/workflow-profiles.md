@@ -12,7 +12,7 @@ Create a profile from the built-in Kotlin default.
 bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default
 ```
 
-The default profile uses the checked-in Codex marketplace projection and selects
+The default profile uses the published Codex marketplace branch and selects
 `typed-design-discipline`, `kotlin-correctness`, and
 `evidence-driven-delivery` with Codex hook adapters. That pulls in Kotlin
 standards, TDD, Gradle validation, type-safety and schema-driven-design

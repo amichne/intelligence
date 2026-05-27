@@ -15,13 +15,10 @@ from typing import Any
 
 CODEX_PLUGIN_DIR = ".codex-plugin"
 CODEX_PROVIDER_DIR = "codex"
+CODEX_BRANCH_MARKETPLACE_PATH = Path(".agents") / "plugins" / "marketplace.json"
+CODEX_BRANCH_PLUGINS_PATH = Path("plugins")
+CODEX_BRANCH_LOCK_PATH = Path("marketplace-lock.json")
 GITHUB_COPILOT_PROVIDER_PATH = Path(".github") / "plugin"
-MAIN_BRANCH_PROVIDER_PATHS = [
-    Path(CODEX_PROVIDER_DIR),
-    GITHUB_COPILOT_PROVIDER_PATH,
-]
-CHECKED_IN_PROJECTION_GENERATED_AT = "1970-01-01T00:00:00Z"
-CHECKED_IN_PROJECTION_SOURCE_SHA = "0000000000000000000000000000000000000000"
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -39,38 +36,28 @@ def main() -> int:
 
     materialize = subparsers.add_parser("materialize")
     materialize.add_argument("--out", required=True, help="Output directory to replace.")
-
-    sync_github = subparsers.add_parser("sync-github-plugin")
-    sync_github.add_argument(
-        "--check",
-        action="store_true",
-        help="Fail if .github/plugin does not match generated output.",
-    )
-
-    sync_main = subparsers.add_parser("sync-main-projections")
-    sync_main.add_argument(
-        "--check",
-        action="store_true",
-        help="Fail if codex/ and .github/plugin do not match generated output.",
+    materialize.add_argument(
+        "--provider",
+        choices=["all", "codex"],
+        default="codex",
+        help="Materialize all provider projections or only the Codex marketplace root.",
     )
 
     publish = subparsers.add_parser("publish-branch")
-    publish.add_argument("--branch", default="marketplace")
+    publish.add_argument("--branch", default="marketplace/codex")
+    publish.add_argument(
+        "--provider",
+        choices=["all", "codex"],
+        default="codex",
+        help="Publish all provider projections or only the Codex marketplace root.",
+    )
     publish.add_argument("--no-push", action="store_true")
 
     args = parser.parse_args()
     repo_root = Path.cwd().resolve()
 
     if args.command == "materialize":
-        materialize_marketplace(repo_root, Path(args.out).resolve())
-        return 0
-
-    if args.command == "sync-github-plugin":
-        sync_github_plugin(repo_root, check=args.check)
-        return 0
-
-    if args.command == "sync-main-projections":
-        sync_main_projections(repo_root, check=args.check)
+        materialize_marketplace(repo_root, Path(args.out).resolve(), provider=args.provider)
         return 0
 
     with tempfile.TemporaryDirectory(prefix="intelligence-marketplace-") as temp:
@@ -78,7 +65,7 @@ def main() -> int:
         materialized = temp_root / "materialized"
         worktree = temp_root / "worktree"
         local_branch = f"intelligence-marketplace-publish-{os.getpid()}"
-        materialize_marketplace(repo_root, materialized)
+        materialize_marketplace(repo_root, materialized, provider=args.provider)
         run(["git", "worktree", "add", "--detach", str(worktree), "HEAD"], repo_root)
         try:
             run(["git", "checkout", "--orphan", local_branch], worktree)
@@ -110,6 +97,32 @@ def main() -> int:
 
 
 def materialize_marketplace(
+    repo_root: Path,
+    out_root: Path,
+    *,
+    provider: str = "all",
+    generated_at: str | None = None,
+    source_sha: str | None = None,
+) -> None:
+    if provider == "codex":
+        materialize_codex_marketplace(
+            repo_root,
+            out_root,
+            generated_at=generated_at,
+            source_sha=source_sha,
+        )
+        return
+    if provider != "all":
+        raise SystemExit(f"unsupported marketplace provider: {provider}")
+    materialize_all_marketplaces(
+        repo_root,
+        out_root,
+        generated_at=generated_at,
+        source_sha=source_sha,
+    )
+
+
+def materialize_all_marketplaces(
     repo_root: Path,
     out_root: Path,
     *,
@@ -181,20 +194,7 @@ def materialize_marketplace(
             github_copilot_hydrated,
         )
 
-        codex_marketplace["plugins"].append(
-            {
-                "name": plugin_name,
-                "source": {
-                    "source": "local",
-                    "path": f"./plugins/{plugin_name}",
-                },
-                "policy": {
-                    "installation": "AVAILABLE",
-                    "authentication": "ON_INSTALL",
-                },
-                "category": category,
-            }
-        )
+        codex_marketplace["plugins"].append(codex_marketplace_entry(plugin_name, category))
         github_copilot_marketplace["plugins"].append(
             github_copilot_plugin_entry(
                 plugin_name=plugin_name,
@@ -207,27 +207,16 @@ def materialize_marketplace(
             )
         )
 
-        codex_manifest = {
-            "name": plugin_name,
-            "version": plugin_manifest.get("version", plugin_ref.get("version", "0.1.0")),
-            "description": description,
-            "author": {"name": owner_name},
-            "license": "UNLICENSED",
-            "keywords": sorted(set([plugin_name, *tags])),
-            "interface": {
-                "displayName": title_case(plugin_name),
-                "shortDescription": short_description(description),
-                "longDescription": description,
-                "developerName": owner_name,
-                "category": category,
-                "capabilities": capabilities_for(codex_hydrated),
-                "brandColor": brand_color_for(category),
-                "defaultPrompt": default_prompts(plugin_name),
-            },
-        }
-        if codex_hydrated["skills"]:
-            codex_manifest["skills"] = "./skills/"
-
+        codex_manifest = codex_plugin_manifest(
+            plugin_name=plugin_name,
+            plugin_manifest=plugin_manifest,
+            plugin_ref=plugin_ref,
+            description=description,
+            tags=tags,
+            category=category,
+            owner_name=owner_name,
+            hydrated=codex_hydrated,
+        )
         write_json(codex_plugin_out / CODEX_PLUGIN_DIR / "plugin.json", codex_manifest)
         lock["plugins"].append(
             {
@@ -254,58 +243,91 @@ def materialize_marketplace(
     print(f"materialized marketplace at {out_root}")
 
 
-def sync_github_plugin(repo_root: Path, *, check: bool) -> None:
-    sync_provider_paths(
-        repo_root,
-        paths=[GITHUB_COPILOT_PROVIDER_PATH],
-        check=check,
-        command="sync-github-plugin",
-    )
-
-
-def sync_main_projections(repo_root: Path, *, check: bool) -> None:
-    sync_provider_paths(
-        repo_root,
-        paths=MAIN_BRANCH_PROVIDER_PATHS,
-        check=check,
-        command="sync-main-projections",
-    )
-
-
-def sync_provider_paths(
+def materialize_codex_marketplace(
     repo_root: Path,
+    out_root: Path,
     *,
-    paths: list[Path],
-    check: bool,
-    command: str,
+    generated_at: str | None = None,
+    source_sha: str | None = None,
 ) -> None:
-    with tempfile.TemporaryDirectory(prefix="intelligence-provider-projections-") as temp:
-        materialized = Path(temp) / "marketplace"
-        materialize_marketplace(
-            repo_root,
-            materialized,
-            generated_at=CHECKED_IN_PROJECTION_GENERATED_AT,
-            source_sha=CHECKED_IN_PROJECTION_SOURCE_SHA,
+    if out_root == repo_root:
+        raise SystemExit("refusing to materialize over repository root")
+    if out_root.exists():
+        shutil.rmtree(out_root)
+    out_root.mkdir(parents=True)
+
+    marketplace = read_json(repo_root / "marketplace.json")
+    owner = marketplace.get("owner", {})
+    owner_name = owner.get("name", "Local developer")
+    marketplace_path = out_root / CODEX_BRANCH_MARKETPLACE_PATH
+    plugins_root = out_root / CODEX_BRANCH_PLUGINS_PATH
+    codex_marketplace = {
+        "name": marketplace["name"],
+        "interface": {"displayName": title_case(marketplace["name"])},
+        "plugins": [],
+    }
+    lock = {
+        "type": "HYDRATED_MARKETPLACE",
+        "schemaVersion": 1,
+        "generatedAt": generated_at or current_source_timestamp(repo_root),
+        "sourceSha": source_sha or current_sha(repo_root),
+        "plugins": [],
+    }
+
+    for entry in marketplace.get("plugins", []):
+        plugin_ref = entry["plugin"]
+        source_path = Path(plugin_ref["source"]["path"])
+        plugin_manifest = read_json(repo_root / source_path / "plugin.json")
+        plugin_name = plugin_manifest["name"]
+        codex_plugin_out = plugins_root / plugin_name
+        codex_plugin_out.mkdir(parents=True, exist_ok=True)
+
+        description = (
+            plugin_manifest.get("description")
+            or entry.get("description")
+            or f"{plugin_name} plugin."
+        )
+        tags = entry.get("tags", [])
+        category = category_for(tags)
+        hydrated = hydrate_plugin(repo_root, codex_plugin_out, plugin_manifest)
+        render_agents_md_adapter(codex_plugin_out, plugin_name, description, hydrated)
+
+        codex_marketplace["plugins"].append(codex_marketplace_entry(plugin_name, category))
+        codex_manifest = codex_plugin_manifest(
+            plugin_name=plugin_name,
+            plugin_manifest=plugin_manifest,
+            plugin_ref=plugin_ref,
+            description=description,
+            tags=tags,
+            category=category,
+            owner_name=owner_name,
+            hydrated=hydrated,
+        )
+        write_json(codex_plugin_out / CODEX_PLUGIN_DIR / "plugin.json", codex_manifest)
+        lock["plugins"].append(
+            {
+                "name": plugin_name,
+                "version": codex_manifest["version"],
+                "sourceManifest": f"{source_path.as_posix()}/plugin.json",
+                "references": hydrated["references"],
+            }
         )
 
-        if check:
-            missing_or_changed = []
-            for provider_path in paths:
-                source = materialized / provider_path
-                target = repo_root / provider_path
-                if not target.exists() or sync_digest_path(source) != sync_digest_path(target):
-                    missing_or_changed.append(provider_path.as_posix())
-            if missing_or_changed:
-                changed = ", ".join(missing_or_changed)
-                raise SystemExit(
-                    f"{changed} not in sync; run `python3 scripts/publish-marketplace.py {command}`"
-                )
-            print(f"OK {', '.join(path.as_posix() for path in paths)} in sync")
-            return
-
-        for provider_path in paths:
-            copy_path(materialized / provider_path, repo_root / provider_path)
-            print(f"synced provider marketplace at {provider_path.as_posix()}")
+    write_json(marketplace_path, codex_marketplace)
+    write_json(out_root / CODEX_BRANCH_LOCK_PATH, lock)
+    (out_root / "README.md").write_text(
+        "# Intelligence Codex Marketplace\n\n"
+        "This branch is generated from the referential source graph on `main`.\n\n"
+        "Codex expects the marketplace manifest at `.agents/plugins/marketplace.json` "
+        "and plugin payloads under `plugins/`. Each plugin payload is fully hydrated "
+        "from the provider-neutral primitives and contains its own `.codex-plugin/plugin.json`.\n\n"
+        "Install with:\n\n"
+        "```sh\n"
+        "codex plugin marketplace add amichne/intelligence --ref marketplace/codex\n"
+        "```\n",
+        encoding="utf-8",
+    )
+    print(f"materialized Codex marketplace at {out_root}")
 
 
 def person_for(owner: dict[str, Any], fallback_name: str) -> dict[str, str]:
@@ -314,6 +336,55 @@ def person_for(owner: dict[str, Any], fallback_name: str) -> dict[str, str]:
         if owner.get(key):
             person[key] = owner[key]
     return person
+
+
+def codex_marketplace_entry(plugin_name: str, category: str) -> dict[str, Any]:
+    return {
+        "name": plugin_name,
+        "source": {
+            "source": "local",
+            "path": f"./plugins/{plugin_name}",
+        },
+        "policy": {
+            "installation": "AVAILABLE",
+            "authentication": "ON_INSTALL",
+        },
+        "category": category,
+    }
+
+
+def codex_plugin_manifest(
+    *,
+    plugin_name: str,
+    plugin_manifest: dict[str, Any],
+    plugin_ref: dict[str, Any],
+    description: str,
+    tags: list[str],
+    category: str,
+    owner_name: str,
+    hydrated: dict[str, Any],
+) -> dict[str, Any]:
+    manifest: dict[str, Any] = {
+        "name": plugin_name,
+        "version": plugin_manifest.get("version", plugin_ref.get("version", "0.1.0")),
+        "description": description,
+        "author": {"name": owner_name},
+        "license": "UNLICENSED",
+        "keywords": sorted(set([plugin_name, *tags])),
+        "interface": {
+            "displayName": title_case(plugin_name),
+            "shortDescription": short_description(description),
+            "longDescription": description,
+            "developerName": owner_name,
+            "category": category,
+            "capabilities": capabilities_for(hydrated),
+            "brandColor": brand_color_for(category),
+            "defaultPrompt": default_prompts(plugin_name),
+        },
+    }
+    if hydrated["skills"]:
+        manifest["skills"] = "./skills/"
+    return manifest
 
 
 def github_copilot_plugin_entry(
@@ -684,29 +755,6 @@ def digest_path(path: Path) -> str:
             hasher.update(child.read_bytes())
             hasher.update(b"\0")
     else:
-        hasher.update(path.read_bytes())
-    return f"sha256:{hasher.hexdigest()}"
-
-
-def sync_digest_path(path: Path) -> str:
-    import hashlib
-    import stat
-
-    hasher = hashlib.sha256()
-    if path.is_dir():
-        for child in sorted(item for item in path.rglob("*") if item.is_file()):
-            relative = child.relative_to(path).as_posix()
-            mode = stat.S_IMODE(child.stat().st_mode)
-            hasher.update(relative.encode())
-            hasher.update(b"\0")
-            hasher.update(f"{mode:o}".encode())
-            hasher.update(b"\0")
-            hasher.update(child.read_bytes())
-            hasher.update(b"\0")
-    else:
-        mode = stat.S_IMODE(path.stat().st_mode)
-        hasher.update(f"{mode:o}".encode())
-        hasher.update(b"\0")
         hasher.update(path.read_bytes())
     return f"sha256:{hasher.hexdigest()}"
 

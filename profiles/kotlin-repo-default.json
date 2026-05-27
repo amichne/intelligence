@@ -8,8 +8,8 @@
       "type": "WORKFLOW_MARKETPLACE",
       "name": "amichne-intelligence",
       "provider": "codex",
-      "source": "https://github.com/amichne/intelligence/tree/main",
-      "entrypoint": "codex/marketplace.json",
+      "source": "https://github.com/amichne/intelligence/tree/marketplace/codex",
+      "entrypoint": ".agents/plugins/marketplace.json",
       "scope": "plugins in this workflow profile"
     }
   ],

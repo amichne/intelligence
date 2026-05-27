@@ -32,7 +32,7 @@ machine's local filesystem layout.
 
 ```sh
 node scripts/validate-manifests.mjs --portable
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
+node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
 ```
 
 Hydrated validation also checks runtime adapter files that are not JSON schemas.
@@ -61,8 +61,7 @@ npm run package:cli -- --version local
 Preview marketplace publication with:
 
 ```sh
-python3 scripts/publish-marketplace.py materialize --out /tmp/intelligence-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-marketplace
-python3 scripts/publish-marketplace.py sync-main-projections --check
-python3 scripts/publish-marketplace.py publish-branch --branch marketplace --no-push
+python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
+node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
+python3 scripts/publish-marketplace.py publish-branch --provider codex --branch marketplace/codex --no-push
 ```

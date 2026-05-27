@@ -2,18 +2,20 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "codex-plugin.schema.json",
   "title": "Codex Plugin Manifest",
-  "description": "Generated Codex-native plugin manifest projection derived from a provider-neutral plugin manifest.",
+  "description": "Generated Codex-native `.codex-plugin/plugin.json` manifest derived from a provider-neutral plugin manifest.",
   "type": "object",
   "required": [
     "name",
     "version",
     "description",
     "author",
-    "license",
-    "keywords",
     "interface"
   ],
   "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
     "name": {
       "$ref": "#/$defs/name"
     },
@@ -41,10 +43,19 @@
         },
         "url": {
           "type": "string",
-          "format": "uri"
+          "format": "uri",
+          "pattern": "^https://"
         }
       },
       "additionalProperties": false
+    },
+    "homepage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
     },
     "license": {
       "type": "string",
@@ -55,13 +66,25 @@
       "items": {
         "type": "string",
         "minLength": 1
-      },
+          },
       "uniqueItems": true
     },
     "skills": {
       "type": "string",
       "enum": [
         "./skills/"
+      ]
+    },
+    "apps": {
+      "type": "string",
+      "enum": [
+        "./.app.json"
+      ]
+    },
+    "mcpServers": {
+      "type": "string",
+      "enum": [
+        "./.mcp.json"
       ]
     },
     "interface": {
@@ -72,9 +95,19 @@
         "longDescription",
         "developerName",
         "category",
-        "capabilities",
-        "brandColor",
-        "defaultPrompt"
+        "capabilities"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "defaultPrompt"
+          ]
+        },
+        {
+          "required": [
+            "default_prompt"
+          ]
+        }
       ],
       "properties": {
         "displayName": {
@@ -106,11 +139,48 @@
           "minItems": 1,
           "uniqueItems": true
         },
+        "websiteURL": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "privacyPolicyURL": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
+        "termsOfServiceURL": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
+        },
         "brandColor": {
           "type": "string",
           "pattern": "^#[0-9A-Fa-f]{6}$"
         },
+        "composerIcon": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "logo": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "screenshots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/relativePath"
+          }
+        },
         "defaultPrompt": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "default_prompt": {
           "type": "array",
           "items": {
             "type": "string",
@@ -129,6 +199,11 @@
     "name": {
       "type": "string",
       "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*\\.\\./).+"
     }
   }
 }
