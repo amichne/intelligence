@@ -20,6 +20,8 @@ MAIN_BRANCH_PROVIDER_PATHS = [
     Path(CODEX_PROVIDER_DIR),
     GITHUB_COPILOT_PROVIDER_PATH,
 ]
+CHECKED_IN_PROJECTION_GENERATED_AT = "1970-01-01T00:00:00Z"
+CHECKED_IN_PROJECTION_SOURCE_SHA = "0000000000000000000000000000000000000000"
 HOOK_COMMAND_PATH_RE = re.compile(r"\bhooks/[A-Za-z0-9_.-]+")
 PRIMITIVE_COLLECTIONS = {
     "SKILL": "skills",
@@ -107,7 +109,13 @@ def main() -> int:
         return 0
 
 
-def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
+def materialize_marketplace(
+    repo_root: Path,
+    out_root: Path,
+    *,
+    generated_at: str | None = None,
+    source_sha: str | None = None,
+) -> None:
     if out_root == repo_root:
         raise SystemExit("refusing to materialize over repository root")
     if out_root.exists():
@@ -137,8 +145,8 @@ def materialize_marketplace(repo_root: Path, out_root: Path) -> None:
     lock = {
         "type": "HYDRATED_MARKETPLACE",
         "schemaVersion": 1,
-        "generatedAt": current_source_timestamp(repo_root),
-        "sourceSha": current_sha(repo_root),
+        "generatedAt": generated_at or current_source_timestamp(repo_root),
+        "sourceSha": source_sha or current_sha(repo_root),
         "plugins": [],
     }
 
@@ -273,7 +281,12 @@ def sync_provider_paths(
 ) -> None:
     with tempfile.TemporaryDirectory(prefix="intelligence-provider-projections-") as temp:
         materialized = Path(temp) / "marketplace"
-        materialize_marketplace(repo_root, materialized)
+        materialize_marketplace(
+            repo_root,
+            materialized,
+            generated_at=CHECKED_IN_PROJECTION_GENERATED_AT,
+            source_sha=CHECKED_IN_PROJECTION_SOURCE_SHA,
+        )
 
         if check:
             missing_or_changed = []
