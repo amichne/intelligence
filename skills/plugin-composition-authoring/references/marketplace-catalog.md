@@ -1,9 +1,9 @@
 # Marketplace Catalog
 
-Use this reference when editing `marketplace.json`.
+Use this reference when editing `adaptable.marketplace.json`.
 
 The catalog shape is governed by
-`schemas/core/marketplace.schema.json`. Validate changes with
+`schemas/marketplace/adaptable.schema.json`. Validate changes with
 `node scripts/validate-manifests.mjs`.
 
 ## Catalog Duties

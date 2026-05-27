@@ -14,7 +14,7 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PROFILE_DIR = REPO_ROOT / "profiles"
 TEMPLATE_DIR = REPO_ROOT / "templates" / "primitives"
-MARKETPLACE_PATH = REPO_ROOT / "marketplace.json"
+MARKETPLACE_PATH = REPO_ROOT / "adaptable.marketplace.json"
 
 PRIMITIVE_COLLECTIONS = {
     "skill": "skills",
@@ -56,7 +56,7 @@ def main(argv: list[str] | None = None) -> int:
     primitive_new.add_argument("name", help="Kebab-case primitive or plugin name.")
     primitive_new.add_argument("--description", default=None, help="Short description for metadata and docs.")
     primitive_new.add_argument("--plugin", action="append", default=[], help="Plugin manifest to update with this primitive. Repeatable.")
-    primitive_new.add_argument("--marketplace", action="store_true", help="Add the new plugin or primitive to marketplace.json.")
+    primitive_new.add_argument("--marketplace", action="store_true", help="Add the new plugin or primitive to adaptable.marketplace.json.")
     primitive_new.add_argument("--dry-run", action="store_true", help="Print planned writes without changing files.")
     primitive_new.add_argument("--force", action="store_true", help="Overwrite scaffold target files if they already exist.")
     primitive_new.add_argument("--validate", action="store_true", help="Run manifest validation after writing.")
@@ -148,7 +148,7 @@ def cmd_primitive_new(args: argparse.Namespace) -> int:
         for plugin_name in plugin_updates:
             print(f"would add {args.kind} {name} to plugins/{plugin_name}/plugin.json")
         if marketplace_update:
-            print(f"would add {args.kind} {name} to marketplace.json")
+            print(f"would add {args.kind} {name} to adaptable.marketplace.json")
         return 0
 
     for path, content, executable in planned:
@@ -164,7 +164,7 @@ def cmd_primitive_new(args: argparse.Namespace) -> int:
         print(f"updated plugins/{plugin_name}/plugin.json")
     if marketplace_update:
         add_to_marketplace(args.kind, name, description)
-        print("updated marketplace.json")
+        print("updated adaptable.marketplace.json")
 
     if args.validate:
         return run_validation(manifests_only=False)

@@ -6,12 +6,21 @@ import { fileURLToPath } from "node:url";
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const coreSchemaDir = path.join(repoRoot, "schemas", "core");
 const adapterSchemaDir = path.join(repoRoot, "schemas", "adapters");
+const marketplaceSchemaDir = path.join(repoRoot, "schemas", "marketplace");
 const hookSchemaDir = path.join(repoRoot, "schemas", "hooks");
+const adaptableMarketplace = path.join(repoRoot, "adaptable.marketplace.json");
 const codexMarketplace = path.join(repoRoot, "codex", "marketplace.json");
 const codexMarketplaceLock = path.join(repoRoot, "codex", "marketplace-lock.json");
 const codexBranchMarketplace = path.join(repoRoot, ".agents", "plugins", "marketplace.json");
 const codexBranchMarketplaceLock = path.join(repoRoot, "marketplace-lock.json");
 const githubPluginMarketplace = path.join(repoRoot, ".github", "plugin", "marketplace.json");
+const codexMarketplaceFixture = path.join(
+  repoRoot,
+  "schemas",
+  "marketplace",
+  "fixtures",
+  "codex.marketplace.json"
+);
 const generatedJsonRoots = [
   path.join(repoRoot, "codex"),
   path.join(repoRoot, ".github", "plugin")
@@ -52,7 +61,11 @@ for (const schemaPath of listJsonFiles(coreSchemaDir)) {
   ajv.addSchema(readJson(schemaPath));
 }
 
-for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJsonFiles(hookSchemaDir)]) {
+for (const schemaPath of [
+  ...listSchemaFilesRecursive(adapterSchemaDir),
+  ...listSchemaFilesRecursive(marketplaceSchemaDir),
+  ...listJsonFiles(hookSchemaDir)
+]) {
   const schema = readJson(schemaPath);
   if (schema.$schema === "http://json-schema.org/draft-07/schema#") {
     draft7Ajv.addSchema(schema);
@@ -62,7 +75,8 @@ for (const schemaPath of [...listJsonFilesRecursive(adapterSchemaDir), ...listJs
 }
 
 const checks = [
-  ["marketplace.schema.json", path.join(repoRoot, "marketplace.json")],
+  ["adaptable-marketplace.schema.json", adaptableMarketplace],
+  ["codex-marketplace.schema.json", codexMarketplaceFixture],
   ...optionalChecks("codex-marketplace.schema.json", codexMarketplace),
   ...optionalChecks("codex-marketplace-lock.schema.json", codexMarketplaceLock),
   ...optionalChecks("codex-marketplace.schema.json", codexBranchMarketplace),
@@ -211,7 +225,7 @@ function validateLocalReferences(filePath, data) {
 }
 
 function validateWorkflowProfileReferences(filePath, data) {
-  const marketplace = readJson(path.join(repoRoot, "marketplace.json"));
+  const marketplace = readJson(adaptableMarketplace);
   const pluginNames = new Set((marketplace.plugins ?? []).map((entry) => entry.name));
   const hookNames = new Set((marketplace.hooks ?? []).map((entry) => entry.name));
   let failures = 0;
@@ -554,6 +568,10 @@ function listJsonFilesRecursive(directory) {
 
   visit(directory);
   return results.sort();
+}
+
+function listSchemaFilesRecursive(directory) {
+  return listJsonFilesRecursive(directory).filter((file) => file.endsWith(".schema.json"));
 }
 
 function loadDependency(specifier) {

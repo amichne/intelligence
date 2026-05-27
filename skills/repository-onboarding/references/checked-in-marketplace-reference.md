@@ -37,7 +37,7 @@ plugin payloads and runtime caches are not source-of-truth files.
 
 | Provider | Marketplace | Source | Entrypoint | Scope |
 |---|---|---|---|---|
-| Codex | amichne-intelligence | https://github.com/amichne/intelligence/tree/marketplace/codex | .agents/plugins/marketplace.json | all configured plugins |
+| Codex | amichne-intelligence | https://github.com/amichne/intelligence/tree/codex | .agents/plugins/marketplace.json | all configured plugins |
 
 ## Expected Plugins
 

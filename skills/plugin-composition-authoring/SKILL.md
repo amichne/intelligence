@@ -37,7 +37,7 @@ the primitive remains usable without the plugin.
    Use local references to existing primitives. Keep metadata limited to
    composition, version, and description.
 
-4. Update `marketplace.json`.
+4. Update `adaptable.marketplace.json`.
    Add or update one plugin entry and any newly promoted primitive entries.
    Preserve existing ordering unless a new order is part of the request.
 
@@ -49,11 +49,11 @@ the primitive remains usable without the plugin.
 - Load [referential-plugin-shape.md](references/referential-plugin-shape.md)
   when creating or reviewing a plugin manifest in this repository.
 - Load [marketplace-catalog.md](references/marketplace-catalog.md) when editing
-  `marketplace.json` or plugin catalog metadata.
+  `adaptable.marketplace.json` or plugin catalog metadata.
 
 ## Completion Criteria
 
 - The plugin references only existing independent primitives.
 - No plugin-payload copy is introduced.
-- `marketplace.json` and plugin manifest references validate.
+- `adaptable.marketplace.json` and plugin manifest references validate.
 - First-party source handling remains clean.

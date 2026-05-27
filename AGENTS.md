@@ -20,7 +20,7 @@ not justified.
 
 ## Repository Map
 
-- `marketplace.json` is the provider-neutral curated marketplace catalog.
+- `adaptable.marketplace.json` is the provider-neutral curated marketplace catalog.
 - `agents/` contains independent reusable agent profiles.
 - `skills/` contains independent reusable skills.
 - `concepts/` contains portable concept primitives meant to be copied, linked,
@@ -51,7 +51,8 @@ not justified.
 
 - Keep primitives useful outside plugins. Plugins compose existing primitives;
   they do not own the only copy of a primitive.
-- Keep root marketplace and plugin manifests aligned with `schemas/core/`.
+- Keep the root adaptable marketplace aligned with `schemas/marketplace/` and
+  provider-neutral definitions in `schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `node scripts/validate-manifests.mjs` is the coverage gate and must reject
@@ -73,7 +74,7 @@ not justified.
 
 - Run `bash -n hooks/*.sh` after editing shell hook entrypoints.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
-- Run `node scripts/validate-manifests.mjs` after changing `marketplace.json`,
+- Run `node scripts/validate-manifests.mjs` after changing `adaptable.marketplace.json`,
   `plugins/*/plugin.json`, hooks, schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against

@@ -63,5 +63,5 @@ Preview marketplace publication with:
 ```sh
 python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider codex --branch marketplace/codex --no-push
+python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex --no-push
 ```

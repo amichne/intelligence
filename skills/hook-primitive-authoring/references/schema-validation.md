@@ -10,10 +10,11 @@ manifest validator loads schemas from:
 ```text
 schemas/core/
 schemas/adapters/
+schemas/marketplace/
 ```
 
 Hook metadata is validated with `hook.schema.json`, plugin composition with
-`plugin.schema.json`, and marketplace entries with `marketplace.schema.json`
+`plugin.schema.json`, and marketplace entries with `adaptable-marketplace.schema.json`
 through:
 
 ```sh

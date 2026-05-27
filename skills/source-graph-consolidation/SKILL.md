@@ -47,7 +47,7 @@ place until the cleanup ledger proves the replacement and rollback path.
    references or scoped subdirectories.
 
 5. Compose by reference.
-   Add or update `marketplace.json` and `plugins/*/plugin.json` after the
+   Add or update `adaptable.marketplace.json` and `plugins/*/plugin.json` after the
    independent primitive exists. Use direct primitive paths, not payload copies.
 
 6. Record provenance.

@@ -15,6 +15,7 @@ from typing import Any
 
 CODEX_PLUGIN_DIR = ".codex-plugin"
 CODEX_PROVIDER_DIR = "codex"
+ADAPTABLE_MARKETPLACE_PATH = Path("adaptable.marketplace.json")
 CODEX_BRANCH_MARKETPLACE_PATH = Path(".agents") / "plugins" / "marketplace.json"
 CODEX_BRANCH_PLUGINS_PATH = Path("plugins")
 CODEX_BRANCH_LOCK_PATH = Path("marketplace-lock.json")
@@ -44,7 +45,7 @@ def main() -> int:
     )
 
     publish = subparsers.add_parser("publish-branch")
-    publish.add_argument("--branch", default="marketplace/codex")
+    publish.add_argument("--branch", default="codex")
     publish.add_argument(
         "--provider",
         choices=["all", "codex"],
@@ -135,7 +136,7 @@ def materialize_all_marketplaces(
         shutil.rmtree(out_root)
     out_root.mkdir(parents=True)
 
-    marketplace = read_json(repo_root / "marketplace.json")
+    marketplace = read_json(repo_root / ADAPTABLE_MARKETPLACE_PATH)
     owner = marketplace.get("owner", {})
     owner_name = owner.get("name", "Local developer")
     codex_root = out_root / CODEX_PROVIDER_DIR
@@ -256,7 +257,7 @@ def materialize_codex_marketplace(
         shutil.rmtree(out_root)
     out_root.mkdir(parents=True)
 
-    marketplace = read_json(repo_root / "marketplace.json")
+    marketplace = read_json(repo_root / ADAPTABLE_MARKETPLACE_PATH)
     owner = marketplace.get("owner", {})
     owner_name = owner.get("name", "Local developer")
     marketplace_path = out_root / CODEX_BRANCH_MARKETPLACE_PATH
@@ -323,7 +324,7 @@ def materialize_codex_marketplace(
         "from the provider-neutral primitives and contains its own `.codex-plugin/plugin.json`.\n\n"
         "Install with:\n\n"
         "```sh\n"
-        "codex plugin marketplace add amichne/intelligence --ref marketplace/codex\n"
+        "codex plugin marketplace add amichne/intelligence --ref codex\n"
         "```\n",
         encoding="utf-8",
     )

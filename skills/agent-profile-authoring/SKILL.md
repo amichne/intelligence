@@ -45,7 +45,7 @@ boundaries, and output contract.
 
 6. Validate and promote.
    Check name format, trigger clarity, tool scope, and overlap. Add the agent to
-   `marketplace.json` or a referential plugin only after it exists as an
+   `adaptable.marketplace.json` or a referential plugin only after it exists as an
    independent primitive.
 
 ## Reference Routing

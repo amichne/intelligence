@@ -22,7 +22,7 @@ manifests.
 
 ## Distribution Boundary
 
-`marketplace.json` exposes generally useful, project-agnostic plugin families.
+`adaptable.marketplace.json` exposes generally useful, project-agnostic plugin families.
 Private cleanup and activation utilities are intentionally kept outside this
 public repository.
 

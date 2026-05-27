@@ -14,7 +14,7 @@ Authored sources are the files humans intentionally maintain.
 | `hooks/` | Hook metadata, implementations, requirements, and adapter configs. |
 | `concepts/` | Portable instruction and principle documents. |
 | `plugins/*/plugin.json` | Referential composition manifests. |
-| `marketplace.json` | Curated provider-neutral marketplace catalog. |
+| `adaptable.marketplace.json` | Curated provider-neutral marketplace catalog. |
 | `profiles/*.json` | Workflow profiles for target repositories. |
 | `schemas/` | Public core and adapter schema contracts. |
 

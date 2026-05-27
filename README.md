@@ -27,7 +27,7 @@ zensical build --clean
 
 ## Repository Shape
 
-- `marketplace.json` is the curated provider-neutral marketplace catalog.
+- `adaptable.marketplace.json` is the curated provider-neutral marketplace catalog.
 - `agents/` contains independent reusable agent profiles.
 - `skills/` contains independent reusable skills.
 - `concepts/` contains portable instruction and principle documents.
@@ -64,8 +64,8 @@ zensical build --clean
 
 ## Marketplace Publication
 
-`marketplace.json` keeps the provider-neutral source catalog. The generated
-`marketplace/codex` branch is materialized from that source. `main` keeps only
+`adaptable.marketplace.json` keeps the provider-neutral source catalog. The
+generated `codex` branch is materialized from that source. `main` keeps only
 referential plugin manifests and primitive source files.
 
 Preview the branch output locally:
@@ -74,12 +74,12 @@ Preview the branch output locally:
 npm ci
 python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider codex --branch marketplace/codex --no-push
+python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex --no-push
 ```
 
 Merges to `main` run `.github/workflows/publish-marketplace.yml`, which
 validates source contracts, materializes the Codex marketplace root, and
-force-updates `marketplace/codex`.
+force-updates `codex`.
 
 ## CLI Archives
 

@@ -7,7 +7,7 @@ change belongs.
 
 | Path | Owner |
 |---|---|
-| `marketplace.json` | Provider-neutral curated marketplace catalog. |
+| `adaptable.marketplace.json` | Provider-neutral curated marketplace catalog. |
 | `agents/` | Independent reusable agent profiles. |
 | `skills/` | Independent reusable skills. |
 | `concepts/` | Portable concept and principle primitives. |

@@ -34,4 +34,4 @@ jobs:
           node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
 
       - name: Publish Codex marketplace branch
-        run: python3 scripts/publish-marketplace.py publish-branch --provider codex --branch marketplace/codex
+        run: python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex

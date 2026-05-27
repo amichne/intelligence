@@ -29,7 +29,7 @@ Use this reference before promoting an agent profile.
 
 ## Promotion Checks
 
-- Add the agent to `marketplace.json` only after the file exists under
+- Add the agent to `adaptable.marketplace.json` only after the file exists under
   `agents/`.
 - Compose it into plugin manifests by reference.
 - Record source provenance in public-safe form.

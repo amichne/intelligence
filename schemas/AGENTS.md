@@ -8,7 +8,8 @@ This file applies to `schemas/`.
 
 - Keep public-facing primitive, plugin, marketplace, and adapter schemas under
   `schemas/`.
-- Keep provider-neutral contracts in `schemas/core/` and runtime-specific
-  projections under `schemas/adapters/<adapter>/`.
+- Keep provider-neutral core definitions in `schemas/core/`, marketplace root
+  contracts in `schemas/marketplace/`, and non-marketplace runtime projections
+  under `schemas/adapters/<adapter>/`.
 - Add or update the schema before changing the persisted JSON shape it owns.
 - Run `node scripts/validate-manifests.mjs` after changing schemas or JSON data.

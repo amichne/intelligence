@@ -108,7 +108,7 @@
           "type": "string",
           "minLength": 1,
           "examples": [
-            "https://github.com/acme/agent-tools/tree/marketplace/codex"
+            "https://github.com/acme/agent-tools/tree/codex"
           ]
         },
         "entrypoint": {
@@ -206,7 +206,7 @@
           "type": "WORKFLOW_MARKETPLACE",
           "name": "acme-tools",
           "provider": "codex",
-          "source": "https://github.com/acme/agent-tools/tree/marketplace/codex",
+          "source": "https://github.com/acme/agent-tools/tree/codex",
           "entrypoint": ".agents/plugins/marketplace.json",
           "scope": "plugins in this workflow profile"
         }

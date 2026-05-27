@@ -50,7 +50,7 @@ on the plugin to explain its behavior.
    skill folder.
 
 6. Promote.
-   Add the skill to `marketplace.json` and any referential plugin that should
+   Add the skill to `adaptable.marketplace.json` and any referential plugin that should
    compose it. If promotion changes any JSON shape, update the owning schema
    first and run manifest validation.
 

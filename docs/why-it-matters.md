@@ -17,7 +17,7 @@ by reference, and publication is limited to project-agnostic behavior.
 |---|---|
 | Scattered skills and instructions | Canonical primitives under `skills/`, `agents/`, `hooks/`, and `concepts/`. |
 | Plugin payloads becoming the only copy | Plugins compose primitives by reference instead of owning them. |
-| Unclear marketplace surface | `marketplace.json` curates generally useful, project-agnostic plugin families. |
+| Unclear marketplace surface | `adaptable.marketplace.json` curates generally useful, project-agnostic plugin families. |
 | Structured data drift | JSON manifests are covered by schemas and `node scripts/validate-manifests.mjs`. |
 
 ## When This Helps

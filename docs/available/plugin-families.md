@@ -5,7 +5,7 @@ reference, which keeps the primitive useful outside any one plugin payload.
 
 ## Marketplace Families
 
-These families are exposed through `marketplace.json`.
+These families are exposed through `adaptable.marketplace.json`.
 
 | Plugin | What It Provides |
 |---|---|
