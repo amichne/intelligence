@@ -42,6 +42,18 @@
     },
     {
       "category": "Engineering",
+      "name": "kotlin-agentic-correctness",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/kotlin-agentic-correctness",
+        "source": "local"
+      }
+    },
+    {
+      "category": "Engineering",
       "name": "evidence-driven-delivery",
       "policy": {
         "authentication": "ON_INSTALL",

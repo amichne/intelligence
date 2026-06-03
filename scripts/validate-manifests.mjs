@@ -601,6 +601,9 @@ function listJsonFilesRecursive(directory) {
     "node_modules",
     "site"
   ]);
+  const skippedFiles = new Set([
+    ".skill-lock.json"
+  ]);
 
   function visit(current) {
     if (!fs.existsSync(current)) {
@@ -621,6 +624,9 @@ function listJsonFilesRecursive(directory) {
       for (const entry of fs.readdirSync(current).sort()) {
         visit(path.join(current, entry));
       }
+      return;
+    }
+    if (stat.isFile() && skippedFiles.has(path.basename(current))) {
       return;
     }
     if (stat.isFile() && current.endsWith(".json")) {

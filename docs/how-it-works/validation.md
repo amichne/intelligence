@@ -1,27 +1,30 @@
 # Validation
 
-Validation is the contract that keeps the public source graph usable. The
-repository uses schema-backed checks, focused syntax checks, and documentation
-builds.
+The validation model is derived from the same first principle used in the source
+model:
+**every change is valid only if it preserves the normalized contract before any
+runtime output is produced.**
 
-## Main Gate
+Validation happens in two layers.
 
-Use the CLI gate for ordinary changes.
+## Layer 1: canonical source integrity
 
-```sh
-bin/intelligence validate
-```
+Canonical artifacts in `source/` are the authority. We first validate syntax,
+structure, and schemas there so we can fail before projection.
 
-The underlying manifest gate is:
+| Check | What it protects |
+|---|---|
+| `bin/intelligence validate` | Runs repository checks from one entrypoint and ensures source edits stay coherent across schema-backed surfaces. |
+| `node scripts/validate-manifests.mjs` | Enforces JSON manifest contracts from `source/`, including `source/schemas`, marketplaces, plugins, profiles, and schema ownership rules. |
+| `node scripts/validate-manifests.mjs --portable` | Ensures source-aligned serialization is still stable outside the local checkout assumptions. |
 
-```sh
-node scripts/validate-manifests.mjs
-```
+This is the primary safety boundary: the source model must be valid before we generate
+provider payloads.
 
-## Structured Data Gate
+### JSON and schema boundary
 
-Every persisted JSON file should have a schema, typed parser, generator, or
-equivalent boundary assertion.
+Every persisted JSON file should have schema, typed parser, generator, or an
+equivalent assertion boundary.
 
 ```sh
 node scripts/validate-manifests.mjs
@@ -32,16 +35,23 @@ machine's local filesystem layout.
 
 ```sh
 node scripts/validate-manifests.mjs --portable
+```
+
+Hydrated validation checks runtime-adapted output surfaces and catches projection
+mismatches that normal schema checks may miss.
+
+```sh
 node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
 ```
 
-Hydrated validation also checks runtime adapter files that are not JSON schemas.
-Codex plugin payloads that contain bundled agent profiles or instruction
-primitives must include a generated `AGENTS.md` adapter.
+## Layer 2: projection safety and runtime compatibility
 
-## Focused Checks
+A source-valid model can still fail in a target projection. This layer verifies
+provider mappings and adapter surfaces.
 
-Run the narrow check that matches the changed surface.
+### Focused checks
+
+Match the surface you changed with the tightest check.
 
 | Changed Surface | Check |
 |---|---|
@@ -49,16 +59,12 @@ Run the narrow check that matches the changed surface.
 | JSON hook assets | `python3 -m json.tool source/hooks/name.hook.json` |
 | Marketplace or plugin manifests | `node scripts/validate-manifests.mjs` |
 | Documentation site | `zensical build --clean` |
+| Provider-specific projection | `node scripts/validate-manifests.mjs --portable --hydrated <provider-output-dir>` |
 
-## Package And Publish Checks
+## Publish proof path
 
-Build local distribution archives with:
-
-```sh
-npm run package:cli -- --version local
-```
-
-Preview marketplace publication with:
+For publish flows, keep the same source-to-projection sequence: validate source,
+materialize outputs, then verify hydration.
 
 ```sh
 python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
@@ -69,3 +75,24 @@ node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-gith
 python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
 python3 scripts/publish-marketplace.py sync-main-marketplaces --check
 ```
+
+## Distribution artifact checks
+
+When you are preparing archive outputs for CLI distribution, keep this command in
+the publishing workflow:
+
+```sh
+npm run package:cli -- --version local
+```
+
+If a provider check fails, repair projection logic or schema boundaries, then
+regenerate outputs instead of patching generated payloads by hand.
+
+## What this protects
+
+This two-layer model gives practical safety:
+
+- It isolates invariant claims to source (`source/`), reducing drift from generated artifacts.
+- It preserves the ability to support more targets through adapter projections.
+- It makes failures explainable:
+  source-model invalidation vs adapter/projection regression.

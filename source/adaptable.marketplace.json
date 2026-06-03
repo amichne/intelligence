@@ -82,6 +82,33 @@
     },
     {
       "type": "PLUGIN_ENTRY",
+      "name": "kotlin-agentic-correctness",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "kotlin-agentic-correctness",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/kotlin-agentic-correctness"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Single Kotlin workflow combining typed design discipline, invariant-oriented Kotlin standards, filesystem-backed evidence, Kast semantic tooling, and Gradle/PR proof loops.",
+      "tags": [
+        "agents",
+        "ci",
+        "evidence",
+        "gradle",
+        "hooks",
+        "kast",
+        "kotlin",
+        "schemas",
+        "skills",
+        "testing",
+        "validation"
+      ]
+    },
+    {
+      "type": "PLUGIN_ENTRY",
       "name": "evidence-driven-delivery",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
@@ -284,6 +311,98 @@
       },
       "path": "skills/kotlin-gradle-validation",
       "name": "kotlin-gradle-validation"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-agentic-correctness",
+      "name": "kotlin-agentic-correctness"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/kotlin-review",
+      "name": "kotlin-review",
+      "dependsOn": [
+        {
+          "type": "SKILL",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "skills/kotlin-standards",
+          "name": "kotlin-standards"
+        },
+        {
+          "type": "SKILL",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "skills/kotlin-gradle-validation",
+          "name": "kotlin-gradle-validation"
+        },
+        {
+          "type": "AGENT",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "agents/kotlin-review/kotlin-review-captain.agent.md",
+          "name": "kotlin-review-captain"
+        },
+        {
+          "type": "AGENT",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "name": "kotlin-type-safety-reviewer"
+        },
+        {
+          "type": "AGENT",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "name": "kotlin-boundary-contract-reviewer"
+        },
+        {
+          "type": "AGENT",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "name": "kotlin-package-cohesion-reviewer"
+        },
+        {
+          "type": "INSTRUCTION",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "concepts/type-safety/core.md",
+          "name": "type-safety"
+        },
+        {
+          "type": "INSTRUCTION",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./"
+          },
+          "path": "concepts/schema-driven-design/core.md",
+          "name": "schema-driven-design"
+        }
+      ]
     },
     {
       "type": "SKILL",

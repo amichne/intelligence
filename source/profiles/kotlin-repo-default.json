@@ -2,7 +2,7 @@
   "type": "WORKFLOW_PROFILE",
   "schemaVersion": 1,
   "name": "kotlin-repo-default",
-  "description": "Default Kotlin repository workflow using typed design discipline, Kotlin correctness, evidence-driven delivery, and Codex hook adapters.",
+  "description": "Default Kotlin repository workflow using the single Kotlin Agentic Correctness plugin and Codex hook adapters.",
   "marketplaces": [
     {
       "type": "WORKFLOW_MARKETPLACE",
@@ -14,9 +14,7 @@
     }
   ],
   "plugins": [
-    "typed-design-discipline",
-    "kotlin-correctness",
-    "evidence-driven-delivery"
+    "kotlin-agentic-correctness"
   ],
   "hooks": [
     {
