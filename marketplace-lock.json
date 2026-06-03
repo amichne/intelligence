@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-03T16:25:09-04:00",
+  "generatedAt": "2026-06-03T16:26:13-04:00",
   "plugins": [
     {
       "name": "typed-design-discipline",
@@ -507,6 +507,6 @@
     }
   ],
   "schemaVersion": 1,
-  "sourceSha": "dc9223198a3682abd995fed741b72df738a3415b",
+  "sourceSha": "bb2159ca76c95b74b747a39b7a7ff50ddc0a7ff9",
   "type": "HYDRATED_MARKETPLACE"
 }

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -117,7 +118,13 @@ def sync_main_marketplaces(repo_root: Path, *, check: bool = False) -> int:
         temp_root = Path(temp)
         codex_root = temp_root / "codex"
         github_root = temp_root / "github"
-        materialize_codex_marketplace(repo_root, codex_root)
+        generated_at, source_sha = lock_metadata_for_sync(repo_root)
+        materialize_codex_marketplace(
+            repo_root,
+            codex_root,
+            generated_at=generated_at,
+            source_sha=source_sha,
+        )
         materialize_github_marketplace(repo_root, github_root)
         marketplace_files = [
             (codex_root / CODEX_BRANCH_MARKETPLACE_PATH, repo_root / CODEX_BRANCH_MARKETPLACE_PATH),
@@ -839,17 +846,21 @@ def run(command: list[str], cwd: Path) -> None:
 
 
 def current_sha(repo_root: Path) -> str | None:
-    result = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=repo_root,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        check=False,
-    )
-    if result.returncode != 0:
+    source_path = repo_root / SOURCE_ROOT
+    if not source_path.exists():
         return None
-    return result.stdout.strip()
+    return digest_path_sha1(source_path)
+
+
+def lock_metadata_for_sync(repo_root: Path) -> tuple[str, str | None]:
+    source_sha = current_sha(repo_root)
+    generated_at = current_source_timestamp(repo_root)
+    existing_lock_path = repo_root / CODEX_BRANCH_LOCK_PATH
+    if existing_lock_path.exists():
+        existing_lock = read_json(existing_lock_path)
+        if existing_lock.get("sourceSha") == source_sha and existing_lock.get("generatedAt"):
+            generated_at = existing_lock["generatedAt"]
+    return generated_at, source_sha
 
 
 def current_source_timestamp(repo_root: Path) -> str:
@@ -897,8 +908,6 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 
 
 def digest_path(path: Path) -> str:
-    import hashlib
-
     hasher = hashlib.sha256()
     if path.is_dir():
         for child in sorted(item for item in path.rglob("*") if item.is_file()):
@@ -910,6 +919,20 @@ def digest_path(path: Path) -> str:
     else:
         hasher.update(path.read_bytes())
     return f"sha256:{hasher.hexdigest()}"
+
+
+def digest_path_sha1(path: Path) -> str:
+    hasher = hashlib.sha1()
+    if path.is_dir():
+        for child in sorted(item for item in path.rglob("*") if item.is_file()):
+            relative = child.relative_to(path).as_posix()
+            hasher.update(relative.encode())
+            hasher.update(b"\0")
+            hasher.update(child.read_bytes())
+            hasher.update(b"\0")
+    else:
+        hasher.update(path.read_bytes())
+    return hasher.hexdigest()
 
 
 def default_branch_for_provider(provider: str) -> str:
