@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T13:58:23-04:00",
+  "generatedAt": "2026-06-03T16:26:13-04:00",
   "plugins": [
     {
       "name": "typed-design-discipline",
@@ -180,6 +180,13 @@
           "type": "SKILL"
         },
         {
+          "name": "kotlin-review",
+          "sha256": "sha256:ae2606e222576b8f67b46f89eb9a4811e3e4d597dacb01641c098335f7be7599",
+          "sourcePath": "source/skills/kotlin-review",
+          "targetPath": "skills/kotlin-review",
+          "type": "SKILL"
+        },
+        {
           "name": "kotlin-standards",
           "sha256": "sha256:934538021afc46240b3622c5c46dfc18371b093c3f351daaede933a42e3ad5be",
           "sourcePath": "source/skills/kotlin-standards",
@@ -188,6 +195,160 @@
         }
       ],
       "sourceManifest": "source/plugins/kotlin-correctness/plugin.json",
+      "version": "0.1.0"
+    },
+    {
+      "name": "kotlin-agentic-correctness",
+      "references": [
+        {
+          "name": "kotlin-boundary-contract-reviewer",
+          "sha256": "sha256:fa2a10dff2f0308259127ad3abb1ad64bc9eb3d9af3a257b9f9cf3738e9ea472",
+          "sourcePath": "source/agents/kotlin-review/kotlin-boundary-contract-reviewer.agent.md",
+          "targetPath": "agents/kotlin-boundary-contract-reviewer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-package-cohesion-reviewer",
+          "sha256": "sha256:0ade97ff63036325e2bf05fb48a6b453bb6ea93e9dc1d244f36ba951ace56fb5",
+          "sourcePath": "source/agents/kotlin-review/kotlin-package-cohesion-reviewer.agent.md",
+          "targetPath": "agents/kotlin-package-cohesion-reviewer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-review-captain",
+          "sha256": "sha256:b64b31256c67463b0b3f358fdc9036123ba5d331a2d4cbd21c921ab07bb5ea5b",
+          "sourcePath": "source/agents/kotlin-review/kotlin-review-captain.agent.md",
+          "targetPath": "agents/kotlin-review-captain.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "kotlin-type-safety-reviewer",
+          "sha256": "sha256:bdc2e2fcfd83bd49766e2714f4a42afe10746e3f66a2ab2c20c7ac508e27785c",
+          "sourcePath": "source/agents/kotlin-review/kotlin-type-safety-reviewer.agent.md",
+          "targetPath": "agents/kotlin-type-safety-reviewer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "schema-type-enforcer",
+          "sha256": "sha256:d81ae547ba672e9eaaaa3ce8e19a974e9b9a646692dd626ff8229d33ca073c5b",
+          "sourcePath": "source/agents/schema-type-enforcer.agent.md",
+          "targetPath": "agents/schema-type-enforcer.agent.md",
+          "type": "AGENT"
+        },
+        {
+          "name": "agents-md-turn-refresh",
+          "sha256": "sha256:08b8270637614a5c8cbc176a22a636fa28c3be9d5474fa16b73b4f1534cee5ab",
+          "sourcePath": "source/hooks/agents-md-turn-refresh.hook.json",
+          "targetPath": "hooks/agents-md-turn-refresh.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "gradle-check-green",
+          "sha256": "sha256:ea899f5220836c6b9f3a9c4b9791f855e57712f2a5e59dadda9bacdc13253ae6",
+          "sourcePath": "source/hooks/gradle-check-green.hook.json",
+          "targetPath": "hooks/gradle-check-green.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "kotlin-horizontalization-check",
+          "sha256": "sha256:287b758f0af60bc380fd7ab44eb9f10c9a8a13f592bdac0cc887d79fc9beac49",
+          "sourcePath": "source/hooks/kotlin-horizontalization-check.hook.json",
+          "targetPath": "hooks/kotlin-horizontalization-check.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "required-skill-read",
+          "sha256": "sha256:19091b15a9c0808d815885c0dc5682e26aa8bf8b28ac9201063e11e60128867d",
+          "sourcePath": "source/hooks/required-skill-read.hook.json",
+          "targetPath": "hooks/required-skill-read.hooks.json",
+          "type": "HOOK"
+        },
+        {
+          "name": "schema-driven-design",
+          "sha256": "sha256:5e371b55534d129c3ebab63cb9830def941a79bb3c9d0cc8d5a8ce3b804b3116",
+          "sourcePath": "source/concepts/schema-driven-design/core.md",
+          "targetPath": "instructions/schema-driven-design.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "type-safety",
+          "sha256": "sha256:8355ec7411fc3213262f45647f6222a217706358a50db3494c5dc51185835cf5",
+          "sourcePath": "source/concepts/type-safety/core.md",
+          "targetPath": "instructions/type-safety.md",
+          "type": "INSTRUCTION"
+        },
+        {
+          "name": "define-goal",
+          "sha256": "sha256:ebe782dba012c41482ce19f34cba0de3f5d7e7cd89f21806d3034d8333b8a0c4",
+          "sourcePath": "source/skills/define-goal",
+          "targetPath": "skills/define-goal",
+          "type": "SKILL"
+        },
+        {
+          "name": "git-change-flow",
+          "sha256": "sha256:4fa7b20a61c7cb8ab36f1d99dddbe3818e8d1c6bc35dd9487358cedc43ac2c9c",
+          "sourcePath": "source/skills/git-change-flow",
+          "targetPath": "skills/git-change-flow",
+          "type": "SKILL"
+        },
+        {
+          "name": "github-ci-operations",
+          "sha256": "sha256:0e76df72d3874a19a1e07f577c7b6c87e9834bf4e1cc119c7ec6cb3b1f2e3cec",
+          "sourcePath": "source/skills/github-ci-operations",
+          "targetPath": "skills/github-ci-operations",
+          "type": "SKILL"
+        },
+        {
+          "name": "kotlin-agentic-correctness",
+          "sha256": "sha256:8fe716f5e5c08061467f4a650f10e6474eff8f9b52515cdd20b7ff531614f44a",
+          "sourcePath": "source/skills/kotlin-agentic-correctness",
+          "targetPath": "skills/kotlin-agentic-correctness",
+          "type": "SKILL"
+        },
+        {
+          "name": "kotlin-gradle-validation",
+          "sha256": "sha256:cd541aa4ac2e11c78df923fd039dbd295ec78c47fcae459342e3270c2a767d8d",
+          "sourcePath": "source/skills/kotlin-gradle-validation",
+          "targetPath": "skills/kotlin-gradle-validation",
+          "type": "SKILL"
+        },
+        {
+          "name": "kotlin-review",
+          "sha256": "sha256:ae2606e222576b8f67b46f89eb9a4811e3e4d597dacb01641c098335f7be7599",
+          "sourcePath": "source/skills/kotlin-review",
+          "targetPath": "skills/kotlin-review",
+          "type": "SKILL"
+        },
+        {
+          "name": "kotlin-standards",
+          "sha256": "sha256:934538021afc46240b3622c5c46dfc18371b093c3f351daaede933a42e3ad5be",
+          "sourcePath": "source/skills/kotlin-standards",
+          "targetPath": "skills/kotlin-standards",
+          "type": "SKILL"
+        },
+        {
+          "name": "pull-request-lifecycle",
+          "sha256": "sha256:8442d2e53942a76bbf5c59c0988e679ed397d27edd059f6f603c83fea50ca155",
+          "sourcePath": "source/skills/pull-request-lifecycle",
+          "targetPath": "skills/pull-request-lifecycle",
+          "type": "SKILL"
+        },
+        {
+          "name": "shell-script-safety",
+          "sha256": "sha256:d59aa6e0a5e74eb494e8310feb4949993f2f96d5df64946936eaf4788a3c739b",
+          "sourcePath": "source/skills/shell-script-safety",
+          "targetPath": "skills/shell-script-safety",
+          "type": "SKILL"
+        },
+        {
+          "name": "tdd",
+          "sha256": "sha256:ae85ef87b82e3ac2f4abaf97511eb0e6c011381fd5165ab75c5a2546fff89f17",
+          "sourcePath": "source/skills/tdd",
+          "targetPath": "skills/tdd",
+          "type": "SKILL"
+        }
+      ],
+      "sourceManifest": "source/plugins/kotlin-agentic-correctness/plugin.json",
       "version": "0.1.0"
     },
     {
@@ -346,6 +507,6 @@
     }
   ],
   "schemaVersion": 1,
-  "sourceSha": "a40c719a605de6c198a72a5977e08e654ae3ebfd",
+  "sourceSha": "bb2159ca76c95b74b747a39b7a7ff50ddc0a7ff9",
   "type": "HYDRATED_MARKETPLACE"
 }

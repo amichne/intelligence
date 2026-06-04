@@ -37,6 +37,7 @@ Kotlin type modeling, package cohesion, Gradle proof loops, and review agents fo
 ## Skill Primitives
 
 - `kotlin-gradle-validation`: `skills/kotlin-gradle-validation` (source: `source/skills/kotlin-gradle-validation`)
+- `kotlin-review`: `skills/kotlin-review` (source: `source/skills/kotlin-review`)
 - `kotlin-standards`: `skills/kotlin-standards` (source: `source/skills/kotlin-standards`)
 
 ## Hook Primitives

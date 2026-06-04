@@ -1,50 +1,80 @@
-# Source Graph
+# Source Graph and Normalized Representation
 
-The source graph records where reusable AI tooling lives and how it is composed
-for public distribution.
+The repository starts from one governing principle:
+**a reusable primitive or plugin family is valid only when it has a provider-neutral
+JSON form that is enforced by schema.**
 
-## Authored Sources
+That schema becomes the first principle concern because it is the only place where
+we state invariant behavior and composition rules. Every concrete marketplace
+authoring and adapter surface is derived from this canonical model.
 
-Authored sources are the files humans intentionally maintain.
+## Canonical source model
 
-| Source | Role |
+The source graph is the authored `source/` graph, normalized to stable kinds and
+schemas.
+
+| Source | Canonical role |
 |---|---|
-| `source/skills/` | Independent reusable skill primitives. |
-| `source/agents/` | Independent reusable agent profiles. |
-| `source/hooks/` | Hook metadata, implementations, requirements, and adapter configs. |
-| `source/concepts/` | Portable instruction and principle documents. |
-| `source/plugins/*/plugin.json` | Referential composition manifests. |
-| `source/adaptable.marketplace.json` | Curated provider-neutral marketplace catalog. |
-| `source/profiles/*.json` | Workflow profiles for target repositories. |
-| `source/schemas/` | Public core and adapter schema contracts. |
+| `source/schemas/` | Defines the core grammar and validation boundaries that all
+authors must satisfy. |
+| `source/skills/` | Independent reusable skill behavior in normalized shape. |
+| `source/agents/` | Agent profile primitives bound to explicit schema fields. |
+| `source/hooks/` | Hook semantics, requirements, and adapter entrypoints. |
+| `source/concepts/` | Portable instruction and principle objects. |
+| `source/plugins/*/plugin.json` | Referential composition over existing primitives. |
+| `source/adaptable.marketplace.json` | Curated provider-neutral marketplace graph. |
+| `source/profiles/*.json` | Runtime usage contracts for target repositories. |
 
-## Composition Flow
+This means the graph is a model, not a pile of export targets.
 
-Primitives are authored first. Plugins compose them by reference, and the
-marketplace exposes only the curated public subset.
+## Benefits and safety from schema-first design
+
+The schema-first approach gives practical safety gains.
+
+| What we optimize for | Safety gain |
+|---|---|
+| Deterministic behavior | Behavior is declared once in `source/`, so changes are diffed at the source-model layer before any generator or adapter is touched. |
+| Host interoperability | Providers are supported as projections, not forks, which avoids implicit source-model drift per provider. |
+| Failure visibility | Contract violations fail fast through schema gates (`bin/intelligence validate`, `node scripts/validate-manifests.mjs`). |
+| Backward compatibility | Generated projections can be reviewed against the invariant source graph, making unsupported migrations obvious. |
+| Recovery under failure | Regenerating targets from the same source model lets teams fix generator issues without editing historical payloads manually. |
+
+## Target mapping from agnostic representation
+
+Provider markets and local runtimes consume different models. The repository keeps
+an agnostic representation in source and maps it outward through deterministic
+projections.
 
 ```mermaid
 flowchart TD
-  author[Author primitive]
-  validate[Schema validation]
-  compose[Referential plugin]
-  adapt[Provider adapter projection]
-  publish[Marketplace exposure]
+  Author[Author in source/] --> Schema[Schema-as-model]
+  Schema --> Validate[Validation gate]
+  Validate --> Build[Adapter projection]
+  Build --> Codex[Codex payloads]
+  Build --> Github[GitHub payloads]
+  Build --> Runtime[Target runtime usage]
+  Runtime --> Verify[Portable + hydrated checks]
 
-  author --> validate --> compose --> adapt --> publish
+  Schema --> SchemaFile[source/schemas/
+and contracts]
 ```
 
-This flow keeps plugin payloads from becoming the only copy of reusable
-behavior.
+When a runtime lacks a native concept, we project into the nearest practical
+representation and keep the canonical shape unchanged. For this repository, that is
+why `plugins/`, `.agents/plugins/marketplace.json`, and `.github/plugin/` are
+published outputs from `source/` rather than independent sources.
 
-## Adapter Projections
+## Practical workflow for contributors
 
-Provider-native marketplaces are generated from the same `source/` graph. When
-a runtime does not support a primitive kind directly, the adapter must project
-it into the nearest runtime-readable shape instead of changing the source model.
+Before moving from source to adapters, keep this sequence.
 
-For Codex-style plugin payloads, agent profiles and instruction primitives are
-distributed through a generated `AGENTS.md` file. The file points back to the
-bundled primitive paths and states that it is an adapter, not a new authority.
-On `main`, the root `plugins/` directory is one of those generated payload
-surfaces; edit `source/plugins/` for authored composition changes.
+1. Author in source paths (for example `source/skills`, `source/plugins`, or
+   `source/adaptable.marketplace.json`).
+2. Run schema gates to ensure the canonical model remains valid.
+3. Materialize provider outputs (`publish-marketplace.py`) and hydrate-check them
+   with `--portable --hydrated` so adapter assumptions are explicitly tested.
+4. Commit only source edits as truth; treat generated surfaces as derived.
+
+This preserves one representation with many targets and makes safety review
+simple: if a target model differs unexpectedly, the bug is in the adapter path,
+not in the canonical source model.

@@ -110,6 +110,48 @@
       "version": "0.1.0"
     },
     {
+      "agents": "./agents",
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Single Kotlin workflow combining typed design discipline, invariant-oriented Kotlin standards, filesystem-backed evidence, Kast semantic tooling, and Gradle/PR proof loops.",
+      "hooks": "./hooks",
+      "keywords": [
+        "agents",
+        "ci",
+        "evidence",
+        "gradle",
+        "hooks",
+        "kast",
+        "kotlin",
+        "kotlin-agentic-correctness",
+        "schemas",
+        "skills",
+        "testing",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "kotlin-agentic-correctness",
+      "skills": "./skills",
+      "source": "kotlin-agentic-correctness",
+      "strict": true,
+      "tags": [
+        "agents",
+        "ci",
+        "evidence",
+        "gradle",
+        "hooks",
+        "kast",
+        "kotlin",
+        "schemas",
+        "skills",
+        "testing",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
       "author": {
         "name": "Amichne"
       },

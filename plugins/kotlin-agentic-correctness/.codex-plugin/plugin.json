@@ -1,0 +1,41 @@
+{
+  "author": {
+    "name": "Amichne"
+  },
+  "description": "Single Kotlin workflow combining typed design discipline, invariant-oriented Kotlin standards, filesystem-backed evidence, Kast semantic tooling, and Gradle/PR proof loops.",
+  "interface": {
+    "brandColor": "#0F766E",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "category": "Engineering",
+    "defaultPrompt": [
+      "Use Kotlin Agentic Correctness for this task.",
+      "Review this repo with Kotlin Agentic Correctness.",
+      "Show the Kotlin Agentic Correctness workflow."
+    ],
+    "developerName": "Amichne",
+    "displayName": "Kotlin Agentic Correctness",
+    "longDescription": "Single Kotlin workflow combining typed design discipline, invariant-oriented Kotlin standards, filesystem-backed evidence, Kast semantic tooling, and Gradle/PR proof loops.",
+    "shortDescription": "Single Kotlin workflow combining typed design discipline, invariant-o..."
+  },
+  "keywords": [
+    "agents",
+    "ci",
+    "evidence",
+    "gradle",
+    "hooks",
+    "kast",
+    "kotlin",
+    "kotlin-agentic-correctness",
+    "schemas",
+    "skills",
+    "testing",
+    "validation"
+  ],
+  "license": "UNLICENSED",
+  "name": "kotlin-agentic-correctness",
+  "skills": "./skills/",
+  "version": "0.1.0"
+}
