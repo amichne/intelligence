@@ -1,0 +1,68 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "engineering-baseline",
+  "version": "0.1.0",
+  "description": "Repository baseline for type-safe work: onboarding, shared instructions, and turn-level hooks that keep agents using the right local guidance.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/repository-onboarding",
+      "name": "repository-onboarding"
+    }
+  ],
+  "agents": [],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/type-safety/core.md",
+      "name": "type-safety"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/agents-md-turn-refresh.hook.json",
+      "name": "agents-md-turn-refresh"
+    },
+    {
+      "type": "HOOK",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "hooks/required-skill-read.hook.json",
+      "name": "required-skill-read"
+    }
+  ],
+  "metadata": {
+    "composition": "referential",
+    "dailyDriver": "Install in repositories that should consume curated agent tooling and enforce baseline instruction hygiene.",
+    "notFor": "Language-specific implementation loops, CI release babysitting, or API contract authoring.",
+    "owner": "engineering-standards-platform",
+    "principle": "make-illegal-states-unrepresentable",
+    "role": "engineering-baseline",
+    "scope": "Default repository guardrails, type-safety and schema-driven instructions, marketplace onboarding, and turn-level skill-read enforcement."
+  }
+}

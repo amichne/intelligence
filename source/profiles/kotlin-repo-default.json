@@ -2,7 +2,7 @@
   "type": "WORKFLOW_PROFILE",
   "schemaVersion": 1,
   "name": "kotlin-repo-default",
-  "description": "Default Kotlin repository workflow using the single Kotlin Agentic Correctness plugin and Codex hook adapters.",
+  "description": "Default enterprise Kotlin repository workflow using the engineering baseline, Kotlin engineering workflow, Git/CI operations, and Codex hook adapters.",
   "marketplaces": [
     {
       "type": "WORKFLOW_MARKETPLACE",
@@ -14,7 +14,9 @@
     }
   ],
   "plugins": [
-    "kotlin-agentic-correctness"
+    "engineering-baseline",
+    "kotlin-engineering",
+    "git-ci-operations"
   ],
   "hooks": [
     {
