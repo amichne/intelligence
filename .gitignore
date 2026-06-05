@@ -26,15 +26,61 @@ replay_pid*
 # Kotlin Gradle plugin data, see https://kotlinlang.org/docs/whatsnew20.html#new-directory-for-kotlin-data-in-gradle-projects
 .kotlin/
 
-# Local agent hook state and editor state
+# Local agent hook state, editor state, and OS metadata
 .agent-turn/
 .skill-lock.json
 .idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+
+# Dependency and package-manager caches
 node_modules/
-build/
-.apm/
 apm_modules/
+.npm/
+.pnpm-store/
+.yarn/
+.cache/
+
+# APM generated outputs
+.apm/
+!packages/*/.apm/
+!packages/*/.apm/**
+.agents/
+.claude-plugin/
+.cursor-plugin/
+.github/plugin/
+packages/*/apm_modules/
+packages/*/.agents/
+packages/*/.claude-plugin/
+packages/*/.cursor-plugin/
+packages/*/.github/plugin/
+
+# Build, docs, and package outputs
+build/
 dist/
 site/
+tmp/
+temp/
+*.tmp
+
+# Python caches, environments, and coverage output
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.tox/
+.nox/
+.venv/
+venv/
+env/
+ENV/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+pip-wheel-metadata/

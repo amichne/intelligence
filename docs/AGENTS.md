@@ -7,13 +7,13 @@ The `docs` tree is the hand-authored source for the Zensical site.
 
 The site is organized around the reader's job instead of the repository tree.
 
-- `docs/index.md` introduces the repository, the public distribution boundary,
-  and the fastest useful commands.
-- `docs/getting-started/` covers how to use the workflow profile, marketplace,
-  and primitive scaffolding paths.
-- `docs/available/` explains the plugin families and primitive types that are
-  currently curated here.
-- `docs/how-it-works/` documents source graph and validation contracts.
+- `docs/index.md` introduces the APM marketplace, package boundary, and fastest
+  useful commands.
+- `docs/getting-started/` covers marketplace consumption and primitive
+  authoring.
+- `docs/available/` explains the package families and primitive types currently
+  curated here.
+- `docs/how-it-works/` documents APM package graph and validation contracts.
 - `docs/reference/` maps repository paths, commands, docs tooling, and
   terminology.
 
@@ -35,7 +35,7 @@ Use the Zensical and Material-style features already enabled in
 - Use admonitions for safety boundaries and generated-file warnings.
 - Use tables for lookup surfaces such as plugin families, commands, and file
   ownership.
-- Use Mermaid for source graph flows when it clarifies composition.
+- Use Mermaid for package graph flows when it clarifies composition.
 - Wrap prose near 80 characters unless tables or links require longer lines.
 - Put at least one orienting paragraph after each major heading before lists or
   subheadings.

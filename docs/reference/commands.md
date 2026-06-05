@@ -1,45 +1,17 @@
 # Commands
 
-This page collects the commands most readers need while working in this
-repository.
-
-## Repository CLI
-
-`bin/intelligence` is the local orchestration entrypoint.
+## APM
 
 | Command | Purpose |
 |---|---|
-| `bin/intelligence --help` | Show available subcommands. |
-| `bin/intelligence validate` | Run manifest validation gates. |
-| `bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default` | Create a target-repository workflow profile. |
-| `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json` | Dry-run profile installation. |
-| `bin/intelligence primitive new skill example-skill --plugin primitive-systems-authoring` | Scaffold a new primitive and optionally reference it. |
+| `apm pack --marketplace=all --dry-run --check-versions --json` | Preview Claude and Codex marketplace outputs. |
+| `apm pack --marketplace=all --check-versions --json` | Generate marketplace outputs. |
+| `apm audit --ci --no-policy` | Audit package content for publishing. |
+| `apm marketplace add amichne/intelligence --name amichne-apm` | Register this marketplace as a consumer. |
+| `apm install apm-authoring@amichne-apm` | Install a package from this marketplace. |
 
-## npm Scripts
-
-The root `package.json` pins validator dependencies and exposes common tasks.
-
-| Script | Purpose |
-|---|---|
-| `npm run intelligence -- --help` | Run the repository CLI through npm. |
-| `npm run validate:manifests` | Run `node scripts/validate-manifests.mjs`. |
-| `npm run apm:manifest:check` | Fail if checked `apm.yml` is stale relative to `source/adaptable.marketplace.json`. |
-| `npm run apm:stage` | Generate the ignored APM marketplace workspace under `build/apm-marketplace`. |
-| `npm run apm:pack:preview` | Stage the APM workspace and run an APM pack dry-run with version checks. |
-| `npm run package:cli -- --version local` | Build local CLI archives under `dist/`. |
-
-## Documentation
-
-Build the Zensical site from the repository root.
+## Docs
 
 ```sh
 zensical build --clean
-```
-
-Install the docs toolchain when needed.
-
-```sh
-python3 -m venv .venv-docs
-. .venv-docs/bin/activate
-python -m pip install -r requirements-docs.txt
 ```

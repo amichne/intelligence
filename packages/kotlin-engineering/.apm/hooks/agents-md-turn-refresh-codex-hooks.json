@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json.schemastore.org/codex-hooks.json",
+  "description": "Track files changed in the current Codex turn and require the nearest AGENTS.md files to be created or updated when repository guidance may have drifted.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${PLUGIN_ROOT}/hooks/agents-md-turn-refresh.sh start",
+            "timeout": 10,
+            "statusMessage": "Starting AGENTS.md turn tracking"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${PLUGIN_ROOT}/hooks/agents-md-turn-refresh.sh record",
+            "timeout": 10,
+            "statusMessage": "Recording AGENTS.md turn edits"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${PLUGIN_ROOT}/hooks/agents-md-turn-refresh.sh stop",
+            "timeout": 30,
+            "statusMessage": "Checking affected AGENTS.md files"
+          }
+        ]
+      }
+    ]
+  }
+}

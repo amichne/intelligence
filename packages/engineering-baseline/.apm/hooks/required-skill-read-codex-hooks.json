@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/codex-hooks.json",
+  "description": "Track required skill reads for APM package work and remind before other tools run.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${PLUGIN_ROOT}/hooks/required-skill-read.py init --repo . --config ${PLUGIN_ROOT}/hook-config/required-skill-read.requirements.json",
+            "timeout": 10,
+            "statusMessage": "Starting required-skill read tracking"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ${PLUGIN_ROOT}/hooks/required-skill-read.py check --repo . --config ${PLUGIN_ROOT}/hook-config/required-skill-read.requirements.json",
+            "timeout": 10,
+            "statusMessage": "Checking required skill reads"
+          }
+        ]
+      }
+    ]
+  }
+}
