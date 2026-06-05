@@ -16,11 +16,9 @@ change belongs.
 | `source/profiles/` | Schema-validated workflow profiles. |
 | `source/templates/` | Primitive scaffold templates used by `bin/intelligence`. |
 | `bin/` | Thin local command wrappers. |
-| `scripts/` | Root validation, packaging, and marketplace publication tooling. |
+| `scripts/` | Root validation, packaging, APM staging, and marketplace publication tooling. |
 | `source/schemas/` | Public provider-neutral and adapter schema contracts. |
-| `plugins/` | Materialized Codex plugin payloads generated from `source/`. |
-| `.github/plugin/` | Materialized GitHub marketplace projection generated from `source/`. |
-| `.agents/plugins/marketplace.json` | Materialized Codex marketplace entrypoint on `main`. |
-| `marketplace-lock.json` | Materialized lockfile for root plugin payloads. |
+| `apm.yml` | Checked APM marketplace manifest generated from the curated source catalog. |
+| `build/apm-marketplace/` | Ignored APM marketplace workspace generated for preview and release artifacts. |
 | `docs/` | Hand-authored Zensical documentation source. |
 | `zensical.toml` | Documentation navigation, theme, and Markdown feature contract. |

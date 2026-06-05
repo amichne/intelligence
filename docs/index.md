@@ -46,7 +46,7 @@ The repository supports several related workflows.
 |---|---|---|
 | Understand the toolbox | [What is available](available/index.md) | A map of plugin families, primitives, hooks, and schemas. |
 | Add Intelligence to another repo | [Workflow profiles](getting-started/workflow-profiles.md) | A checked-in profile and dry-run install path. |
-| Import curated plugins | [Marketplace](getting-started/marketplace.md) | Provider-native marketplace payloads from generated output. |
+| Import curated plugins | [Marketplace](getting-started/marketplace.md) | APM marketplace release artifacts generated from source. |
 | Create a new building block | [Author a primitive](getting-started/author-a-primitive.md) | A scaffolded skill, agent, hook, concept, or plugin reference. |
 | Keep the source graph honest | [Validation](how-it-works/validation.md) | Schema-backed checks. |
 

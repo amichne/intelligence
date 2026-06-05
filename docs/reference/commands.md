@@ -23,12 +23,9 @@ The root `package.json` pins validator dependencies and exposes common tasks.
 |---|---|
 | `npm run intelligence -- --help` | Run the repository CLI through npm. |
 | `npm run validate:manifests` | Run `node scripts/validate-manifests.mjs`. |
-| `npm run marketplace:materialize` | Materialize Codex marketplace output under `/tmp/intelligence-codex-marketplace`. |
-| `npm run marketplace:materialize:github` | Materialize GitHub marketplace output under `/tmp/intelligence-github-marketplace`. |
-| `npm run marketplace:sync-main` | Regenerate the adapted marketplace manifests and GitHub payload tree checked into `main`. |
-| `npm run marketplace:sync-main:check` | Fail if the adapted marketplace manifests or GitHub payload tree on `main` are stale. |
-| `npm run marketplace:publish:preview` | Build the generated Codex branch locally without pushing. |
-| `npm run marketplace:publish:github:preview` | Build the generated GitHub branch locally without pushing. |
+| `npm run apm:manifest:check` | Fail if checked `apm.yml` is stale relative to `source/adaptable.marketplace.json`. |
+| `npm run apm:stage` | Generate the ignored APM marketplace workspace under `build/apm-marketplace`. |
+| `npm run apm:pack:preview` | Stage the APM workspace and run an APM pack dry-run with version checks. |
 | `npm run package:cli -- --version local` | Build local CLI archives under `dist/`. |
 
 ## Documentation

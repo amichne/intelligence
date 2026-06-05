@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "codex-marketplace.schema.json",
   "title": "Codex Marketplace",
-  "description": "Codex-native marketplace manifest stored at `.agents/plugins/marketplace.json` on a hydrated Codex marketplace branch. This is an external runtime shape, so it intentionally uses Codex field names instead of the provider-neutral `type` discriminator model.",
+  "description": "Codex-native marketplace manifest emitted by APM for release artifacts. This is an external runtime shape, so it intentionally uses Codex field names instead of the provider-neutral `type` discriminator model.",
   "type": "object",
   "required": [
     "name",
@@ -50,7 +50,7 @@
             "name": "browser",
             "source": {
               "source": "local",
-              "path": "./plugins/browser"
+              "path": "./packages/browser"
             },
             "policy": {
               "installation": "AVAILABLE",
@@ -107,10 +107,10 @@
       "additionalProperties": false,
       "examples": [
         {
-          "name": "browser",
-          "source": {
-            "source": "local",
-            "path": "./plugins/browser"
+            "name": "browser",
+            "source": {
+              "source": "local",
+            "path": "./packages/browser"
           },
           "policy": {
             "installation": "AVAILABLE",
@@ -121,7 +121,7 @@
       ]
     },
     "localPluginSource": {
-      "description": "Plugin payload stored under the marketplace root.",
+      "description": "Plugin package stored under the marketplace root.",
       "type": "object",
       "required": [
         "source",
@@ -129,7 +129,7 @@
       ],
       "properties": {
         "source": {
-          "description": "Codex source discriminator. The generated branch stores local plugin payloads.",
+          "description": "Codex source discriminator. The APM release artifact stores local plugin packages.",
           "type": "string",
           "enum": [
             "local"
@@ -139,11 +139,11 @@
           ]
         },
         "path": {
-          "description": "Path relative to `.agents/plugins/marketplace.json`.",
+          "description": "Path relative to the marketplace artifact root.",
           "type": "string",
-          "pattern": "^\\./plugins/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
+          "pattern": "^\\./packages/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
           "examples": [
-            "./plugins/browser"
+            "./packages/browser"
           ]
         }
       },
@@ -151,7 +151,7 @@
       "examples": [
         {
           "source": "local",
-          "path": "./plugins/browser"
+          "path": "./packages/browser"
         }
       ]
     },

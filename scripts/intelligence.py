@@ -309,7 +309,7 @@ def render_marketplaces_section(profile: dict[str, Any], status: str) -> str:
             "- Run `bin/intelligence profile init --repo . --profile "
             + profile["name"]
             + "` to refresh this checked-in reference.",
-            "- Run `bin/intelligence install --repo . --profile .agents/intelligence-profile.json --runtime codex` for a dry run.",
+            "- Run `bin/intelligence install --repo . --profile .agents/intelligence-profile.json` for a dry run.",
             "- Add `--apply` only after reviewing the dry run.",
             "",
             "## Validation",

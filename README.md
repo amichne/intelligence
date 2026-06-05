@@ -37,11 +37,12 @@ zensical build --clean
 - `source/profiles/` contains workflow profiles for target repositories.
 - `source/templates/` contains primitive scaffold templates used by `bin/intelligence`.
 - `source/schemas/` contains public provider-neutral and adapter schema contracts.
-- `plugins/`, `marketplace-lock.json`, `.agents/plugins/marketplace.json`, and
-  `.github/plugin/` are materialized publication outputs generated from
-  `source/`.
-- `scripts/` contains root validation, packaging, and marketplace publication
-  tooling.
+- `apm.yml` is the checked APM marketplace manifest generated from
+  `source/adaptable.marketplace.json`.
+- `scripts/` contains root validation, packaging, APM staging, and marketplace
+  publication tooling.
+- `build/apm-marketplace/` is the ignored APM workspace generated for local
+  preview and release artifact creation.
 - `docs/` contains the public documentation site source.
 
 ## Validation
@@ -67,32 +68,30 @@ zensical build --clean
 
 ## Marketplace Publication
 
-`source/adaptable.marketplace.json` keeps the provider-neutral source catalog.
-The generated `codex` and `github` branches are materialized from that source.
-`main` also keeps the adapted marketplace manifests at
-`.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json`, the
-root `marketplace-lock.json`, the resolved Codex plugin payloads under
-`plugins/`, and the fully materialized GitHub payloads under
-`.github/plugin/plugins/`. The referential plugin manifests live under
-`source/plugins/`.
+`source/adaptable.marketplace.json` keeps the provider-neutral source catalog,
+and `apm.yml` is the APM marketplace manifest generated from that catalog. The
+hydrated APM package workspace is generated under ignored `build/` output, not
+checked into `main`.
 
-Preview the branch output locally:
+Preview the APM marketplace locally:
 
 ```sh
 npm ci
-python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex --no-push
-python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
-python3 scripts/publish-marketplace.py sync-main-marketplaces --check
+node scripts/validate-manifests.mjs --portable
+python3 scripts/prepare-apm-marketplace.py manifest --check
+python3 scripts/prepare-apm-marketplace.py stage --out build/apm-marketplace --check-root-manifest
+cd build/apm-marketplace
+apm pack --marketplace=all --dry-run --check-versions --json
+apm audit --ci --no-policy
 ```
 
-Merges to `main` run `.github/workflows/publish-marketplace.yml`, which
-validates source contracts, materializes the Codex and GitHub marketplace
-roots, force-updates `codex` and `github`, then writes the adapted marketplace
-manifests and GitHub payload tree back to `main` if they changed.
+Pull requests run `.github/workflows/sync-provider-marketplaces.yml`, which
+validates source contracts, prepares the APM workspace, and runs the APM pack
+and audit gates. Tags and manual publish dispatches run
+`.github/workflows/publish-marketplace.yml`, which uploads the generated APM
+marketplace root, marketplace JSON files, pack report, and checksums as release
+artifacts. No generated provider branches or hydrated payload trees are pushed
+back to `main`.
 
 ## CLI Archives
 

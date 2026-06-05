@@ -1,13 +1,27 @@
-name: Publish Marketplace
+name: Publish APM Marketplace
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*"
   workflow_dispatch:
+    inputs:
+      version:
+        description: Optional version label for artifact names.
+        required: false
+        type: string
+      publish_release:
+        description: Create or update a GitHub Release for this version.
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
+
+concurrency:
+  group: publish-apm-marketplace-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   publish:
@@ -15,8 +29,6 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Node
         uses: actions/setup-node@v4
@@ -27,29 +39,82 @@ jobs:
       - name: Install validation dependencies
         run: npm ci
 
-      - name: Validate source
+      - name: Validate source manifests
+        run: node scripts/validate-manifests.mjs --portable
+
+      - name: Set up APM
+        uses: microsoft/apm-action@v1
+        with:
+          setup-only: "true"
+          apm-version: "0.18.0"
+
+      - name: Verify APM version
         run: |
-          node scripts/validate-manifests.mjs --portable
-          python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
-          node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-          python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
-          node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
+          set -euo pipefail
+          apm --version
+          apm --version | grep -F "0.18.0"
 
-      - name: Publish Codex marketplace branch
-        run: python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex
+      - name: Prepare APM marketplace workspace
+        run: python3 scripts/prepare-apm-marketplace.py stage --out build/apm-marketplace --check-root-manifest
 
-      - name: Publish GitHub marketplace branch
-        run: python3 scripts/publish-marketplace.py publish-branch --provider github --branch github
-
-      - name: Publish adapted marketplace manifests to main
+      - name: Pack APM marketplace artifacts
+        working-directory: build/apm-marketplace
         run: |
-          python3 scripts/publish-marketplace.py sync-main-marketplaces
-          if [ -z "$(git status --porcelain -- .agents/plugins/marketplace.json marketplace-lock.json plugins .github/plugin/marketplace.json .github/plugin/plugins)" ]; then
-            echo "main adapted marketplaces already current"
-            exit 0
+          set -euo pipefail
+          apm pack --marketplace=all --check-versions --json > pack-report.json
+          apm audit --ci --no-policy
+
+      - name: Resolve artifact version
+        id: version
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && -n "${INPUT_VERSION}" ]]; then
+            version="${INPUT_VERSION}"
+          elif [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            version="${GITHUB_REF_NAME}"
+          else
+            version="$(git rev-parse --short=12 HEAD)"
           fi
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A -- .agents/plugins/marketplace.json marketplace-lock.json plugins .github/plugin/marketplace.json .github/plugin/plugins
-          git commit -m "Publish adapted marketplace manifests"
-          git push origin HEAD:main
+          version="$(printf '%s' "${version}" | tr -c 'A-Za-z0-9._-' '-')"
+          version="${version##[-._]}"
+          version="${version%%[-._]}"
+          if [[ -z "${version}" ]]; then
+            echo "::error::resolved artifact version is empty"
+            exit 1
+          fi
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+          echo "Resolved APM marketplace version: ${version}"
+
+      - name: Archive APM marketplace root
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          mkdir -p dist/apm
+          tar -C build -czf "dist/apm/intelligence-apm-marketplace-${version}.tar.gz" apm-marketplace
+          cp build/apm-marketplace/marketplace.json "dist/apm/marketplace-${version}.json"
+          cp build/apm-marketplace/codex-marketplace.json "dist/apm/codex-marketplace-${version}.json"
+          cp build/apm-marketplace/pack-report.json "dist/apm/pack-report-${version}.json"
+          (cd dist/apm && shasum -a 256 * > SHA256SUMS)
+
+      - name: Upload APM marketplace artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: intelligence-apm-marketplace-${{ steps.version.outputs.version }}
+          path: dist/apm
+          if-no-files-found: error
+
+      - name: Publish GitHub Release assets
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          if gh release view "${version}" >/dev/null 2>&1; then
+            gh release upload "${version}" dist/apm/* --clobber
+          else
+            gh release create "${version}" dist/apm/* --generate-notes --title "${version}"
+          fi

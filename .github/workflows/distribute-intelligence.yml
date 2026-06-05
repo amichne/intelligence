@@ -50,7 +50,7 @@ jobs:
       - name: Validate packaging inputs
         run: |
           bash -n bin/intelligence
-          python3 -m py_compile scripts/intelligence.py scripts/package-intelligence.py
+          python3 -m py_compile scripts/intelligence.py scripts/package-intelligence.py scripts/prepare-apm-marketplace.py
           node scripts/validate-manifests.mjs --portable
 
       - name: Resolve artifact version

@@ -33,11 +33,13 @@ not justified.
 - `bin/` contains thin local command wrappers for repository tooling.
 - `source/schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
-- `scripts/` contains root validation, packaging, and marketplace publication
-  tooling.
-- `plugins/`, `.agents/plugins/marketplace.json`, `marketplace-lock.json`, and
-  `.github/plugin/` are materialized publication outputs. Regenerate them from
-  `source/`; do not hand-edit them as source.
+- `apm.yml` is the checked APM marketplace manifest generated from the curated
+  source catalog.
+- `scripts/` contains root validation, packaging, APM staging, and marketplace
+  publication tooling.
+- `build/apm-marketplace/` is an untracked APM workspace generated from
+  `source/` for local preview and release artifacts. Do not hand-edit it or
+  commit hydrated package payloads.
 - `package.json` and `package-lock.json` pin local validator dependencies.
 
 ## Terminology
@@ -57,6 +59,8 @@ not justified.
 - Keep `source/adaptable.marketplace.json` aligned with
   `source/schemas/marketplace/` and provider-neutral definitions in
   `source/schemas/core/`.
+- Keep checked `apm.yml` aligned with `source/adaptable.marketplace.json` by
+  running `python3 scripts/prepare-apm-marketplace.py manifest --check`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `node scripts/validate-manifests.mjs` is the coverage gate and must reject
@@ -81,6 +85,9 @@ not justified.
 - Run `node scripts/validate-manifests.mjs` after changing
   `source/adaptable.marketplace.json`, `source/plugins/*/plugin.json`, hooks,
   schemas, profiles, or any JSON manifest.
+- Run `python3 scripts/prepare-apm-marketplace.py stage --out build/apm-marketplace --check-root-manifest`
+  and `apm pack --marketplace=all --dry-run --check-versions --json` from
+  `build/apm-marketplace` after changing marketplace exposure.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
   `source/schemas/core/hook.schema.json`.

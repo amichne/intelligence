@@ -18,8 +18,8 @@ structure, and schemas there so we can fail before projection.
 | `node scripts/validate-manifests.mjs` | Enforces JSON manifest contracts from `source/`, including `source/schemas`, marketplaces, plugins, profiles, and schema ownership rules. |
 | `node scripts/validate-manifests.mjs --portable` | Ensures source-aligned serialization is still stable outside the local checkout assumptions. |
 
-This is the primary safety boundary: the source model must be valid before we generate
-provider payloads.
+This is the primary safety boundary: the source model must be valid before we
+stage APM packages or write release artifacts.
 
 ### JSON and schema boundary
 
@@ -30,24 +30,17 @@ equivalent assertion boundary.
 node scripts/validate-manifests.mjs
 ```
 
-Use the portable mode when validating generated marketplace output outside this
-machine's local filesystem layout.
+Use the portable mode in CI and release workflows.
 
 ```sh
 node scripts/validate-manifests.mjs --portable
 ```
 
-Hydrated validation checks runtime-adapted output surfaces and catches projection
-mismatches that normal schema checks may miss.
+## Layer 2: APM staging and runtime compatibility
 
-```sh
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-```
-
-## Layer 2: projection safety and runtime compatibility
-
-A source-valid model can still fail in a target projection. This layer verifies
-provider mappings and adapter surfaces.
+A source-valid model can still fail when staged into APM packages. This layer
+verifies APM manifest freshness, package staging, marketplace output mapping, and
+APM audit checks.
 
 ### Focused checks
 
@@ -58,22 +51,22 @@ Match the surface you changed with the tightest check.
 | Hook shell entrypoints | `bash -n source/hooks/*.sh` |
 | JSON hook assets | `python3 -m json.tool source/hooks/name.hook.json` |
 | Marketplace or plugin manifests | `node scripts/validate-manifests.mjs` |
+| APM manifest freshness | `python3 scripts/prepare-apm-marketplace.py manifest --check` |
+| APM marketplace preview | `npm run apm:pack:preview` |
 | Documentation site | `zensical build --clean` |
-| Provider-specific projection | `node scripts/validate-manifests.mjs --portable --hydrated <provider-output-dir>` |
 
 ## Publish proof path
 
-For publish flows, keep the same source-to-projection sequence: validate source,
-materialize outputs, then verify hydration.
+For publish flows, keep the same source-to-APM sequence: validate source, stage
+the APM workspace, then verify pack and audit output.
 
 ```sh
-python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex --no-push
-python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
-python3 scripts/publish-marketplace.py sync-main-marketplaces --check
+node scripts/validate-manifests.mjs --portable
+python3 scripts/prepare-apm-marketplace.py manifest --check
+python3 scripts/prepare-apm-marketplace.py stage --out build/apm-marketplace --check-root-manifest
+cd build/apm-marketplace
+apm pack --marketplace=all --dry-run --check-versions --json
+apm audit --ci --no-policy
 ```
 
 ## Distribution artifact checks
@@ -85,14 +78,14 @@ the publishing workflow:
 npm run package:cli -- --version local
 ```
 
-If a provider check fails, repair projection logic or schema boundaries, then
-regenerate outputs instead of patching generated payloads by hand.
+If an APM check fails, repair staging logic or schema boundaries, then regenerate
+the ignored workspace instead of patching generated payloads by hand.
 
 ## What this protects
 
 This two-layer model gives practical safety:
 
 - It isolates invariant claims to source (`source/`), reducing drift from generated artifacts.
-- It preserves the ability to support more targets through adapter projections.
+- It preserves the ability to support more targets through APM package outputs.
 - It makes failures explainable:
-  source-model invalidation vs adapter/projection regression.
+  source-model invalidation vs APM staging or packaging regression.

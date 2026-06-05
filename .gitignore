@@ -31,6 +31,9 @@ replay_pid*
 .skill-lock.json
 .idea/
 node_modules/
+build/
+.apm/
+apm_modules/
 dist/
 site/
 __pycache__/
