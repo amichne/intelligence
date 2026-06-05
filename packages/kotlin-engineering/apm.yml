@@ -1,0 +1,11 @@
+name: kotlin-engineering
+version: 0.1.0
+description: "Kotlin engineering workflow for code changes that need typed design, Kast semantics, review, filesystem evidence, Gradle proof, CI, and PR delivery."
+author: Amichne
+license: Apache-2.0
+type: hybrid
+targets: [claude, codex]
+metadata:
+  role: "kotlin-engineering"
+  scope: "End-to-end Kotlin agent work from invariant framing through Kast-backed navigation, review, filesystem evidence, Gradle proof, PR/CI operations, and shell-safe automation."
+  primitiveSource: package-owned-apm

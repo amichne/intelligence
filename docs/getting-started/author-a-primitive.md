@@ -1,45 +1,36 @@
 # Author A Primitive
 
-A primitive is an independent building block that can be useful without a
-plugin. Skills, agents, hooks, instructions, and concept documents are
-primitives in this repository.
+Author primitives inside the package that ships them. Do not create a separate
+source tree that requires a custom generator.
 
-## Scaffold
+## Layout
 
-Use the repository CLI to create a primitive from the local templates.
-
-```sh
-bin/intelligence primitive new skill example-skill \
-  --plugin primitive-systems-authoring \
-  --marketplace
+```text
+packages/example-package/
+  apm.yml
+  .apm/
+    skills/example-skill/SKILL.md
+    agents/example-agent.agent.md
+    instructions/example.instructions.md
+    hooks/example-codex-hooks.json
+  hook-config/example.requirements.json
+  hooks/example.sh
 ```
 
-The command can add the primitive to a referential plugin or marketplace entry
-when that is part of the intended distribution path.
+## Workflow
 
-## Keep It Independent
-
-A plugin should compose a primitive that already exists. It should not become
-the only copy of that primitive's behavior.
-
-Check the primitive against these questions before publishing it:
-
-| Question | Why It Matters |
-|---|---|
-| What reader or agent job does it serve? | Prevents vague reusable content. |
-| Can it stand without the plugin? | Preserves primitive independence. |
-| Does it persist structured data? | Triggers schema or parser ownership. |
-| What validates it? | Keeps future changes executable. |
-| Should it be public? | Maintains the curated marketplace boundary. |
+1. Choose the package under `packages/`.
+2. Add or edit the primitive under that package's `.apm/` tree.
+3. Keep hook scripts under package `hooks/` when hook JSON references them.
+   Keep hook sidecar JSON under `hook-config/`.
+4. Update the package `apm.yml` only when metadata changes.
+5. Update root `apm.yml` only when marketplace exposure changes.
 
 ## Validate
 
-Run the repository gate after changing primitives, plugin manifests, schemas,
-hooks, marketplace entries, or workflow profiles.
-
 ```sh
-bin/intelligence validate
+python3 -m json.tool packages/example-package/.apm/hooks/example-codex-hooks.json
+bash -n packages/example-package/hooks/example.sh
+apm pack --marketplace=all --dry-run --check-versions --json
+apm audit --ci --no-policy
 ```
-
-When a primitive comes from another source, keep provenance in the primitive or
-plugin documentation that is safe for the public repository.

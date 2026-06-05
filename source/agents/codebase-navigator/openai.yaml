@@ -1,8 +1,0 @@
-interface:
-  display_name: "Codebase Navigator"
-  short_description: "Generate and maintain AGENTS.local.md navigation summaries for AI codebase traversal"
-  default_prompt: |
-    Bootstrap or refresh AGENTS.local.md navigation files for this repository.
-    Check whether OUTDATED.local.md exists at the root; if so, process it.
-    Otherwise, generate summaries for the root and one level of subdirectories.
-    Report which files were written, updated, or skipped.

@@ -1,57 +1,23 @@
 # Primitives
 
-Primitives are the building blocks. They are kept outside plugin payloads so
-they can be inspected, tested, reused, and composed independently.
+Primitives are package-owned APM assets.
 
-## Skill Groups
+## Skills
 
-Skills live under `source/skills/<name>/SKILL.md`. Many include references, scripts,
-templates, or examples next to the entrypoint.
+Skills live under `packages/*/.apm/skills/<name>/SKILL.md` and may include
+`references/`, `scripts/`, `assets/`, and examples.
 
-| Group | Examples |
-|---|---|
-| Authoring | `skill-primitive-authoring`, `agent-profile-authoring`, `hook-primitive-authoring`, `plugin-composition-authoring`. |
-| Repository orientation | `repo-instruction-topology`, `repository-signature-indexing`, `local-repository-navigation`. |
-| Documentation and planning | `define-goal`, `reference-doc-workflow`, `site-docs-authoring`. |
-| Kotlin and validation | `kotlin-standards`, `kotlin-gradle-validation`, `manage-json-schemas`, `tdd`. |
-| OpenAPI | `openapi-schema-modeling`, `openapi-contract-authoring`, `openapi-contract-rating`. |
-| Version control | `git-change-flow`, `github-ci-operations`, `pull-request-lifecycle`. |
+## Agents
 
-## Agent Profiles
+Agents live under `packages/*/.apm/agents/*.agent.md`.
 
-Agent profiles live under `source/agents/`. They are focused reviewer or enforcement
-surfaces that plugins can compose.
+## Instructions
 
-| Agent | Focus |
-|---|---|
-| `schema-type-enforcer` | Schema-backed type and structured-data boundaries. |
-| `kotlin-review-captain` | Kotlin review coordination. |
-| `kotlin-type-safety-reviewer` | Kotlin type-safety review. |
-| `kotlin-boundary-contract-reviewer` | Kotlin module and boundary contract review. |
-| `kotlin-package-cohesion-reviewer` | Kotlin package layout and cohesion review. |
-| `openapi-contract-rater` | OpenAPI contract quality review. |
+Instructions live under `packages/*/.apm/instructions/*.instructions.md`.
 
 ## Hooks
 
-Hook primitive metadata lives at `source/hooks/*.hook.json`. Runtime adapter
-configs live under provider folders such as `source/hooks/codex/`.
-
-| Hook | Purpose |
-|---|---|
-| `agents-md-turn-refresh` | Refreshes scoped agent instructions at turn boundaries. |
-| `required-skill-read` | Checks that required skill instructions were read when configured. |
-| `kotlin-horizontalization-check` | Guards Kotlin layout and package horizontalization expectations. |
-| `gradle-check-green` | Runs the repository Gradle wrapper when Kotlin or Gradle-owned files changed. |
-
-!!! note "Provider boundary"
-    Keep provider-neutral hook metadata separate from adapter-specific matcher
-    syntax and runtime event names. Adapter files belong under provider
-    directories such as `source/hooks/codex/`.
-
-## Concepts And Schemas
-
-Concept primitives live under `source/concepts/`. They hold portable principles such
-as `type-safety` and `schema-driven-design`.
-
-Public provider-neutral schemas live under `source/schemas/core/`. Adapter
-schemas live under `source/schemas/adapters/`.
+Hooks live under `packages/*/.apm/hooks/*.json`. Target-specific Codex hooks
+use names such as `<name>-codex-hooks.json`. Executable scripts referenced by
+hook JSON live under package `hooks/`, while JSON sidecar config belongs under
+`hook-config/` so APM does not scan it as a hook definition.

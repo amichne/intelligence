@@ -1,0 +1,11 @@
+name: engineering-baseline
+version: 0.1.0
+description: "Repository baseline for type-safe work: onboarding, shared instructions, and turn-level hooks that keep agents using the right local guidance."
+author: Amichne
+license: Apache-2.0
+type: hybrid
+targets: [claude, codex]
+metadata:
+  role: "engineering-baseline"
+  scope: "Default repository guardrails, type-safety and schema-driven instructions, marketplace onboarding, and turn-level skill-read enforcement."
+  primitiveSource: package-owned-apm

@@ -1,30 +1,18 @@
 # Plugin Families
 
-Plugins are composition surfaces. They assemble existing primitives by
-reference, which keeps the primitive useful outside any one plugin payload.
+These APM package families are exposed through the root `apm.yml` marketplace.
 
-## Marketplace Families
-
-These families are exposed through `source/adaptable.marketplace.json`.
-
-| Plugin | What It Provides |
+| Package | What It Provides |
 |---|---|
-| `engineering-baseline` | Repository onboarding, shared instructions, and turn-level hooks. |
+| `engineering-baseline` | Repository onboarding, shared instructions, and Codex turn-level hooks. |
 | `api-contracts` | JSON Schema and OpenAPI contract authoring, modeling, and review. |
-| `kotlin-engineering` | Kotlin typed design, Kast semantics, Gradle proof, CI, and PR delivery. |
+| `kotlin-engineering` | Kotlin typed design, review agents, Gradle proof, CI, and PR delivery. |
 | `git-ci-operations` | Goal framing, TDD, Git hygiene, CI triage, releases, and shell-safe automation. |
-| `agent-platform-authoring` | Skills, agents, hooks, schemas, plugin manifests, repo maps, and docs surfaces. |
+| `apm-authoring` | APM package authoring, marketplace metadata, hooks, schemas, repo maps, and docs surfaces. |
 
-## How To Inspect A Plugin
-
-Open the plugin manifest and follow its primitive references.
+Inspect a package directly.
 
 ```sh
-sed -n '1,220p' source/plugins/kotlin-engineering/plugin.json
-```
-
-Validate plugin and marketplace structure after edits.
-
-```sh
-node scripts/validate-manifests.mjs
+sed -n '1,160p' packages/apm-authoring/apm.yml
+find packages/apm-authoring/.apm -maxdepth 3 -type f
 ```

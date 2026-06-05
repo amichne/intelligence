@@ -28,19 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@v4
-
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install validation dependencies
-        run: npm ci
-
-      - name: Validate source manifests
-        run: node scripts/validate-manifests.mjs --portable
+        uses: actions/checkout@v5
 
       - name: Set up APM
         uses: microsoft/apm-action@v1
@@ -53,16 +41,6 @@ jobs:
           set -euo pipefail
           apm --version
           apm --version | grep -F "0.18.0"
-
-      - name: Prepare APM marketplace workspace
-        run: python3 scripts/prepare-apm-marketplace.py stage --out build/apm-marketplace --check-root-manifest
-
-      - name: Pack APM marketplace artifacts
-        working-directory: build/apm-marketplace
-        run: |
-          set -euo pipefail
-          apm pack --marketplace=all --check-versions --json > pack-report.json
-          apm audit --ci --no-policy
 
       - name: Resolve artifact version
         id: version
@@ -87,21 +65,27 @@ jobs:
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
           echo "Resolved APM marketplace version: ${version}"
 
+      - name: Pack APM marketplace outputs
+        run: |
+          set -euo pipefail
+          mkdir -p dist/apm
+          apm pack --marketplace=all --check-versions --json > "dist/apm/pack-report-${{ steps.version.outputs.version }}.json"
+          apm audit --ci --no-policy
+
       - name: Archive APM marketplace root
         run: |
           set -euo pipefail
           version="${{ steps.version.outputs.version }}"
-          mkdir -p dist/apm
-          tar -C build -czf "dist/apm/intelligence-apm-marketplace-${version}.tar.gz" apm-marketplace
-          cp build/apm-marketplace/marketplace.json "dist/apm/marketplace-${version}.json"
-          cp build/apm-marketplace/codex-marketplace.json "dist/apm/codex-marketplace-${version}.json"
-          cp build/apm-marketplace/pack-report.json "dist/apm/pack-report-${version}.json"
+          cp .claude-plugin/marketplace.json "dist/apm/claude-marketplace-${version}.json"
+          cp .agents/plugins/marketplace.json "dist/apm/codex-marketplace-${version}.json"
+          tar -czf "dist/apm/amichne-apm-marketplace-${version}.tar.gz" \
+            apm.yml packages .claude-plugin .agents
           (cd dist/apm && shasum -a 256 * > SHA256SUMS)
 
       - name: Upload APM marketplace artifact
         uses: actions/upload-artifact@v4
         with:
-          name: intelligence-apm-marketplace-${{ steps.version.outputs.version }}
+          name: amichne-apm-marketplace-${{ steps.version.outputs.version }}
           path: dist/apm
           if-no-files-found: error
 
