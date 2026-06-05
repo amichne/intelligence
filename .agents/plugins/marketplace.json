@@ -6,73 +6,61 @@
   "plugins": [
     {
       "category": "Engineering",
-      "name": "typed-design-discipline",
+      "name": "engineering-baseline",
       "policy": {
         "authentication": "ON_INSTALL",
         "installation": "AVAILABLE"
       },
       "source": {
-        "path": "./plugins/typed-design-discipline",
+        "path": "./plugins/engineering-baseline",
         "source": "local"
       }
     },
     {
       "category": "Engineering",
-      "name": "contract-governance",
+      "name": "api-contracts",
       "policy": {
         "authentication": "ON_INSTALL",
         "installation": "AVAILABLE"
       },
       "source": {
-        "path": "./plugins/contract-governance",
+        "path": "./plugins/api-contracts",
         "source": "local"
       }
     },
     {
       "category": "Engineering",
-      "name": "kotlin-correctness",
+      "name": "kotlin-engineering",
       "policy": {
         "authentication": "ON_INSTALL",
         "installation": "AVAILABLE"
       },
       "source": {
-        "path": "./plugins/kotlin-correctness",
+        "path": "./plugins/kotlin-engineering",
         "source": "local"
       }
     },
     {
       "category": "Engineering",
-      "name": "kotlin-agentic-correctness",
+      "name": "git-ci-operations",
       "policy": {
         "authentication": "ON_INSTALL",
         "installation": "AVAILABLE"
       },
       "source": {
-        "path": "./plugins/kotlin-agentic-correctness",
+        "path": "./plugins/git-ci-operations",
         "source": "local"
       }
     },
     {
       "category": "Engineering",
-      "name": "evidence-driven-delivery",
+      "name": "agent-platform-authoring",
       "policy": {
         "authentication": "ON_INSTALL",
         "installation": "AVAILABLE"
       },
       "source": {
-        "path": "./plugins/evidence-driven-delivery",
-        "source": "local"
-      }
-    },
-    {
-      "category": "Engineering",
-      "name": "primitive-systems-authoring",
-      "policy": {
-        "authentication": "ON_INSTALL",
-        "installation": "AVAILABLE"
-      },
-      "source": {
-        "path": "./plugins/primitive-systems-authoring",
+        "path": "./plugins/agent-platform-authoring",
         "source": "local"
       }
     }

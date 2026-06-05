@@ -5,7 +5,7 @@
   "owner": {
     "name": "Amichne"
   },
-  "description": "Curated marketplace for project-agnostic AI tooling primitives.",
+  "description": "Curated marketplace for enterprise-ready AI tooling primitives, daily-driver plugins, and agent operating procedures.",
   "management": {
     "type": "MANAGEMENT_POLICY",
     "mode": "CURATED"
@@ -13,20 +13,22 @@
   "plugins": [
     {
       "type": "PLUGIN_ENTRY",
-      "name": "typed-design-discipline",
+      "name": "engineering-baseline",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
-        "name": "typed-design-discipline",
+        "name": "engineering-baseline",
         "source": {
           "type": "LOCAL_SOURCE",
-          "path": "./plugins/typed-design-discipline"
+          "path": "./plugins/engineering-baseline"
         },
         "version": "0.1.0"
       },
-      "description": "Core type-safety, schema-driven design, onboarding, and turn-time hooks for rigorous repository work.",
+      "description": "Repository baseline for type-safe work: onboarding, shared instructions, and turn-level hooks that keep agents using the right local guidance.",
       "tags": [
         "core",
+        "daily-driver",
         "design",
+        "governance",
         "hooks",
         "instructions",
         "onboarding",
@@ -36,21 +38,23 @@
     },
     {
       "type": "PLUGIN_ENTRY",
-      "name": "contract-governance",
+      "name": "api-contracts",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
-        "name": "contract-governance",
+        "name": "api-contracts",
         "source": {
           "type": "LOCAL_SOURCE",
-          "path": "./plugins/contract-governance"
+          "path": "./plugins/api-contracts"
         },
         "version": "0.1.0"
       },
-      "description": "Strict JSON Schema and OpenAPI contract work with typed boundary assertions, explicit variants, and contract review.",
+      "description": "API contract workflow for JSON Schema and OpenAPI boundaries: schema modeling, operation authoring, typed errors, examples, and review.",
       "tags": [
         "agents",
         "api",
+        "boundary",
         "contracts",
+        "governance",
         "openapi",
         "schemas",
         "skills",
@@ -59,48 +63,30 @@
     },
     {
       "type": "PLUGIN_ENTRY",
-      "name": "kotlin-correctness",
+      "name": "kotlin-engineering",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
-        "name": "kotlin-correctness",
+        "name": "kotlin-engineering",
         "source": {
           "type": "LOCAL_SOURCE",
-          "path": "./plugins/kotlin-correctness"
+          "path": "./plugins/kotlin-engineering"
         },
         "version": "0.1.0"
       },
-      "description": "Kotlin type modeling, package cohesion, Gradle proof loops, and review agents for correctness-oriented code.",
-      "tags": [
-        "agents",
-        "gradle",
-        "hooks",
-        "kotlin",
-        "schemas",
-        "skills",
-        "validation"
-      ]
-    },
-    {
-      "type": "PLUGIN_ENTRY",
-      "name": "kotlin-agentic-correctness",
-      "plugin": {
-        "type": "PLUGIN_REFERENCE",
-        "name": "kotlin-agentic-correctness",
-        "source": {
-          "type": "LOCAL_SOURCE",
-          "path": "./plugins/kotlin-agentic-correctness"
-        },
-        "version": "0.1.0"
-      },
-      "description": "Single Kotlin workflow combining typed design discipline, invariant-oriented Kotlin standards, filesystem-backed evidence, Kast semantic tooling, and Gradle/PR proof loops.",
+      "description": "Kotlin engineering workflow for code changes that need typed design, Kast semantics, review, filesystem evidence, Gradle proof, CI, and PR delivery.",
       "tags": [
         "agents",
         "ci",
+        "daily-driver",
+        "delivery",
         "evidence",
         "gradle",
         "hooks",
         "kast",
         "kotlin",
+        "operating-procedure",
+        "quality",
+        "review",
         "schemas",
         "skills",
         "testing",
@@ -109,23 +95,26 @@
     },
     {
       "type": "PLUGIN_ENTRY",
-      "name": "evidence-driven-delivery",
+      "name": "git-ci-operations",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
-        "name": "evidence-driven-delivery",
+        "name": "git-ci-operations",
         "source": {
           "type": "LOCAL_SOURCE",
-          "path": "./plugins/evidence-driven-delivery"
+          "path": "./plugins/git-ci-operations"
         },
         "version": "0.1.0"
       },
-      "description": "Goal definition, test-driven implementation, Git hygiene, CI triage, and PR lifecycle procedures with explicit proof.",
+      "description": "Git and CI operations workflow for evidence-backed changes: goals, TDD, Git hygiene, PRs, GitHub Actions, releases, and shell-safe automation.",
       "tags": [
+        "automation",
         "ci",
         "git",
         "github",
+        "operations",
         "planning",
         "pull-requests",
+        "release",
         "skills",
         "tdd",
         "testing",
@@ -134,21 +123,24 @@
     },
     {
       "type": "PLUGIN_ENTRY",
-      "name": "primitive-systems-authoring",
+      "name": "agent-platform-authoring",
       "plugin": {
         "type": "PLUGIN_REFERENCE",
-        "name": "primitive-systems-authoring",
+        "name": "agent-platform-authoring",
         "source": {
           "type": "LOCAL_SOURCE",
-          "path": "./plugins/primitive-systems-authoring"
+          "path": "./plugins/agent-platform-authoring"
         },
         "version": "0.1.0"
       },
-      "description": "Authoring procedures for independent skills, agents, hooks, schemas, plugins, repository maps, and documentation systems.",
+      "description": "Agent platform authoring kit for maintaining the source graph: skills, agents, hooks, schemas, plugin manifests, repo maps, and docs surfaces.",
       "tags": [
         "agents",
+        "authoring",
         "docs",
+        "governance",
         "hooks",
+        "marketplace",
         "plugins",
         "repository",
         "schemas",
@@ -302,6 +294,15 @@
       },
       "path": "skills/kotlin-standards",
       "name": "kotlin-standards"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/negative-capability-proof",
+      "name": "negative-capability-proof"
     },
     {
       "type": "SKILL",
