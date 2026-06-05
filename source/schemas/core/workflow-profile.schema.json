@@ -94,6 +94,7 @@
         "provider": {
           "type": "string",
           "enum": [
+            "apm",
             "agents",
             "claude",
             "codex",
@@ -101,21 +102,21 @@
             "local"
           ],
           "examples": [
-            "codex"
+            "apm"
           ]
         },
         "source": {
           "type": "string",
           "minLength": 1,
           "examples": [
-            "https://github.com/acme/agent-tools/tree/codex"
+            "https://github.com/acme/agent-tools/releases"
           ]
         },
         "entrypoint": {
           "type": "string",
           "minLength": 1,
           "examples": [
-            ".agents/plugins/marketplace.json"
+            "marketplace.json"
           ]
         },
         "scope": {
@@ -205,9 +206,9 @@
         {
           "type": "WORKFLOW_MARKETPLACE",
           "name": "acme-tools",
-          "provider": "codex",
-          "source": "https://github.com/acme/agent-tools/tree/codex",
-          "entrypoint": ".agents/plugins/marketplace.json",
+          "provider": "apm",
+          "source": "https://github.com/acme/agent-tools/releases",
+          "entrypoint": "marketplace.json",
           "scope": "plugins in this workflow profile"
         }
       ],

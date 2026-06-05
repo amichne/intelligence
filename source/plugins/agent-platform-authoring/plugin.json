@@ -129,7 +129,7 @@
   "hooks": [],
   "metadata": {
     "composition": "referential",
-    "dailyDriver": "Use for maintaining the canonical source graph and provider marketplace projections.",
+    "dailyDriver": "Use for maintaining the canonical source graph and APM marketplace packaging.",
     "notFor": "Product-code delivery, Kotlin implementation loops, or runtime activation plans until consolidation and linking primitives are hardened.",
     "owner": "intelligence-source-graph-platform",
     "principle": "primitives-remain-independent",

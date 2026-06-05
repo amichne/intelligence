@@ -9,18 +9,18 @@ These families are exposed through `source/adaptable.marketplace.json`.
 
 | Plugin | What It Provides |
 |---|---|
-| `typed-design-discipline` | Type-safety, schema-driven design, onboarding, and turn-time hooks. |
-| `contract-governance` | JSON Schema and OpenAPI contracts, explicit variants, and contract review. |
-| `kotlin-correctness` | Kotlin type modeling, package cohesion, Gradle validation, and review agents. |
-| `evidence-driven-delivery` | Goal definition, TDD, Git hygiene, CI triage, and PR lifecycle procedures. |
-| `primitive-systems-authoring` | Skills, agents, hooks, schemas, plugins, repository maps, and docs-as-code authoring. |
+| `engineering-baseline` | Repository onboarding, shared instructions, and turn-level hooks. |
+| `api-contracts` | JSON Schema and OpenAPI contract authoring, modeling, and review. |
+| `kotlin-engineering` | Kotlin typed design, Kast semantics, Gradle proof, CI, and PR delivery. |
+| `git-ci-operations` | Goal framing, TDD, Git hygiene, CI triage, releases, and shell-safe automation. |
+| `agent-platform-authoring` | Skills, agents, hooks, schemas, plugin manifests, repo maps, and docs surfaces. |
 
 ## How To Inspect A Plugin
 
 Open the plugin manifest and follow its primitive references.
 
 ```sh
-sed -n '1,220p' plugins/typed-design-discipline/plugin.json
+sed -n '1,220p' source/plugins/kotlin-engineering/plugin.json
 ```
 
 Validate plugin and marketplace structure after edits.

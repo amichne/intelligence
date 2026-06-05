@@ -5,8 +5,8 @@ Use this reference when choosing an activation strategy.
 ## Preferred Order
 
 1. Marketplace import.
-   Use this when a runtime can install referential plugins from
-   a generated runtime marketplace.
+   Use this when a runtime can install referential plugins from an APM
+   marketplace release artifact.
 
 2. Child symlinks.
    Use this when a runtime expects individual skill, agent, or hook files under
@@ -21,8 +21,8 @@ Use this reference when choosing an activation strategy.
 
 ## Known Local Targets
 
-- Codex app plugin import should use the generated `.agents/plugins/marketplace.json`,
-  not `source/adaptable.marketplace.json` on `main`.
+- Marketplace import should use the APM release artifact, not
+  `source/adaptable.marketplace.json` on `main`.
 - Codex and Agents skill folders may already be symlinked or managed by another
   local repo; inspect before writing.
 - Claude agent folders may contain broken historical symlinks; cleanup-ledger
