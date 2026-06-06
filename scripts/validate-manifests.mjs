@@ -94,7 +94,8 @@ const checks = [
     .map((file) => ["hook.schema.json", file]),
   ...listFiles(path.join(sourceRoot, "hooks"))
     .filter((file) => file.endsWith(".requirements.json"))
-    .map((file) => ["hook-skill-requirements.schema.json", file])
+    .map((file) => ["hook-skill-requirements.schema.json", file]),
+  ...listPackageHookConfigFiles().map((file) => ["hook-skill-requirements.schema.json", file])
 ];
 
 let failures = 0;
@@ -197,7 +198,10 @@ function hydratedChecks(directory) {
 
 function listAdapterHookChecks() {
   return adapterHookSchemas.flatMap(({ adapter, schemaId, validator }) =>
-    listJsonFiles(path.join(sourceRoot, "hooks", adapter)).map((file) => [
+    [
+      ...listJsonFiles(path.join(sourceRoot, "hooks", adapter)),
+      ...listPackageAdapterHookFiles(adapter)
+    ].map((file) => [
       validator,
       schemaId,
       file
@@ -300,6 +304,9 @@ function requireLocalPath(filePath, localPath, label) {
 function localReferenceRoot(filePath) {
   const normalized = normalizePath(filePath);
   if (normalized === normalizePath(sourceRoot) || normalized.startsWith(`${normalizePath(sourceRoot)}${path.sep}`)) {
+    return sourceRoot;
+  }
+  if (normalized.includes(`${path.sep}packages${path.sep}`) && normalized.includes(`${path.sep}hook-config${path.sep}`)) {
     return sourceRoot;
   }
   return repoRoot;
@@ -566,6 +573,35 @@ function listCodexPluginManifests(directory) {
     .filter((entry) => entry.isDirectory())
     .map((entry) => path.join(directory, entry.name, ".codex-plugin", "plugin.json"))
     .filter((file) => fs.existsSync(file))
+    .sort();
+}
+
+function listPackageAdapterHookFiles(adapter) {
+  return listPackageDirectories()
+    .flatMap((packageDir) =>
+      listJsonFiles(path.join(packageDir, ".apm", "hooks"))
+        .filter((file) => file.endsWith(`-${adapter}-hooks.json`))
+    )
+    .sort();
+}
+
+function listPackageHookConfigFiles() {
+  return listPackageDirectories()
+    .flatMap((packageDir) =>
+      listJsonFiles(path.join(packageDir, "hook-config"))
+        .filter((file) => file.endsWith(".requirements.json"))
+    )
+    .sort();
+}
+
+function listPackageDirectories() {
+  const packagesDir = path.join(repoRoot, "packages");
+  if (!fs.existsSync(packagesDir)) {
+    return [];
+  }
+  return fs.readdirSync(packagesDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(packagesDir, entry.name))
     .sort();
 }
 
