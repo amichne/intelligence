@@ -30,7 +30,8 @@ validate AI tooling. The fastest useful checks are local and executable.
 
 ```sh
 npm ci
-bin/intelligence validate
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 zensical build --clean
 ```
 

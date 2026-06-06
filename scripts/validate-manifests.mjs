@@ -593,10 +593,16 @@ function listJsonFilesRecursive(directory) {
   const results = [];
   const skippedDirectories = new Set([
     ".git",
+    ".cache",
+    ".claude-plugin",
+    ".gradle",
     ".idea",
     ".agent-turn",
+    ".kotlin",
+    ".local",
     ".venv",
     ".venv-docs",
+    "build",
     "dist",
     "node_modules",
     "site"

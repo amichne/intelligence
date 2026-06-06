@@ -34,10 +34,7 @@ Each path has a dry-run or validation command before it mutates anything.
 
 | Path | Command | Use When |
 |---|---|---|
-| Validate this repository | `bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
-| Create a repo profile | `bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default` | A target repo should declare which Intelligence plugins and hooks it uses. |
-| Dry-run install | `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json` | You want to inspect marketplace reference changes first. |
-| Scaffold a primitive | `bin/intelligence primitive new skill example-skill --plugin primitive-systems-authoring` | You are adding a reusable building block. |
+| Validate this repository | `.local/intelligence/bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
 | Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
 
 ## First Validation
@@ -45,7 +42,8 @@ Each path has a dry-run or validation command before it mutates anything.
 Run the repo gate before trusting local state.
 
 ```sh
-bin/intelligence validate
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 ```
 
 This wraps the manifest validation path. Use the expanded commands in

@@ -2,8 +2,9 @@
   "name": "intelligence",
   "private": true,
   "scripts": {
-    "intelligence": "python3 scripts/intelligence.py",
-    "package:cli": "python3 scripts/package-intelligence.py --out dist",
+    "cli:run": "./gradlew -q :cli:run",
+    "cli:install-dev": "./gradlew installDevelopmentCli",
+    "package:cli": "./gradlew :cli:distTar :cli:distZip",
     "validate:manifests": "node scripts/validate-manifests.mjs",
     "marketplace:materialize": "python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace",
     "marketplace:materialize:github": "python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace",

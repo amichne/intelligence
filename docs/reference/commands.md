@@ -5,15 +5,17 @@ repository.
 
 ## Repository CLI
 
-`bin/intelligence` is the local orchestration entrypoint.
+The local orchestration entrypoint is generated from the Kotlin build during
+development.
+
+```sh
+./gradlew installDevelopmentCli
+```
 
 | Command | Purpose |
 |---|---|
-| `bin/intelligence --help` | Show available subcommands. |
-| `bin/intelligence validate` | Run manifest validation gates. |
-| `bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default` | Create a target-repository workflow profile. |
-| `bin/intelligence install --repo /path/to/repo --profile .agents/intelligence-profile.json` | Dry-run profile installation. |
-| `bin/intelligence primitive new skill example-skill --plugin primitive-systems-authoring` | Scaffold a new primitive and optionally reference it. |
+| `.local/intelligence/bin/intelligence --help` | Show available subcommands. |
+| `.local/intelligence/bin/intelligence validate` | Run manifest validation gates. |
 
 ## npm Scripts
 
@@ -21,7 +23,8 @@ The root `package.json` pins validator dependencies and exposes common tasks.
 
 | Script | Purpose |
 |---|---|
-| `npm run intelligence -- --help` | Run the repository CLI through npm. |
+| `npm run cli:install-dev` | Refresh `.local/intelligence/bin/intelligence` from the Kotlin build output. |
+| `npm run cli:run -- --args='validate'` | Run the Kotlin CLI through Gradle. |
 | `npm run validate:manifests` | Run `node scripts/validate-manifests.mjs`. |
 | `npm run marketplace:materialize` | Materialize Codex marketplace output under `/tmp/intelligence-codex-marketplace`. |
 | `npm run marketplace:materialize:github` | Materialize GitHub marketplace output under `/tmp/intelligence-github-marketplace`. |
@@ -29,7 +32,7 @@ The root `package.json` pins validator dependencies and exposes common tasks.
 | `npm run marketplace:sync-main:check` | Fail if the adapted marketplace manifests or GitHub payload tree on `main` are stale. |
 | `npm run marketplace:publish:preview` | Build the generated Codex branch locally without pushing. |
 | `npm run marketplace:publish:github:preview` | Build the generated GitHub branch locally without pushing. |
-| `npm run package:cli -- --version local` | Build local CLI archives under `dist/`. |
+| `npm run package:cli` | Build local CLI archives under `cli/build/distributions/`. |
 
 ## Documentation
 

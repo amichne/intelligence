@@ -6,11 +6,9 @@ apply to a repository.
 
 ## Create A Profile
 
-Create a profile from the built-in Kotlin default.
-
-```sh
-bin/intelligence profile init --repo /path/to/repo --profile kotlin-repo-default
-```
+Profile creation is being moved into the Kotlin CLI. Until that command is
+ported, use the checked-in JSON profiles under `source/profiles/` as the
+authoritative examples and validate changes with the repository gate.
 
 The default profile uses the published Codex marketplace branch and selects
 `typed-design-discipline`, `kotlin-correctness`, and
@@ -21,24 +19,11 @@ hooks.
 
 ## Dry-Run Installation
 
-Inspect the planned writes before applying anything.
-
-```sh
-bin/intelligence install --repo /path/to/repo \
-  --profile .agents/intelligence-profile.json
-```
-
-The dry run shows the marketplace reference changes implied by the profile.
+Inspect profile changes in review before applying them to another repository.
 
 ## Apply Changes
 
-Apply only after reviewing the dry run.
-
-```sh
-bin/intelligence install --repo /path/to/repo \
-  --profile .agents/intelligence-profile.json \
-  --apply
-```
+Apply only after reviewing the profile and marketplace references.
 
 ## Profile Shape
 

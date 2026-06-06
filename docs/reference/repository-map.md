@@ -14,7 +14,7 @@ change belongs.
 | `source/hooks/` | Hook metadata, implementations, requirements, and provider adapters. |
 | `source/plugins/` | Referential plugin composition manifests. |
 | `source/profiles/` | Schema-validated workflow profiles. |
-| `source/templates/` | Primitive scaffold templates used by `bin/intelligence`. |
+| `source/templates/` | Primitive scaffold templates used by repository CLI tooling. |
 | `bin/` | Thin local command wrappers. |
 | `scripts/` | Root validation, packaging, and marketplace publication tooling. |
 | `source/schemas/` | Public provider-neutral and adapter schema contracts. |

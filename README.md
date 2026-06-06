@@ -35,7 +35,7 @@ zensical build --clean
   adapters.
 - `source/plugins/` contains referential plugin composition manifests.
 - `source/profiles/` contains workflow profiles for target repositories.
-- `source/templates/` contains primitive scaffold templates used by `bin/intelligence`.
+- `source/templates/` contains primitive scaffold templates used by repository CLI tooling.
 - `source/schemas/` contains public provider-neutral and adapter schema contracts.
 - `plugins/`, `marketplace-lock.json`, `.agents/plugins/marketplace.json`, and
   `.github/plugin/` are materialized publication outputs generated from
@@ -53,10 +53,11 @@ npm ci
 node scripts/validate-manifests.mjs
 ```
 
-Use the CLI wrapper for ordinary repository work:
+Build or refresh the local Kotlin CLI during development:
 
 ```sh
-bin/intelligence validate
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 ```
 
 Build the docs after documentation or navigation changes:
@@ -99,8 +100,7 @@ manifests and GitHub payload tree back to `main` if they changed.
 Build local distribution archives:
 
 ```sh
-npm run package:cli -- --version local
+npm run package:cli
 ```
 
-The packager writes `dist/intelligence-<version>.tar.gz`,
-`dist/intelligence-<version>.zip`, and `dist/SHA256SUMS`.
+Gradle writes CLI distributions under `cli/build/distributions/`.

@@ -6,16 +6,9 @@ primitives in this repository.
 
 ## Scaffold
 
-Use the repository CLI to create a primitive from the local templates.
-
-```sh
-bin/intelligence primitive new skill example-skill \
-  --plugin primitive-systems-authoring \
-  --marketplace
-```
-
-The command can add the primitive to a referential plugin or marketplace entry
-when that is part of the intended distribution path.
+Primitive scaffolding is being moved into the Kotlin CLI. Until that command is
+ported, create the primitive under `source/` from the local templates and add
+plugin or marketplace references deliberately.
 
 ## Keep It Independent
 
@@ -38,7 +31,8 @@ Run the repository gate after changing primitives, plugin manifests, schemas,
 hooks, marketplace entries, or workflow profiles.
 
 ```sh
-bin/intelligence validate
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 ```
 
 When a primitive comes from another source, keep provenance in the primitive or

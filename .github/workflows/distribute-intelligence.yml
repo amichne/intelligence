@@ -44,13 +44,21 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Install validation dependencies
         run: npm ci
 
       - name: Validate packaging inputs
         run: |
-          bash -n bin/intelligence
-          python3 -m py_compile scripts/intelligence.py scripts/package-intelligence.py
+          ./gradlew :cli:test :cli:installDist
           node scripts/validate-manifests.mjs --portable
 
       - name: Resolve artifact version
@@ -77,7 +85,14 @@ jobs:
           echo "Resolved package version: ${version}"
 
       - name: Package CLI
-        run: python3 scripts/package-intelligence.py --version "${{ steps.version.outputs.version }}" --out dist
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          ./gradlew :cli:distTar :cli:distZip
+          mkdir -p dist
+          cp cli/build/distributions/intelligence.tar.gz "dist/intelligence-${version}.tar.gz"
+          cp cli/build/distributions/intelligence.zip "dist/intelligence-${version}.zip"
+          shasum -a 256 "dist/intelligence-${version}.tar.gz" "dist/intelligence-${version}.zip" > dist/SHA256SUMS
 
       - name: Smoke test packaged CLI
         run: |
@@ -85,12 +100,9 @@ jobs:
           version="${{ steps.version.outputs.version }}"
           mkdir -p /tmp/intelligence-smoke/unpack /tmp/intelligence-smoke/target
           tar -xzf "dist/intelligence-${version}.tar.gz" -C /tmp/intelligence-smoke/unpack
-          packaged="/tmp/intelligence-smoke/unpack/intelligence-${version}/bin/intelligence"
+          packaged="/tmp/intelligence-smoke/unpack/intelligence/bin/intelligence"
           "${packaged}" --help
-          "${packaged}" profile init \
-            --repo /tmp/intelligence-smoke/target \
-            --profile kotlin-repo-default \
-            --dry-run
+          "${packaged}" validate --repo "$PWD" --portable
 
       - name: Upload CLI artifact
         uses: actions/upload-artifact@v4

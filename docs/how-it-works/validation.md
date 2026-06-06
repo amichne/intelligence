@@ -14,7 +14,7 @@ structure, and schemas there so we can fail before projection.
 
 | Check | What it protects |
 |---|---|
-| `bin/intelligence validate` | Runs repository checks from one entrypoint and ensures source edits stay coherent across schema-backed surfaces. |
+| `.local/intelligence/bin/intelligence validate` | Runs repository checks from the Kotlin CLI and ensures source edits stay coherent across schema-backed surfaces. |
 | `node scripts/validate-manifests.mjs` | Enforces JSON manifest contracts from `source/`, including `source/schemas`, marketplaces, plugins, profiles, and schema ownership rules. |
 | `node scripts/validate-manifests.mjs --portable` | Ensures source-aligned serialization is still stable outside the local checkout assumptions. |
 
@@ -82,7 +82,7 @@ When you are preparing archive outputs for CLI distribution, keep this command i
 the publishing workflow:
 
 ```sh
-npm run package:cli -- --version local
+npm run package:cli
 ```
 
 If a provider check fails, repair projection logic or schema boundaries, then
