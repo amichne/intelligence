@@ -35,7 +35,7 @@ The schema-first approach gives practical safety gains.
 |---|---|
 | Deterministic behavior | Behavior is declared once in `source/`, so changes are diffed at the source-model layer before any generator or adapter is touched. |
 | Host interoperability | Providers are supported as projections, not forks, which avoids implicit source-model drift per provider. |
-| Failure visibility | Contract violations fail fast through schema gates (`.local/intelligence/bin/intelligence validate`, `node scripts/validate-manifests.mjs`). |
+| Failure visibility | Contract violations fail fast through the Kotlin CLI validation gate (`.local/intelligence/bin/intelligence validate`). |
 | Backward compatibility | Generated projections can be reviewed against the invariant source graph, making unsupported migrations obvious. |
 | Recovery under failure | Regenerating targets from the same source model lets teams fix generator issues without editing historical payloads manually. |
 
@@ -60,9 +60,10 @@ and contracts]
 ```
 
 When a runtime lacks a native concept, we project into the nearest practical
-representation and keep the canonical shape unchanged. For this repository, that is
-why `plugins/`, `.agents/plugins/marketplace.json`, and `.github/plugin/` are
-published outputs from `source/` rather than independent sources.
+representation and keep the canonical shape unchanged. For this repository,
+Codex and GitHub payloads are published to generated branches or explicit
+output directories from `source/`; they are not independent sources and are not
+checked into the source branch.
 
 ## Practical workflow for contributors
 
@@ -71,8 +72,8 @@ Before moving from source to adapters, keep this sequence.
 1. Author in source paths (for example `source/skills`, `source/plugins`, or
    `source/adaptable.marketplace.json`).
 2. Run schema gates to ensure the canonical model remains valid.
-3. Materialize provider outputs (`publish-marketplace.py`) and hydrate-check them
-   with `--portable --hydrated` so adapter assumptions are explicitly tested.
+3. Materialize provider outputs with the Kotlin CLI and hydrate-check them with
+   `--portable --hydrated` so adapter assumptions are explicitly tested.
 4. Commit only source edits as truth; treat generated surfaces as derived.
 
 This preserves one representation with many targets and makes safety review

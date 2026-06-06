@@ -3,11 +3,9 @@
 The marketplace is the curated distribution surface for project-agnostic
 plugin families. The source of truth is `source/adaptable.marketplace.json` on `main`;
 provider payloads are generated into the orphan `codex` and `github` branches.
-`main` keeps the authored reference graph under `source/` and the adapted
-marketplace manifests for providers that expect them in-place. It also keeps
-resolved Codex payloads under root `plugins/` and GitHub payloads under
-`.github/plugin/plugins/` so providers can resolve them without reading the
-authored graph.
+`main` keeps only the authored reference graph under `source/`; provider-native
+payloads are produced by the Kotlin CLI in explicit output directories or
+published branches.
 
 ## Local Preview
 
@@ -15,13 +13,13 @@ Preview the hydrated marketplace before publishing.
 
 ```sh
 npm ci
-python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider codex --branch codex --no-push
-python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
-node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
-python3 scripts/publish-marketplace.py publish-branch --provider github --branch github --no-push
-python3 scripts/publish-marketplace.py sync-main-marketplaces --check
+npm run cli:install-dev
+.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+.local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex --no-push
+.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+.local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
 The materialized output is a Codex marketplace root. Codex reads
@@ -30,9 +28,8 @@ from root-level `plugins/<name>` directories.
 
 The GitHub marketplace branch publishes its runtime entrypoint at
 `.github/plugin/marketplace.json` with plugin payloads under
-`.github/plugin/plugins/<name>`. The checked-in main copy uses
-`metadata.pluginRoot` for `.github/plugin/plugins`, and each plugin `source`
-is the plugin directory name resolved under that root.
+`.github/plugin/plugins/<name>`. Each plugin `source` is the plugin directory
+name resolved under `metadata.pluginRoot`.
 
 ## Published Shape
 
@@ -42,23 +39,20 @@ The generated branches publish only the plugin families listed in
 | Surface | Owner | Purpose |
 |---|---|---|
 | `source/adaptable.marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
-| `scripts/publish-marketplace.py` | Generator | Hydrates provider marketplace payloads. |
-| `.agents/plugins/marketplace.json` | Generated on `main` and `codex` | Codex marketplace entrypoint. |
-| `plugins/<name>/.codex-plugin/plugin.json` | Generated on `main` and `codex` | Codex plugin manifest and embedded payload root. |
-| `.github/plugin/marketplace.json` | Generated on `main` and `github` | GitHub marketplace entrypoint. |
-| `.github/plugin/plugins/<name>` | Generated on `main` and `github` | GitHub plugin payload root. |
+| `cli/` | Kotlin CLI source | Hydrates provider marketplace payloads. |
+| `.agents/plugins/marketplace.json` | Generated on `codex` | Codex marketplace entrypoint. |
+| `plugins/<name>/.codex-plugin/plugin.json` | Generated on `codex` | Codex plugin manifest and embedded payload root. |
+| `.github/plugin/marketplace.json` | Generated on `github` | GitHub marketplace entrypoint. |
+| `.github/plugin/plugins/<name>` | Generated on `github` | GitHub plugin payload root. |
 
 ## Publication Gate
 
 Merges to `main` run `.github/workflows/publish-marketplace.yml`. The workflow
 validates source contracts, materializes the marketplace, validates the
-hydrated output, force-updates the generated branches, then writes the adapted
-marketplace manifests, root Codex payloads, lockfile, and GitHub payload tree
-back to `main`.
+hydrated output, and force-updates the generated branches.
 
 `.github/workflows/sync-provider-marketplaces.yml` checks pull requests and
 pushing by materializing the same provider payloads, validating them, and
-checking the adapted marketplace manifests, root Codex payloads, lockfile, and
-GitHub payload tree on `main` for drift.
+asserting materialized marketplace payloads are absent from the source branch.
 
 Run the same checks locally when changing marketplace exposure.

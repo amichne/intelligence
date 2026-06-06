@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.4.0"
     application
     id("org.graalvm.buildtools.native") version "0.10.2"
 }
@@ -14,6 +14,9 @@ kotlin {
 }
 
 dependencies {
+    implementation("com.github.ajalt.clikt:clikt:5.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
+
     testImplementation(kotlin("test"))
 }
 

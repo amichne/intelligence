@@ -5,14 +5,16 @@ on:
     paths:
       - ".github/workflows/publish-marketplace.yml"
       - ".github/workflows/sync-provider-marketplaces.yml"
-      - ".agents/**"
-      - ".github/plugin/**"
-      - "marketplace-lock.json"
+      - ".sdkmanrc"
+      - "build.gradle.kts"
+      - "cli/**"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
       - "package-lock.json"
       - "package.json"
-      - "plugins/**"
+      - "settings.gradle.kts"
       - "source/**"
-      - "scripts/publish-marketplace.py"
       - "scripts/validate-manifests.mjs"
   push:
     branches:
@@ -20,14 +22,16 @@ on:
     paths:
       - ".github/workflows/publish-marketplace.yml"
       - ".github/workflows/sync-provider-marketplaces.yml"
-      - ".agents/**"
-      - ".github/plugin/**"
-      - "marketplace-lock.json"
+      - ".sdkmanrc"
+      - "build.gradle.kts"
+      - "cli/**"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
       - "package-lock.json"
       - "package.json"
-      - "plugins/**"
+      - "settings.gradle.kts"
       - "source/**"
-      - "scripts/publish-marketplace.py"
       - "scripts/validate-manifests.mjs"
   workflow_dispatch:
 
@@ -51,39 +55,47 @@ jobs:
           node-version: 20
           cache: npm
 
+      - name: Set up GraalVM Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
       - name: Install validation dependencies
         run: npm ci
 
-      - name: Validate source manifests
-        run: node scripts/validate-manifests.mjs --portable
+      - name: Build and validate source
+        run: |
+          ./gradlew :cli:test installDevelopmentCli
+          .local/intelligence/bin/intelligence validate --portable
 
       - name: Materialize Codex marketplace
-        run: python3 scripts/publish-marketplace.py materialize --provider codex --out /tmp/intelligence-codex-marketplace
+        run: .local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
 
       - name: Validate Codex marketplace payload
-        run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-codex-marketplace
+        run: .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
 
       - name: Materialize GitHub marketplace
-        run: python3 scripts/publish-marketplace.py materialize --provider github --out /tmp/intelligence-github-marketplace
+        run: .local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
 
       - name: Validate GitHub marketplace payload
-        run: node scripts/validate-manifests.mjs --portable --hydrated /tmp/intelligence-github-marketplace
+        run: .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
 
-      - name: Synchronize main adapted marketplaces on same-repository pull requests
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+      - name: Verify generated marketplaces are not checked in
         run: |
-          paths=".agents/plugins/marketplace.json marketplace-lock.json plugins .github/plugin/marketplace.json .github/plugin/plugins"
-          python3 scripts/publish-marketplace.py sync-main-marketplaces
-          if [ -z "$(git status --porcelain -- ${paths})" ]; then
-            echo "main adapted marketplaces already current"
+          forbidden=".agents/plugins .github/plugin marketplace-lock.json plugins"
+          present=()
+          for path in ${forbidden}; do
+            if [ -e "${path}" ]; then
+              present+=("${path}")
+            fi
+          done
+          if [ "${#present[@]}" -eq 0 ]; then
+            echo "source branch contains no materialized marketplace payloads"
             exit 0
           fi
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          git add -A -- ${paths}
-          git commit -m "Publish adapted marketplace manifests"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
-      - name: Verify main adapted marketplaces
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name != github.repository
-        run: python3 scripts/publish-marketplace.py sync-main-marketplaces --check
+          printf '::error::materialized marketplace payloads must not be checked in: %s\n' "${present[*]}"
+          exit 1

@@ -15,12 +15,10 @@ change belongs.
 | `source/plugins/` | Referential plugin composition manifests. |
 | `source/profiles/` | Schema-validated workflow profiles. |
 | `source/templates/` | Primitive scaffold templates used by repository CLI tooling. |
-| `bin/` | Thin local command wrappers. |
-| `scripts/` | Root validation, packaging, and marketplace publication tooling. |
+| `cli/` | Kotlin Clikt command-line application. |
+| `scripts/` | Root validation helpers invoked by the Kotlin CLI. |
 | `source/schemas/` | Public provider-neutral and adapter schema contracts. |
-| `plugins/` | Materialized Codex plugin payloads generated from `source/`. |
-| `.github/plugin/` | Materialized GitHub marketplace projection generated from `source/`. |
-| `.agents/plugins/marketplace.json` | Materialized Codex marketplace entrypoint on `main`. |
-| `marketplace-lock.json` | Materialized lockfile for root plugin payloads. |
+| Generated `codex` branch | Codex marketplace projection generated from `source/`. |
+| Generated `github` branch | GitHub Copilot marketplace projection generated from `source/`. |
 | `docs/` | Hand-authored Zensical documentation source. |
 | `zensical.toml` | Documentation navigation, theme, and Markdown feature contract. |

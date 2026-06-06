@@ -30,14 +30,14 @@ not justified.
 - `source/profiles/` contains schema-validated workflow profiles that select existing
   marketplace plugins, hooks, and validation commands.
 - `source/templates/` contains primitive scaffold templates used by local tooling.
-- `bin/` contains thin local command wrappers for repository tooling.
+- `cli/` contains the Kotlin Clikt command-line application.
 - `source/schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
-- `scripts/` contains root validation, packaging, and marketplace publication
-  tooling.
-- `plugins/`, `.agents/plugins/marketplace.json`, `marketplace-lock.json`, and
-  `.github/plugin/` are materialized publication outputs. Regenerate them from
-  `source/`; do not hand-edit them as source.
+- `scripts/` contains root validation helpers invoked by the Kotlin CLI.
+- Provider marketplace payloads are materialized outputs. Generate them outside
+  the source tree or publish them to generated branches through the Kotlin CLI;
+  do not check in `.agents/plugins/`, `.github/plugin/`, `plugins/`, or
+  `marketplace-lock.json`.
 - `package.json` and `package-lock.json` pin local validator dependencies.
 
 ## Terminology
@@ -59,8 +59,8 @@ not justified.
   `source/schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
-  `node scripts/validate-manifests.mjs` is the coverage gate and must reject
-  unvalidated files.
+  `.local/intelligence/bin/intelligence validate` is the coverage gate and must
+  reject unvalidated files.
 
 ## Hook Rules
 
@@ -78,7 +78,7 @@ not justified.
 
 - Run `bash -n source/hooks/*.sh` after editing shell hook entrypoints.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
-- Run `node scripts/validate-manifests.mjs` after changing
+- Run `.local/intelligence/bin/intelligence validate` after changing
   `source/adaptable.marketplace.json`, `source/plugins/*/plugin.json`, hooks,
   schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,

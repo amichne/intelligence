@@ -32,6 +32,12 @@ build/
 .claude-plugin/
 .cache/
 
+# Materialized marketplace projections belong in generated branches or external output roots.
+.agents/plugins/
+.github/plugin/
+marketplace-lock.json
+plugins/
+
 # Local agent hook state and editor state
 .agent-turn/
 .skill-lock.json
