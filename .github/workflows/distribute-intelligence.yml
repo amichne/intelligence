@@ -58,7 +58,7 @@ jobs:
 
       - name: Validate packaging inputs
         run: |
-          ./gradlew :cli:test :cli:installDist
+          ./gradlew :cli:test :cli:installDist installDevelopmentCli
           .local/intelligence/bin/intelligence validate --portable
 
       - name: Resolve artifact version
