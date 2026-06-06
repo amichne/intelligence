@@ -1,0 +1,4 @@
+interface:
+  display_name: "Jira Ticket Resolver"
+  short_description: "Resolve and fetch the right Jira ticket"
+  default_prompt: "Use $jira-resolve-ticket to identify the relevant Jira issue for this repo and fetch its context."

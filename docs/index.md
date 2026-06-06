@@ -27,6 +27,9 @@ apm audit --ci --no-policy
 Build the docs site when documentation changes.
 
 ```sh
+npm ci
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 zensical build --clean
 ```
 

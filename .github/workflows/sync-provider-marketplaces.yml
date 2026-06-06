@@ -1,0 +1,101 @@
+name: Verify Marketplace Publication
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/publish-marketplace.yml"
+      - ".github/workflows/sync-provider-marketplaces.yml"
+      - ".sdkmanrc"
+      - "build.gradle.kts"
+      - "cli/**"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
+      - "package-lock.json"
+      - "package.json"
+      - "settings.gradle.kts"
+      - "source/**"
+      - "scripts/validate-manifests.mjs"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/publish-marketplace.yml"
+      - ".github/workflows/sync-provider-marketplaces.yml"
+      - ".sdkmanrc"
+      - "build.gradle.kts"
+      - "cli/**"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
+      - "package-lock.json"
+      - "package.json"
+      - "settings.gradle.kts"
+      - "source/**"
+      - "scripts/validate-manifests.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: verify-marketplace-publication-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Set up GraalVM Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install validation dependencies
+        run: npm ci
+
+      - name: Build and validate source
+        run: |
+          ./gradlew :cli:test installDevelopmentCli
+          .local/intelligence/bin/intelligence validate --portable
+
+      - name: Materialize Codex marketplace
+        run: .local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+
+      - name: Validate Codex marketplace payload
+        run: .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+
+      - name: Materialize GitHub marketplace
+        run: .local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+
+      - name: Validate GitHub marketplace payload
+        run: .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+
+      - name: Verify generated marketplaces are not checked in
+        run: |
+          forbidden=".agents/plugins .github/plugin marketplace-lock.json plugins"
+          present=()
+          for path in ${forbidden}; do
+            if [ -e "${path}" ]; then
+              present+=("${path}")
+            fi
+          done
+          if [ "${#present[@]}" -eq 0 ]; then
+            echo "source branch contains no materialized marketplace payloads"
+            exit 0
+          fi
+          printf '::error::materialized marketplace payloads must not be checked in: %s\n' "${present[*]}"
+          exit 1

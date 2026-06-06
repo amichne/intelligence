@@ -1,28 +1,34 @@
 # Marketplace
 
-The marketplace is authored in the root `apm.yml` `marketplace:` block.
-Generated marketplace JSON is output from `apm pack`, not source.
+The marketplace is the curated distribution surface for project-agnostic
+plugin families. The source of truth is `source/adaptable.marketplace.json` on `main`;
+provider payloads are generated into the orphan `codex` and `github` branches.
+`main` keeps only the authored reference graph under `source/`; provider-native
+payloads are produced by the Kotlin CLI in explicit output directories or
+published branches.
 
 ## Consumer Setup
 
 Register the marketplace and install a package.
 
 ```sh
-apm marketplace add amichne/intelligence --name amichne-apm
-apm install apm-authoring@amichne-apm
+npm ci
+npm run cli:install-dev
+.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+.local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex --no-push
+.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+.local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
 Use other package names from [Plugin families](../available/plugin-families.md)
 as needed.
 
-## Producer Preview
-
-Run current APM checks from the repository root.
-
-```sh
-apm pack --marketplace=all --dry-run --check-versions --json
-apm audit --ci --no-policy
-```
+The GitHub marketplace branch publishes its runtime entrypoint at
+`.github/plugin/marketplace.json` with plugin payloads under
+`.github/plugin/plugins/<name>`. Each plugin `source` is the plugin directory
+name resolved under `metadata.pluginRoot`.
 
 ## Published Shape
 
@@ -34,5 +40,23 @@ apm audit --ci --no-policy
 | `.claude-plugin/marketplace.json` | Generated Claude marketplace output. |
 | `.agents/plugins/marketplace.json` | Generated Codex marketplace output. |
 
-When Codex output is enabled, every marketplace package entry includes a
-`category` field.
+| Surface | Owner | Purpose |
+|---|---|---|
+| `source/adaptable.marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
+| `cli/` | Kotlin CLI source | Hydrates provider marketplace payloads. |
+| `.agents/plugins/marketplace.json` | Generated on `codex` | Codex marketplace entrypoint. |
+| `plugins/<name>/.codex-plugin/plugin.json` | Generated on `codex` | Codex plugin manifest and embedded payload root. |
+| `.github/plugin/marketplace.json` | Generated on `github` | GitHub marketplace entrypoint. |
+| `.github/plugin/plugins/<name>` | Generated on `github` | GitHub plugin payload root. |
+
+## Publication Gate
+
+Merges to `main` run `.github/workflows/publish-marketplace.yml`. The workflow
+validates source contracts, materializes the marketplace, validates the
+hydrated output, and force-updates the generated branches.
+
+`.github/workflows/sync-provider-marketplaces.yml` checks pull requests and
+pushing by materializing the same provider payloads, validating them, and
+asserting materialized marketplace payloads are absent from the source branch.
+
+Run the same checks locally when changing marketplace exposure.

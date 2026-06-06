@@ -4,15 +4,20 @@ These APM package families are exposed through the root `apm.yml` marketplace.
 
 | Package | What It Provides |
 |---|---|
-| `engineering-baseline` | Repository onboarding, shared instructions, and Codex turn-level hooks. |
-| `api-contracts` | JSON Schema and OpenAPI contract authoring, modeling, and review. |
-| `kotlin-engineering` | Kotlin typed design, review agents, Gradle proof, CI, and PR delivery. |
-| `git-ci-operations` | Goal framing, TDD, Git hygiene, CI triage, releases, and shell-safe automation. |
-| `apm-authoring` | APM package authoring, marketplace metadata, hooks, schemas, repo maps, and docs surfaces. |
+| `engineering-baseline` | Repository onboarding, shared instructions, schemas, and turn-level hooks. |
+| `api-contracts` | JSON Schema and OpenAPI authoring, modeling, and review workflows. |
+| `kotlin-engineering` | Kotlin typed design, Gradle proof, review agents, and delivery workflows. |
+| `git-ci-operations` | Git hygiene, TDD, pull requests, CI triage, and release procedures. |
+| `agent-platform-authoring` | Skills, agents, hooks, schemas, plugins, repository maps, and docs-as-code authoring. |
 
 Inspect a package directly.
 
 ```sh
-sed -n '1,160p' packages/apm-authoring/apm.yml
-find packages/apm-authoring/.apm -maxdepth 3 -type f
+sed -n '1,220p' source/plugins/kotlin-engineering/plugin.json
+```
+
+Validate plugin and marketplace structure after edits.
+
+```sh
+.local/intelligence/bin/intelligence validate
 ```

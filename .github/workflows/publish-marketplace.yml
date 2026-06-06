@@ -36,69 +36,35 @@ jobs:
           setup-only: "true"
           apm-version: "0.18.0"
 
-      - name: Verify APM version
-        run: |
-          set -euo pipefail
-          apm --version
-          apm --version | grep -F "0.18.0"
-
-      - name: Resolve artifact version
-        id: version
-        env:
-          INPUT_VERSION: ${{ github.event.inputs.version }}
-        run: |
-          set -euo pipefail
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && -n "${INPUT_VERSION}" ]]; then
-            version="${INPUT_VERSION}"
-          elif [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            version="${GITHUB_REF_NAME}"
-          else
-            version="$(git rev-parse --short=12 HEAD)"
-          fi
-          version="$(printf '%s' "${version}" | tr -c 'A-Za-z0-9._-' '-')"
-          version="${version##[-._]}"
-          version="${version%%[-._]}"
-          if [[ -z "${version}" ]]; then
-            echo "::error::resolved artifact version is empty"
-            exit 1
-          fi
-          echo "version=${version}" >> "${GITHUB_OUTPUT}"
-          echo "Resolved APM marketplace version: ${version}"
-
-      - name: Pack APM marketplace outputs
-        run: |
-          set -euo pipefail
-          mkdir -p dist/apm
-          apm pack --marketplace=all --check-versions --json > "dist/apm/pack-report-${{ steps.version.outputs.version }}.json"
-          apm audit --ci --no-policy
-
-      - name: Archive APM marketplace root
-        run: |
-          set -euo pipefail
-          version="${{ steps.version.outputs.version }}"
-          cp .claude-plugin/marketplace.json "dist/apm/claude-marketplace-${version}.json"
-          cp .agents/plugins/marketplace.json "dist/apm/codex-marketplace-${version}.json"
-          tar -czf "dist/apm/amichne-apm-marketplace-${version}.tar.gz" \
-            apm.yml packages .claude-plugin .agents
-          (cd dist/apm && shasum -a 256 * > SHA256SUMS)
-
-      - name: Upload APM marketplace artifact
-        uses: actions/upload-artifact@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
         with:
-          name: amichne-apm-marketplace-${{ steps.version.outputs.version }}
-          path: dist/apm
-          if-no-files-found: error
+          node-version: 20
+          cache: npm
 
-      - name: Publish GitHub Release assets
-        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true')
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
+      - name: Set up GraalVM Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install validation dependencies
+        run: npm ci
+
+      - name: Validate source
         run: |
-          set -euo pipefail
-          version="${{ steps.version.outputs.version }}"
-          if gh release view "${version}" >/dev/null 2>&1; then
-            gh release upload "${version}" dist/apm/* --clobber
-          else
-            gh release create "${version}" dist/apm/* --generate-notes --title "${version}"
-          fi
+          ./gradlew :cli:test installDevelopmentCli
+          .local/intelligence/bin/intelligence validate --portable
+          .local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+          .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+          .local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+          .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+
+      - name: Publish Codex marketplace branch
+        run: .local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex
+
+      - name: Publish GitHub marketplace branch
+        run: .local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github

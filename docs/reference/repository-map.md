@@ -2,14 +2,18 @@
 
 | Path | Purpose |
 |---|---|
-| `apm.yml` | Root APM marketplace manifest. |
-| `packages/*/apm.yml` | APM package manifests. |
-| `packages/*/.apm/skills/` | Skill primitives. |
-| `packages/*/.apm/agents/` | Agent primitives. |
-| `packages/*/.apm/instructions/` | Instruction primitives. |
-| `packages/*/.apm/hooks/` | Hook JSON primitives. |
-| `packages/*/hooks/` | Hook executable scripts. |
-| `packages/*/hook-config/` | Hook sidecar JSON that should not be scanned as hook definitions. |
-| `.claude-plugin/marketplace.json` | Generated Claude marketplace output. |
-| `.agents/plugins/marketplace.json` | Generated Codex marketplace output. |
-| `docs/` | Zensical documentation source. |
+| `source/adaptable.marketplace.json` | Provider-neutral curated marketplace catalog. |
+| `source/agents/` | Independent reusable agent profiles. |
+| `source/skills/` | Independent reusable skills. |
+| `source/concepts/` | Portable concept and principle primitives. |
+| `source/hooks/` | Hook metadata, implementations, requirements, and provider adapters. |
+| `source/plugins/` | Referential plugin composition manifests. |
+| `source/profiles/` | Schema-validated workflow profiles. |
+| `source/templates/` | Primitive scaffold templates used by repository CLI tooling. |
+| `cli/` | Kotlin Clikt command-line application. |
+| `scripts/` | Root validation helpers invoked by the Kotlin CLI. |
+| `source/schemas/` | Public provider-neutral and adapter schema contracts. |
+| Generated `codex` branch | Codex marketplace projection generated from `source/`. |
+| Generated `github` branch | GitHub Copilot marketplace projection generated from `source/`. |
+| `docs/` | Hand-authored Zensical documentation source. |
+| `zensical.toml` | Documentation navigation, theme, and Markdown feature contract. |

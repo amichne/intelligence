@@ -5,19 +5,9 @@ source tree that requires a custom generator.
 
 ## Layout
 
-```text
-packages/example-package/
-  apm.yml
-  .apm/
-    skills/example-skill/SKILL.md
-    agents/example-agent.agent.md
-    instructions/example.instructions.md
-    hooks/example-codex-hooks.json
-  hook-config/example.requirements.json
-  hooks/example.sh
-```
-
-## Workflow
+Primitive scaffolding is being moved into the Kotlin CLI. Until that command is
+ported, create the primitive under `source/` from the local templates and add
+plugin or marketplace references deliberately.
 
 1. Choose the package under `packages/`.
 2. Add or edit the primitive under that package's `.apm/` tree.
@@ -29,8 +19,6 @@ packages/example-package/
 ## Validate
 
 ```sh
-python3 -m json.tool packages/example-package/.apm/hooks/example-codex-hooks.json
-bash -n packages/example-package/hooks/example.sh
-apm pack --marketplace=all --dry-run --check-versions --json
-apm audit --ci --no-policy
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 ```

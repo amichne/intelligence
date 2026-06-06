@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "lifecycle-events.schema.json",
+  "title": "LifecycleEvent",
+  "type": "object",
+  "discriminator": {
+    "propertyName": "type"
+  },
+  "$defs": {
+    "TenantId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "examples": [
+        "acme"
+      ]
+    },
+    "InvoiceId": {
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "inv-1001"
+      ]
+    }
+  },
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "INVOICE_CREATED",
+        "INVOICE_CANCELLED"
+      ]
+    },
+    "tenantId": {
+      "$ref": "#/$defs/TenantId"
+    },
+    "invoiceId": {
+      "$ref": "#/$defs/InvoiceId"
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "type"
+  ],
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "INVOICE_CREATED"
+          ]
+        },
+        "tenantId": {
+          "$ref": "#/$defs/TenantId"
+        },
+        "invoiceId": {
+          "$ref": "#/$defs/InvoiceId"
+        }
+      },
+      "required": [
+        "type",
+        "tenantId",
+        "invoiceId"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "type": "INVOICE_CREATED",
+          "tenantId": "acme",
+          "invoiceId": "inv-1001"
+        }
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "INVOICE_CANCELLED"
+          ]
+        },
+        "tenantId": {
+          "$ref": "#/$defs/TenantId"
+        },
+        "invoiceId": {
+          "$ref": "#/$defs/InvoiceId"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "type",
+        "tenantId",
+        "invoiceId",
+        "reason"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "type": "INVOICE_CANCELLED",
+          "tenantId": "acme",
+          "invoiceId": "inv-1001",
+          "reason": "duplicate"
+        }
+      ]
+    }
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "type": "INVOICE_CREATED",
+      "tenantId": "acme",
+      "invoiceId": "inv-1001"
+    }
+  ]
+}

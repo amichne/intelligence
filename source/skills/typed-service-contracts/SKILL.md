@@ -1,0 +1,4 @@
+---
+name: "typed-service-contracts"
+description: "Internal consolidated skill from a prior migration source."
+---

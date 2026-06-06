@@ -13,6 +13,38 @@ the `amichne-apm` marketplace.
 
 ## Next Pages
 
-- [Marketplace](marketplace.md) explains consumption and publishing shape.
-- [Author a primitive](author-a-primitive.md) explains package-owned `.apm/`
-  primitives.
+Install validation dependencies before running repository gates.
+
+```sh
+npm ci
+```
+
+Install the docs toolchain only if `zensical` is not already available.
+
+```sh
+python3 -m venv .venv-docs
+. .venv-docs/bin/activate
+python -m pip install -r requirements-docs.txt
+```
+
+## Choose A Path
+
+Each path has a dry-run or validation command before it mutates anything.
+
+| Path | Command | Use When |
+|---|---|---|
+| Validate this repository | `.local/intelligence/bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
+| Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
+
+## First Validation
+
+Run the repo gate before trusting local state.
+
+```sh
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
+```
+
+This wraps the manifest validation path. Use the expanded commands in
+[Validation](../how-it-works/validation.md) when you need to isolate a failing
+schema check.

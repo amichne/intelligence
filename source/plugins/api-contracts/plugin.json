@@ -1,0 +1,95 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "api-contracts",
+  "version": "0.1.0",
+  "description": "API contract workflow for JSON Schema and OpenAPI boundaries: schema modeling, operation authoring, typed errors, examples, and review.",
+  "skills": [
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/manage-json-schemas",
+      "name": "manage-json-schemas"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/openapi-schema-modeling",
+      "name": "openapi-schema-modeling"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/openapi-contract-authoring",
+      "name": "openapi-contract-authoring"
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "skills/openapi-contract-rating",
+      "name": "openapi-contract-rating"
+    }
+  ],
+  "agents": [
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/schema-type-enforcer.agent.md",
+      "name": "schema-type-enforcer"
+    },
+    {
+      "type": "AGENT",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "agents/openapi/openapi-contract-rater.agent.md",
+      "name": "openapi-contract-rater"
+    }
+  ],
+  "instructions": [
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/type-safety/core.md",
+      "name": "type-safety"
+    },
+    {
+      "type": "INSTRUCTION",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
+      "path": "concepts/schema-driven-design/core.md",
+      "name": "schema-driven-design"
+    }
+  ],
+  "hooks": [],
+  "metadata": {
+    "composition": "referential",
+    "dailyDriver": "Use when external input, persisted data, or API surface shape is the correctness boundary.",
+    "notFor": "General code delivery, repo onboarding, or Kotlin-only package review unless contract shape is the task.",
+    "owner": "api-contract-platform",
+    "principle": "contracts-are-boundary-authorities",
+    "role": "api-contracts",
+    "scope": "JSON Schema and OpenAPI boundary design, rating, authoring, typed error modeling, and explicit variant constraints."
+  }
+}
