@@ -47,8 +47,18 @@ Preview branch publication locally with:
 .local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
-Build CLI archives with:
+Build the self-contained native CLI executable with:
 
 ```sh
-./gradlew :cli:distTar :cli:distZip
+./gradlew :cli:nativeCompile
+```
+
+The release workflow publishes one GraalVM native executable per supported
+platform/architecture target, plus `SHA256SUMS`. It does not publish JVM
+application archives.
+
+After a stable native release, install the CLI with Homebrew:
+
+```sh
+brew install amichne/intelligence/intelligence
 ```

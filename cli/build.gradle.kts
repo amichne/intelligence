@@ -40,6 +40,7 @@ graalvmNative {
             imageName.set("intelligence")
             mainClass.set("intelligence.cli.MainKt")
             fallback.set(false)
+            buildArgs.addAll(listOf("-O2", "-march=compatibility"))
         }
     }
 }
