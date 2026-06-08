@@ -1,4 +1,4 @@
-# amichne-apm Agent Instructions
+# amichne-intelligence Agent Instructions
 
 ## Scope
 
@@ -20,34 +20,32 @@ not justified.
 
 ## Repository Map
 
-- `source/adaptable.marketplace.json` is the provider-neutral curated marketplace catalog.
+- `source/adaptable.marketplace.json` is the provider-neutral curated
+  marketplace catalog and the source of truth for plugin exposure.
 - `source/agents/` contains independent reusable agent profiles.
 - `source/skills/` contains independent reusable skills.
-- `source/concepts/` contains portable concept primitives meant to be copied, linked,
-  or projected into other projects.
+- `source/concepts/` contains portable concept primitives meant to be copied,
+  linked, or projected into other projects.
 - `source/hooks/` contains reusable hook assets and runtime adapter configs.
 - `source/plugins/` contains plugin composition manifests.
-- `source/profiles/` contains schema-validated workflow profiles that select existing
+- `source/profiles/` contains schema-validated workflow profiles that select
   marketplace plugins, hooks, and validation commands.
 - `source/templates/` contains primitive scaffold templates used by local tooling.
-- `cli/` contains the Kotlin Clikt command-line application.
 - `source/schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
-- `scripts/` contains root validation helpers invoked by the Kotlin CLI.
+- `cli/` contains the Kotlin Clikt command-line application.
 - Provider marketplace payloads are materialized outputs. Generate them outside
   the source tree or publish them to generated branches through the Kotlin CLI;
   do not check in `.agents/plugins/`, `.github/plugin/`, `plugins/`, or
   `marketplace-lock.json`.
-- `package.json` and `package-lock.json` pin local validator dependencies.
 
 ## Terminology
 
-- A primitive is an independent building block that ships inside an APM package:
-  skills, agents, hooks, instructions, and prompts.
-- A package is the installable APM unit under `packages/<name>/`.
-- Marketplace exposure is curated through the root `apm.yml`
-  `marketplace.packages` list.
-- Generated marketplace JSON is output, not authoring source.
+- A primitive is an independent building block: skills, agents, hooks,
+  instructions, prompts, and concepts.
+- A plugin is a composed installable workflow defined under `source/plugins/`.
+- Marketplace exposure is curated through `source/adaptable.marketplace.json`.
+- Provider payloads are generated marketplace output, not authoring source.
 
 ## Source Rules
 
@@ -63,10 +61,9 @@ not justified.
 
 ## Hook Rules
 
-- Keep hook JSON under `packages/*/.apm/hooks/`.
-- Use APM target suffixes such as `<name>-codex-hooks.json` for target-specific
-  hook files.
-- Keep hook sidecar JSON under `packages/*/hook-config/`.
+- Keep provider-neutral hook metadata in `source/hooks/*.hook.json`.
+- Keep adapter-specific hook JSON under directories such as `source/hooks/codex/`.
+- Keep hook sidecar JSON next to the hook implementation or metadata that owns it.
 - Keep hook implementations host-portable. Prefer shell entrypoints with narrow,
   typed JSON parsing delegated to Python when the behavior is stateful.
 - Store turn-local hook state outside tracked source. This repository uses
@@ -76,6 +73,7 @@ not justified.
 
 - Run `bash -n source/hooks/*.sh` after editing shell hook entrypoints.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
+- Run `./gradlew :cli:test installDevelopmentCli` after changing Kotlin CLI code.
 - Run `.local/intelligence/bin/intelligence validate` after changing
   `source/adaptable.marketplace.json`, `source/plugins/*/plugin.json`, hooks,
   schemas, profiles, or any JSON manifest.

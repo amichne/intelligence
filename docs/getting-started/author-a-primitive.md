@@ -1,7 +1,7 @@
 # Author A Primitive
 
-Author primitives inside the package that ships them. Do not create a separate
-source tree that requires a custom generator.
+Author primitives under `source/` and reference them from plugin manifests. Do
+not create provider payloads by hand.
 
 ## Layout
 
@@ -9,12 +9,15 @@ Primitive scaffolding is being moved into the Kotlin CLI. Until that command is
 ported, create the primitive under `source/` from the local templates and add
 plugin or marketplace references deliberately.
 
-1. Choose the package under `packages/`.
-2. Add or edit the primitive under that package's `.apm/` tree.
-3. Keep hook scripts under package `hooks/` when hook JSON references them.
-   Keep hook sidecar JSON under `hook-config/`.
-4. Update the package `apm.yml` only when metadata changes.
-5. Update root `apm.yml` only when marketplace exposure changes.
+1. Choose the primitive kind under `source/skills/`, `source/agents/`,
+   `source/hooks/`, or `source/concepts/`.
+2. Add or edit the primitive in the source-owned location.
+3. For hooks, keep provider-neutral metadata in `source/hooks/*.hook.json` and
+   adapter JSON under directories such as `source/hooks/codex/`.
+4. Update `source/plugins/<name>/plugin.json` when a plugin should compose the
+   primitive.
+5. Update `source/adaptable.marketplace.json` only when marketplace exposure
+   changes.
 
 ## Validate
 

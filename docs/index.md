@@ -1,35 +1,34 @@
-# amichne-apm
+# amichne-intelligence
 
-`amichne-apm` is an APM-native marketplace for reusable AI tooling packages.
-Each package owns the primitives it ships in `.apm/`; the root `apm.yml` owns
-marketplace exposure.
+`amichne-intelligence` is a marketplace-only source graph for reusable AI
+tooling primitives and plugin families. The source graph is authored under
+`source/`, with `source/adaptable.marketplace.json` controlling marketplace
+exposure.
 
 ```mermaid
 flowchart LR
-  primitive[Package primitives in .apm/]
-  package[packages/*/apm.yml]
-  marketplace[root apm.yml marketplace]
-  output[APM marketplace JSON]
+  primitive[Independent primitives in source/]
+  plugin[source/plugins/*/plugin.json]
+  marketplace[source/adaptable.marketplace.json]
+  cli[Kotlin CLI]
+  output[Provider marketplace payloads]
   runtime[Consumer runtimes]
 
-  primitive --> package --> marketplace --> output --> runtime
+  primitive --> plugin --> marketplace --> cli --> output --> runtime
 ```
 
 ## Start Here
 
-Use APM directly.
+Install the local CLI from the Kotlin build and validate the source graph.
 
 ```sh
-apm pack --marketplace=all --dry-run --check-versions --json
-apm audit --ci --no-policy
+./gradlew installDevelopmentCli
+.local/intelligence/bin/intelligence validate
 ```
 
 Build the docs site when documentation changes.
 
 ```sh
-npm ci
-./gradlew installDevelopmentCli
-.local/intelligence/bin/intelligence validate
 zensical build --clean
 ```
 
@@ -37,7 +36,7 @@ zensical build --clean
 
 | Job | Entry Point | Result |
 |---|---|---|
-| Inspect packages | [What is available](available/index.md) | A map of package families and primitives. |
-| Consume the marketplace | [Marketplace](getting-started/marketplace.md) | APM marketplace installation commands. |
-| Author a primitive | [Author a primitive](getting-started/author-a-primitive.md) | A package-owned `.apm/` primitive. |
-| Validate publishing | [Validation](how-it-works/validation.md) | APM checks before release. |
+| Inspect plugin families | [What is available](available/index.md) | A map of plugin families and primitives. |
+| Consume the marketplace | [Marketplace](getting-started/marketplace.md) | Provider marketplace materialization commands. |
+| Author a primitive | [Author a primitive](getting-started/author-a-primitive.md) | A source-owned primitive referenced by plugins. |
+| Validate publishing | [Validation](how-it-works/validation.md) | Source and hydrated output checks before release. |

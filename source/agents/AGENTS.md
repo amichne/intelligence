@@ -26,5 +26,5 @@ This file applies to reusable agent profiles under `source/agents/`.
 
 ## Verify
 
-- Run `node scripts/validate-manifests.mjs` after adding promoted agents to a
-  plugin or marketplace manifest.
+- Run `.local/intelligence/bin/intelligence validate` after adding promoted
+  agents to a plugin or marketplace manifest.

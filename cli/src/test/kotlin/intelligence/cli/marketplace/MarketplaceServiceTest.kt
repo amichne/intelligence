@@ -1,9 +1,12 @@
 package intelligence.cli.marketplace
 
+import intelligence.cli.validation.ValidationOptions
+import intelligence.cli.validation.ValidationService
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class MarketplaceServiceTest {
@@ -28,6 +31,17 @@ class MarketplaceServiceTest {
                 .resolve("kotlin-engineering")
                 .resolve("AGENTS.md")
                 .exists()
+        )
+
+        assertEquals(
+            0,
+            ValidationService(output = {}).validate(
+                ValidationOptions(
+                    repo = repoRoot(),
+                    portable = true,
+                    hydrated = output,
+                )
+            )
         )
     }
 

@@ -30,14 +30,8 @@ internal class ValidateCommand(
     private val hydrated by option("--hydrated", help = "Hydrated marketplace output to validate.")
         .convert("PATH") { it.toCliPath() }
 
-    @Suppress("unused")
-    private val manifestsOnly by option(
-        "--manifests-only",
-        help = "Accepted for compatibility; manifest validation is always delegated to the repository validator.",
-    ).flag(default = false)
-
     override fun help(context: Context): String =
-        "Run repository manifest validation gates."
+        "Validate marketplace source and hydrated provider outputs."
 
     override fun run() {
         val exitCode = try {

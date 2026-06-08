@@ -13,7 +13,7 @@ internal class IntelligenceCommand(
     name = "intelligence",
 ) {
     init {
-        val validationService = ValidationService(processRunner = processRunner, output = { echo(it) })
+        val validationService = ValidationService(output = { echo(it) })
         val marketplaceService = MarketplaceService(processRunner = processRunner, output = { echo(it) })
         subcommands(
             ValidateCommand(validationService),

@@ -11,11 +11,8 @@ on:
       - "gradle/**"
       - "gradlew"
       - "gradlew.bat"
-      - "package-lock.json"
-      - "package.json"
       - "settings.gradle.kts"
       - "source/**"
-      - "scripts/validate-manifests.mjs"
   push:
     branches:
       - main
@@ -28,11 +25,8 @@ on:
       - "gradle/**"
       - "gradlew"
       - "gradlew.bat"
-      - "package-lock.json"
-      - "package.json"
       - "settings.gradle.kts"
       - "source/**"
-      - "scripts/validate-manifests.mjs"
   workflow_dispatch:
 
 permissions:
@@ -49,12 +43,6 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
       - name: Set up GraalVM Java
         uses: actions/setup-java@v4
         with:
@@ -63,9 +51,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Install validation dependencies
-        run: npm ci
 
       - name: Build and validate source
         run: |

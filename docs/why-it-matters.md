@@ -3,9 +3,9 @@
 Reusable agent behavior becomes difficult to trust when it is scattered across
 runtime caches, one-off prompts, or provider-specific plugin folders.
 
-`amichne-apm` keeps the durable boundary simple:
+`amichne-intelligence` keeps the durable boundary simple:
 
-| Problem | APM-native answer |
+| Problem | Marketplace-only answer |
 |---|---|
 | Scattered skills and instructions | Canonical primitives under `source/skills/`, `source/agents/`, `source/hooks/`, and `source/concepts/`. |
 | Plugin payloads becoming the only copy | Plugins compose primitives by reference instead of owning them. |

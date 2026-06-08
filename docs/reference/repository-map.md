@@ -11,7 +11,6 @@
 | `source/profiles/` | Schema-validated workflow profiles. |
 | `source/templates/` | Primitive scaffold templates used by repository CLI tooling. |
 | `cli/` | Kotlin Clikt command-line application. |
-| `scripts/` | Root validation helpers invoked by the Kotlin CLI. |
 | `source/schemas/` | Public provider-neutral and adapter schema contracts. |
 | Generated `codex` branch | Codex marketplace projection generated from `source/`. |
 | Generated `github` branch | GitHub Copilot marketplace projection generated from `source/`. |

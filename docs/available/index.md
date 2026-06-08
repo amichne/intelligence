@@ -1,16 +1,16 @@
 # What Is Available
 
-The marketplace exposes APM packages. Each package owns its primitives under
-`packages/<name>/.apm/`.
+The marketplace exposes plugin families composed from independent source
+primitives.
 
 | Surface | Path |
 |---|---|
-| Marketplace | `apm.yml` |
-| Packages | `packages/*/apm.yml` |
-| Skills | `packages/*/.apm/skills/` |
-| Agents | `packages/*/.apm/agents/` |
-| Instructions | `packages/*/.apm/instructions/` |
-| Hooks | `packages/*/.apm/hooks/` |
+| Marketplace catalog | `source/adaptable.marketplace.json` |
+| Plugin manifests | `source/plugins/*/plugin.json` |
+| Skills | `source/skills/` |
+| Agents | `source/agents/` |
+| Instructions and concepts | `source/concepts/` |
+| Hooks | `source/hooks/` |
 
-See [Plugin families](plugin-families.md) for the curated package list and
+See [Plugin families](plugin-families.md) for the curated plugin list and
 [Primitives](primitives.md) for the primitive layout.

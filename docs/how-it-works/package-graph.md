@@ -1,34 +1,38 @@
-# APM Package Graph
+# Source Graph
 
-The repository now has one publishing model: APM packages and an APM
-marketplace manifest.
+The repository has one publishing model: source-owned primitives and plugin
+manifests are projected into provider marketplace payloads by the Kotlin CLI.
 
 ```mermaid
 flowchart TD
-  Root[root apm.yml]
-  Package[packages/*/apm.yml]
-  Primitive[packages/*/.apm primitives]
-  HookScripts[packages/*/hooks scripts]
-  Pack[apm pack]
-  Claude[.claude-plugin/marketplace.json]
-  Codex[.agents/plugins/marketplace.json]
+  Primitive[source primitives]
+  Plugin[source/plugins/*/plugin.json]
+  Catalog[source/adaptable.marketplace.json]
+  Validate[intelligence validate]
+  Materialize[intelligence marketplace materialize]
+  Codex[Codex marketplace payload]
+  Github[GitHub marketplace payload]
 
-  Primitive --> Package
-  HookScripts --> Package
-  Package --> Root
-  Root --> Pack
-  Pack --> Claude
-  Pack --> Codex
+  Primitive --> Plugin
+  Plugin --> Catalog
+  Catalog --> Validate
+  Validate --> Materialize
+  Materialize --> Codex
+  Materialize --> Github
 ```
 
 ## Source Of Truth
 
 | Path | Role |
 |---|---|
-| `apm.yml` | Marketplace source of truth. |
-| `packages/*/apm.yml` | Package source of truth. |
-| `packages/*/.apm/` | Primitive source of truth. |
-| `.claude-plugin/marketplace.json` | Generated marketplace output. |
-| `.agents/plugins/marketplace.json` | Generated marketplace output. |
+| `source/adaptable.marketplace.json` | Marketplace source of truth. |
+| `source/plugins/*/plugin.json` | Plugin composition source of truth. |
+| `source/skills/` | Skill primitive source of truth. |
+| `source/agents/` | Agent primitive source of truth. |
+| `source/hooks/` | Hook metadata, scripts, requirements, and adapter source of truth. |
+| `source/concepts/` | Portable instruction and principle source of truth. |
+| `.agents/plugins/marketplace.json` | Generated Codex marketplace output. |
+| `.github/plugin/marketplace.json` | Generated GitHub marketplace output. |
 
-Generated marketplace JSON should be refreshed through APM, not hand-authored.
+Generated marketplace JSON should be refreshed through the Kotlin CLI, not
+hand-authored.

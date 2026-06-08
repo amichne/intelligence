@@ -43,7 +43,7 @@
   "validation": {
     "type": "WORKFLOW_VALIDATION",
     "commands": [
-      "node scripts/validate-manifests.mjs"
+      ".local/intelligence/bin/intelligence validate"
     ]
   }
 }

@@ -1,23 +1,23 @@
 # Primitives
 
-Primitives are package-owned APM assets.
+Primitives are source-owned assets that can be composed into plugin families.
 
 ## Skills
 
-Skills live under `packages/*/.apm/skills/<name>/SKILL.md` and may include
-`references/`, `scripts/`, `assets/`, and examples.
+Skills live under `source/skills/<name>/SKILL.md` and may include `references/`,
+`scripts/`, `assets/`, and examples.
 
 ## Agents
 
-Agents live under `packages/*/.apm/agents/*.agent.md`.
+Agents live under `source/agents/`.
 
 ## Instructions
 
-Instructions live under `packages/*/.apm/instructions/*.instructions.md`.
+Portable instructions and concepts live under `source/concepts/`.
 
 ## Hooks
 
-Hooks live under `packages/*/.apm/hooks/*.json`. Target-specific Codex hooks
-use names such as `<name>-codex-hooks.json`. Executable scripts referenced by
-hook JSON live under package `hooks/`, while JSON sidecar config belongs under
-`hook-config/` so APM does not scan it as a hook definition.
+Provider-neutral hook metadata lives in `source/hooks/*.hook.json`.
+Provider-specific hook adapters live under directories such as
+`source/hooks/codex/`. Executable scripts referenced by hook JSON live under the
+hook root unless the adapter owns them.

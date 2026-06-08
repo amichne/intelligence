@@ -20,5 +20,5 @@ This file applies to reusable hook assets under `source/hooks/`.
 
 ## Verify
 
-- Run `node scripts/validate-manifests.mjs` after changing hook metadata.
+- Run `.local/intelligence/bin/intelligence validate` after changing hook metadata.
 - Run syntax checks for every executable hook implementation touched.

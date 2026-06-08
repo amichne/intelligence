@@ -19,32 +19,26 @@ class IntelligenceCommandTest {
     }
 
     @Test
-    fun `validate delegates to repository validator with typed options`() {
-        val runner = RecordingProcessRunner()
-        val result = IntelligenceCommand(processRunner = runner).test(
+    fun `validate runs marketplace source checks`() {
+        val result = IntelligenceCommand().test(
             listOf(
                 "validate",
                 "--repo",
                 repoRoot().toString(),
                 "--portable",
-                "--hydrated",
-                "/tmp/intelligence-hydrated",
-                "--manifests-only",
             )
         )
 
         assertEquals(0, result.statusCode)
-        assertEquals(repoRoot(), runner.cwd)
-        assertEquals(
-            listOf(
-                "node",
-                "scripts/validate-manifests.mjs",
-                "--portable",
-                "--hydrated",
-                "/tmp/intelligence-hydrated",
-            ),
-            runner.command,
-        )
+        assertTrue(result.stdout.contains("OK source marketplace"))
+    }
+
+    @Test
+    fun `validate rejects removed compatibility flags`() {
+        val result = IntelligenceCommand().test("validate --manifests-only")
+
+        assertNotEquals(0, result.statusCode)
+        assertTrue(result.stderr.contains("--manifests-only"))
     }
 
     private fun repoRoot(): Path =

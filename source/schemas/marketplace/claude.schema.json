@@ -221,9 +221,6 @@
         },
         {
           "$ref": "#/$defs/gitSubdirSource"
-        },
-        {
-          "$ref": "#/$defs/npmSource"
         }
       ]
     },
@@ -310,34 +307,6 @@
         },
         "sha": {
           "$ref": "#/$defs/gitSha"
-        }
-      },
-      "additionalProperties": false
-    },
-    "npmSource": {
-      "type": "object",
-      "required": [
-        "source",
-        "package"
-      ],
-      "properties": {
-        "source": {
-          "type": "string",
-          "enum": [
-            "npm"
-          ]
-        },
-        "package": {
-          "type": "string",
-          "minLength": 1
-        },
-        "version": {
-          "type": "string",
-          "minLength": 1
-        },
-        "registry": {
-          "type": "string",
-          "format": "uri"
         }
       },
       "additionalProperties": false

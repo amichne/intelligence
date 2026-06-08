@@ -20,7 +20,6 @@ internal object FileSystem {
         "__pycache__",
         "build",
         "dist",
-        "node_modules",
         "target",
     )
 

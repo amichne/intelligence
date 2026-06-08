@@ -288,52 +288,6 @@
         }
       ]
     },
-    "NpmSource": {
-      "type": "object",
-      "description": "An npm package source.",
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "NPM_SOURCE"
-          ],
-          "examples": [
-            "NPM_SOURCE"
-          ]
-        },
-        "package": {
-          "type": "string",
-          "description": "npm package name or scoped package name.",
-          "minLength": 1,
-          "examples": [
-            "@acme/review-plugin"
-          ]
-        },
-        "version": {
-          "$ref": "#/$defs/VersionConstraint"
-        },
-        "registry": {
-          "type": "string",
-          "description": "Package registry URL.",
-          "format": "uri",
-          "examples": [
-            "https://registry.npmjs.org"
-          ]
-        }
-      },
-      "required": [
-        "type",
-        "package"
-      ],
-      "additionalProperties": false,
-      "examples": [
-        {
-          "type": "NPM_SOURCE",
-          "package": "@acme/review-plugin",
-          "version": "^2.0.0"
-        }
-      ]
-    },
     "MarketplaceSource": {
       "type": "object",
       "description": "A plugin resolved from a named marketplace.",
@@ -386,9 +340,6 @@
         },
         {
           "$ref": "#/$defs/GitSubdirSource"
-        },
-        {
-          "$ref": "#/$defs/NpmSource"
         },
         {
           "$ref": "#/$defs/MarketplaceSource"

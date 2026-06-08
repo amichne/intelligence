@@ -1,7 +1,7 @@
 [project]
-site_name = "amichne-apm"
+site_name = "amichne-intelligence"
 site_description = """
-APM-native marketplace for reusable AI tooling primitives.
+Marketplace-only source graph for reusable AI tooling primitives.
 """
 site_author = "amichne"
 site_url = "https://github.com/amichne/intelligence"
@@ -27,7 +27,7 @@ nav = [
     { "Primitives" = "available/primitives.md" },
   ]},
   { "How it works" = [
-    { "APM package graph" = "how-it-works/package-graph.md" },
+    { "Source graph" = "how-it-works/package-graph.md" },
     { "Validation" = "how-it-works/validation.md" },
   ]},
   { "Reference" = [
@@ -68,7 +68,6 @@ features = [
   "content.action.view",
   "content.code.copy",
   "content.tabs.link",
-  "content.tooltips",
   "navigation.footer",
   "navigation.instant",
   "navigation.instant.prefetch",

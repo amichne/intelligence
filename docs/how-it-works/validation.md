@@ -1,22 +1,22 @@
 # Validation
 
-Validation is APM-first. Run checks from the repository root.
+Validation starts from the marketplace source graph. Run checks from the
+repository root.
 
 Validation happens in two layers.
 
-## Layer 1: canonical source integrity
+## Layer 1: Canonical Source Integrity
 
 Canonical artifacts in `source/` are the authority. We first validate syntax,
-structure, and schemas there so we can fail before projection.
+structure, and source references there so we can fail before projection.
 
 | Check | What it protects |
 |---|---|
 | `.local/intelligence/bin/intelligence validate` | Runs repository checks from the Kotlin CLI and ensures source edits stay coherent across schema-backed surfaces. |
-| `.local/intelligence/bin/intelligence validate --portable` | Ensures source-aligned serialization is still stable outside the local checkout assumptions. |
-| `node scripts/validate-manifests.mjs` | Low-level manifest helper invoked by the Kotlin CLI. |
+| `.local/intelligence/bin/intelligence validate --portable` | Runs the same checks without relying on host-local assumptions. |
 
-This is the primary safety boundary: the source model must be valid before we generate
-provider payloads.
+This is the primary safety boundary: the source model must be valid before we
+generate provider payloads.
 
 ### JSON and schema boundary
 
@@ -33,15 +33,10 @@ Parse changed hook JSON and check executable scripts.
 
 ```sh
 .local/intelligence/bin/intelligence validate --portable
+bash -n source/hooks/*.sh
 ```
 
-## Documentation
-
-```sh
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
-```
-
-## Layer 2: projection safety and runtime compatibility
+## Layer 2: Projection Safety And Runtime Compatibility
 
 A source-valid model can still fail in a target projection. This layer verifies
 provider mappings and adapter surfaces.
@@ -58,7 +53,7 @@ Match the surface you changed with the tightest check.
 | Documentation site | `zensical build --clean` |
 | Provider-specific projection | `.local/intelligence/bin/intelligence validate --portable --hydrated <provider-output-dir>` |
 
-## Publish proof path
+## Publish Proof Path
 
 For publish flows, keep the same source-to-projection sequence: validate source,
 materialize outputs, then verify hydration.
@@ -72,23 +67,13 @@ materialize outputs, then verify hydration.
 .local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
-## Distribution artifact checks
-
-When you are preparing archive outputs for CLI distribution, keep this command in
-the publishing workflow:
-
-```sh
-npm run package:cli
-```
-
 If a provider check fails, repair projection logic or schema boundaries, then
 regenerate outputs instead of patching generated payloads by hand.
 
-## What this protects
+## What This Protects
 
 This two-layer model gives practical safety:
 
 - It isolates invariant claims to source (`source/`), reducing drift from generated artifacts.
 - It preserves the ability to support more targets through adapter projections.
-- It makes failures explainable:
-  source-model invalidation vs adapter/projection regression.
+- It makes failures explainable: source-model invalidation vs adapter/projection regression.

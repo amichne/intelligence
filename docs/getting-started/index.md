@@ -1,23 +1,19 @@
 # Getting Started
 
-Start with the APM manifest. The root `apm.yml` exposes local packages through
-the `amichne-apm` marketplace.
+Start with the marketplace catalog. `source/adaptable.marketplace.json` exposes
+local plugin families and points each entry at `source/plugins/*/plugin.json`.
 
 ## Common Tasks
 
 | Task | Command |
 |---|---|
-| Preview marketplace outputs | `apm pack --marketplace=all --dry-run --check-versions --json` |
-| Audit package content | `apm audit --ci --no-policy` |
+| Install the development CLI | `./gradlew installDevelopmentCli` |
+| Validate source contracts | `.local/intelligence/bin/intelligence validate` |
+| Materialize Codex output | `.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace` |
+| Materialize GitHub output | `.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace` |
 | Build docs | `zensical build --clean` |
 
 ## Next Pages
-
-Install validation dependencies before running repository gates.
-
-```sh
-npm ci
-```
 
 Install the docs toolchain only if `zensical` is not already available.
 
@@ -34,6 +30,7 @@ Each path has a dry-run or validation command before it mutates anything.
 | Path | Command | Use When |
 |---|---|---|
 | Validate this repository | `.local/intelligence/bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
+| Preview generated output | `.local/intelligence/bin/intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace` | You changed marketplace exposure or projection logic. |
 | Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
 
 ## First Validation
@@ -45,6 +42,5 @@ Run the repo gate before trusting local state.
 .local/intelligence/bin/intelligence validate
 ```
 
-This wraps the manifest validation path. Use the expanded commands in
-[Validation](../how-it-works/validation.md) when you need to isolate a failing
-schema check.
+Use the expanded commands in [Validation](../how-it-works/validation.md) when
+you need to isolate a failing source or hydrated-output check.

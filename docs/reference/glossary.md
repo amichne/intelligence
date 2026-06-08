@@ -2,12 +2,11 @@
 
 | Term | Meaning |
 |---|---|
-| APM | Microsoft Agent Package Manager. |
-| Marketplace | The package catalog authored in root `apm.yml`. |
-| Package | An installable unit under `packages/<name>/`. |
-| Primitive | A skill, agent, instruction, prompt, or hook shipped from `.apm/`. |
+| Marketplace | The curated plugin catalog authored in `source/adaptable.marketplace.json`. |
+| Plugin | An installable workflow family defined by `source/plugins/<name>/plugin.json`. |
+| Primitive | A skill, agent, instruction, prompt, concept, or hook composed into plugins. |
 | Skill | Agent-facing workflow directory with `SKILL.md`. |
-| Agent | Delegated persona or specialist profile in `.apm/agents/`. |
-| Instruction | Long-lived behavior guidance in `.apm/instructions/`. |
-| Hook | Runtime callback JSON in `.apm/hooks/`. |
-| Generated output | Marketplace JSON produced by `apm pack`. |
+| Agent | Delegated persona or specialist profile under `source/agents/`. |
+| Instruction | Long-lived behavior guidance under `source/concepts/` or plugin-composed instruction entries. |
+| Hook | Runtime callback metadata, adapter JSON, and executable support files under `source/hooks/`. |
+| Generated output | Provider marketplace JSON produced by the Kotlin CLI. |

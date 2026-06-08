@@ -48,28 +48,6 @@ plugins/
 *.swp
 *.swo
 
-# Dependency and package-manager caches
-node_modules/
-apm_modules/
-.npm/
-.pnpm-store/
-.yarn/
-.cache/
-
-# APM generated outputs
-.apm/
-!packages/*/.apm/
-!packages/*/.apm/**
-.agents/
-.claude-plugin/
-.cursor-plugin/
-.github/plugin/
-packages/*/apm_modules/
-packages/*/.agents/
-packages/*/.claude-plugin/
-packages/*/.cursor-plugin/
-packages/*/.github/plugin/
-
 # Build, docs, and package outputs
 build/
 dist/

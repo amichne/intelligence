@@ -12,4 +12,5 @@ This file applies to `source/schemas/`.
   marketplace root contracts in `source/schemas/marketplace/`, and
   non-marketplace runtime projections under `source/schemas/adapters/<adapter>/`.
 - Add or update the schema before changing the persisted JSON shape it owns.
-- Run `node scripts/validate-manifests.mjs` after changing schemas or JSON data.
+- Run `.local/intelligence/bin/intelligence validate` after changing schemas or
+  JSON data.

@@ -1,38 +1,352 @@
 package intelligence.cli.validation
 
-import intelligence.cli.io.ProcessRunner
+import intelligence.cli.io.JsonFiles
+import intelligence.cli.io.arrayValue
+import intelligence.cli.io.objectValue
+import intelligence.cli.io.stringValue
+import intelligence.cli.marketplace.PrimitiveKind
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.name
+import kotlin.io.path.readText
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 
 internal class ValidationService(
-    private val processRunner: ProcessRunner = ProcessRunner.system(),
     private val output: (String) -> Unit = ::println,
 ) {
     fun validate(options: ValidationOptions): Int {
-        if (!options.repo.isDirectory()) {
+        val repository = options.repo.toAbsolutePath().normalize()
+        if (!repository.isDirectory()) {
             throw ValidationFailure("repository does not exist: ${options.repo}")
         }
 
-        val validator = options.repo.resolve("scripts").resolve("validate-manifests.mjs")
-        if (!validator.exists()) {
-            throw ValidationFailure("repository has no scripts/validate-manifests.mjs: ${options.repo}")
+        val issues = mutableListOf<String>()
+        validateRetiredRootPaths(repository, issues)
+        validateJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
+        validateMarketplaceSource(repository, issues)
+
+        options.hydrated?.let { hydrated ->
+            validateHydratedOutput(hydrated.toAbsolutePath().normalize(), issues)
         }
 
-        val command = buildList {
-            add("node")
-            add("scripts/validate-manifests.mjs")
-            if (options.portable) {
-                add("--portable")
-            }
-            options.hydrated?.let {
-                add("--hydrated")
-                add(it.toString())
-            }
+        return if (issues.isEmpty()) {
+            output("OK source marketplace")
+            options.hydrated?.let { output("OK hydrated marketplace ${it.toAbsolutePath().normalize()}") }
+            0
+        } else {
+            issues.forEach { issue -> output("FAIL $issue") }
+            1
+        }
+    }
+
+    private fun validateRetiredRootPaths(repo: Path, issues: MutableList<String>) {
+        RETIRED_ROOT_PATHS
+            .map(repo::resolve)
+            .filter(Path::exists)
+            .forEach { path -> issues += "retired root path remains: ${path.relativeToUnix(repo)}" }
+    }
+
+    private fun validateJsonSyntax(root: Path, issues: MutableList<String>) {
+        if (!root.exists()) {
+            issues += "missing source root: ${root.name}"
+            return
         }
 
-        output("$ " + command.joinToString(" "))
-        return processRunner.run(command, options.repo)
+        walkRegularFiles(root)
+            .filter { it.name.endsWith(".json") }
+            .forEach { path ->
+                try {
+                    JsonFiles.json.parseToJsonElement(path.readText(Charsets.UTF_8))
+                } catch (error: Exception) {
+                    issues += "invalid JSON ${path.relativeToUnix(root.parent)}: ${error.message}"
+                }
+            }
+    }
+
+    private fun validateMarketplaceSource(repo: Path, issues: MutableList<String>) {
+        val sourceRoot = repo.resolve(SOURCE_ROOT)
+        val marketplacePath = sourceRoot.resolve("adaptable.marketplace.json")
+        val marketplace = readObject(marketplacePath, repo, issues) ?: return
+
+        requireValue(marketplace.stringValue("type") == "MARKETPLACE", marketplacePath, repo, "type must be MARKETPLACE", issues)
+        requireValue(marketplace["schemaVersion"]?.primitiveContent() == "1", marketplacePath, repo, "schemaVersion must be 1", issues)
+        requireString(marketplace, "name", marketplacePath, repo, issues)
+        requireValue(marketplace.objectValue("owner") != null, marketplacePath, repo, "owner must be an object", issues)
+
+        val pluginEntries = marketplace.arrayValue("plugins")
+        requireValue(pluginEntries.isNotEmpty(), marketplacePath, repo, "plugins must not be empty", issues)
+
+        val referencedPlugins = linkedSetOf<String>()
+        pluginEntries.forEachObject { entry ->
+            val entryName = requireString(entry, "name", marketplacePath, repo, issues) ?: return@forEachObject
+            if (!referencedPlugins.add(entryName)) {
+                issues += "${marketplacePath.relativeToUnix(repo)}: duplicate plugin entry `$entryName`"
+            }
+
+            val pluginRef = entry.objectValue("plugin")
+            if (pluginRef == null) {
+                issues += "${marketplacePath.relativeToUnix(repo)}: plugin entry `$entryName` is missing plugin reference"
+                return@forEachObject
+            }
+
+            val source = pluginRef.objectValue("source")
+            val sourcePath = source?.stringValue("path")
+            if (source?.stringValue("type") != "LOCAL_SOURCE" || sourcePath.isNullOrBlank()) {
+                issues += "${marketplacePath.relativeToUnix(repo)}: plugin `$entryName` must use a local source path"
+                return@forEachObject
+            }
+
+            val manifestPath = resolveSourcePath(repo, sourcePath, issues) ?: return@forEachObject
+            val manifestFile = manifestPath.resolve("plugin.json")
+            val manifest = readObject(manifestFile, repo, issues) ?: return@forEachObject
+            validatePluginManifest(repo, manifestFile, manifest, expectedName = entryName, issues)
+        }
+
+        val pluginRoot = sourceRoot.resolve("plugins")
+        if (pluginRoot.exists()) {
+            Files.list(pluginRoot).use { stream ->
+                stream
+                    .filter { it.isDirectory() }
+                    .map { it.name }
+                    .filter { it !in referencedPlugins }
+                    .forEach { name -> issues += "source/plugins/$name is not listed in source/adaptable.marketplace.json" }
+            }
+        }
+    }
+
+    private fun validatePluginManifest(
+        repo: Path,
+        path: Path,
+        manifest: JsonObject,
+        expectedName: String,
+        issues: MutableList<String>,
+    ) {
+        requireValue(manifest.stringValue("type") == "PLUGIN", path, repo, "type must be PLUGIN", issues)
+        requireValue(manifest["schemaVersion"]?.primitiveContent() == "1", path, repo, "schemaVersion must be 1", issues)
+        val name = requireString(manifest, "name", path, repo, issues)
+        if (name != null && name != expectedName) {
+            issues += "${path.relativeToUnix(repo)}: plugin name `$name` does not match marketplace entry `$expectedName`"
+        }
+
+        PrimitiveKind.entries.forEach { kind ->
+            manifest.arrayValue(kind.collectionName).forEachObject { primitive ->
+                validatePrimitiveReference(repo, path, primitive, kind, issues)
+                primitive.arrayValue("dependsOn").forEachObject { dependency ->
+                    val dependencyKind = dependency.stringValue("type")?.let(PrimitiveKind::fromSourceName)
+                    if (dependencyKind == null) {
+                        issues += "${path.relativeToUnix(repo)}: unsupported dependency type `${dependency.stringValue("type")}`"
+                    } else {
+                        validatePrimitiveReference(repo, path, dependency, dependencyKind, issues)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun validatePrimitiveReference(
+        repo: Path,
+        owner: Path,
+        primitive: JsonObject,
+        kind: PrimitiveKind,
+        issues: MutableList<String>,
+    ) {
+        val primitiveName = requireString(primitive, "name", owner, repo, issues) ?: "<unnamed>"
+        val source = primitive.objectValue("source")
+        if (source?.stringValue("type") != "LOCAL_SOURCE" || source.stringValue("path") != "./") {
+            issues += "${owner.relativeToUnix(repo)}: `$primitiveName` must use local source `./`"
+            return
+        }
+
+        val sourcePathValue = requireString(primitive, "path", owner, repo, issues) ?: return
+        val sourcePath = resolveSourcePath(repo, sourcePathValue, issues) ?: return
+        if (!sourcePath.exists()) {
+            issues += "${owner.relativeToUnix(repo)}: missing ${kind.sourceName.lowercase()} `$primitiveName` at ${sourcePath.relativeToUnix(repo)}"
+            return
+        }
+
+        if (kind == PrimitiveKind.Hook) {
+            val metadata = readObject(sourcePath, repo, issues) ?: return
+            val adapterPathValue = metadata.stringValue("path") ?: sourcePathValue
+            val adapterPath = resolveSourcePath(repo, adapterPathValue, issues) ?: return
+            if (!adapterPath.exists()) {
+                issues += "${sourcePath.relativeToUnix(repo)}: missing hook adapter ${adapterPath.relativeToUnix(repo)}"
+            }
+        }
+    }
+
+    private fun validateHydratedOutput(root: Path, issues: MutableList<String>) {
+        if (!root.isDirectory()) {
+            issues += "hydrated output does not exist: $root"
+            return
+        }
+
+        var foundProvider = false
+        val branchCodexMarketplace = root.resolve(".agents").resolve("plugins").resolve("marketplace.json")
+        if (branchCodexMarketplace.exists()) {
+            foundProvider = true
+            validateCodexMarketplace(root, branchCodexMarketplace, issues)
+        }
+
+        val nestedCodexMarketplace = root.resolve("codex").resolve("marketplace.json")
+        if (nestedCodexMarketplace.exists()) {
+            foundProvider = true
+            validateCodexMarketplace(root.resolve("codex"), nestedCodexMarketplace, issues)
+        }
+
+        val githubMarketplace = root.resolve(".github").resolve("plugin").resolve("marketplace.json")
+        if (githubMarketplace.exists()) {
+            foundProvider = true
+            validateGithubMarketplace(root, githubMarketplace, issues)
+        }
+
+        if (!foundProvider) {
+            issues += "hydrated output has no supported marketplace entrypoint: $root"
+        }
+    }
+
+    private fun validateCodexMarketplace(root: Path, marketplacePath: Path, issues: MutableList<String>) {
+        val marketplace = readObject(marketplacePath, root, issues) ?: return
+        marketplace.arrayValue("plugins").forEachObject { entry ->
+            val name = requireString(entry, "name", marketplacePath, root, issues) ?: return@forEachObject
+            val sourcePath = entry.objectValue("source")?.stringValue("path")
+            if (sourcePath.isNullOrBlank()) {
+                issues += "${marketplacePath.relativeToUnix(root)}: Codex plugin `$name` has no source.path"
+                return@forEachObject
+            }
+
+            val pluginRoot = resolveRelative(root, sourcePath, issues) ?: return@forEachObject
+            if (!pluginRoot.isDirectory()) {
+                issues += "${marketplacePath.relativeToUnix(root)}: missing Codex plugin payload ${pluginRoot.relativeToUnix(root)}"
+                return@forEachObject
+            }
+
+            val manifest = pluginRoot.resolve(".codex-plugin").resolve("plugin.json")
+            if (!manifest.isRegularFile()) {
+                issues += "${pluginRoot.relativeToUnix(root)}: missing .codex-plugin/plugin.json"
+            }
+        }
+    }
+
+    private fun validateGithubMarketplace(root: Path, marketplacePath: Path, issues: MutableList<String>) {
+        val marketplace = readObject(marketplacePath, root, issues) ?: return
+        val pluginRoot = marketplace.objectValue("metadata")
+            ?.stringValue("pluginRoot")
+            ?.let { resolveRelative(root, it, issues) }
+            ?: run {
+                issues += "${marketplacePath.relativeToUnix(root)}: missing metadata.pluginRoot"
+                return
+            }
+
+        marketplace.arrayValue("plugins").forEachObject { entry ->
+            val name = requireString(entry, "name", marketplacePath, root, issues) ?: return@forEachObject
+            val source = requireString(entry, "source", marketplacePath, root, issues) ?: return@forEachObject
+            val payload = pluginRoot.resolve(source).normalize()
+            if (!payload.startsWith(pluginRoot) || !payload.isDirectory()) {
+                issues += "${marketplacePath.relativeToUnix(root)}: missing GitHub plugin payload for `$name`"
+            }
+        }
+    }
+
+    private fun readObject(path: Path, displayRoot: Path, issues: MutableList<String>): JsonObject? {
+        if (!path.isRegularFile()) {
+            issues += "missing JSON object: ${path.relativeToUnix(displayRoot)}"
+            return null
+        }
+
+        return try {
+            JsonFiles.readObject(path)
+        } catch (error: Exception) {
+            issues += "invalid JSON object ${path.relativeToUnix(displayRoot)}: ${error.message}"
+            null
+        }
+    }
+
+    private fun requireString(
+        payload: JsonObject,
+        key: String,
+        path: Path,
+        displayRoot: Path,
+        issues: MutableList<String>,
+    ): String? =
+        payload.stringValue(key)?.takeIf { it.isNotBlank() }
+            ?: run {
+                issues += "${path.relativeToUnix(displayRoot)}: missing string field `$key`"
+                null
+            }
+
+    private fun requireValue(
+        condition: Boolean,
+        path: Path,
+        displayRoot: Path,
+        message: String,
+        issues: MutableList<String>,
+    ) {
+        if (!condition) {
+            issues += "${path.relativeToUnix(displayRoot)}: $message"
+        }
+    }
+
+    private fun resolveSourcePath(repo: Path, pathValue: String, issues: MutableList<String>): Path? =
+        resolveRelative(repo.resolve(SOURCE_ROOT), pathValue.removePrefix("source/"), issues)
+
+    private fun resolveRelative(base: Path, pathValue: String, issues: MutableList<String>): Path? {
+        val relativeValue = pathValue.removePrefix("./")
+        val path = Path.of(relativeValue).normalize()
+        if (path.isAbsolute || path.startsWith("..")) {
+            issues += "path escapes its root: $pathValue"
+            return null
+        }
+        return base.resolve(path).normalize()
+    }
+
+    private fun walkRegularFiles(root: Path): Sequence<Path> =
+        Files.walk(root).use { stream ->
+            stream
+                .filter { path -> path.isRegularFile() }
+                .filter { path -> !path.anySegmentIn(SKIPPED_DIRECTORIES) }
+                .toList()
+                .asSequence()
+        }
+
+    private fun Path.anySegmentIn(names: Set<String>): Boolean =
+        iterator().asSequence().any { it.toString() in names }
+
+    private fun JsonElement.primitiveContent(): String? =
+        (this as? JsonPrimitive)?.content
+
+    private fun JsonArray.forEachObject(action: (JsonObject) -> Unit) {
+        forEach { element ->
+            runCatching { element.jsonObject }.getOrNull()?.let(action)
+        }
+    }
+
+    private fun Path.relativeToUnix(base: Path): String =
+        runCatching { base.relativize(this).toString().replace('\\', '/') }
+            .getOrElse { toString().replace('\\', '/') }
+
+    private companion object {
+        val SOURCE_ROOT: Path = Path.of("source")
+        val RETIRED_ROOT_PATHS: List<Path> = listOf(
+            Path.of("packages"),
+            Path.of("scripts"),
+        )
+        val SKIPPED_DIRECTORIES: Set<String> = setOf(
+            ".git",
+            ".gradle",
+            ".idea",
+            ".kotlin",
+            ".local",
+            ".cache",
+            "build",
+            "site",
+        )
     }
 }
 
