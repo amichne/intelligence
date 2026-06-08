@@ -8,18 +8,32 @@ provider payloads are generated into the orphan `codex` and `github` branches.
 payloads are produced by the Kotlin CLI in explicit output directories or
 published branches.
 
-## Consumer Setup
+## Browse First
 
-Preview the provider payloads locally.
+After installing the CLI, browse a repository marketplace by giving the CLI the
+repository reference. The command discovers supported marketplace entrypoints and
+shows plugins separately from standalone primitives.
 
 ```sh
-./gradlew installDevelopmentCli
-.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
-.local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex --no-push
-.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
-.local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
+intelligence marketplace browse amichne/intelligence
+intelligence marketplace browse amichne/intelligence --format json
+```
+
+Standalone primitives are shown only when they are exposed directly by the
+marketplace. Primitives that only exist inside a plugin payload remain bundled
+under that plugin.
+
+## Projection Preview
+
+Preview provider payloads locally when changing marketplace projection logic.
+
+```sh
+intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+intelligence marketplace publish-branch --provider codex --branch codex --no-push
+intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
 Use plugin names from [Plugin families](../available/plugin-families.md) as

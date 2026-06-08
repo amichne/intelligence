@@ -22,6 +22,5 @@ plugin or marketplace references deliberately.
 ## Validate
 
 ```sh
-./gradlew installDevelopmentCli
-.local/intelligence/bin/intelligence validate
+intelligence validate
 ```

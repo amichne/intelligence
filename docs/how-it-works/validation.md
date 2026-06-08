@@ -12,8 +12,8 @@ structure, and source references there so we can fail before projection.
 
 | Check | What it protects |
 |---|---|
-| `.local/intelligence/bin/intelligence validate` | Runs repository checks from the Kotlin CLI and ensures source edits stay coherent across schema-backed surfaces. |
-| `.local/intelligence/bin/intelligence validate --portable` | Runs the same checks without relying on host-local assumptions. |
+| `intelligence validate` | Runs repository checks from the Kotlin CLI and ensures source edits stay coherent across schema-backed surfaces. |
+| `intelligence validate --portable` | Runs the same checks without relying on host-local assumptions. |
 
 This is the primary safety boundary: the source model must be valid before we
 generate provider payloads.
@@ -24,7 +24,7 @@ Every persisted JSON file should have schema, typed parser, generator, or an
 equivalent assertion boundary.
 
 ```sh
-.local/intelligence/bin/intelligence validate
+intelligence validate
 ```
 
 ## Hooks
@@ -32,7 +32,7 @@ equivalent assertion boundary.
 Parse changed hook JSON and check executable scripts.
 
 ```sh
-.local/intelligence/bin/intelligence validate --portable
+intelligence validate --portable
 bash -n source/hooks/*.sh
 ```
 
@@ -49,9 +49,9 @@ Match the surface you changed with the tightest check.
 |---|---|
 | Hook shell entrypoints | `bash -n source/hooks/*.sh` |
 | JSON hook assets | `python3 -m json.tool source/hooks/name.hook.json` |
-| Marketplace or plugin manifests | `.local/intelligence/bin/intelligence validate` |
+| Marketplace or plugin manifests | `intelligence validate` |
 | Documentation site | `zensical build --clean` |
-| Provider-specific projection | `.local/intelligence/bin/intelligence validate --portable --hydrated <provider-output-dir>` |
+| Provider-specific projection | `intelligence validate --portable --hydrated <provider-output-dir>` |
 
 ## Publish Proof Path
 
@@ -59,12 +59,12 @@ For publish flows, keep the same source-to-projection sequence: validate source,
 materialize outputs, then verify hydration.
 
 ```sh
-.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
-.local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex --no-push
-.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
-.local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
+intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+intelligence marketplace publish-branch --provider codex --branch codex --no-push
+intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
 If a provider check fails, repair projection logic or schema boundaries, then

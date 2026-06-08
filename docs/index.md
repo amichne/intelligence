@@ -19,17 +19,17 @@ flowchart LR
 
 ## Start Here
 
-Install the local CLI from the Kotlin build and validate the source graph.
+Browse the marketplace from the installed CLI.
 
 ```sh
-./gradlew installDevelopmentCli
-.local/intelligence/bin/intelligence validate
+intelligence marketplace browse amichne/intelligence
+intelligence marketplace browse amichne/intelligence --format json
 ```
 
-Build the docs site when documentation changes.
+Validate the source graph when authoring this repository.
 
 ```sh
-zensical build --clean
+intelligence validate
 ```
 
 ## What You Can Do
@@ -37,6 +37,6 @@ zensical build --clean
 | Job | Entry Point | Result |
 |---|---|---|
 | Inspect plugin families | [What is available](available/index.md) | A map of plugin families and primitives. |
-| Consume the marketplace | [Marketplace](getting-started/marketplace.md) | Provider marketplace materialization commands. |
+| Consume the marketplace | [Marketplace](getting-started/marketplace.md) | Browse marketplace offerings by repository reference. |
 | Author a primitive | [Author a primitive](getting-started/author-a-primitive.md) | A source-owned primitive referenced by plugins. |
 | Validate publishing | [Validation](how-it-works/validation.md) | Source and hydrated output checks before release. |

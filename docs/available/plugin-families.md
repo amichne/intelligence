@@ -20,5 +20,5 @@ sed -n '1,220p' source/plugins/kotlin-engineering/plugin.json
 Validate plugin and marketplace structure after edits.
 
 ```sh
-.local/intelligence/bin/intelligence validate
+intelligence validate
 ```
