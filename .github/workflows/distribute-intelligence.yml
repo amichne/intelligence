@@ -22,13 +22,17 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 concurrency:
   group: distribute-intelligence-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  package:
-    name: Package CLI
+  metadata:
+    name: Resolve distribution metadata
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -37,20 +41,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: graalvm
-          java-version: 21
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Validate packaging inputs
-        run: |
-          ./gradlew :cli:test :cli:installDist installDevelopmentCli
-          .local/intelligence/bin/intelligence validate --portable
 
       - name: Resolve artifact version
         id: version
@@ -75,53 +65,149 @@ jobs:
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
           echo "Resolved package version: ${version}"
 
-      - name: Package CLI
-        run: |
-          set -euo pipefail
-          version="${{ steps.version.outputs.version }}"
-          ./gradlew :cli:distTar :cli:distZip
-          mkdir -p dist
-          cp cli/build/distributions/intelligence.tar.gz "dist/intelligence-${version}.tar.gz"
-          cp cli/build/distributions/intelligence.zip "dist/intelligence-${version}.zip"
-          shasum -a 256 "dist/intelligence-${version}.tar.gz" "dist/intelligence-${version}.zip" > dist/SHA256SUMS
+  validate:
+    name: Validate CLI source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
 
-      - name: Smoke test packaged CLI
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Validate source graph
+        run: |
+          ./gradlew :cli:test installDevelopmentCli
+          .local/intelligence/bin/intelligence validate --portable
+
+  native:
+    name: Build native CLI (${{ matrix.target }})
+    needs:
+      - metadata
+      - validate
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-x64
+            runner: ubuntu-24.04
+            executable: intelligence
+            extension: ""
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            executable: intelligence
+            extension: ""
+          - target: macos-x64
+            runner: macos-15-intel
+            executable: intelligence
+            extension: ""
+          - target: macos-arm64
+            runner: macos-15
+            executable: intelligence
+            extension: ""
+          - target: windows-x64
+            runner: windows-2025
+            executable: intelligence.exe
+            extension: ".exe"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build native executable
         run: |
           set -euo pipefail
-          version="${{ steps.version.outputs.version }}"
-          mkdir -p /tmp/intelligence-smoke/unpack /tmp/intelligence-smoke/target
-          tar -xzf "dist/intelligence-${version}.tar.gz" -C /tmp/intelligence-smoke/unpack
-          packaged="/tmp/intelligence-smoke/unpack/intelligence/bin/intelligence"
-          "${packaged}" --help
-          "${packaged}" validate --repo "$PWD" --portable
-          "${packaged}" marketplace materialize --repo "$PWD" --provider codex --out /tmp/intelligence-smoke/codex-marketplace
-          "${packaged}" validate --repo "$PWD" --portable --hydrated /tmp/intelligence-smoke/codex-marketplace
-          "${packaged}" marketplace materialize --repo "$PWD" --provider github --out /tmp/intelligence-smoke/github-marketplace
-          "${packaged}" validate --repo "$PWD" --portable --hydrated /tmp/intelligence-smoke/github-marketplace
+          version="${{ needs.metadata.outputs.version }}"
+          target="${{ matrix.target }}"
+          asset="dist/intelligence-${version}-${target}${{ matrix.extension }}"
+          ./gradlew :cli:nativeCompile --no-daemon
+          mkdir -p dist
+          cp "cli/build/native/nativeCompile/${{ matrix.executable }}" "${asset}"
+          if [[ "${RUNNER_OS}" != "Windows" ]]; then
+            strip "${asset}" || true
+          fi
+          chmod 0755 "${asset}" || true
+          echo "asset=${asset}" >> "${GITHUB_ENV}"
+
+      - name: Verify native executable
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          repo="${PWD}"
+          smoke_root="${RUNNER_TEMP:-/tmp}/intelligence-smoke-${target}"
+          if command -v cygpath >/dev/null 2>&1; then
+            repo="$(cygpath -m "${PWD}")"
+            smoke_root="$(cygpath -m "${smoke_root}")"
+          fi
+          rm -rf "${smoke_root}"
+          mkdir -p "${smoke_root}"
+
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" --help
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" validate --repo "${repo}" --portable
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
+
+      - name: Verify no JVM linkage
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          linkage="${RUNNER_TEMP:-/tmp}/intelligence-linkage.txt"
+          if [[ "${RUNNER_OS}" == "macOS" ]]; then
+            otool -L "${asset}" | tee "${linkage}"
+          else
+            ldd "${asset}" | tee "${linkage}" || true
+          fi
+          if grep -Eiq 'libjvm|libjli|JavaVirtualMachines|/java/' "${linkage}"; then
+            echo "::error::native executable links against a JVM runtime"
+            exit 1
+          fi
 
       - name: Upload CLI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: intelligence-${{ steps.version.outputs.version }}
-          path: |
-            dist/intelligence-${{ steps.version.outputs.version }}.tar.gz
-            dist/intelligence-${{ steps.version.outputs.version }}.zip
-            dist/SHA256SUMS
+          name: intelligence-${{ needs.metadata.outputs.version }}-${{ matrix.target }}
+          path: ${{ env.asset }}
           if-no-files-found: error
 
   release:
     name: Publish release assets
     if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true')
-    needs: package
+    needs:
+      - metadata
+      - native
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Download CLI artifact
+      - name: Download CLI artifacts
         uses: actions/download-artifact@v4
         with:
-          name: intelligence-${{ needs.package.outputs.version }}
+          pattern: intelligence-${{ needs.metadata.outputs.version }}-*
           path: dist
+          merge-multiple: true
+
+      - name: Create checksums
+        run: |
+          set -euo pipefail
+          cd dist
+          shasum -a 256 intelligence-* > SHA256SUMS
 
       - name: Resolve release tag
         id: tag

@@ -23,7 +23,7 @@ sdk env install
 | `.local/intelligence/bin/intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace` | Materialize all provider projections outside the source tree. |
 | `.local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex --no-push` | Build the generated Codex branch locally without pushing. |
 | `.local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push` | Build the generated GitHub branch locally without pushing. |
-| `./gradlew :cli:distTar :cli:distZip` | Build local CLI archives under `cli/build/distributions/`. |
+| `./gradlew :cli:nativeCompile` | Build the self-contained GraalVM native CLI executable under `cli/build/native/nativeCompile/`. |
 
 ## Documentation
 
