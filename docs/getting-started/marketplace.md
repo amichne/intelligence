@@ -26,6 +26,15 @@ Standalone primitives are shown only when they are exposed directly by the
 marketplace. Primitives that only exist inside a plugin payload remain bundled
 under that plugin.
 
+## Recorded Walkthrough
+
+The marketplace flow has an asciinema walkthrough covering browse, JSON output,
+direct git-backed import, validation, Codex and GitHub materialization, default
+publish, and interactive UI import:
+
+- [Published asciinema recording](https://asciinema.org/a/Tt6XWXu7PssolCwy)
+- [Repository asciicast](../assets/asciinema/marketplace-referential-import.cast)
+
 ## Referential Imports
 
 Import plugins by reference instead of copying provider payloads. The direct
