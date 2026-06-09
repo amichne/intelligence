@@ -19,20 +19,46 @@ shows plugins separately from standalone primitives.
 ```sh
 intelligence marketplace browse amichne/intelligence
 intelligence marketplace browse amichne/intelligence --format json
+intelligence marketplace ui
 ```
 
 Standalone primitives are shown only when they are exposed directly by the
 marketplace. Primitives that only exist inside a plugin payload remain bundled
 under that plugin.
 
+## Recorded Walkthrough
+
+The marketplace flow has an asciinema walkthrough covering browse, JSON output,
+direct git-backed import, validation, Codex and GitHub materialization, default
+publish, and interactive UI import:
+
+- [Published asciinema recording](https://asciinema.org/a/04spSj54iNerpDpc)
+- [Repository asciicast](../assets/asciinema/marketplace-referential-import.cast)
+
+## Referential Imports
+
+Import plugins by reference instead of copying provider payloads. The direct
+form resolves the remote marketplace from the repository reference, defaults to
+`main` when `--ref` is omitted, writes a `MARKETPLACE_SOURCE` plugin entry, and
+records exact reconstruction evidence in `.intelligence/marketplace-lock.json`.
+
+```sh
+intelligence marketplace import amichne/intelligence/kotlin-engineering
+intelligence marketplace import amichne/intelligence/kotlin-engineering --ref v0.1.2
+```
+
+The CLI leaves Codex or GitHub Copilot installation as a provider-specific next
+step.
+
 ## Manage Marketplaces
 
-Name external marketplace repositories in the source graph before importing from
-them. The names are repository-local and source-controlled so CI and other users
+Direct imports add external marketplace metadata automatically. Name external
+marketplace repositories explicitly when a project wants stable local aliases.
+The names are repository-local and source-controlled so CI and other users
 resolve the same marketplace graph.
 
 ```sh
-intelligence marketplace remote add shared-tools acme/shared-tools --ref v1.2.0
+intelligence marketplace remote add shared-tools acme/shared-tools
 intelligence marketplace remote list
 intelligence marketplace remote remove shared-tools
 ```
@@ -40,18 +66,14 @@ intelligence marketplace remote remove shared-tools
 Managed external marketplaces are recorded as `externalMarketplaces` entries and
 allowed through `management.allowExternalMarketplaces`.
 
-## Referential Imports
-
-Import plugins by reference instead of copying provider payloads. The CLI writes
-a `MARKETPLACE_SOURCE` plugin entry, records exact lock evidence, and leaves
-Codex or GitHub Copilot installation as a provider-specific next step.
+Named aliases can still be imported directly:
 
 ```sh
-intelligence marketplace import shared-tools/review-stack --version 1.2.0
+intelligence marketplace import shared-tools/review-stack
 ```
 
-Version selectors must be exact in the first implementation. Floating refs and
-range resolution are intentionally rejected until the resolver owns those rules.
+When `--version` is omitted, the CLI imports the exact version declared by the
+remote plugin reference or manifest. Floating version ranges remain rejected.
 
 ## Projection Preview
 
@@ -80,6 +102,7 @@ name resolved under `metadata.pluginRoot`.
 |---|---|---|
 | `source/adaptable.marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
 | `source/plugins/*/plugin.json` | Hand-authored source on `main` | Plugin composition over source primitives. |
+| `.intelligence/marketplace-lock.json` | CLI-written source-controlled state | Resolved imported marketplace references and integrity evidence. |
 | `schemas/` | Hand-authored public contracts | Provider-neutral and adapter JSON Schema definitions. |
 | `cli/` | Kotlin CLI source | Hydrates provider marketplace payloads. |
 | `.agents/plugins/marketplace.json` | CI-generated on `main` and generated on `codex` | Codex marketplace entrypoint. |

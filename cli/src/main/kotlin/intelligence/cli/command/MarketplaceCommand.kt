@@ -31,6 +31,7 @@ internal class MarketplaceCommand(
             BrowseMarketplaceCommand(browserService),
             RemoteMarketplaceCommand(marketplaceService),
             ImportMarketplaceCommand(marketplaceService),
+            MarketplaceUiCommand(marketplaceService, browserService),
             MaterializeMarketplaceCommand(marketplaceService),
             PublishMarketplaceCommand(marketplaceService),
             PublishMarketplaceBranchCommand(marketplaceService),
@@ -195,21 +196,44 @@ private class ImportMarketplaceCommand(
     private val repo by repoOption()
 
     private val plugin by argument(
-        name = "marketplace/plugin",
-        help = "Plugin to import by repo-local marketplace name and plugin name.",
+        name = "marketplace/plugin|repository/plugin",
+        help = "Plugin to import by named marketplace or direct repository reference.",
     )
 
-    private val version by option("--version", help = "Exact plugin version to import.")
-        .required()
+    private val version by option("--version", help = "Exact plugin version to import. Defaults to the remote plugin version.")
+
+    private val ref by option("--ref", help = "Branch, tag, or SHA for direct repository imports. Defaults to main.")
 
     override fun help(context: Context): String =
-        "Import a plugin by portable marketplace reference."
+        "Import a plugin by portable marketplace reference or direct repository/plugin reference."
 
     override fun run() {
         try {
-            marketplaceService.importPlugin(repoRoot = repo, plugin = plugin, version = version)
+            marketplaceService.importPlugin(repoRoot = repo, target = plugin, version = version, ref = ref)
         } catch (failure: MarketplaceFailure) {
             throw CliktError(failure.message ?: "marketplace import failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
+private class MarketplaceUiCommand(
+    private val marketplaceService: MarketplaceService,
+    private val browserService: MarketplaceBrowserService,
+) : CliktCommand(
+    name = "ui",
+) {
+    private val repo by repoOption()
+
+    private val ref by option("--ref", help = "Branch, tag, or SHA for direct imports selected in the UI. Defaults to main.")
+
+    override fun help(context: Context): String =
+        "Interactively browse, import, and publish marketplace offerings."
+
+    override fun run() {
+        try {
+            MarketplaceTerminalUi(marketplaceService, browserService).run(repoRoot = repo, ref = ref)
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace ui failed", statusCode = failure.exitCode)
         }
     }
 }

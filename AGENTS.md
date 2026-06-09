@@ -31,6 +31,8 @@ not justified.
 - `source/profiles/` contains schema-validated workflow profiles that select
   marketplace plugins, hooks, and validation commands.
 - `source/templates/` contains primitive scaffold templates used by local tooling.
+- `.intelligence/marketplace-lock.json` records resolved imported marketplace
+  references and integrity evidence needed to reconstruct remote imports.
 - `schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
 - `cli/` contains the Kotlin Clikt command-line application.
@@ -46,6 +48,8 @@ not justified.
   instructions, prompts, and concepts.
 - A plugin is a composed installable workflow defined under `source/plugins/`.
 - Marketplace exposure is curated through `source/adaptable.marketplace.json`.
+- Marketplace imports are reconstructed through
+  `.intelligence/marketplace-lock.json`.
 - Provider payloads are generated marketplace output, not authoring source.
   Treat tracked `.agents/plugins/` and `.github/plugin/` files as CI-owned
   publication artifacts.

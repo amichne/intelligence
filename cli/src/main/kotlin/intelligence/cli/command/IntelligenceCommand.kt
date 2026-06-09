@@ -6,6 +6,7 @@ import intelligence.cli.marketplace.MarketplaceService
 import intelligence.cli.validation.ValidationService
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.core.subcommands
 
 internal class IntelligenceCommand(
@@ -14,6 +15,9 @@ internal class IntelligenceCommand(
     name = "intelligence",
 ) {
     init {
+        context {
+            helpFormatter = { IntelligenceHelpFormatter(it) }
+        }
         val validationService = ValidationService(output = { echo(it) })
         val marketplaceService = MarketplaceService(processRunner = processRunner, output = { echo(it) })
         val browserService = MarketplaceBrowserService()

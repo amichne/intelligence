@@ -32,6 +32,7 @@ internal class ValidationService(
         validateRetiredRootPaths(repository, issues)
         validateJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
         validateJsonSyntax(repository.resolve(SCHEMAS_ROOT), issues)
+        validateOptionalJsonSyntax(repository.resolve(INTELLIGENCE_ROOT), issues)
         validateMarketplaceSource(repository, issues)
 
         options.hydrated?.let { hydrated ->
@@ -70,6 +71,12 @@ internal class ValidationService(
                     issues += "invalid JSON ${path.relativeToUnix(root.parent)}: ${error.message}"
                 }
             }
+    }
+
+    private fun validateOptionalJsonSyntax(root: Path, issues: MutableList<String>) {
+        if (root.exists()) {
+            validateJsonSyntax(root, issues)
+        }
     }
 
     private fun validateMarketplaceSource(repo: Path, issues: MutableList<String>) {
@@ -246,19 +253,19 @@ internal class ValidationService(
                     targetSource.stringValue("version") == version
             }
         if (lockEntry == null) {
-            issues += "${SOURCE_LOCK_PATH.relativeToUnix(repo)}: missing lock entry for imported plugin `$entryName`"
+            issues += "${MARKETPLACE_LOCK_PATH.relativeToUnix(repo)}: missing lock entry for imported plugin `$entryName`"
             return
         }
         if (lockEntry.objectValue("resolvedSource") == null) {
-            issues += "${SOURCE_LOCK_PATH.relativeToUnix(repo)}: imported plugin `$entryName` is missing resolvedSource"
+            issues += "${MARKETPLACE_LOCK_PATH.relativeToUnix(repo)}: imported plugin `$entryName` is missing resolvedSource"
         }
         if (!lockEntry.stringValue("integrity").orEmpty().startsWith("sha256:")) {
-            issues += "${SOURCE_LOCK_PATH.relativeToUnix(repo)}: imported plugin `$entryName` is missing sha256 integrity"
+            issues += "${MARKETPLACE_LOCK_PATH.relativeToUnix(repo)}: imported plugin `$entryName` is missing sha256 integrity"
         }
     }
 
     private fun readLock(repo: Path, issues: MutableList<String>): JsonObject? {
-        val lockPath = repo.resolve(SOURCE_LOCK_PATH)
+        val lockPath = repo.resolve(MARKETPLACE_LOCK_PATH)
         if (!lockPath.exists()) {
             return null
         }
@@ -500,7 +507,8 @@ internal class ValidationService(
     private companion object {
         val SOURCE_ROOT: Path = Path.of("source")
         val SCHEMAS_ROOT: Path = Path.of("schemas")
-        val SOURCE_LOCK_PATH: Path = SOURCE_ROOT.resolve("marketplace-lock.json")
+        val INTELLIGENCE_ROOT: Path = Path.of(".intelligence")
+        val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
         val RETIRED_ROOT_PATHS: List<Path> = listOf(
             Path.of("packages"),
             Path.of("scripts"),
