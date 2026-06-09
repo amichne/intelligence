@@ -3,7 +3,7 @@
 Use this reference for `source/plugins/<name>/plugin.json` in this repository.
 
 The manifest shape is governed by
-`source/schemas/core/plugin.schema.json`. Validate changes with
+`schemas/core/plugin.schema.json`. Validate changes with
 `node scripts/validate-manifests.mjs`.
 
 ## Manifest Pattern

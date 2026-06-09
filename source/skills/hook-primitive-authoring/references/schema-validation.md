@@ -8,9 +8,9 @@ This repository owns the schema reference material used by hook validation. The
 manifest validator loads schemas from:
 
 ```text
-source/schemas/core/
-source/schemas/adapters/
-source/schemas/marketplace/
+schemas/core/
+schemas/adapters/
+schemas/marketplace/
 ```
 
 Hook metadata is validated with `hook.schema.json`, plugin composition with
@@ -22,7 +22,7 @@ node scripts/validate-manifests.mjs
 ```
 
 Adapter projections under `source/hooks/<adapter>/` validate against the
-matching schema in `source/schemas/adapters/<adapter>/`. The same command also
+matching schema in `schemas/adapters/<adapter>/`. The same command also
 checks local primitive references and rejects any JSON file that is not covered
 by a schema validation path.
 
@@ -33,9 +33,9 @@ owning schema before treating the artifact as accepted.
 ## Validation Checklist
 
 - `source/hooks/<name>.hook.json` parses as JSON.
-- The hook metadata validates against `source/schemas/core/hook.schema.json`.
+- The hook metadata validates against `schemas/core/hook.schema.json`.
 - Adapter projections validate against their adapter schema, such as
-  `source/schemas/adapters/codex/hooks.schema.json` for
+  `schemas/adapters/codex/hooks.schema.json` for
   `source/hooks/codex/*.json`.
 - Every local `path` exists.
 - Every `dependsOn` reference points at a canonical primitive.

@@ -35,7 +35,7 @@ repo-owned primitive before any plugin composes it.
    at the hook root, and adapter config under `source/hooks/<adapter>/`.
 
 3. Identify schemas.
-   For neutral metadata, use the local `source/schemas/core/hook.schema.json`
+   For neutral metadata, use the local `schemas/core/hook.schema.json`
    path through `node scripts/validate-manifests.mjs`. For runtime adapters,
    use the adapter schema when one exists and still parse JSON locally.
 

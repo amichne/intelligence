@@ -24,10 +24,10 @@
       ]
     },
     "name": {
-      "$ref": "reference-definitions.schema.json#/$defs/Name"
+      "$ref": "../core/reference-definitions.schema.json#/$defs/Name"
     },
     "owner": {
-      "$ref": "reference-definitions.schema.json#/$defs/Owner"
+      "$ref": "../core/reference-definitions.schema.json#/$defs/Owner"
     },
     "description": {
       "type": "string",
@@ -38,13 +38,33 @@
       ]
     },
     "management": {
-      "$ref": "reference-definitions.schema.json#/$defs/ManagementPolicy"
+      "$ref": "../core/reference-definitions.schema.json#/$defs/ManagementPolicy"
+    },
+    "externalMarketplaces": {
+      "type": "array",
+      "description": "Named external marketplace repositories available to imports and MARKETPLACE_SOURCE references.",
+      "items": {
+        "$ref": "../core/reference-definitions.schema.json#/$defs/ExternalMarketplace"
+      },
+      "examples": [
+        [
+          {
+            "type": "EXTERNAL_MARKETPLACE",
+            "name": "shared-tools",
+            "source": {
+              "type": "GITHUB_SOURCE",
+              "repo": "acme/shared-tools",
+              "ref": "v1.2.0"
+            }
+          }
+        ]
+      ]
     },
     "plugins": {
       "type": "array",
       "description": "Plugin entries exposed by this marketplace.",
       "items": {
-        "$ref": "reference-definitions.schema.json#/$defs/PluginEntry"
+        "$ref": "../core/reference-definitions.schema.json#/$defs/PluginEntry"
       },
       "examples": [
         [
@@ -67,7 +87,7 @@
       "type": "array",
       "description": "Standalone skill primitives exposed by this marketplace.",
       "items": {
-        "$ref": "skill.schema.json"
+        "$ref": "../core/skill.schema.json"
       },
       "examples": [
         [
@@ -88,7 +108,7 @@
       "type": "array",
       "description": "Standalone agent primitives exposed by this marketplace.",
       "items": {
-        "$ref": "agent.schema.json"
+        "$ref": "../core/agent.schema.json"
       },
       "examples": [
         [
@@ -108,7 +128,7 @@
       "type": "array",
       "description": "Standalone instruction primitives exposed by this marketplace.",
       "items": {
-        "$ref": "instruction.schema.json"
+        "$ref": "../core/instruction.schema.json"
       },
       "examples": [
         [
@@ -128,7 +148,7 @@
       "type": "array",
       "description": "Standalone hook primitives exposed by this marketplace.",
       "items": {
-        "$ref": "hook.schema.json"
+        "$ref": "../core/hook.schema.json"
       },
       "examples": [
         [
@@ -145,7 +165,7 @@
       ]
     },
     "metadata": {
-      "$ref": "reference-definitions.schema.json#/$defs/StringMap"
+      "$ref": "../core/reference-definitions.schema.json#/$defs/StringMap"
     }
   },
   "required": [
@@ -173,6 +193,17 @@
           "shared-tools"
         ]
       },
+      "externalMarketplaces": [
+        {
+          "type": "EXTERNAL_MARKETPLACE",
+          "name": "shared-tools",
+          "source": {
+            "type": "GITHUB_SOURCE",
+            "repo": "acme/shared-tools",
+            "ref": "v1.2.0"
+          }
+        }
+      ],
       "plugins": [
         {
           "type": "PLUGIN_ENTRY",

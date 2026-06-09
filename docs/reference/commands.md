@@ -1,8 +1,8 @@
 # Commands
 
-This catalog describes the CLI operations by job. Use `intelligence --help` for
-the top-level command list, and add `--help` after any command group or command
-for focused usage.
+This catalog describes the portable marketplace operator commands by job. Use
+`intelligence --help` for the top-level command list, and add `--help` after any
+command group or command for focused usage.
 
 ## Discover
 
@@ -25,6 +25,27 @@ Validate before trusting source graph changes or generated provider output.
 | Validate portable source | `intelligence validate --portable` | You want checks that avoid host-local assumptions. |
 | Validate hydrated output | `intelligence validate --portable --hydrated /tmp/intelligence-marketplace` | You materialized provider output and want to check the generated shape. |
 
+## Manage
+
+Manage named external marketplaces in repository-local, source-controlled
+metadata. These names are the only marketplace names imports may reference.
+
+| Operation | Command | Use When |
+|---|---|---|
+| Add external marketplace | `intelligence marketplace remote add shared-tools acme/shared-tools --ref v1.2.0` | You want this repo to import plugins from another marketplace. |
+| List external marketplaces | `intelligence marketplace remote list` | You want to inspect the repo-local marketplace registry. |
+| Remove external marketplace | `intelligence marketplace remote remove shared-tools` | You no longer want imports to resolve from that marketplace. |
+
+## Import
+
+Import by reference. The CLI writes `MARKETPLACE_SOURCE` entries and lock
+evidence; it does not vendor provider payloads or mutate local harness config.
+
+| Operation | Command | Use When |
+|---|---|---|
+| Import plugin reference | `intelligence marketplace import shared-tools/review-stack --version 1.2.0` | You want a portable plugin entry resolved through a managed marketplace. |
+| Import into another repo | `intelligence marketplace import shared-tools/review-stack --repo /path/to/repo --version 1.2.0` | You are managing a marketplace repo other than the current directory. |
+
 ## Project
 
 Materialize only when authoring or publishing provider marketplace payloads. The
@@ -38,13 +59,15 @@ output directory is replaced.
 
 ## Publish
 
-Publish commands prepare generated orphan branches from source. Use `--no-push`
-for a local proof without updating remotes.
+The default publish command writes CI-owned harness payloads into the repository
+root. Provider flags publish generated orphan branches from source. Use
+`--no-push` with provider flags for a local proof without updating remotes.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Preview Codex branch | `intelligence marketplace publish-branch --provider codex --branch codex --no-push` | You want to inspect the generated Codex branch locally. |
-| Preview GitHub branch | `intelligence marketplace publish-branch --provider github --branch github --no-push` | You want to inspect the generated GitHub branch locally. |
+| Publish default harness payloads | `intelligence marketplace publish` | CI or a local maintainer needs `.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json` refreshed on `main`. |
+| Preview Codex branch | `intelligence marketplace publish --codex --no-push` | You want to inspect the generated Codex branch locally. |
+| Preview GitHub Copilot branch | `intelligence marketplace publish --github --no-push` | You want to inspect the generated GitHub branch locally. |
 
 ## Build
 

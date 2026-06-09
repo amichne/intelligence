@@ -576,6 +576,44 @@
         }
       ]
     },
+    "ExternalMarketplace": {
+      "type": "object",
+      "description": "Named marketplace repository that may satisfy MARKETPLACE_SOURCE references.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "EXTERNAL_MARKETPLACE"
+          ],
+          "examples": [
+            "EXTERNAL_MARKETPLACE"
+          ]
+        },
+        "name": {
+          "$ref": "#/$defs/Name"
+        },
+        "source": {
+          "$ref": "#/$defs/SourceReference"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "type": "EXTERNAL_MARKETPLACE",
+          "name": "shared-tools",
+          "source": {
+            "type": "GITHUB_SOURCE",
+            "repo": "acme/shared-tools",
+            "ref": "v1.2.0"
+          }
+        }
+      ]
+    },
     "Marketplace": {
       "type": "object",
       "description": "Catalog of plugins and optional standalone primitive sets. A marketplace can mix local and remote references.",
@@ -614,6 +652,26 @@
         },
         "management": {
           "$ref": "#/$defs/ManagementPolicy"
+        },
+        "externalMarketplaces": {
+          "type": "array",
+          "description": "Named external marketplace repositories available to imports and MARKETPLACE_SOURCE references.",
+          "items": {
+            "$ref": "#/$defs/ExternalMarketplace"
+          },
+          "examples": [
+            [
+              {
+                "type": "EXTERNAL_MARKETPLACE",
+                "name": "shared-tools",
+                "source": {
+                  "type": "GITHUB_SOURCE",
+                  "repo": "acme/shared-tools",
+                  "ref": "v1.2.0"
+                }
+              }
+            ]
+          ]
         },
         "plugins": {
           "type": "array",
@@ -746,6 +804,17 @@
               "shared-tools"
             ]
           },
+          "externalMarketplaces": [
+            {
+              "type": "EXTERNAL_MARKETPLACE",
+              "name": "shared-tools",
+              "source": {
+                "type": "GITHUB_SOURCE",
+                "repo": "acme/shared-tools",
+                "ref": "v1.2.0"
+              }
+            }
+          ],
           "plugins": [
             {
               "type": "PLUGIN_ENTRY",
@@ -772,6 +841,43 @@
               "name": "code-review"
             }
           ]
+        }
+      ]
+    },
+    "MarketplaceLockRoot": {
+      "type": "object",
+      "description": "Root marker for a marketplace-level lockfile.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "MARKETPLACE_LOCK_ROOT"
+          ],
+          "examples": [
+            "MARKETPLACE_LOCK_ROOT"
+          ]
+        },
+        "name": {
+          "$ref": "#/$defs/Name"
+        },
+        "source": {
+          "$ref": "#/$defs/LocalSource"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "source"
+      ],
+      "additionalProperties": false,
+      "examples": [
+        {
+          "type": "MARKETPLACE_LOCK_ROOT",
+          "name": "acme-tools",
+          "source": {
+            "type": "LOCAL_SOURCE",
+            "path": "./adaptable.marketplace.json"
+          }
         }
       ]
     },
@@ -901,7 +1007,14 @@
           ]
         },
         "root": {
-          "$ref": "#/$defs/PluginReference"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PluginReference"
+            },
+            {
+              "$ref": "#/$defs/MarketplaceLockRoot"
+            }
+          ]
         },
         "entries": {
           "type": "array",

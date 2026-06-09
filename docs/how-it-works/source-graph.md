@@ -4,9 +4,11 @@ The repository starts from one governing principle:
 **a reusable primitive or plugin family is valid only when it has a provider-neutral
 JSON form that is enforced by schema.**
 
-That schema becomes the first principle concern because it is the only place where
-we state invariant behavior and composition rules. Every concrete marketplace
-authoring and adapter surface is derived from this canonical model.
+That schema becomes the first principle concern because it is where we state
+invariant behavior and composition rules. The contracts live at root `schemas/`
+so the repository shape is visible before entering authored content. Every
+concrete marketplace authoring and adapter surface is derived from this
+canonical model.
 
 ## Canonical source model
 
@@ -15,7 +17,7 @@ schemas.
 
 | Source | Canonical role |
 |---|---|
-| `source/schemas/` | Defines the core grammar and validation boundaries that all
+| `schemas/` | Defines the core grammar and validation boundaries that all
 authors must satisfy. |
 | `source/skills/` | Independent reusable skill behavior in normalized shape. |
 | `source/agents/` | Agent profile primitives bound to explicit schema fields. |
@@ -55,15 +57,14 @@ flowchart TD
   Build --> Runtime[Target runtime usage]
   Runtime --> Verify[Portable + hydrated checks]
 
-  Schema --> SchemaFile[source/schemas/
-and contracts]
+  Schema --> SchemaFile[Root schemas/ contracts]
 ```
 
 When a runtime lacks a native concept, we project into the nearest practical
 representation and keep the canonical shape unchanged. For this repository,
-Codex and GitHub payloads are published to generated branches or explicit
-output directories from `source/`; they are not independent sources and are not
-checked into the source branch.
+Codex and GitHub Copilot payloads are published to CI-owned default harness
+paths on `main`, generated branches, or explicit output directories from
+`source/`; they are not independent sources.
 
 ## Practical workflow for contributors
 
@@ -74,7 +75,8 @@ Before moving from source to adapters, keep this sequence.
 2. Run schema gates to ensure the canonical model remains valid.
 3. Materialize provider outputs with the Kotlin CLI and hydrate-check them with
    `--portable --hydrated` so adapter assumptions are explicitly tested.
-4. Commit only source edits as truth; treat generated surfaces as derived.
+4. Commit source edits as truth; treat generated surfaces as derived, even when
+   CI commits refreshed default harness payloads.
 
 This preserves one representation with many targets and makes safety review
 simple: if a target model differs unexpectedly, the bug is in the adapter path,

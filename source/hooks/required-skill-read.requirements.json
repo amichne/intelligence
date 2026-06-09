@@ -1,5 +1,5 @@
 {
-  "$schema": "../schemas/hooks/skill-requirements.schema.json",
+  "$schema": "../../schemas/hooks/skill-requirements.schema.json",
   "type": "HOOK_SKILL_REQUIREMENTS",
   "schemaVersion": 1,
   "mode": "ADVISORY",

@@ -31,13 +31,14 @@ not justified.
 - `source/profiles/` contains schema-validated workflow profiles that select
   marketplace plugins, hooks, and validation commands.
 - `source/templates/` contains primitive scaffold templates used by local tooling.
-- `source/schemas/` contains public-facing JSON Schema contracts for primitive,
+- `schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
 - `cli/` contains the Kotlin Clikt command-line application.
-- Provider marketplace payloads are materialized outputs. Generate them outside
-  the source tree or publish them to generated branches through the Kotlin CLI;
-  do not check in `.agents/plugins/`, `.github/plugin/`, `plugins/`, or
-  `marketplace-lock.json`.
+- Provider marketplace payloads are materialized outputs. `main` carries
+  CI-generated default harness payloads under `.agents/plugins/` and
+  `.github/plugin/`; do not edit those by hand. Provider orphan branches are
+  still generated through the Kotlin CLI with `marketplace publish --codex` or
+  `marketplace publish --github`.
 
 ## Terminology
 
@@ -46,14 +47,16 @@ not justified.
 - A plugin is a composed installable workflow defined under `source/plugins/`.
 - Marketplace exposure is curated through `source/adaptable.marketplace.json`.
 - Provider payloads are generated marketplace output, not authoring source.
+  Treat tracked `.agents/plugins/` and `.github/plugin/` files as CI-owned
+  publication artifacts.
 
 ## Source Rules
 
 - Keep primitives useful outside plugins. Plugins compose existing primitives;
   they do not own the only copy of a primitive.
 - Keep `source/adaptable.marketplace.json` aligned with
-  `source/schemas/marketplace/` and provider-neutral definitions in
-  `source/schemas/core/`.
+  `schemas/marketplace/` and provider-neutral definitions in
+  `schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `.local/intelligence/bin/intelligence validate` is the coverage gate and must
@@ -79,4 +82,4 @@ not justified.
   schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
-  `source/schemas/core/hook.schema.json`.
+  `schemas/core/hook.schema.json`.

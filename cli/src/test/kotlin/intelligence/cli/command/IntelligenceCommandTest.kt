@@ -4,6 +4,7 @@ import intelligence.cli.io.ProcessRunner
 import java.nio.file.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import com.github.ajalt.clikt.testing.test
@@ -14,7 +15,7 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("--help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Browse, validate, materialize, and publish"))
+        assertTrue(result.stdout.contains("portable plugin marketplaces"))
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
     }
@@ -24,10 +25,13 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace --help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Browse marketplace offerings and manage provider projections"))
+        assertTrue(result.stdout.contains("Browse, manage, import, project, and publish portable marketplaces"))
         assertTrue(result.stdout.contains("browse"))
+        assertTrue(result.stdout.contains("remote"))
+        assertTrue(result.stdout.contains("import"))
         assertTrue(result.stdout.contains("materialize"))
-        assertTrue(result.stdout.contains("publish-branch"))
+        assertTrue(result.stdout.contains("publish"))
+        assertFalse(result.stdout.contains("publish-branch"))
     }
 
     @Test
@@ -39,6 +43,16 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("paths"))
         assertTrue(result.stdout.contains("owner/repo shorthand"))
         assertTrue(result.stdout.contains("Auto tries published provider marketplaces"))
+    }
+
+    @Test
+    fun `marketplace publish help exposes default and branch publication`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace publish --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("default harness marketplaces"))
+        assertTrue(result.stdout.contains("--codex"))
+        assertTrue(result.stdout.contains("--copilot"))
     }
 
     @Test
@@ -95,7 +109,7 @@ class IntelligenceCommandTest {
         )
 
         assertNotEquals(0, result.statusCode)
-        assertTrue(result.stderr.contains("provider must be one of: all, codex, github"))
+        assertTrue(result.stderr.contains("provider must be one of: all, codex, github, copilot"))
     }
 
     private class RecordingProcessRunner(

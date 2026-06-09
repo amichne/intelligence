@@ -355,7 +355,7 @@
           "uniqueItems": true
         },
         {
-          "$ref": "claude-hooks.schema.json#/$defs/hooks"
+          "$ref": "../adapters/claude/hooks.schema.json#/$defs/hooks"
         }
       ]
     },

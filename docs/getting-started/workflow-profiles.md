@@ -28,7 +28,7 @@ Apply only after reviewing the profile and marketplace references.
 ## Profile Shape
 
 Profiles live under `source/profiles/` in this repository and are validated
-against `source/schemas/core/workflow-profile.schema.json`.
+against `schemas/core/workflow-profile.schema.json`.
 
 The profile shape answers these questions:
 
