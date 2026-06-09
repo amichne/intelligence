@@ -113,10 +113,6 @@ jobs:
             runner: macos-15
             executable: intelligence
             extension: ""
-          - target: windows-x64
-            runner: windows-2025
-            executable: intelligence.exe
-            extension: ".exe"
     steps:
       - name: Check out source
         uses: actions/checkout@v4
