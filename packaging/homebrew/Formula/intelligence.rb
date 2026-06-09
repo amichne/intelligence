@@ -70,6 +70,6 @@ class Intelligence < Formula
   end
 
   test do
-    assert_match "Repository CLI", shell_output("#{bin}/intelligence --help")
+    assert_match "portable plugin marketplaces", shell_output("#{bin}/intelligence --help")
   end
 end
