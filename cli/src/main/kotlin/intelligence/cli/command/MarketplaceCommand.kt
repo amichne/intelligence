@@ -29,6 +29,8 @@ internal class MarketplaceCommand(
     init {
         subcommands(
             BrowseMarketplaceCommand(browserService),
+            RemoteMarketplaceCommand(marketplaceService),
+            ImportMarketplaceCommand(marketplaceService),
             MaterializeMarketplaceCommand(marketplaceService),
             PublishMarketplaceCommand(marketplaceService),
             PublishMarketplaceBranchCommand(marketplaceService),
@@ -36,7 +38,7 @@ internal class MarketplaceCommand(
     }
 
     override fun help(context: Context): String =
-        "Browse marketplace offerings and manage provider projections."
+        "Browse, manage, import, project, and publish portable marketplaces."
 
     override fun run() = Unit
 }
@@ -88,6 +90,126 @@ private class BrowseMarketplaceCommand(
             )
         } catch (failure: MarketplaceFailure) {
             throw CliktError(failure.message ?: "marketplace browse failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
+private class RemoteMarketplaceCommand(
+    marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "remote",
+) {
+    init {
+        subcommands(
+            AddRemoteMarketplaceCommand(marketplaceService),
+            ListRemoteMarketplaceCommand(marketplaceService),
+            RemoveRemoteMarketplaceCommand(marketplaceService),
+        )
+    }
+
+    override fun help(context: Context): String =
+        "Manage repo-local external marketplace names."
+
+    override fun run() = Unit
+}
+
+private class AddRemoteMarketplaceCommand(
+    private val marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "add",
+) {
+    private val repo by repoOption()
+
+    private val name by argument(
+        name = "name",
+        help = "Repo-local marketplace name used by MARKETPLACE_SOURCE references.",
+    )
+
+    private val repository by argument(
+        name = "repository",
+        help = "Local repository path, GitHub owner/repo, GitHub URL, or git URL.",
+    )
+
+    private val ref by option("--ref", help = "Exact branch, tag, or SHA for git-backed marketplaces.")
+
+    override fun help(context: Context): String =
+        "Add a named external marketplace to the source graph."
+
+    override fun run() {
+        try {
+            marketplaceService.addRemote(repoRoot = repo, name = name, repository = repository, ref = ref)
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace remote add failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
+private class ListRemoteMarketplaceCommand(
+    private val marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "list",
+) {
+    private val repo by repoOption()
+
+    override fun help(context: Context): String =
+        "List named external marketplaces from the source graph."
+
+    override fun run() {
+        try {
+            marketplaceService.listRemotes(repoRoot = repo)
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace remote list failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
+private class RemoveRemoteMarketplaceCommand(
+    private val marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "remove",
+) {
+    private val repo by repoOption()
+
+    private val name by argument(
+        name = "name",
+        help = "Repo-local marketplace name to remove.",
+    )
+
+    override fun help(context: Context): String =
+        "Remove a named external marketplace from the source graph."
+
+    override fun run() {
+        try {
+            marketplaceService.removeRemote(repoRoot = repo, name = name)
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace remote remove failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
+private class ImportMarketplaceCommand(
+    private val marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "import",
+) {
+    private val repo by repoOption()
+
+    private val plugin by argument(
+        name = "marketplace/plugin",
+        help = "Plugin to import by repo-local marketplace name and plugin name.",
+    )
+
+    private val version by option("--version", help = "Exact plugin version to import.")
+        .required()
+
+    override fun help(context: Context): String =
+        "Import a plugin by portable marketplace reference."
+
+    override fun run() {
+        try {
+            marketplaceService.importPlugin(repoRoot = repo, plugin = plugin, version = version)
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace import failed", statusCode = failure.exitCode)
         }
     }
 }

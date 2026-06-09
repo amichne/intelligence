@@ -24,7 +24,7 @@ internal class IntelligenceCommand(
     }
 
     override fun help(context: Context): String =
-        "Browse, validate, materialize, and publish Intelligence marketplaces."
+        "Operate portable plugin marketplaces across harness projections."
 
     override fun run() = Unit
 }

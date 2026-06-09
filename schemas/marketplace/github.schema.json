@@ -284,7 +284,7 @@
           "$ref": "#/$defs/relativePath"
         },
         {
-          "$ref": "github-hooks.schema.json#/$defs/hooks"
+          "$ref": "../adapters/github/hooks.schema.json#/$defs/hooks"
         }
       ]
     },

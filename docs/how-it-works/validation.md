@@ -7,8 +7,9 @@ Validation happens in two layers.
 
 ## Layer 1: Canonical Source Integrity
 
-Canonical artifacts in `source/` are the authority. We first validate syntax,
-structure, and source references there so we can fail before projection.
+Canonical artifacts in `source/` and public contracts in root `schemas/` are
+the authority. We first validate syntax, structure, and source references there
+so we can fail before projection.
 
 | Check | What it protects |
 |---|---|

@@ -31,7 +31,7 @@ not justified.
 - `source/profiles/` contains schema-validated workflow profiles that select
   marketplace plugins, hooks, and validation commands.
 - `source/templates/` contains primitive scaffold templates used by local tooling.
-- `source/schemas/` contains public-facing JSON Schema contracts for primitive,
+- `schemas/` contains public-facing JSON Schema contracts for primitive,
   plugin, marketplace, hook, and adapter surfaces.
 - `cli/` contains the Kotlin Clikt command-line application.
 - Provider marketplace payloads are materialized outputs. `main` carries
@@ -55,8 +55,8 @@ not justified.
 - Keep primitives useful outside plugins. Plugins compose existing primitives;
   they do not own the only copy of a primitive.
 - Keep `source/adaptable.marketplace.json` aligned with
-  `source/schemas/marketplace/` and provider-neutral definitions in
-  `source/schemas/core/`.
+  `schemas/marketplace/` and provider-neutral definitions in
+  `schemas/core/`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `.local/intelligence/bin/intelligence validate` is the coverage gate and must
@@ -82,4 +82,4 @@ not justified.
   schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
-  `source/schemas/core/hook.schema.json`.
+  `schemas/core/hook.schema.json`.

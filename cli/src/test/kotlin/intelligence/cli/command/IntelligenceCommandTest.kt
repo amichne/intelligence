@@ -15,7 +15,7 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("--help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Browse, validate, materialize, and publish"))
+        assertTrue(result.stdout.contains("portable plugin marketplaces"))
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
     }
@@ -25,8 +25,10 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace --help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Browse marketplace offerings and manage provider projections"))
+        assertTrue(result.stdout.contains("Browse, manage, import, project, and publish portable marketplaces"))
         assertTrue(result.stdout.contains("browse"))
+        assertTrue(result.stdout.contains("remote"))
+        assertTrue(result.stdout.contains("import"))
         assertTrue(result.stdout.contains("materialize"))
         assertTrue(result.stdout.contains("publish"))
         assertFalse(result.stdout.contains("publish-branch"))

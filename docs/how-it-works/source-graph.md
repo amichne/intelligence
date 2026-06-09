@@ -4,9 +4,11 @@ The repository starts from one governing principle:
 **a reusable primitive or plugin family is valid only when it has a provider-neutral
 JSON form that is enforced by schema.**
 
-That schema becomes the first principle concern because it is the only place where
-we state invariant behavior and composition rules. Every concrete marketplace
-authoring and adapter surface is derived from this canonical model.
+That schema becomes the first principle concern because it is where we state
+invariant behavior and composition rules. The contracts live at root `schemas/`
+so the repository shape is visible before entering authored content. Every
+concrete marketplace authoring and adapter surface is derived from this
+canonical model.
 
 ## Canonical source model
 
@@ -15,7 +17,7 @@ schemas.
 
 | Source | Canonical role |
 |---|---|
-| `source/schemas/` | Defines the core grammar and validation boundaries that all
+| `schemas/` | Defines the core grammar and validation boundaries that all
 authors must satisfy. |
 | `source/skills/` | Independent reusable skill behavior in normalized shape. |
 | `source/agents/` | Agent profile primitives bound to explicit schema fields. |
@@ -55,8 +57,7 @@ flowchart TD
   Build --> Runtime[Target runtime usage]
   Runtime --> Verify[Portable + hydrated checks]
 
-  Schema --> SchemaFile[source/schemas/
-and contracts]
+  Schema --> SchemaFile[Root schemas/ contracts]
 ```
 
 When a runtime lacks a native concept, we project into the nearest practical

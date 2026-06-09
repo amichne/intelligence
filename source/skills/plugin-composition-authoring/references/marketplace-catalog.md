@@ -3,7 +3,7 @@
 Use this reference when editing `source/adaptable.marketplace.json`.
 
 The catalog shape is governed by
-`source/schemas/marketplace/adaptable.schema.json`. Validate changes with
+`schemas/marketplace/adaptable.schema.json`. Validate changes with
 `node scripts/validate-manifests.mjs`.
 
 ## Catalog Duties
