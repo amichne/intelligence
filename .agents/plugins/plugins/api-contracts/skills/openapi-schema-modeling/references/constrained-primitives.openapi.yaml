@@ -1,0 +1,76 @@
+openapi: 3.1.0
+info:
+  title: Constrained Primitive Contract Examples
+  version: 0.1.0
+  description: OpenAPI schema examples for named primitive contracts without semantic nulls.
+x-contract-policy:
+  semanticNull: forbidden
+  absentMeaning: Use omitted optional fields, explicit variants, or typed commands instead of null.
+paths: {}
+components:
+  schemas:
+    TenantId:
+      type: string
+      description: Stable tenant identifier.
+      pattern: "^tenant_[a-z0-9][a-z0-9-]{1,62}$"
+      minLength: 9
+      maxLength: 70
+      examples:
+        - tenant_acme-ops
+    OrderId:
+      type: string
+      description: Stable order identifier.
+      pattern: "^ord_[0-9A-HJKMNP-TV-Z]{26}$"
+      minLength: 30
+      maxLength: 30
+      examples:
+        - ord_01HZX7Q9WVJXK6SC2H0MX7J5PG
+    EmailAddress:
+      type: string
+      description: Deliverable contact email supplied by the account owner.
+      format: email
+      minLength: 3
+      maxLength: 254
+      examples:
+        - billing@example.com
+    CursorToken:
+      type: string
+      description: Opaque pagination cursor issued by the API.
+      pattern: "^cur_[A-Za-z0-9_-]{24,256}$"
+      minLength: 28
+      maxLength: 260
+      examples:
+        - cur_U3RhYmxlUGFnZUN1cnNvcl92MQ
+    PageSize:
+      type: integer
+      description: Maximum number of items returned in one page.
+      minimum: 1
+      maximum: 200
+      default: 50
+      examples:
+        - 50
+    CurrencyCode:
+      type: string
+      description: ISO 4217 currency code accepted by this API.
+      enum:
+        - USD
+        - EUR
+        - GBP
+      examples:
+        - USD
+    MoneyAmount:
+      type: object
+      description: Decimal money amount with explicit currency and precision.
+      additionalProperties: false
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: string
+          description: Decimal amount with two fractional digits.
+          pattern: "^-?[0-9]+\\.[0-9]{2}$"
+          examples:
+            - "1250.00"
+        currency:
+          $ref: "#/components/schemas/CurrencyCode"

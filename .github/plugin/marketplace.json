@@ -1,0 +1,223 @@
+{
+  "$schema": "github-marketplace.schema.json",
+  "metadata": {
+    "description": "Curated marketplace for enterprise-ready AI tooling primitives, daily-driver plugins, and agent operating procedures.",
+    "pluginRoot": ".github/plugin/plugins"
+  },
+  "name": "amichne-intelligence",
+  "owner": {
+    "name": "Amichne"
+  },
+  "plugins": [
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Repository baseline for type-safe work: onboarding, shared instructions, and turn-level hooks that keep agents using the right local guidance.",
+      "hooks": "./hooks",
+      "keywords": [
+        "core",
+        "daily-driver",
+        "design",
+        "engineering-baseline",
+        "governance",
+        "hooks",
+        "instructions",
+        "onboarding",
+        "schemas",
+        "skills"
+      ],
+      "license": "UNLICENSED",
+      "name": "engineering-baseline",
+      "skills": "./skills",
+      "source": "engineering-baseline",
+      "strict": true,
+      "tags": [
+        "core",
+        "daily-driver",
+        "design",
+        "governance",
+        "hooks",
+        "instructions",
+        "onboarding",
+        "schemas",
+        "skills"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "agents": "./agents",
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "API contract workflow for JSON Schema and OpenAPI boundaries: schema modeling, operation authoring, typed errors, examples, and review.",
+      "keywords": [
+        "agents",
+        "api",
+        "api-contracts",
+        "boundary",
+        "contracts",
+        "governance",
+        "openapi",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "api-contracts",
+      "skills": "./skills",
+      "source": "api-contracts",
+      "strict": true,
+      "tags": [
+        "agents",
+        "api",
+        "boundary",
+        "contracts",
+        "governance",
+        "openapi",
+        "schemas",
+        "skills",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "agents": "./agents",
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Kotlin engineering workflow for code changes that need typed design, Kast semantics, review, filesystem evidence, Gradle proof, CI, and PR delivery.",
+      "hooks": "./hooks",
+      "keywords": [
+        "agents",
+        "ci",
+        "daily-driver",
+        "delivery",
+        "evidence",
+        "gradle",
+        "hooks",
+        "kast",
+        "kotlin",
+        "kotlin-engineering",
+        "operating-procedure",
+        "quality",
+        "review",
+        "schemas",
+        "skills",
+        "testing",
+        "validation"
+      ],
+      "license": "UNLICENSED",
+      "name": "kotlin-engineering",
+      "skills": "./skills",
+      "source": "kotlin-engineering",
+      "strict": true,
+      "tags": [
+        "agents",
+        "ci",
+        "daily-driver",
+        "delivery",
+        "evidence",
+        "gradle",
+        "hooks",
+        "kast",
+        "kotlin",
+        "operating-procedure",
+        "quality",
+        "review",
+        "schemas",
+        "skills",
+        "testing",
+        "validation"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Git and CI operations workflow for evidence-backed changes: goals, TDD, Git hygiene, PRs, GitHub Actions, releases, and shell-safe automation.",
+      "keywords": [
+        "automation",
+        "ci",
+        "git",
+        "git-ci-operations",
+        "github",
+        "operations",
+        "planning",
+        "pull-requests",
+        "release",
+        "skills",
+        "tdd",
+        "testing",
+        "workflow"
+      ],
+      "license": "UNLICENSED",
+      "name": "git-ci-operations",
+      "skills": "./skills",
+      "source": "git-ci-operations",
+      "strict": true,
+      "tags": [
+        "automation",
+        "ci",
+        "git",
+        "github",
+        "operations",
+        "planning",
+        "pull-requests",
+        "release",
+        "skills",
+        "tdd",
+        "testing",
+        "workflow"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "author": {
+        "name": "Amichne"
+      },
+      "category": "Engineering",
+      "description": "Agent platform authoring kit for maintaining the source graph: skills, agents, hooks, schemas, plugin manifests, repo maps, and docs surfaces.",
+      "keywords": [
+        "agent-platform-authoring",
+        "agents",
+        "authoring",
+        "docs",
+        "governance",
+        "hooks",
+        "marketplace",
+        "plugins",
+        "repository",
+        "schemas",
+        "shell",
+        "skills",
+        "workflow"
+      ],
+      "license": "UNLICENSED",
+      "name": "agent-platform-authoring",
+      "skills": "./skills",
+      "source": "agent-platform-authoring",
+      "strict": true,
+      "tags": [
+        "agents",
+        "authoring",
+        "docs",
+        "governance",
+        "hooks",
+        "marketplace",
+        "plugins",
+        "repository",
+        "schemas",
+        "shell",
+        "skills",
+        "workflow"
+      ],
+      "version": "0.1.0"
+    }
+  ]
+}

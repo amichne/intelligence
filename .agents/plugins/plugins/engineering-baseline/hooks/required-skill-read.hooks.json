@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/codex-hooks.json",
+  "description": "Track required skill reads for source-graph work and remind before other tools run.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 hooks/required-skill-read.py init --repo .",
+            "timeout": 10,
+            "statusMessage": "Starting required-skill read tracking"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 hooks/required-skill-read.py check --repo .",
+            "timeout": 10,
+            "statusMessage": "Checking required skill reads"
+          }
+        ]
+      }
+    ]
+  }
+}

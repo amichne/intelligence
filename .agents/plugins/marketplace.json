@@ -1,0 +1,68 @@
+{
+  "interface": {
+    "displayName": "Amichne Intelligence"
+  },
+  "name": "amichne-intelligence",
+  "plugins": [
+    {
+      "category": "Engineering",
+      "name": "engineering-baseline",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/engineering-baseline",
+        "source": "local"
+      }
+    },
+    {
+      "category": "Engineering",
+      "name": "api-contracts",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/api-contracts",
+        "source": "local"
+      }
+    },
+    {
+      "category": "Engineering",
+      "name": "kotlin-engineering",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/kotlin-engineering",
+        "source": "local"
+      }
+    },
+    {
+      "category": "Engineering",
+      "name": "git-ci-operations",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/git-ci-operations",
+        "source": "local"
+      }
+    },
+    {
+      "category": "Engineering",
+      "name": "agent-platform-authoring",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/agent-platform-authoring",
+        "source": "local"
+      }
+    }
+  ]
+}
