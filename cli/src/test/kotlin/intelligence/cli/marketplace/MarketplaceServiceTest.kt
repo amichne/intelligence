@@ -10,6 +10,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.exists
+import kotlin.io.path.name
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.Test
@@ -185,7 +186,56 @@ class MarketplaceServiceTest {
         val source = imported.jsonObject.objectValue("plugin")!!.objectValue("source")!!
         assertEquals("MARKETPLACE_SOURCE", source.stringValue("type"))
         assertEquals("shared-tools", source.stringValue("marketplace"))
-        assertTrue(repository.resolve("source").resolve("marketplace-lock.json").exists())
+        assertTrue(repository.resolve(".intelligence").resolve("marketplace-lock.json").exists())
+        assertTrue(
+            output.resolve(".agents")
+                .resolve("plugins")
+                .resolve("plugins")
+                .resolve("review-stack")
+                .resolve(".codex-plugin")
+                .resolve("plugin.json")
+                .exists()
+        )
+        assertEquals(
+            0,
+            ValidationService(output = {}).validate(
+                ValidationOptions(
+                    repo = repository,
+                    portable = true,
+                    hydrated = output,
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `direct remote import defaults to main and writes reconstructable lock`() {
+        val repository = minimalMarketplaceRepository()
+        val remote = bareGitMarketplace("shared-tools")
+        val output = Files.createTempDirectory("intelligence-direct-imported-marketplace-")
+        val service = MarketplaceService(output = {})
+
+        service.importPlugin(repository, "${remote}/review-stack", version = null)
+        service.materialize(repository, output, MarketplaceProvider.Codex)
+
+        val marketplace = JsonFiles.readObject(repository.resolve("source").resolve("adaptable.marketplace.json"))
+        val external = marketplace.arrayValue("externalMarketplaces").single().jsonObject
+        val externalSource = external.objectValue("source")!!
+        val imported = marketplace.arrayValue("plugins").single { it.jsonObject.stringValue("name") == "review-stack" }
+        val source = imported.jsonObject.objectValue("plugin")!!.objectValue("source")!!
+        val lockPath = repository.resolve(".intelligence").resolve("marketplace-lock.json")
+        val lock = JsonFiles.readObject(lockPath)
+        val lockEntry = lock.arrayValue("entries").single().jsonObject
+
+        assertEquals("shared-tools", external.stringValue("name"))
+        assertEquals("GIT_SOURCE", externalSource.stringValue("type"))
+        assertEquals("main", externalSource.stringValue("ref"))
+        assertEquals("MARKETPLACE_SOURCE", source.stringValue("type"))
+        assertEquals("shared-tools", source.stringValue("marketplace"))
+        assertEquals("1.2.0", source.stringValue("version"))
+        assertTrue(lockPath.exists())
+        assertEquals("GIT_SOURCE", lockEntry.objectValue("resolvedSource")!!.stringValue("type"))
+        assertTrue(lockEntry.objectValue("resolvedSource")!!.stringValue("sha").orEmpty().isNotBlank())
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
@@ -300,5 +350,28 @@ class MarketplaceServiceTest {
             }
             """.trimIndent(),
         )
+    }
+
+    private fun bareGitMarketplace(name: String): Path {
+        val worktree = Files.createTempDirectory("intelligence-remote-worktree-")
+        val bare = Files.createTempDirectory("intelligence-remote-bare-").resolve("$name.git")
+        writeExternalMarketplace(worktree)
+        runGit(worktree, "init", "--initial-branch", "main")
+        runGit(worktree, "config", "user.name", "Fixture")
+        runGit(worktree, "config", "user.email", "fixture@example.invalid")
+        runGit(worktree, "add", ".")
+        runGit(worktree, "commit", "-m", "Initial marketplace")
+        runGit(worktree, "clone", "--bare", worktree.toString(), bare.toString())
+        assertEquals("$name.git", bare.name)
+        return bare
+    }
+
+    private fun runGit(cwd: Path, vararg args: String) {
+        val process = ProcessBuilder(listOf("git") + args)
+            .directory(cwd.toFile())
+            .redirectOutput(ProcessBuilder.Redirect.DISCARD)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
+            .start()
+        assertEquals(0, process.waitFor(), "git ${args.joinToString(" ")} failed in $cwd")
     }
 }

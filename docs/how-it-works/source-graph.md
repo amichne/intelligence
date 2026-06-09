@@ -25,6 +25,7 @@ authors must satisfy. |
 | `source/concepts/` | Portable instruction and principle objects. |
 | `source/plugins/*/plugin.json` | Referential composition over existing primitives. |
 | `source/adaptable.marketplace.json` | Curated provider-neutral marketplace graph. |
+| `.intelligence/marketplace-lock.json` | Resolved imported marketplace references and integrity evidence. |
 | `source/profiles/*.json` | Runtime usage contracts for target repositories. |
 
 This means the graph is a model, not a pile of export targets.

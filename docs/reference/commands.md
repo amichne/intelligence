@@ -14,6 +14,7 @@ knowing provider branches, entrypoints, plugin paths, or primitive paths.
 | Browse published offerings | `intelligence marketplace browse amichne/intelligence` | You want the default marketplace view from a repository reference. |
 | Browse local source | `intelligence marketplace browse . --provider source` | You are developing this repository and want the authored source catalog. |
 | Browse machine output | `intelligence marketplace browse amichne/intelligence --format json` | You want a script-readable offering catalog. |
+| Interactive marketplace flow | `intelligence marketplace ui` | You want prompts for browse, import, and publish actions. |
 
 ## Validate
 
@@ -28,23 +29,28 @@ Validate before trusting source graph changes or generated provider output.
 ## Manage
 
 Manage named external marketplaces in repository-local, source-controlled
-metadata. These names are the only marketplace names imports may reference.
+metadata. Direct repository imports add this metadata automatically; these
+commands are for explicit aliases and cleanup.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Add external marketplace | `intelligence marketplace remote add shared-tools acme/shared-tools --ref v1.2.0` | You want this repo to import plugins from another marketplace. |
+| Add external marketplace | `intelligence marketplace remote add shared-tools acme/shared-tools` | You want this repo to use a stable alias for another marketplace. |
 | List external marketplaces | `intelligence marketplace remote list` | You want to inspect the repo-local marketplace registry. |
 | Remove external marketplace | `intelligence marketplace remote remove shared-tools` | You no longer want imports to resolve from that marketplace. |
 
 ## Import
 
-Import by reference. The CLI writes `MARKETPLACE_SOURCE` entries and lock
-evidence; it does not vendor provider payloads or mutate local harness config.
+Import by reference. The CLI writes `MARKETPLACE_SOURCE` entries and
+`.intelligence/marketplace-lock.json` evidence; it does not vendor provider
+payloads or mutate local harness config. Direct repository imports default to
+`main` unless `--ref` is supplied.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Import plugin reference | `intelligence marketplace import shared-tools/review-stack --version 1.2.0` | You want a portable plugin entry resolved through a managed marketplace. |
-| Import into another repo | `intelligence marketplace import shared-tools/review-stack --repo /path/to/repo --version 1.2.0` | You are managing a marketplace repo other than the current directory. |
+| Import direct reference | `intelligence marketplace import amichne/intelligence/kotlin-engineering` | You want a portable plugin entry from a remote marketplace without cloning it. |
+| Import pinned ref | `intelligence marketplace import amichne/intelligence/kotlin-engineering --ref v0.1.2` | You want to resolve from a specific branch, tag, or SHA. |
+| Import named alias | `intelligence marketplace import shared-tools/review-stack` | You want a portable plugin entry resolved through managed marketplace metadata. |
+| Import into another repo | `intelligence marketplace import amichne/intelligence/kotlin-engineering --repo /path/to/repo` | You are managing a marketplace repo other than the current directory. |
 
 ## Project
 
@@ -88,6 +94,8 @@ Every command group supports focused help.
 intelligence --help
 intelligence marketplace --help
 intelligence marketplace browse --help
+intelligence marketplace import --help
+intelligence marketplace ui --help
 intelligence validate --help
 ```
 

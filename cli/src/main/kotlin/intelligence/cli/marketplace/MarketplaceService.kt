@@ -195,14 +195,22 @@ internal class MarketplaceService(
 
     fun importPlugin(
         repoRoot: Path,
-        plugin: String,
-        version: String,
+        target: String,
+        version: String?,
+        ref: String? = null,
     ) {
         val root = repoRoot.normalizedAbsolute()
-        val importRef = MarketplaceImportRef.parse(plugin)
-        val exactVersion = ExactVersion.parse(version)
+        val importTarget = MarketplaceImportTarget.parse(
+            value = target,
+            ref = ref,
+            remoteNameForRepository = ::remoteNameForRepository,
+        )
+        val importRef = importTarget.importRef
         val marketplacePath = root.resolve(ADAPTABLE_MARKETPLACE_PATH)
-        val marketplace = marketplace(root)
+        val marketplace = when (importTarget) {
+            is MarketplaceImportTarget.Named -> marketplace(root)
+            is MarketplaceImportTarget.Direct -> marketplace(root).withDirectRemote(root, importTarget)
+        }
         val remote = marketplace.externalMarketplaces()
             .firstOrNull { it.name == importRef.marketplace.value }
             ?: throw MarketplaceFailure.InvalidSource("unknown external marketplace: ${importRef.marketplace.value}")
@@ -216,6 +224,7 @@ internal class MarketplaceService(
             throw MarketplaceFailure.InvalidSource("plugin already exists in marketplace: ${importRef.plugin.value}")
         }
 
+        var importedVersion = ""
         RemoteMarketplaceResolver(root).use { resolver ->
             val resolvedMarketplace = resolver.resolve(remote)
             val remoteMarketplace = marketplaceAt(resolvedMarketplace.root)
@@ -225,6 +234,8 @@ internal class MarketplaceService(
                 ?: throw MarketplaceFailure.InvalidSource(
                     "plugin ${importRef.plugin.value} was not found in ${importRef.marketplace.value}"
                 )
+            val exactVersion = ExactVersion.parse(version ?: remotePluginVersion(resolvedMarketplace.root, remoteEntry))
+            importedVersion = exactVersion.value
             requireRemoteVersion(
                 remoteRoot = resolvedMarketplace.root,
                 remoteEntry = remoteEntry,
@@ -248,8 +259,32 @@ internal class MarketplaceService(
             )
         }
 
-        output("imported ${importRef.marketplace.value}/${importRef.plugin.value} at ${exactVersion.value}")
+        output("imported ${importRef.marketplace.value}/${importRef.plugin.value} at $importedVersion")
         output("provider payloads are unchanged until you run marketplace materialize or marketplace publish")
+    }
+
+    private fun JsonObject.withDirectRemote(
+        repoRoot: Path,
+        target: MarketplaceImportTarget.Direct,
+    ): JsonObject {
+        val source = externalSource(
+            repoRoot = repoRoot,
+            repository = target.repository,
+            ref = target.ref,
+            allowExternalLocalGit = true,
+        )
+        val marketplaceName = target.importRef.marketplace.value
+        val remotes = externalMarketplaces()
+        val existing = remotes.firstOrNull { it.name == marketplaceName }
+        if (existing != null && existing.source != source) {
+            throw MarketplaceFailure.InvalidSource(
+                "direct import marketplace name `$marketplaceName` already points to ${sourceDisplay(existing.source)}"
+            )
+        }
+        return withExternalMarketplaces(
+            (remotes.filterNot { it.name == marketplaceName } + ExternalMarketplace(marketplaceName, source))
+                .sortedBy { it.name }
+        ).withAllowedExternalMarketplace(marketplaceName)
     }
 
     private fun materializeAllMarketplaces(
@@ -890,11 +925,23 @@ internal class MarketplaceService(
         }
     }
 
-    private fun externalSource(repoRoot: Path, repository: String, ref: String?): JsonObject {
+    private fun externalSource(
+        repoRoot: Path,
+        repository: String,
+        ref: String?,
+        allowExternalLocalGit: Boolean = false,
+    ): JsonObject {
         val localPath = repository.toCliPath()
         if (localPath.exists()) {
             val absolute = localPath.normalizedAbsolute()
             if (!absolute.startsWith(repoRoot)) {
+                if (allowExternalLocalGit && looksLikeGitRepository(absolute)) {
+                    return buildJsonObject {
+                        put("type", "GIT_SOURCE")
+                        put("url", absolute.toString())
+                        put("ref", ExactRef.parse(ref).value)
+                    }
+                }
                 throw MarketplaceFailure.InvalidSource("local marketplace path must be inside the target repository")
             }
             return buildJsonObject {
@@ -924,6 +971,21 @@ internal class MarketplaceService(
         throw MarketplaceFailure.InvalidSource(
             "repository must be an existing local path, GitHub owner/repo, GitHub URL, or git URL"
         )
+    }
+
+    private fun looksLikeGitRepository(path: Path): Boolean =
+        path.name.endsWith(".git") || path.resolve(".git").exists()
+
+    private fun remoteNameForRepository(repository: String): MarketplaceName {
+        val rawName = parseGitHubRepository(repository)
+            ?.substringAfter("/")
+            ?: repository
+                .trim()
+                .trimEnd('/')
+                .removeSuffix(".git")
+                .substringAfterLast("/")
+                .substringAfterLast(":")
+        return MarketplaceName.fromRepositoryName(rawName)
     }
 
     private fun importedPluginReference(importRef: MarketplaceImportRef, version: ExactVersion): JsonObject =
@@ -960,7 +1022,7 @@ internal class MarketplaceService(
         version: ExactVersion,
         integrity: String,
     ) {
-        val lockPath = repoRoot.resolve(SOURCE_LOCK_PATH)
+        val lockPath = repoRoot.resolve(MARKETPLACE_LOCK_PATH)
         val currentEntries = if (lockPath.exists()) {
             JsonFiles.readObject(lockPath).arrayValue("entries").objects()
         } else {
@@ -989,7 +1051,7 @@ internal class MarketplaceService(
                     put("name", rootMarketplace.requiredString("name"))
                     putJsonObject("source") {
                         put("type", "LOCAL_SOURCE")
-                        put("path", "./adaptable.marketplace.json")
+                        put("path", "source/adaptable.marketplace.json")
                     }
                 }
                 put("entries", JsonArray(nextEntries.sortedBy { it.objectValue("target")?.stringValue("name") }))
@@ -1353,7 +1415,7 @@ internal class MarketplaceService(
         val GITHUB_BRANCH_PLUGINS_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("plugins")
         const val GITHUB_MARKETPLACE_PLUGIN_ROOT = ".github/plugin/plugins"
         val HOOK_COMMAND_PATH_RE = Regex("\\bhooks/[A-Za-z0-9_.-]+")
-        val SOURCE_LOCK_PATH: Path = SOURCE_ROOT.resolve("marketplace-lock.json")
+        val MARKETPLACE_LOCK_PATH: Path = Path.of(".intelligence").resolve("marketplace-lock.json")
         val GITHUB_SHORTHAND = Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
     }
 }
@@ -1363,12 +1425,24 @@ private class MarketplaceName private constructor(
 ) {
     companion object {
         private val NAME = Regex("^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
+        private val NON_NAME_CHARACTER = Regex("[^a-z0-9]+")
 
         fun parse(value: String): MarketplaceName {
             if (!NAME.matches(value)) {
                 throw MarketplaceFailure.InvalidSource("marketplace names must be kebab-case: $value")
             }
             return MarketplaceName(value)
+        }
+
+        fun fromRepositoryName(value: String): MarketplaceName {
+            val normalized = value
+                .lowercase()
+                .replace(NON_NAME_CHARACTER, "-")
+                .trim('-')
+            if (normalized.isBlank()) {
+                throw MarketplaceFailure.InvalidSource("cannot derive marketplace name from repository: $value")
+            }
+            return parse(normalized)
         }
     }
 }
@@ -1378,10 +1452,11 @@ private class ExactRef private constructor(
 ) {
     companion object {
         fun parse(value: String?): ExactRef {
-            val ref = value?.takeIf { it.isNotBlank() }
-                ?: throw MarketplaceFailure.InvalidSource("external git marketplaces require --ref")
+            val ref = value?.takeIf { it.isNotBlank() } ?: DEFAULT_REF
             return ExactRef(ref)
         }
+
+        const val DEFAULT_REF = "main"
     }
 }
 
@@ -1411,6 +1486,59 @@ private data class MarketplaceImportRef(
             return MarketplaceImportRef(
                 marketplace = MarketplaceName.parse(parts[0]),
                 plugin = MarketplaceName.parse(parts[1]),
+            )
+        }
+
+        fun parseOrNull(value: String): MarketplaceImportRef? {
+            val parts = value.split("/")
+            if (parts.size != 2) {
+                return null
+            }
+            return MarketplaceImportRef(
+                marketplace = MarketplaceName.parse(parts[0]),
+                plugin = MarketplaceName.parse(parts[1]),
+            )
+        }
+    }
+}
+
+private sealed interface MarketplaceImportTarget {
+    val importRef: MarketplaceImportRef
+
+    data class Named(
+        override val importRef: MarketplaceImportRef,
+    ) : MarketplaceImportTarget
+
+    data class Direct(
+        val repository: String,
+        val ref: String?,
+        override val importRef: MarketplaceImportRef,
+    ) : MarketplaceImportTarget
+
+    companion object {
+        fun parse(
+            value: String,
+            ref: String?,
+            remoteNameForRepository: (String) -> MarketplaceName,
+        ): MarketplaceImportTarget {
+            MarketplaceImportRef.parseOrNull(value)?.let { named ->
+                if (!ref.isNullOrBlank()) {
+                    throw MarketplaceFailure.InvalidSource("--ref only applies to direct repository imports")
+                }
+                return Named(named)
+            }
+
+            val separator = value.lastIndexOf('/')
+            if (separator <= 0 || separator == value.lastIndex) {
+                throw MarketplaceFailure.InvalidSource("import must use marketplace/plugin or repository/plugin syntax")
+            }
+            val repository = value.substring(0, separator).trimEnd('/')
+            val plugin = MarketplaceName.parse(value.substring(separator + 1))
+            val marketplace = remoteNameForRepository(repository)
+            return Direct(
+                repository = repository,
+                ref = ref,
+                importRef = MarketplaceImportRef(marketplace = marketplace, plugin = plugin),
             )
         }
     }

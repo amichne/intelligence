@@ -29,6 +29,7 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("browse"))
         assertTrue(result.stdout.contains("remote"))
         assertTrue(result.stdout.contains("import"))
+        assertTrue(result.stdout.contains("ui"))
         assertTrue(result.stdout.contains("materialize"))
         assertTrue(result.stdout.contains("publish"))
         assertFalse(result.stdout.contains("publish-branch"))
@@ -53,6 +54,35 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("default harness marketplaces"))
         assertTrue(result.stdout.contains("--codex"))
         assertTrue(result.stdout.contains("--copilot"))
+    }
+
+    @Test
+    fun `marketplace import help exposes direct repository import defaults`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace import --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("repository/plugin"))
+        assertTrue(result.stdout.contains("--ref"))
+        assertTrue(result.stdout.contains("Defaults"))
+        assertTrue(result.stdout.contains("main"))
+    }
+
+    @Test
+    fun `marketplace ui help exposes interactive flow`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace ui --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("Interactively browse"))
+        assertTrue(result.stdout.contains("--ref"))
+    }
+
+    @Test
+    fun `marketplace ui fails clearly outside an interactive terminal`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace ui")
+
+        assertNotEquals(0, result.statusCode)
+        assertTrue(result.stderr.contains("requires an interactive terminal"))
+        assertTrue(result.stderr.contains("marketplace import"))
     }
 
     @Test

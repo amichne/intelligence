@@ -17,8 +17,10 @@ on `main` are CI-owned generated output.
 - `source/skills/`, `source/agents/`, `source/hooks/`, and `source/concepts/`
   contain the reusable primitive inventory.
 - `schemas/` owns the public JSON contracts for source and provider payloads.
-- `cli/` owns browsing, validation, marketplace management, import,
+- `cli/` owns browsing, validation, interactive marketplace import,
   materialization, and publication.
+- `.intelligence/marketplace-lock.json` records imported marketplace references
+  and resolved content evidence for reconstruction.
 
 ## Browse Marketplace Offerings
 
@@ -31,17 +33,26 @@ intelligence marketplace browse /path/to/intelligence --provider source
 intelligence marketplace browse amichne/intelligence --format json
 ```
 
-## Manage And Import Marketplaces
+## Import Marketplace References
 
-Marketplace repos can name external marketplaces in source-controlled metadata
-and import plugin entries by reference. Imports remain portable: they write a
-`MARKETPLACE_SOURCE` plugin reference and lock evidence instead of copying
-provider payloads into the target repo.
+Marketplace repos can import plugin entries by repository reference. Users do
+not need to clone the source repository first: the CLI resolves the reference,
+defaults to `main` when no ref is supplied, writes a `MARKETPLACE_SOURCE` plugin
+reference, and records lock evidence under `.intelligence/marketplace-lock.json`
+instead of copying provider payloads into the target repo.
 
 ```sh
-intelligence marketplace remote add shared-tools acme/shared-tools --ref v1.2.0
+intelligence marketplace import amichne/intelligence/kotlin-engineering
+intelligence marketplace import amichne/intelligence/kotlin-engineering --ref v0.1.2
+intelligence marketplace ui
+```
+
+Named remotes remain available when a repository wants stable local aliases:
+
+```sh
+intelligence marketplace remote add shared-tools acme/shared-tools
 intelligence marketplace remote list
-intelligence marketplace import shared-tools/review-stack --version 1.2.0
+intelligence marketplace import shared-tools/review-stack
 ```
 
 The CLI stays harness-agnostic. It can print provider-specific next steps, but it
