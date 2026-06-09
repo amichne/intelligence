@@ -32,7 +32,7 @@ The marketplace flow has an asciinema walkthrough covering browse, JSON output,
 direct git-backed import, validation, Codex and GitHub materialization, default
 publish, and interactive UI import:
 
-- [Published asciinema recording](https://asciinema.org/a/Tt6XWXu7PssolCwy)
+- [Published asciinema recording](https://asciinema.org/a/ks8fQrqbtxlsjGSI)
 - [Repository asciicast](../assets/asciinema/marketplace-referential-import.cast)
 
 ## Referential Imports
