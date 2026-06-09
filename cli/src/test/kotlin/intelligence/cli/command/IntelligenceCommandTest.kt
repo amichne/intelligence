@@ -15,7 +15,9 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("--help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("portable plugin marketplaces"))
+        assertTrue(result.stdout.startsWith("Operate portable plugin marketplaces"))
+        assertTrue(result.stdout.contains("Usage: intelligence [OPTIONS] [COMMAND]"))
+        assertSectionOrder(result.stdout, "Commands:", "Options:")
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
     }
@@ -25,7 +27,9 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace --help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Browse, manage, import, project, and publish portable marketplaces"))
+        assertTrue(result.stdout.startsWith("Browse, manage, import, project, and publish portable marketplaces"))
+        assertTrue(result.stdout.contains("Usage: intelligence marketplace [OPTIONS] [COMMAND]"))
+        assertSectionOrder(result.stdout, "Commands:", "Options:")
         assertTrue(result.stdout.contains("browse"))
         assertTrue(result.stdout.contains("remote"))
         assertTrue(result.stdout.contains("import"))
@@ -61,7 +65,13 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace import --help")
 
         assertEquals(0, result.statusCode)
+        assertTrue(
+            result.stdout.contains(
+                "Usage: intelligence marketplace import [OPTIONS] <marketplace/plugin|repository/plugin>"
+            )
+        )
         assertTrue(result.stdout.contains("repository/plugin"))
+        assertTrue(result.stdout.contains("--repo <PATH>"))
         assertTrue(result.stdout.contains("--ref"))
         assertTrue(result.stdout.contains("Defaults"))
         assertTrue(result.stdout.contains("main"))
@@ -131,6 +141,14 @@ class IntelligenceCommandTest {
     private fun repoRoot(): Path =
         generateSequence(Path.of(".").toAbsolutePath().normalize()) { it.parent }
             .first { it.resolve("source").resolve("adaptable.marketplace.json").toFile().isFile }
+
+    private fun assertSectionOrder(text: String, first: String, second: String) {
+        val firstIndex = text.indexOf(first)
+        val secondIndex = text.indexOf(second)
+        assertTrue(firstIndex >= 0, "missing `$first` in help output")
+        assertTrue(secondIndex >= 0, "missing `$second` in help output")
+        assertTrue(firstIndex < secondIndex, "`$first` should appear before `$second`")
+    }
 
     @Test
     fun `invalid marketplace provider fails before materialization`() {
