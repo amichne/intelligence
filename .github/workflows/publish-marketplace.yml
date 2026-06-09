@@ -49,7 +49,7 @@ jobs:
           .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
 
       - name: Publish Codex marketplace branch
-        run: .local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex
+        run: .local/intelligence/bin/intelligence marketplace publish --codex
 
       - name: Publish GitHub marketplace branch
-        run: .local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github
+        run: .local/intelligence/bin/intelligence marketplace publish --github

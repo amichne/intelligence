@@ -30,6 +30,7 @@ internal class MarketplaceCommand(
         subcommands(
             BrowseMarketplaceCommand(browserService),
             MaterializeMarketplaceCommand(marketplaceService),
+            PublishMarketplaceCommand(marketplaceService),
             PublishMarketplaceBranchCommand(marketplaceService),
         )
     }
@@ -116,11 +117,67 @@ private class MaterializeMarketplaceCommand(
     }
 }
 
+private class PublishMarketplaceCommand(
+    private val marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "publish",
+) {
+    private val repo by repoOption()
+
+    private val codex by option("--codex", help = "Publish the Codex orphan branch instead of default main payloads.")
+        .flag(default = false)
+
+    private val github by option("--github", help = "Publish the GitHub Copilot orphan branch instead of default main payloads.")
+        .flag(default = false)
+
+    private val copilot by option("--copilot", help = "Alias for --github.")
+        .flag(default = false)
+
+    private val noPush by option("--no-push", help = "Prepare provider branches locally without pushing.")
+        .flag(default = false)
+
+    override fun help(context: Context): String =
+        "Publish default harness marketplaces or provider orphan branches."
+
+    override fun run() {
+        val branchProviders = linkedSetOf<MarketplaceProvider>().apply {
+            if (codex) {
+                add(MarketplaceProvider.Codex)
+            }
+            if (github || copilot) {
+                add(MarketplaceProvider.GitHub)
+            }
+        }
+
+        try {
+            if (branchProviders.isEmpty()) {
+                if (noPush) {
+                    throw CliktError("--no-push only applies when publishing --codex, --github, or --copilot")
+                }
+                marketplaceService.publishDefault(repoRoot = repo)
+            } else {
+                branchProviders.forEach { provider ->
+                    marketplaceService.publishBranch(
+                        repoRoot = repo,
+                        provider = provider,
+                        branch = null,
+                        noPush = noPush,
+                    )
+                }
+            }
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace publication failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
 private class PublishMarketplaceBranchCommand(
     private val marketplaceService: MarketplaceService,
 ) : CliktCommand(
     name = "publish-branch",
 ) {
+    override val hiddenFromHelp: Boolean = true
+
     private val repo by repoOption()
 
     private val provider by providerOption(default = MarketplaceProvider.Codex)

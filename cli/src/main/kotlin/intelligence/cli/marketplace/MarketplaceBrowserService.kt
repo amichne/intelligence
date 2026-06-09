@@ -132,16 +132,16 @@ internal class MarketplaceBrowserService {
             ),
             plugins = marketplace.arrayValue("plugins")
                 .objects()
-                .map { entry -> readCodexPluginOffering(candidate.baseRoot, entry) },
+                .map { entry -> readCodexPluginOffering(candidate, entry) },
             standalonePrimitives = emptyList(),
         )
     }
 
-    private fun readCodexPluginOffering(baseRoot: Path, entry: JsonObject): MarketplacePluginOffering {
+    private fun readCodexPluginOffering(candidate: LocalMarketplaceCandidate, entry: JsonObject): MarketplacePluginOffering {
         val name = entry.requiredString("name")
         val pluginRoot = entry.objectValue("source")
             ?.stringValue("path")
-            ?.let { resolveRelative(baseRoot, it) }
+            ?.let { resolveCodexPluginRoot(candidate, it) }
         val manifest = pluginRoot
             ?.resolve(".codex-plugin")
             ?.resolve("plugin.json")
@@ -241,14 +241,18 @@ internal class MarketplaceBrowserService {
     private fun remoteCandidates(provider: MarketplaceBrowseProvider): List<RemoteMarketplaceCandidate> =
         when (provider) {
             MarketplaceBrowseProvider.Auto -> listOf(
+                RemoteMarketplaceCandidate(MarketplaceBrowseProvider.Codex, branch = null),
+                RemoteMarketplaceCandidate(MarketplaceBrowseProvider.GitHub, branch = null),
                 RemoteMarketplaceCandidate(MarketplaceBrowseProvider.Codex, branch = "codex"),
                 RemoteMarketplaceCandidate(MarketplaceBrowseProvider.GitHub, branch = "github"),
                 RemoteMarketplaceCandidate(MarketplaceBrowseProvider.Source, branch = null),
             )
             MarketplaceBrowseProvider.Codex -> listOf(
+                RemoteMarketplaceCandidate(MarketplaceBrowseProvider.Codex, branch = null),
                 RemoteMarketplaceCandidate(MarketplaceBrowseProvider.Codex, branch = "codex"),
             )
             MarketplaceBrowseProvider.GitHub -> listOf(
+                RemoteMarketplaceCandidate(MarketplaceBrowseProvider.GitHub, branch = null),
                 RemoteMarketplaceCandidate(MarketplaceBrowseProvider.GitHub, branch = "github"),
             )
             MarketplaceBrowseProvider.Source -> listOf(
@@ -268,20 +272,24 @@ internal class MarketplaceBrowserService {
 internal enum class MarketplaceBrowseProvider(
     val cliName: String,
     val displayName: String,
+    private val aliases: Set<String> = emptySet(),
 ) {
     Auto("auto", "Auto"),
     Codex("codex", "Codex"),
-    GitHub("github", "GitHub"),
+    GitHub("github", "GitHub Copilot", aliases = setOf("copilot")),
     Source("source", "Source");
 
     val failureName: String
         get() = if (this == Auto) "supported" else cliName
 
+    val cliNames: Set<String>
+        get() = setOf(cliName) + aliases
+
     companion object {
         fun parse(value: String): MarketplaceBrowseProvider =
-            entries.firstOrNull { it.cliName == value.lowercase() }
+            entries.firstOrNull { value.lowercase() in it.cliNames }
                 ?: throw IllegalArgumentException(
-                    "provider must be one of: ${entries.joinToString(", ") { it.cliName }}"
+                    "provider must be one of: ${entries.flatMap { it.cliNames }.joinToString(", ")}"
                 )
     }
 }
@@ -485,7 +493,7 @@ private data class RemoteMarketplaceCandidate(
     val branch: String?,
 ) {
     val directoryName: String =
-        branch ?: provider.cliName
+        "${branch ?: "default"}-${provider.cliName}"
 }
 
 private fun JsonArray.objects(): List<JsonObject> =
@@ -498,6 +506,17 @@ private fun JsonObject.requiredString(key: String): String =
 private fun resolveRelative(root: Path, value: String): Path {
     val relative = value.removePrefix("./")
     return root.resolve(relative).normalize()
+}
+
+private fun resolveCodexPluginRoot(candidate: LocalMarketplaceCandidate, value: String): Path {
+    val marketplaceRoot = candidate.path.parent ?: candidate.baseRoot
+    val marketplaceRelative = resolveRelative(marketplaceRoot, value)
+    if (marketplaceRelative.exists()) {
+        return marketplaceRelative
+    }
+
+    val rootRelative = resolveRelative(candidate.baseRoot, value)
+    return if (rootRelative.exists()) rootRelative else marketplaceRelative
 }
 
 private fun Path.toUnixString(): String =

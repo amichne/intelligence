@@ -38,13 +38,15 @@ output directory is replaced.
 
 ## Publish
 
-Publish commands prepare generated orphan branches from source. Use `--no-push`
-for a local proof without updating remotes.
+The default publish command writes CI-owned harness payloads into the repository
+root. Provider flags publish generated orphan branches from source. Use
+`--no-push` with provider flags for a local proof without updating remotes.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Preview Codex branch | `intelligence marketplace publish-branch --provider codex --branch codex --no-push` | You want to inspect the generated Codex branch locally. |
-| Preview GitHub branch | `intelligence marketplace publish-branch --provider github --branch github --no-push` | You want to inspect the generated GitHub branch locally. |
+| Publish default harness payloads | `intelligence marketplace publish` | CI or a local maintainer needs `.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json` refreshed on `main`. |
+| Preview Codex branch | `intelligence marketplace publish --codex --no-push` | You want to inspect the generated Codex branch locally. |
+| Preview GitHub Copilot branch | `intelligence marketplace publish --github --no-push` | You want to inspect the generated GitHub branch locally. |
 
 ## Build
 
