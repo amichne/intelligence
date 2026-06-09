@@ -56,6 +56,31 @@ internal class MarketplaceService(
         }
     }
 
+    fun publishDefault(repoRoot: Path) {
+        val repository = repoRoot.normalizedAbsolute()
+        val tempRoot = Files.createTempDirectory("intelligence-marketplace-default-")
+
+        try {
+            renderDefaultMarketplaces(repository, tempRoot, generatedAt = null, sourceSha = null)
+            FileSystem.copyPath(
+                tempRoot.resolve(CODEX_MARKETPLACE_ROOT),
+                repository.resolve(CODEX_MARKETPLACE_ROOT),
+            )
+            FileSystem.copyPath(
+                tempRoot.resolve(GITHUB_COPILOT_PROVIDER_PATH),
+                repository.resolve(GITHUB_COPILOT_PROVIDER_PATH),
+            )
+        } finally {
+            FileSystem.deleteRecursively(tempRoot)
+        }
+
+        output(
+            "published default marketplaces at " +
+                "${repository.resolve(CODEX_BRANCH_MARKETPLACE_PATH)} and " +
+                repository.resolve(GITHUB_BRANCH_MARKETPLACE_PATH)
+        )
+    }
+
     fun publishBranch(
         repoRoot: Path,
         provider: MarketplaceProvider,
@@ -111,41 +136,7 @@ internal class MarketplaceService(
         sourceSha: String?,
     ) {
         FileSystem.replaceDirectory(outRoot)
-
-        val marketplace = marketplace(repoRoot)
-        val owner = marketplace.objectValue("owner") ?: JsonObject(emptyMap())
-        val ownerName = owner.stringValue("name") ?: "Local developer"
-        val codexRoot = outRoot.resolve(CODEX_PROVIDER_DIR)
-        val githubRoot = outRoot.resolve(GITHUB_COPILOT_PROVIDER_PATH)
-        val codexPlugins = mutableListOf<JsonObject>()
-        val githubPlugins = mutableListOf<JsonObject>()
-        val lockPlugins = mutableListOf<JsonObject>()
-
-        marketplace.arrayValue("plugins").forEachObject { entry ->
-            val pluginProjection = hydrateProjection(repoRoot, entry, owner, ownerName)
-            val codexOut = codexRoot.resolve("plugins").resolve(pluginProjection.name)
-            val githubOut = githubRoot.resolve("plugins").resolve(pluginProjection.name)
-            codexOut.createDirectories()
-            githubOut.createDirectories()
-
-            val codexHydrated = hydratePlugin(repoRoot, codexOut, pluginProjection.manifest)
-            val githubHydrated = hydratePlugin(repoRoot, githubOut, pluginProjection.manifest)
-            renderAgentsMdAdapter(codexOut, pluginProjection.name, pluginProjection.description, codexHydrated)
-            renderAgentsMdAdapter(githubOut, pluginProjection.name, pluginProjection.description, githubHydrated)
-
-            codexPlugins.add(codexMarketplaceEntry(pluginProjection.name, pluginProjection.category))
-            githubPlugins.add(githubCopilotPluginEntry(pluginProjection, githubHydrated))
-            val codexManifest = codexPluginManifest(pluginProjection, ownerName, codexHydrated)
-            JsonFiles.writeObject(codexOut.resolve(CODEX_PLUGIN_DIR).resolve("plugin.json"), codexManifest)
-            lockPlugins.add(lockEntry(pluginProjection, codexManifest, codexHydrated))
-        }
-
-        JsonFiles.writeObject(codexRoot.resolve("marketplace.json"), codexMarketplace(marketplace, codexPlugins))
-        JsonFiles.writeObject(
-            codexRoot.resolve("marketplace-lock.json"),
-            codexLock(repoRoot, generatedAt, sourceSha, lockPlugins),
-        )
-        JsonFiles.writeObject(githubRoot.resolve("marketplace.json"), githubMarketplace(marketplace, owner, ownerName, githubPlugins))
+        renderDefaultMarketplaces(repoRoot, outRoot, generatedAt, sourceSha)
         outRoot.resolve("README.md").writeText(
             """
             # Intelligence Marketplace
@@ -154,7 +145,7 @@ internal class MarketplaceService(
 
             Provider-native marketplace projections are scoped under their expected entrypoints:
 
-            - `codex/marketplace.json`
+            - `.agents/plugins/marketplace.json`
             - `.github/plugin/marketplace.json`
 
             Each provider entrypoint owns its own `plugins/` payloads so marketplace-relative paths stay provider-native.
@@ -171,7 +162,58 @@ internal class MarketplaceService(
         sourceSha: String?,
     ) {
         FileSystem.replaceDirectory(outRoot)
+        renderCodexMarketplace(repoRoot, outRoot, generatedAt, sourceSha)
+        outRoot.resolve("README.md").writeText(
+            """
+            # Intelligence Codex Marketplace
 
+            This branch is generated from the referential source graph on `main`.
+
+            Codex expects the marketplace manifest at `.agents/plugins/marketplace.json` and plugin payloads under `.agents/plugins/plugins/`. Each plugin payload is fully hydrated from the provider-neutral primitives and contains its own `.codex-plugin/plugin.json`.
+
+            Install with:
+
+            ```sh
+            codex plugin marketplace add amichne/intelligence --ref codex
+            ```
+            """.trimIndent() + "\n",
+            Charsets.UTF_8,
+        )
+        output("materialized Codex marketplace at $outRoot")
+    }
+
+    private fun materializeGitHubMarketplace(repoRoot: Path, outRoot: Path) {
+        FileSystem.replaceDirectory(outRoot)
+        renderGitHubMarketplace(repoRoot, outRoot)
+        outRoot.resolve("README.md").writeText(
+            """
+            # Intelligence GitHub Marketplace
+
+            This branch is generated from the referential source graph on `main`.
+
+            GitHub Copilot marketplace consumers expect the marketplace manifest at `.github/plugin/marketplace.json` and plugin payloads under `.github/plugin/plugins/`. Each plugin payload is fully hydrated from the provider-neutral primitives.
+            """.trimIndent() + "\n",
+            Charsets.UTF_8,
+        )
+        output("materialized GitHub marketplace at $outRoot")
+    }
+
+    private fun renderDefaultMarketplaces(
+        repoRoot: Path,
+        outRoot: Path,
+        generatedAt: String?,
+        sourceSha: String?,
+    ) {
+        renderCodexMarketplace(repoRoot, outRoot, generatedAt, sourceSha)
+        renderGitHubMarketplace(repoRoot, outRoot)
+    }
+
+    private fun renderCodexMarketplace(
+        repoRoot: Path,
+        outRoot: Path,
+        generatedAt: String?,
+        sourceSha: String?,
+    ) {
         val marketplace = marketplace(repoRoot)
         val owner = marketplace.objectValue("owner") ?: JsonObject(emptyMap())
         val ownerName = owner.stringValue("name") ?: "Local developer"
@@ -194,28 +236,9 @@ internal class MarketplaceService(
 
         JsonFiles.writeObject(outRoot.resolve(CODEX_BRANCH_MARKETPLACE_PATH), codexMarketplace(marketplace, codexPlugins))
         JsonFiles.writeObject(outRoot.resolve(CODEX_BRANCH_LOCK_PATH), codexLock(repoRoot, generatedAt, sourceSha, lockPlugins))
-        outRoot.resolve("README.md").writeText(
-            """
-            # Intelligence Codex Marketplace
-
-            This branch is generated from the referential source graph on `main`.
-
-            Codex expects the marketplace manifest at `.agents/plugins/marketplace.json` and plugin payloads under `plugins/`. Each plugin payload is fully hydrated from the provider-neutral primitives and contains its own `.codex-plugin/plugin.json`.
-
-            Install with:
-
-            ```sh
-            codex plugin marketplace add amichne/intelligence --ref codex
-            ```
-            """.trimIndent() + "\n",
-            Charsets.UTF_8,
-        )
-        output("materialized Codex marketplace at $outRoot")
     }
 
-    private fun materializeGitHubMarketplace(repoRoot: Path, outRoot: Path) {
-        FileSystem.replaceDirectory(outRoot)
-
+    private fun renderGitHubMarketplace(repoRoot: Path, outRoot: Path) {
         val marketplace = marketplace(repoRoot)
         val owner = marketplace.objectValue("owner") ?: JsonObject(emptyMap())
         val ownerName = owner.stringValue("name") ?: "Local developer"
@@ -236,17 +259,6 @@ internal class MarketplaceService(
             outRoot.resolve(GITHUB_BRANCH_MARKETPLACE_PATH),
             githubMarketplace(marketplace, owner, ownerName, githubPlugins),
         )
-        outRoot.resolve("README.md").writeText(
-            """
-            # Intelligence GitHub Marketplace
-
-            This branch is generated from the referential source graph on `main`.
-
-            GitHub marketplace consumers expect the marketplace manifest at `.github/plugin/marketplace.json` and plugin payloads under `.github/plugin/plugins/`. Each plugin payload is fully hydrated from the provider-neutral primitives.
-            """.trimIndent() + "\n",
-            Charsets.UTF_8,
-        )
-        output("materialized GitHub marketplace at $outRoot")
     }
 
     private fun hydrateProjection(
@@ -772,12 +784,12 @@ internal class MarketplaceService(
 
     private companion object {
         const val CODEX_PLUGIN_DIR = ".codex-plugin"
-        const val CODEX_PROVIDER_DIR = "codex"
         val SOURCE_ROOT: Path = Path.of("source")
         val ADAPTABLE_MARKETPLACE_PATH: Path = SOURCE_ROOT.resolve("adaptable.marketplace.json")
-        val CODEX_BRANCH_MARKETPLACE_PATH: Path = Path.of(".agents").resolve("plugins").resolve("marketplace.json")
-        val CODEX_BRANCH_PLUGINS_PATH: Path = Path.of("plugins")
-        val CODEX_BRANCH_LOCK_PATH: Path = Path.of("marketplace-lock.json")
+        val CODEX_MARKETPLACE_ROOT: Path = Path.of(".agents").resolve("plugins")
+        val CODEX_BRANCH_MARKETPLACE_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("marketplace.json")
+        val CODEX_BRANCH_PLUGINS_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("plugins")
+        val CODEX_BRANCH_LOCK_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("marketplace-lock.json")
         val GITHUB_COPILOT_PROVIDER_PATH: Path = Path.of(".github").resolve("plugin")
         val GITHUB_BRANCH_MARKETPLACE_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("marketplace.json")
         val GITHUB_BRANCH_PLUGINS_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("plugins")

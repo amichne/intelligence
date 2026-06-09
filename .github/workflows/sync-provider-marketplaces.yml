@@ -69,18 +69,23 @@ jobs:
       - name: Validate GitHub marketplace payload
         run: .local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
 
-      - name: Verify generated marketplaces are not checked in
+      - name: Publish default marketplaces
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: .local/intelligence/bin/intelligence marketplace publish
+
+      - name: Validate default marketplace payloads
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        run: .local/intelligence/bin/intelligence validate --portable --hydrated .
+
+      - name: Commit default marketplace payloads
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          forbidden=".agents/plugins .github/plugin marketplace-lock.json plugins"
-          present=()
-          for path in ${forbidden}; do
-            if [ -e "${path}" ]; then
-              present+=("${path}")
-            fi
-          done
-          if [ "${#present[@]}" -eq 0 ]; then
-            echo "source branch contains no materialized marketplace payloads"
+          git add -A -f -- .agents/plugins .github/plugin
+          if git diff --cached --quiet -- .agents/plugins .github/plugin; then
+            echo "default marketplace payloads are up to date"
             exit 0
           fi
-          printf '::error::materialized marketplace payloads must not be checked in: %s\n' "${present[*]}"
-          exit 1
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: publish default marketplaces"
+          git push

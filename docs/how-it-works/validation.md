@@ -61,10 +61,10 @@ materialize outputs, then verify hydration.
 ```sh
 intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
 intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
-intelligence marketplace publish-branch --provider codex --branch codex --no-push
+intelligence marketplace publish --codex --no-push
 intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
 intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
-intelligence marketplace publish-branch --provider github --branch github --no-push
+intelligence marketplace publish --github --no-push
 ```
 
 If a provider check fails, repair projection logic or schema boundaries, then

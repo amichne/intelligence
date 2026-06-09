@@ -33,7 +33,7 @@ build/
 .claude-plugin/
 .cache/
 
-# Materialized marketplace projections belong in generated branches or external output roots.
+# Materialized marketplace projections are generated. CI force-adds default harness payloads on main.
 .agents/plugins/
 .github/plugin/
 marketplace-lock.json
