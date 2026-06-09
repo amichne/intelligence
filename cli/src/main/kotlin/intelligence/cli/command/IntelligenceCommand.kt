@@ -1,6 +1,7 @@
 package intelligence.cli.command
 
 import intelligence.cli.io.ProcessRunner
+import intelligence.cli.marketplace.MarketplaceBrowserService
 import intelligence.cli.marketplace.MarketplaceService
 import intelligence.cli.validation.ValidationService
 import com.github.ajalt.clikt.core.CliktCommand
@@ -15,14 +16,15 @@ internal class IntelligenceCommand(
     init {
         val validationService = ValidationService(output = { echo(it) })
         val marketplaceService = MarketplaceService(processRunner = processRunner, output = { echo(it) })
+        val browserService = MarketplaceBrowserService()
         subcommands(
             ValidateCommand(validationService),
-            MarketplaceCommand(marketplaceService),
+            MarketplaceCommand(marketplaceService, browserService),
         )
     }
 
     override fun help(context: Context): String =
-        "Repository CLI for validating and serializing Intelligence marketplace outputs."
+        "Browse, validate, materialize, and publish Intelligence marketplaces."
 
     override fun run() = Unit
 }

@@ -14,8 +14,51 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("--help")
 
         assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("Browse, validate, materialize, and publish"))
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
+    }
+
+    @Test
+    fun `marketplace help exposes browse command`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("Browse marketplace offerings and manage provider projections"))
+        assertTrue(result.stdout.contains("browse"))
+        assertTrue(result.stdout.contains("materialize"))
+        assertTrue(result.stdout.contains("publish-branch"))
+    }
+
+    @Test
+    fun `marketplace browse help explains repository based discovery`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace browse --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("without typing marketplace"))
+        assertTrue(result.stdout.contains("paths"))
+        assertTrue(result.stdout.contains("owner/repo shorthand"))
+        assertTrue(result.stdout.contains("Auto tries published provider marketplaces"))
+    }
+
+    @Test
+    fun `marketplace browse accepts repository path and prints source offerings`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test(
+            listOf(
+                "marketplace",
+                "browse",
+                repoRoot().toString(),
+                "--provider",
+                "source",
+            )
+        )
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("Marketplace: amichne-intelligence"))
+        assertTrue(result.stdout.contains("Plugins"))
+        assertTrue(result.stdout.contains("engineering-baseline"))
+        assertTrue(result.stdout.contains("Standalone skills"))
+        assertTrue(result.stdout.contains("repository-onboarding"))
     }
 
     @Test

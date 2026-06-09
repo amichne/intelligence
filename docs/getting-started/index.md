@@ -7,10 +7,11 @@ local plugin families and points each entry at `source/plugins/*/plugin.json`.
 
 | Task | Command |
 |---|---|
-| Install the development CLI | `./gradlew installDevelopmentCli` |
-| Validate source contracts | `.local/intelligence/bin/intelligence validate` |
-| Materialize Codex output | `.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace` |
-| Materialize GitHub output | `.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace` |
+| Browse marketplace offerings | `intelligence marketplace browse amichne/intelligence` |
+| Browse script-readable offerings | `intelligence marketplace browse amichne/intelligence --format json` |
+| Validate source contracts | `intelligence validate` |
+| Materialize Codex output | `intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace` |
+| Materialize GitHub output | `intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace` |
 | Build docs | `zensical build --clean` |
 
 ## Next Pages
@@ -29,8 +30,9 @@ Each path has a dry-run or validation command before it mutates anything.
 
 | Path | Command | Use When |
 |---|---|---|
-| Validate this repository | `.local/intelligence/bin/intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
-| Preview generated output | `.local/intelligence/bin/intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace` | You changed marketplace exposure or projection logic. |
+| Browse marketplace offerings | `intelligence marketplace browse amichne/intelligence` | You want to see available plugins and standalone primitives. |
+| Validate this repository | `intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
+| Preview generated output | `intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace` | You changed marketplace exposure or projection logic. |
 | Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
 
 ## First Validation
@@ -38,8 +40,7 @@ Each path has a dry-run or validation command before it mutates anything.
 Run the repo gate before trusting local state.
 
 ```sh
-./gradlew installDevelopmentCli
-.local/intelligence/bin/intelligence validate
+intelligence validate
 ```
 
 Use the expanded commands in [Validation](../how-it-works/validation.md) when

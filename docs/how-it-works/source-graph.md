@@ -35,7 +35,7 @@ The schema-first approach gives practical safety gains.
 |---|---|
 | Deterministic behavior | Behavior is declared once in `source/`, so changes are diffed at the source-model layer before any generator or adapter is touched. |
 | Host interoperability | Providers are supported as projections, not forks, which avoids implicit source-model drift per provider. |
-| Failure visibility | Contract violations fail fast through the Kotlin CLI validation gate (`.local/intelligence/bin/intelligence validate`). |
+| Failure visibility | Contract violations fail fast through the Kotlin CLI validation gate (`intelligence validate`). |
 | Backward compatibility | Generated projections can be reviewed against the invariant source graph, making unsupported migrations obvious. |
 | Recovery under failure | Regenerating targets from the same source model lets teams fix generator issues without editing historical payloads manually. |
 

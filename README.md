@@ -17,21 +17,32 @@ CLI and are not checked in on `main`.
 - `source/schemas/` owns the JSON contracts for source and provider payloads.
 - `cli/` owns validation, materialization, and branch publication.
 
-## Local Validation
+## Browse Marketplace Offerings
+
+Users with the CLI installed can browse a repository's marketplace without
+knowing provider entrypoints or plugin paths.
+
+```sh
+intelligence marketplace browse amichne/intelligence
+intelligence marketplace browse /path/to/intelligence --provider source
+intelligence marketplace browse amichne/intelligence --format json
+```
+
+## Development Validation
 
 ```sh
 ./gradlew :cli:test installDevelopmentCli
-.local/intelligence/bin/intelligence validate
+intelligence validate
 ```
 
 ## Marketplace Materialization
 
 ```sh
-.local/intelligence/bin/intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
-.local/intelligence/bin/intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
-.local/intelligence/bin/intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
-.local/intelligence/bin/intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace
+intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
+intelligence validate --portable --hydrated /tmp/intelligence-codex-marketplace
+intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace
+intelligence validate --portable --hydrated /tmp/intelligence-github-marketplace
+intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace
 ```
 
 ## Publication
@@ -43,8 +54,8 @@ the hydrated outputs, and force-updates the generated branches.
 Preview branch publication locally with:
 
 ```sh
-.local/intelligence/bin/intelligence marketplace publish-branch --provider codex --branch codex --no-push
-.local/intelligence/bin/intelligence marketplace publish-branch --provider github --branch github --no-push
+intelligence marketplace publish-branch --provider codex --branch codex --no-push
+intelligence marketplace publish-branch --provider github --branch github --no-push
 ```
 
 Build the self-contained native CLI executable with:
