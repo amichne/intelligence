@@ -184,6 +184,18 @@
         "type": "LOCAL_SOURCE",
         "path": "./"
       },
+      "path": "skills/grill-me-with-docs",
+      "name": "grill-me-with-docs",
+      "expectedResources": [
+        "SKILL.md"
+      ]
+    },
+    {
+      "type": "SKILL",
+      "source": {
+        "type": "LOCAL_SOURCE",
+        "path": "./"
+      },
       "path": "skills/skill-primitive-authoring",
       "name": "skill-primitive-authoring"
     },
