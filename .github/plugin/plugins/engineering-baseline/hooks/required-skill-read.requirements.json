@@ -1,0 +1,15 @@
+{
+  "$schema": "../../schemas/hooks/skill-requirements.schema.json",
+  "type": "HOOK_SKILL_REQUIREMENTS",
+  "schemaVersion": 1,
+  "mode": "ADVISORY",
+  "skills": [
+    {
+      "type": "REQUIRED_SKILL",
+      "id": "manage-json-schemas",
+      "skillPath": "skills/manage-json-schemas/SKILL.md",
+      "requireRead": true,
+      "notes": "Structured data changes should load the schema contract workflow before manifest or JSON edits."
+    }
+  ]
+}
