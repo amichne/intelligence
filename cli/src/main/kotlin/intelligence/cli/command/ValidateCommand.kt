@@ -2,9 +2,9 @@ package intelligence.cli.command
 
 import intelligence.cli.io.normalizedAbsolute
 import intelligence.cli.io.toCliPath
-import intelligence.cli.validation.ValidationFailure
-import intelligence.cli.validation.ValidationOptions
-import intelligence.cli.validation.ValidationService
+import intelligence.cli.io.stringValue
+import intelligence.cli.rpc.RpcDispatcher
+import intelligence.cli.rpc.RpcMethod
 import java.nio.file.Path
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
@@ -14,9 +14,11 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 internal class ValidateCommand(
-    private val validationService: ValidationService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "validate",
 ) {
@@ -34,17 +36,18 @@ internal class ValidateCommand(
         "Validate marketplace source and hydrated provider outputs."
 
     override fun run() {
-        val exitCode = try {
-            validationService.validate(
-                ValidationOptions(
-                    repo = repo,
-                    portable = portable,
-                    hydrated = hydrated,
-                )
-            )
-        } catch (failure: ValidationFailure) {
-            throw CliktError(failure.message ?: "validation failed", statusCode = 1)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.ValidationRun,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("portable", portable)
+                hydrated?.let { put("hydrated", it.toString()) }
+            },
+            failureMessage = "validation failed",
+        )
+        echoRpcMessages(result)
+        val exitCode = result.stringValue("exitCode")?.toIntOrNull() ?: 0
 
         if (exitCode != 0) {
             throw ProgramResult(exitCode)

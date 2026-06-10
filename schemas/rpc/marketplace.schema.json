@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "marketplace-rpc.schema.json",
+  "title": "MARKETPLACE_RPC",
+  "description": "JSON-RPC 2.0 stdio contract for Intelligence marketplace and validation operations.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/RpcRequest"
+    },
+    {
+      "$ref": "#/$defs/RpcResponse"
+    }
+  ],
+  "$defs": {
+    "RpcId": {
+      "description": "Request/response correlation identifier. Notifications are not supported in v1.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "integer"
+        }
+      ],
+      "examples": [
+        "browse-1",
+        1
+      ]
+    },
+    "RpcRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jsonrpc",
+        "id",
+        "method"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "type": "string",
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/RpcId"
+        },
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "params": {
+          "$ref": "#/$defs/Params"
+        }
+      },
+      "examples": [
+        {
+          "jsonrpc": "2.0",
+          "id": "browse-slopsentral",
+          "method": "marketplace.browse",
+          "params": {
+            "repository": "amichne/slopsentral",
+            "provider": "auto"
+          }
+        }
+      ]
+    },
+    "RpcResponse": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jsonrpc",
+        "id"
+      ],
+      "properties": {
+        "jsonrpc": {
+          "type": "string",
+          "enum": [
+            "2.0"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/RpcId"
+        },
+        "result": {
+          "type": "object"
+        },
+        "error": {
+          "$ref": "#/$defs/RpcError"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "result"
+          ],
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "required": [
+            "error"
+          ],
+          "not": {
+            "required": [
+              "result"
+            ]
+          }
+        }
+      ]
+    },
+    "RpcError": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message",
+        "data"
+      ],
+      "properties": {
+        "code": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "data": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "PARSE_ERROR",
+                "INVALID_REQUEST",
+                "METHOD_NOT_FOUND",
+                "INVALID_PARAMS",
+                "MARKETPLACE_FAILURE",
+                "VALIDATION_FAILURE",
+                "INTERNAL_ERROR"
+              ]
+            },
+            "exitCode": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "Method": {
+      "type": "string",
+      "enum": [
+        "marketplace.browse",
+        "marketplace.remotes.list",
+        "marketplace.remotes.add",
+        "marketplace.remotes.remove",
+        "marketplace.import",
+        "marketplace.install",
+        "marketplace.materialize",
+        "marketplace.publishDefault",
+        "marketplace.publishBranch",
+        "validation.run"
+      ]
+    },
+    "Params": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "Provider": {
+      "type": "string",
+      "enum": [
+        "all",
+        "codex",
+        "github",
+        "copilot"
+      ]
+    },
+    "BrowseProvider": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "codex",
+        "github",
+        "copilot",
+        "source"
+      ]
+    }
+  }
+}

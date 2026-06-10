@@ -20,6 +20,15 @@ class IntelligenceCommandTest {
         assertSectionOrder(result.stdout, "Commands:", "Options:")
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
+        assertTrue(result.stdout.contains("rpc"))
+    }
+
+    @Test
+    fun `rpc help exposes stdio contract`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("rpc --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("JSON-RPC stdio contract"))
     }
 
     @Test

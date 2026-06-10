@@ -163,13 +163,19 @@ internal class MarketplaceService(
     }
 
     fun listRemotes(repoRoot: Path) {
-        val remotes = marketplace(repoRoot.normalizedAbsolute()).externalMarketplaces().sortedBy { it.name }
+        val remotes = remoteEntries(repoRoot)
         if (remotes.isEmpty()) {
             output("no external marketplaces configured")
         } else {
-            remotes.forEach { remote -> output("${remote.name}\t${sourceDisplay(remote.source)}") }
+            remotes.forEach { remote -> output("${remote.name}\t${remote.source}") }
         }
     }
+
+    fun remoteEntries(repoRoot: Path): List<MarketplaceRemoteEntry> =
+        marketplace(repoRoot.normalizedAbsolute())
+            .externalMarketplaces()
+            .sortedBy { it.name }
+            .map { remote -> MarketplaceRemoteEntry(remote.name, sourceDisplay(remote.source)) }
 
     fun removeRemote(repoRoot: Path, name: String) {
         val root = repoRoot.normalizedAbsolute()
@@ -1655,6 +1661,11 @@ internal class MarketplaceService(
         val GITHUB_SHORTHAND = Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
     }
 }
+
+internal data class MarketplaceRemoteEntry(
+    val name: String,
+    val source: String,
+)
 
 private class MarketplaceName private constructor(
     val value: String,

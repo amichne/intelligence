@@ -1,9 +1,7 @@
 package intelligence.cli.command
 
 import intelligence.cli.io.ProcessRunner
-import intelligence.cli.marketplace.MarketplaceBrowserService
-import intelligence.cli.marketplace.MarketplaceService
-import intelligence.cli.validation.ValidationService
+import intelligence.cli.rpc.RpcDispatcher
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.context
@@ -18,12 +16,11 @@ internal class IntelligenceCommand(
         context {
             helpFormatter = { IntelligenceHelpFormatter(it) }
         }
-        val validationService = ValidationService(output = { echo(it) })
-        val marketplaceService = MarketplaceService(processRunner = processRunner, output = { echo(it) })
-        val browserService = MarketplaceBrowserService()
+        val dispatcher = RpcDispatcher(processRunner = processRunner)
         subcommands(
-            ValidateCommand(validationService),
-            MarketplaceCommand(marketplaceService, browserService),
+            ValidateCommand(dispatcher),
+            MarketplaceCommand(dispatcher),
+            RpcCommand(dispatcher),
         )
     }
 
