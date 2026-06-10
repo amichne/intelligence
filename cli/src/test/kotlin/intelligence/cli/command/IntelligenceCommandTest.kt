@@ -33,6 +33,7 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("browse"))
         assertTrue(result.stdout.contains("remote"))
         assertTrue(result.stdout.contains("import"))
+        assertTrue(result.stdout.contains("install"))
         assertTrue(result.stdout.contains("ui"))
         assertTrue(result.stdout.contains("materialize"))
         assertTrue(result.stdout.contains("publish"))
@@ -72,6 +73,18 @@ class IntelligenceCommandTest {
         )
         assertTrue(result.stdout.contains("repository/plugin"))
         assertTrue(result.stdout.contains("--repo <PATH>"))
+        assertTrue(result.stdout.contains("--ref"))
+        assertTrue(result.stdout.contains("Defaults"))
+        assertTrue(result.stdout.contains("main"))
+    }
+
+    @Test
+    fun `marketplace install help exposes repository install defaults`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace install --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("Usage: intelligence marketplace install [OPTIONS] <repository>"))
+        assertTrue(result.stdout.contains("adaptable marketplace"))
         assertTrue(result.stdout.contains("--ref"))
         assertTrue(result.stdout.contains("Defaults"))
         assertTrue(result.stdout.contains("main"))
@@ -127,7 +140,7 @@ class IntelligenceCommandTest {
         )
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("OK source marketplace"))
+        assertTrue(result.stdout.contains("OK adaptable marketplace"))
     }
 
     @Test

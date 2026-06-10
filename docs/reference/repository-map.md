@@ -10,6 +10,7 @@
 | `source/plugins/` | Referential plugin composition manifests. |
 | `source/profiles/` | Schema-validated workflow profiles. |
 | `source/templates/` | Primitive scaffold templates used by repository CLI tooling. |
+| `.intelligence/adaptable.marketplace.json` | Install-only adaptable marketplace intent for consumer repositories. |
 | `.intelligence/marketplace-lock.json` | Source-controlled lock evidence for imported marketplace references. |
 | `cli/` | Kotlin Clikt command-line application. |
 | `schemas/` | Public provider-neutral and adapter schema contracts. |

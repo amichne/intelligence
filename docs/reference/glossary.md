@@ -2,7 +2,7 @@
 
 | Term | Meaning |
 |---|---|
-| Marketplace | The curated plugin catalog authored in `source/adaptable.marketplace.json`. |
+| Marketplace | An adaptable plugin catalog, authored in `source/adaptable.marketplace.json` for publisher repos or recorded in `.intelligence/adaptable.marketplace.json` for install-only consumers. |
 | Plugin | An installable workflow family defined by `source/plugins/<name>/plugin.json`. |
 | Primitive | A skill, agent, instruction, prompt, concept, or hook composed into plugins. |
 | Skill | Agent-facing workflow directory with `SKILL.md`. |

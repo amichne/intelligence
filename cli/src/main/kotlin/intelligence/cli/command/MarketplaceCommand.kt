@@ -31,6 +31,7 @@ internal class MarketplaceCommand(
             BrowseMarketplaceCommand(browserService),
             RemoteMarketplaceCommand(marketplaceService),
             ImportMarketplaceCommand(marketplaceService),
+            InstallMarketplaceCommand(marketplaceService),
             MarketplaceUiCommand(marketplaceService, browserService),
             MaterializeMarketplaceCommand(marketplaceService),
             PublishMarketplaceCommand(marketplaceService),
@@ -216,6 +217,32 @@ private class ImportMarketplaceCommand(
     }
 }
 
+private class InstallMarketplaceCommand(
+    private val marketplaceService: MarketplaceService,
+) : CliktCommand(
+    name = "install",
+) {
+    private val repo by repoOption()
+
+    private val repository by argument(
+        name = "repository",
+        help = "Local path, GitHub owner/repo, GitHub URL, or git URL exposing an adaptable marketplace.",
+    )
+
+    private val ref by option("--ref", help = "Branch, tag, or SHA for repository resolution. Defaults to main.")
+
+    override fun help(context: Context): String =
+        "Install every plugin exposed by an adaptable marketplace repository."
+
+    override fun run() {
+        try {
+            marketplaceService.installMarketplace(repoRoot = repo, repository = repository, ref = ref)
+        } catch (failure: MarketplaceFailure) {
+            throw CliktError(failure.message ?: "marketplace install failed", statusCode = failure.exitCode)
+        }
+    }
+}
+
 private class MarketplaceUiCommand(
     private val marketplaceService: MarketplaceService,
     private val browserService: MarketplaceBrowserService,
@@ -351,7 +378,7 @@ private class PublishMarketplaceBranchCommand(
 }
 
 private fun CliktCommand.repoOption() =
-    option("--repo", help = "Repository root containing source/adaptable.marketplace.json.")
+    option("--repo", help = "Repository root containing an adaptable marketplace or install state.")
         .convert("PATH") { it.toCliPath() }
         .default(Path.of(".").normalizedAbsolute())
 

@@ -39,7 +39,10 @@ import kotlinx.serialization.json.putJsonObject
 internal class MarketplaceService(
     private val processRunner: ProcessRunner = ProcessRunner.system(),
     private val output: (String) -> Unit = ::println,
+    resolvedAssetRoot: Path = defaultResolvedAssetRoot(),
 ) {
+    private val resolvedAssets = ResolvedMarketplaceAssets(resolvedAssetRoot.normalizedAbsolute())
+
     fun materialize(
         repoRoot: Path,
         outRoot: Path,
@@ -144,14 +147,14 @@ internal class MarketplaceService(
         val root = repoRoot.normalizedAbsolute()
         val remoteName = MarketplaceName.parse(name)
         val source = externalSource(root, repository, ref)
-        val marketplacePath = root.resolve(ADAPTABLE_MARKETPLACE_PATH)
-        val marketplace = marketplace(root)
+        val marketplaceDocument = marketplaceForMutation(root)
+        val marketplace = marketplaceDocument.payload
         val remotes = marketplace.externalMarketplaces()
             .filterNot { it.name == remoteName.value } +
             ExternalMarketplace(remoteName.value, source)
 
         JsonFiles.writeObject(
-            marketplacePath,
+            marketplaceDocument.path,
             marketplace
                 .withExternalMarketplaces(remotes.sortedBy { it.name })
                 .withAllowedExternalMarketplace(remoteName.value),
@@ -171,8 +174,8 @@ internal class MarketplaceService(
     fun removeRemote(repoRoot: Path, name: String) {
         val root = repoRoot.normalizedAbsolute()
         val remoteName = MarketplaceName.parse(name)
-        val marketplacePath = root.resolve(ADAPTABLE_MARKETPLACE_PATH)
-        val marketplace = marketplace(root)
+        val marketplaceDocument = marketplaceDocument(root)
+        val marketplace = marketplaceDocument.payload
         if (marketplace.importedPluginEntries(remoteName.value).isNotEmpty()) {
             throw MarketplaceFailure.InvalidSource(
                 "cannot remove external marketplace ${remoteName.value}; imported plugins still reference it"
@@ -185,7 +188,7 @@ internal class MarketplaceService(
         }
 
         JsonFiles.writeObject(
-            marketplacePath,
+            marketplaceDocument.path,
             marketplace
                 .withExternalMarketplaces(remotes.sortedBy { it.name })
                 .withoutAllowedExternalMarketplace(remoteName.value),
@@ -200,16 +203,16 @@ internal class MarketplaceService(
         ref: String? = null,
     ) {
         val root = repoRoot.normalizedAbsolute()
+        val marketplaceDocument = marketplaceForMutation(root)
         val importTarget = MarketplaceImportTarget.parse(
             value = target,
             ref = ref,
             remoteNameForRepository = ::remoteNameForRepository,
         )
         val importRef = importTarget.importRef
-        val marketplacePath = root.resolve(ADAPTABLE_MARKETPLACE_PATH)
         val marketplace = when (importTarget) {
-            is MarketplaceImportTarget.Named -> marketplace(root)
-            is MarketplaceImportTarget.Direct -> marketplace(root).withDirectRemote(root, importTarget)
+            is MarketplaceImportTarget.Named -> marketplaceDocument.payload
+            is MarketplaceImportTarget.Direct -> marketplaceDocument.payload.withDirectRemote(root, importTarget)
         }
         val remote = marketplace.externalMarketplaces()
             .firstOrNull { it.name == importRef.marketplace.value }
@@ -225,6 +228,7 @@ internal class MarketplaceService(
         }
 
         var importedVersion = ""
+        var cachedAssetRoot: Path? = null
         RemoteMarketplaceResolver(root).use { resolver ->
             val resolvedMarketplace = resolver.resolve(remote)
             val remoteMarketplace = marketplaceAt(resolvedMarketplace.root)
@@ -243,23 +247,109 @@ internal class MarketplaceService(
                 plugin = importRef.plugin.value,
                 version = exactVersion.value,
             )
+            val cachedSource = resolvedAssets.store(
+                importRef = importRef,
+                version = exactVersion,
+                remoteRoot = resolvedMarketplace.root,
+            )
+            cachedAssetRoot = cachedSource.root
             val pluginReference = importedPluginReference(importRef, exactVersion)
             val importedEntry = importedPluginEntry(importRef, pluginReference, remoteEntry)
             JsonFiles.writeObject(
-                marketplacePath,
+                marketplaceDocument.path,
                 marketplace.withPluginEntry(importedEntry),
             )
             writeMarketplaceLock(
                 repoRoot = root,
                 rootMarketplace = marketplace,
+                rootMarketplacePath = marketplaceDocument.path,
                 target = pluginReference,
                 resolvedSource = resolvedMarketplace.resolvedSource,
                 version = exactVersion,
-                integrity = resolvedPluginIntegrity(resolvedMarketplace.root, remoteEntry),
+                integrity = cachedSource.integrity,
             )
         }
 
         output("imported ${importRef.marketplace.value}/${importRef.plugin.value} at $importedVersion")
+        cachedAssetRoot?.let { output("resolved marketplace assets stored at $it") }
+        output("provider payloads are unchanged until you run marketplace materialize or marketplace publish")
+    }
+
+    fun installMarketplace(
+        repoRoot: Path,
+        repository: String,
+        ref: String? = null,
+    ) {
+        val root = repoRoot.normalizedAbsolute()
+        val remoteName = remoteNameForRepository(repository)
+        val remote = ExternalMarketplace(
+            name = remoteName.value,
+            source = externalSource(
+                repoRoot = root,
+                repository = repository,
+                ref = ref,
+                allowExternalLocalGit = true,
+            ),
+        )
+        val marketplaceDocument = marketplaceForMutation(root)
+        var nextMarketplace = marketplaceDocument.payload.withDirectRemote(remote)
+        val installed = mutableListOf<String>()
+        val lockedImports = mutableListOf<LockedMarketplaceImport>()
+
+        RemoteMarketplaceResolver(root).use { resolver ->
+            val resolvedMarketplace = resolver.resolve(remote)
+            val remoteEntries = marketplaceAt(resolvedMarketplace.root).arrayValue("plugins").objects()
+            if (remoteEntries.isEmpty()) {
+                throw MarketplaceFailure.InvalidSource("marketplace ${remoteName.value} exposes no plugins")
+            }
+
+            remoteEntries.forEach { remoteEntry ->
+                val pluginName = MarketplaceName.parse(remoteEntry.requiredString("name"))
+                if (nextMarketplace.hasPluginEntry(pluginName.value)) {
+                    throw MarketplaceFailure.InvalidSource("plugin already exists in marketplace: ${pluginName.value}")
+                }
+                val importRef = MarketplaceImportRef(marketplace = remoteName, plugin = pluginName)
+                val exactVersion = ExactVersion.parse(remotePluginVersion(resolvedMarketplace.root, remoteEntry))
+                requireRemoteVersion(
+                    remoteRoot = resolvedMarketplace.root,
+                    remoteEntry = remoteEntry,
+                    marketplace = importRef.marketplace.value,
+                    plugin = importRef.plugin.value,
+                    version = exactVersion.value,
+                )
+                val cachedSource = resolvedAssets.store(
+                    importRef = importRef,
+                    version = exactVersion,
+                    remoteRoot = resolvedMarketplace.root,
+                )
+                val pluginReference = importedPluginReference(importRef, exactVersion)
+                nextMarketplace = nextMarketplace.withPluginEntry(
+                    importedPluginEntry(importRef, pluginReference, remoteEntry)
+                )
+                lockedImports += LockedMarketplaceImport(
+                    target = pluginReference,
+                    resolvedSource = resolvedMarketplace.resolvedSource,
+                    version = exactVersion,
+                    integrity = cachedSource.integrity,
+                )
+                installed += importRef.display
+            }
+        }
+
+        JsonFiles.writeObject(marketplaceDocument.path, nextMarketplace)
+        lockedImports.forEach { locked ->
+            writeMarketplaceLock(
+                repoRoot = root,
+                rootMarketplace = nextMarketplace,
+                rootMarketplacePath = marketplaceDocument.path,
+                target = locked.target,
+                resolvedSource = locked.resolvedSource,
+                version = locked.version,
+                integrity = locked.integrity,
+            )
+        }
+        output("installed ${installed.size} plugins from ${remoteName.value}")
+        output("adaptable marketplace state written to ${marketplaceDocument.path}")
         output("provider payloads are unchanged until you run marketplace materialize or marketplace publish")
     }
 
@@ -267,23 +357,29 @@ internal class MarketplaceService(
         repoRoot: Path,
         target: MarketplaceImportTarget.Direct,
     ): JsonObject {
-        val source = externalSource(
-            repoRoot = repoRoot,
-            repository = target.repository,
-            ref = target.ref,
-            allowExternalLocalGit = true,
+        val remote = ExternalMarketplace(
+            name = target.importRef.marketplace.value,
+            source = externalSource(
+                repoRoot = repoRoot,
+                repository = target.repository,
+                ref = target.ref,
+                allowExternalLocalGit = true,
+            ),
         )
-        val marketplaceName = target.importRef.marketplace.value
+        return withDirectRemote(remote)
+    }
+
+    private fun JsonObject.withDirectRemote(remote: ExternalMarketplace): JsonObject {
+        val marketplaceName = remote.name
         val remotes = externalMarketplaces()
         val existing = remotes.firstOrNull { it.name == marketplaceName }
-        if (existing != null && existing.source != source) {
+        if (existing != null && existing.source != remote.source) {
             throw MarketplaceFailure.InvalidSource(
                 "direct import marketplace name `$marketplaceName` already points to ${sourceDisplay(existing.source)}"
             )
         }
         return withExternalMarketplaces(
-            (remotes.filterNot { it.name == marketplaceName } + ExternalMarketplace(marketplaceName, source))
-                .sortedBy { it.name }
+            (remotes.filterNot { it.name == marketplaceName } + remote).sortedBy { it.name }
         ).withAllowedExternalMarketplace(marketplaceName)
     }
 
@@ -823,10 +919,51 @@ internal class MarketplaceService(
         }
 
     private fun marketplace(repoRoot: Path): JsonObject =
-        JsonFiles.readObject(repoRoot.resolve(ADAPTABLE_MARKETPLACE_PATH))
+        marketplaceDocument(repoRoot).payload
+
+    private fun marketplaceDocument(repoRoot: Path): MarketplaceDocument {
+        val path = existingMarketplacePath(repoRoot)
+            ?: throw MarketplaceFailure.InvalidSource(
+                "missing adaptable marketplace: expected $ADAPTABLE_MARKETPLACE_PATH or $INSTALLED_MARKETPLACE_PATH"
+            )
+        return MarketplaceDocument(path = path, payload = JsonFiles.readObject(path))
+    }
+
+    private fun marketplaceForMutation(repoRoot: Path): MarketplaceDocument {
+        val path = existingMarketplacePath(repoRoot) ?: repoRoot.resolve(INSTALLED_MARKETPLACE_PATH)
+        val payload = if (path.exists()) JsonFiles.readObject(path) else emptyInstalledMarketplace(repoRoot)
+        return MarketplaceDocument(path = path, payload = payload)
+    }
+
+    private fun existingMarketplacePath(repoRoot: Path): Path? =
+        listOf(
+            repoRoot.resolve(ADAPTABLE_MARKETPLACE_PATH),
+            repoRoot.resolve(INSTALLED_MARKETPLACE_PATH),
+        ).firstOrNull { it.exists() }
+
+    private fun emptyInstalledMarketplace(repoRoot: Path): JsonObject =
+        buildJsonObject {
+            put("type", "MARKETPLACE")
+            put("schemaVersion", 1)
+            put("name", MarketplaceName.fromRepositoryName(repoRoot.name).value)
+            putJsonObject("owner") {
+                put("name", System.getProperty("user.name")?.takeIf { it.isNotBlank() } ?: "Local developer")
+            }
+            putJsonObject("management") {
+                put("type", "MANAGEMENT_POLICY")
+                put("mode", "CURATED")
+            }
+            putJsonArray("plugins") {}
+        }
 
     private fun currentSha(repoRoot: Path): String =
-        Digests.digestPath(repoRoot.resolve(SOURCE_ROOT), DigestAlgorithm.Sha1)
+        when {
+            repoRoot.resolve(SOURCE_ROOT).exists() -> Digests.digestPath(repoRoot.resolve(SOURCE_ROOT), DigestAlgorithm.Sha1)
+            repoRoot.resolve(INTELLIGENCE_ROOT).exists() -> {
+                Digests.digestPath(repoRoot.resolve(INTELLIGENCE_ROOT), DigestAlgorithm.Sha1)
+            }
+            else -> Digests.digestPath(marketplaceDocument(repoRoot).path, DigestAlgorithm.Sha1)
+        }
 
     private fun currentSourceTimestamp(repoRoot: Path): String {
         val process = ProcessBuilder("git", "show", "-s", "--format=%cI", "HEAD")
@@ -899,27 +1036,35 @@ internal class MarketplaceService(
                 val importRef = MarketplaceImportRef.parse(
                     "${source.requiredString("marketplace")}/${source.requiredString("plugin")}"
                 )
+                val version = ExactVersion.parse(source.requiredString("version"))
+                resolvedAssets.lockedImportRoot(repoRoot, importRef, version)?.let { cachedSource ->
+                    val cachedEntry = marketplacePluginEntry(cachedSource.root, importRef)
+                    requireRemoteVersion(
+                        remoteRoot = cachedSource.root,
+                        remoteEntry = cachedEntry,
+                        marketplace = importRef.marketplace.value,
+                        plugin = importRef.plugin.value,
+                        version = version.value,
+                    )
+                    return SourceEntry(cachedSource.root, cachedEntry)
+                }
+
                 val remote = marketplace(repoRoot).externalMarketplaces()
                     .firstOrNull { it.name == importRef.marketplace.value }
                     ?: throw MarketplaceFailure.InvalidSource(
                         "unknown external marketplace: ${importRef.marketplace.value}"
                     )
                 val resolved = resolver.resolve(remote)
-                val remoteMarketplace = marketplaceAt(resolved.root)
-                val remoteEntry = remoteMarketplace.arrayValue("plugins")
-                    .objects()
-                    .firstOrNull { it.stringValue("name") == importRef.plugin.value }
-                    ?: throw MarketplaceFailure.InvalidSource(
-                        "plugin ${importRef.plugin.value} was not found in ${importRef.marketplace.value}"
-                    )
+                val remoteEntry = marketplacePluginEntry(resolved.root, importRef)
                 requireRemoteVersion(
                     remoteRoot = resolved.root,
                     remoteEntry = remoteEntry,
                     marketplace = importRef.marketplace.value,
                     plugin = importRef.plugin.value,
-                    version = source.requiredString("version"),
+                    version = version.value,
                 )
-                SourceEntry(resolved.root, remoteEntry)
+                val cachedSource = resolvedAssets.store(importRef, version, resolved.root)
+                SourceEntry(cachedSource.root, marketplacePluginEntry(cachedSource.root, importRef))
             }
             else -> throw MarketplaceFailure.InvalidSource("unsupported plugin source type: $sourceType")
         }
@@ -1017,6 +1162,7 @@ internal class MarketplaceService(
     private fun writeMarketplaceLock(
         repoRoot: Path,
         rootMarketplace: JsonObject,
+        rootMarketplacePath: Path,
         target: JsonObject,
         resolvedSource: JsonObject,
         version: ExactVersion,
@@ -1051,25 +1197,12 @@ internal class MarketplaceService(
                     put("name", rootMarketplace.requiredString("name"))
                     putJsonObject("source") {
                         put("type", "LOCAL_SOURCE")
-                        put("path", "source/adaptable.marketplace.json")
+                        put("path", rootMarketplacePath.relativeToUnix(repoRoot))
                     }
                 }
                 put("entries", JsonArray(nextEntries.sortedBy { it.objectValue("target")?.stringValue("name") }))
             }
         )
-    }
-
-    private fun resolvedPluginIntegrity(remoteRoot: Path, remoteEntry: JsonObject): String {
-        val pluginRef = remoteEntry.requiredObject("plugin")
-        val source = pluginRef.requiredObject("source")
-        if (source.stringValue("type") != "LOCAL_SOURCE") {
-            throw MarketplaceFailure.InvalidSource("imported plugin must resolve to a local source in its marketplace")
-        }
-        val sourcePath = resolveSourcePath(remoteRoot, source.requiredString("path"))
-        if (!sourcePath.exists()) {
-            throw MarketplaceFailure.InvalidSource("imported plugin source path is missing: ${source.requiredString("path")}")
-        }
-        return Digests.digestPath(sourcePath, DigestAlgorithm.Sha256)
     }
 
     private fun requireRemoteVersion(
@@ -1113,6 +1246,14 @@ internal class MarketplaceService(
             else -> throw MarketplaceFailure.InvalidSource("missing marketplace source in $root")
         }
     }
+
+    private fun marketplacePluginEntry(root: Path, importRef: MarketplaceImportRef): JsonObject =
+        marketplaceAt(root).arrayValue("plugins")
+            .objects()
+            .firstOrNull { it.stringValue("name") == importRef.plugin.value }
+            ?: throw MarketplaceFailure.InvalidSource(
+                "plugin ${importRef.plugin.value} was not found in ${importRef.marketplace.value}"
+            )
 
     private fun parseGitHubRepository(value: String): String? {
         val trimmed = value.trim()
@@ -1167,6 +1308,9 @@ internal class MarketplaceService(
                     ?.stringValue("marketplace") == marketplaceName
             }
 
+    private fun JsonObject.hasPluginEntry(name: String): Boolean =
+        arrayValue("plugins").objects().any { entry -> entry.stringValue("name") == name }
+
     private fun JsonObject.withExternalMarketplaces(remotes: List<ExternalMarketplace>): JsonObject =
         withReplacedFields(
             "externalMarketplaces" to JsonArray(
@@ -1220,6 +1364,96 @@ internal class MarketplaceService(
             }
             replacements.forEach { (key, value) -> put(key, value) }
         }
+
+    private class ResolvedMarketplaceAssets(
+        private val root: Path,
+    ) {
+        fun store(
+            importRef: MarketplaceImportRef,
+            version: ExactVersion,
+            remoteRoot: Path,
+        ): CachedMarketplaceSource {
+            val sourceRoot = remoteRoot.resolve(SOURCE_ROOT)
+            if (!Files.isDirectory(sourceRoot)) {
+                throw MarketplaceFailure.InvalidSource("resolved marketplace source root is missing: $sourceRoot")
+            }
+
+            val integrity = Digests.digestPath(sourceRoot, DigestAlgorithm.Sha256)
+            cached(importRef, version, integrity)?.let { return it }
+
+            root.createDirectories()
+            val incoming = Files.createTempDirectory(root, ".incoming-")
+            try {
+                FileSystem.copyPath(sourceRoot, incoming.resolve(SOURCE_ROOT))
+                val assetRoot = assetRoot(importRef, version, integrity)
+                assetRoot.parent.createDirectories()
+                FileSystem.copyPath(incoming, assetRoot)
+                return cached(importRef, version, integrity)
+                    ?: throw MarketplaceFailure.InvalidSource("failed to cache marketplace assets for ${importRef.display}")
+            } finally {
+                FileSystem.deleteRecursively(incoming)
+            }
+        }
+
+        fun lockedImportRoot(
+            repoRoot: Path,
+            importRef: MarketplaceImportRef,
+            version: ExactVersion,
+        ): CachedMarketplaceSource? {
+            val lockPath = repoRoot.resolve(MARKETPLACE_LOCK_PATH)
+            if (!lockPath.exists()) {
+                return null
+            }
+
+            val locked = JsonFiles.readObject(lockPath)
+                .arrayValue("entries")
+                .objects()
+                .firstOrNull { entry -> entry.matches(importRef, version) }
+                ?: return null
+            return cached(importRef, version, locked.requiredString("integrity"))
+        }
+
+        private fun cached(
+            importRef: MarketplaceImportRef,
+            version: ExactVersion,
+            integrity: String,
+        ): CachedMarketplaceSource? {
+            val assetRoot = assetRoot(importRef, version, integrity)
+            val sourceRoot = assetRoot.resolve(SOURCE_ROOT)
+            if (!sourceRoot.exists()) {
+                return null
+            }
+            val actualIntegrity = Digests.digestPath(sourceRoot, DigestAlgorithm.Sha256)
+            if (actualIntegrity != integrity) {
+                throw MarketplaceFailure.InvalidSource(
+                    "cached marketplace asset integrity mismatch for ${importRef.display}: " +
+                        "expected $integrity but found $actualIntegrity"
+                )
+            }
+            return CachedMarketplaceSource(root = assetRoot, integrity = integrity)
+        }
+
+        private fun assetRoot(
+            importRef: MarketplaceImportRef,
+            version: ExactVersion,
+            integrity: String,
+        ): Path =
+            root.resolve("plugins")
+                .resolve(importRef.marketplace.value)
+                .resolve(importRef.plugin.value)
+                .resolve(cacheComponent(version.value))
+                .resolve(integrity.removePrefix("sha256:"))
+
+        private fun JsonObject.matches(importRef: MarketplaceImportRef, version: ExactVersion): Boolean {
+            val target = objectValue("target") ?: return false
+            val source = target.objectValue("source") ?: return false
+            return target.stringValue("name") == importRef.plugin.value &&
+                source.stringValue("type") == "MARKETPLACE_SOURCE" &&
+                source.stringValue("marketplace") == importRef.marketplace.value &&
+                source.stringValue("plugin") == importRef.plugin.value &&
+                source.stringValue("version") == version.value
+        }
+    }
 
     private inner class RemoteMarketplaceResolver(
         private val repoRoot: Path,
@@ -1406,6 +1640,8 @@ internal class MarketplaceService(
         const val CODEX_PLUGIN_DIR = ".codex-plugin"
         val SOURCE_ROOT: Path = Path.of("source")
         val ADAPTABLE_MARKETPLACE_PATH: Path = SOURCE_ROOT.resolve("adaptable.marketplace.json")
+        val INTELLIGENCE_ROOT: Path = Path.of(".intelligence")
+        val INSTALLED_MARKETPLACE_PATH: Path = INTELLIGENCE_ROOT.resolve("adaptable.marketplace.json")
         val CODEX_MARKETPLACE_ROOT: Path = Path.of(".agents").resolve("plugins")
         val CODEX_BRANCH_MARKETPLACE_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("marketplace.json")
         val CODEX_BRANCH_PLUGINS_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("plugins")
@@ -1415,7 +1651,7 @@ internal class MarketplaceService(
         val GITHUB_BRANCH_PLUGINS_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("plugins")
         const val GITHUB_MARKETPLACE_PLUGIN_ROOT = ".github/plugin/plugins"
         val HOOK_COMMAND_PATH_RE = Regex("\\bhooks/[A-Za-z0-9_.-]+")
-        val MARKETPLACE_LOCK_PATH: Path = Path.of(".intelligence").resolve("marketplace-lock.json")
+        val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
         val GITHUB_SHORTHAND = Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
     }
 }
@@ -1477,6 +1713,8 @@ private data class MarketplaceImportRef(
     val marketplace: MarketplaceName,
     val plugin: MarketplaceName,
 ) {
+    val display: String = "${marketplace.value}/${plugin.value}"
+
     companion object {
         fun parse(value: String): MarketplaceImportRef {
             val parts = value.split("/")
@@ -1554,6 +1792,23 @@ private data class ResolvedMarketplace(
     val resolvedSource: JsonObject,
 )
 
+private data class CachedMarketplaceSource(
+    val root: Path,
+    val integrity: String,
+)
+
+private data class MarketplaceDocument(
+    val path: Path,
+    val payload: JsonObject,
+)
+
+private data class LockedMarketplaceImport(
+    val target: JsonObject,
+    val resolvedSource: JsonObject,
+    val version: ExactVersion,
+    val integrity: String,
+)
+
 private data class SourceEntry(
     val repoRoot: Path,
     val entry: JsonObject,
@@ -1577,3 +1832,16 @@ private fun JsonObject.requiredString(key: String): String =
 
 private fun Path.relativeToUnix(base: Path): String =
     base.relativize(this).toString().replace('\\', '/')
+
+private const val RESOLVED_ASSET_ROOT_ENV = "INTELLIGENCE_MARKETPLACE_ASSET_ROOT"
+
+private val CACHE_COMPONENT_RE = Regex("[^A-Za-z0-9_.-]+")
+
+private fun defaultResolvedAssetRoot(): Path =
+    System.getenv(RESOLVED_ASSET_ROOT_ENV)
+        ?.takeIf { it.isNotBlank() }
+        ?.toCliPath()
+        ?: Path.of(System.getProperty("user.home"), ".local", "share", "intelligence", "marketplace-assets")
+
+private fun cacheComponent(value: String): String =
+    CACHE_COMPONENT_RE.replace(value, "_").trim('_').ifBlank { "_" }
