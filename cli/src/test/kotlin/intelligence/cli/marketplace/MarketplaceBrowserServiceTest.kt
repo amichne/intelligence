@@ -18,6 +18,33 @@ class MarketplaceBrowserServiceTest {
     }
 
     @Test
+    fun `repository parser keeps owner repo shorthand on github`() {
+        val ref = MarketplaceRepositoryRef.parse("amichne/slopsentral")
+
+        require(ref is MarketplaceRepositoryRef.Remote)
+        assertEquals("amichne/slopsentral", ref.displayName)
+        assertEquals("https://github.com/amichne/slopsentral.git", ref.cloneUrl)
+    }
+
+    @Test
+    fun `repository parser accepts enterprise https git URL`() {
+        val ref = MarketplaceRepositoryRef.parse("https://github.enterprise.example/acme/tools.git")
+
+        require(ref is MarketplaceRepositoryRef.Remote)
+        assertEquals("github.enterprise.example/acme/tools", ref.displayName)
+        assertEquals("https://github.enterprise.example/acme/tools.git", ref.cloneUrl)
+    }
+
+    @Test
+    fun `repository parser accepts enterprise ssh git URL`() {
+        val ref = MarketplaceRepositoryRef.parse("git@github.enterprise.example:acme/tools.git")
+
+        require(ref is MarketplaceRepositoryRef.Remote)
+        assertEquals("github.enterprise.example/acme/tools", ref.displayName)
+        assertEquals("git@github.enterprise.example:acme/tools.git", ref.cloneUrl)
+    }
+
+    @Test
     fun `source browse exposes only standalone primitives listed by marketplace`() {
         val repo = Files.createTempDirectory("intelligence-browse-source-")
         writeJson(

@@ -8,6 +8,7 @@ import intelligence.cli.io.objectValue
 import intelligence.cli.io.stringList
 import intelligence.cli.io.stringValue
 import intelligence.cli.io.toCliPath
+import java.net.URI
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -26,7 +27,7 @@ internal class MarketplaceBrowserService {
         val ref = MarketplaceRepositoryRef.parse(repository)
         return when (ref) {
             is MarketplaceRepositoryRef.Local -> browseLocal(ref, provider)
-            is MarketplaceRepositoryRef.GitHub -> browseGitHub(ref, provider)
+            is MarketplaceRepositoryRef.Remote -> browseRemote(ref, provider)
         }
     }
 
@@ -39,8 +40,8 @@ internal class MarketplaceBrowserService {
                 "no ${provider.failureName} marketplace found in ${ref.path}"
             )
 
-    private fun browseGitHub(
-        ref: MarketplaceRepositoryRef.GitHub,
+    private fun browseRemote(
+        ref: MarketplaceRepositoryRef.Remote,
         provider: MarketplaceBrowseProvider,
     ): MarketplaceBrowseResult {
         val tempRoot = Files.createTempDirectory("intelligence-marketplace-browse-")
@@ -482,7 +483,7 @@ internal data class MarketplacePrimitiveOffering(
         }
 }
 
-private sealed interface MarketplaceRepositoryRef {
+internal sealed interface MarketplaceRepositoryRef {
     val displayName: String
 
     data class Local(
@@ -490,13 +491,10 @@ private sealed interface MarketplaceRepositoryRef {
         override val displayName: String,
     ) : MarketplaceRepositoryRef
 
-    data class GitHub(
-        val owner: String,
-        val repo: String,
-    ) : MarketplaceRepositoryRef {
-        override val displayName: String = "$owner/$repo"
-        val cloneUrl: String = "https://github.com/$owner/$repo.git"
-    }
+    data class Remote(
+        override val displayName: String,
+        val cloneUrl: String,
+    ) : MarketplaceRepositoryRef
 
     companion object {
         fun parse(value: String): MarketplaceRepositoryRef {
@@ -508,15 +506,16 @@ private sealed interface MarketplaceRepositoryRef {
                 throw MarketplaceFailure.InvalidSource("repository path does not exist: $value")
             }
             parseGitHub(value)?.let { return it }
+            parseGitUrl(value)?.let { return it }
             throw MarketplaceFailure.InvalidSource(
-                "repository must be a local path, GitHub URL, or owner/repo shorthand: $value"
+                "repository must be a local path, GitHub URL, owner/repo shorthand, or git URL: $value"
             )
         }
 
         private fun looksLikeLocalPath(value: String): Boolean =
             value.startsWith(".") || value.startsWith("~") || value.startsWith("/")
 
-        private fun parseGitHub(value: String): GitHub? {
+        private fun parseGitHub(value: String): Remote? {
             val trimmed = value.trim()
             val githubPath = when {
                 trimmed.startsWith("https://github.com/") -> trimmed.removePrefix("https://github.com/")
@@ -531,7 +530,42 @@ private sealed interface MarketplaceRepositoryRef {
                 ?.removeSuffix(".git")
                 ?.takeIf { it.isNotBlank() }
                 ?: return null
-            return GitHub(owner, repo)
+            return Remote(
+                displayName = "$owner/$repo",
+                cloneUrl = "https://github.com/$owner/$repo.git",
+            )
+        }
+
+        private fun parseGitUrl(value: String): Remote? {
+            val trimmed = value.trim()
+            if (!looksLikeGitUrl(trimmed)) {
+                return null
+            }
+            return Remote(
+                displayName = displayNameForGitUrl(trimmed),
+                cloneUrl = trimmed,
+            )
+        }
+
+        private fun looksLikeGitUrl(value: String): Boolean =
+            value.startsWith("https://") ||
+                value.startsWith("http://") ||
+                value.startsWith("ssh://") ||
+                value.startsWith("git@") ||
+                value.endsWith(".git")
+
+        private fun displayNameForGitUrl(value: String): String {
+            if (value.startsWith("git@")) {
+                val host = value.removePrefix("git@").substringBefore(":")
+                val path = value.substringAfter(":").removeSuffix(".git").trim('/')
+                return "$host/$path"
+            }
+            return runCatching {
+                val uri = URI(value)
+                val host = uri.host.orEmpty()
+                val path = uri.path.trim('/').removeSuffix(".git")
+                listOf(host, path).filter { it.isNotBlank() }.joinToString("/")
+            }.getOrDefault(value.removeSuffix(".git"))
         }
 
         private val GITHUB_SHORTHAND = Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")
