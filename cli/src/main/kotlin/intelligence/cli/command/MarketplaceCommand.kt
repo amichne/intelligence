@@ -7,7 +7,6 @@ import intelligence.cli.io.toCliPath
 import intelligence.cli.marketplace.MarketplaceBrowseFormat
 import intelligence.cli.marketplace.MarketplaceBrowseProvider
 import intelligence.cli.marketplace.MarketplaceBrowseText
-import intelligence.cli.marketplace.MarketplaceFailure
 import intelligence.cli.marketplace.MarketplaceProvider
 import intelligence.cli.rpc.RpcDispatcher
 import intelligence.cli.rpc.RpcMethod
@@ -30,6 +29,7 @@ import kotlinx.serialization.json.put
 
 internal class MarketplaceCommand(
     dispatcher: RpcDispatcher,
+    terminalUiLauncher: TerminalUiLauncher,
 ) : CliktCommand(
     name = "marketplace",
 ) {
@@ -39,7 +39,7 @@ internal class MarketplaceCommand(
             RemoteMarketplaceCommand(dispatcher),
             ImportMarketplaceCommand(dispatcher),
             InstallMarketplaceCommand(dispatcher),
-            MarketplaceUiCommand(dispatcher),
+            MarketplaceUiCommand(terminalUiLauncher),
             MaterializeMarketplaceCommand(dispatcher),
             PublishMarketplaceCommand(dispatcher),
             PublishMarketplaceBranchCommand(dispatcher),
@@ -291,7 +291,7 @@ private class InstallMarketplaceCommand(
 }
 
 private class MarketplaceUiCommand(
-    private val dispatcher: RpcDispatcher,
+    private val terminalUiLauncher: TerminalUiLauncher,
 ) : CliktCommand(
     name = "ui",
 ) {
@@ -300,13 +300,12 @@ private class MarketplaceUiCommand(
     private val ref by option("--ref", help = "Branch, tag, or SHA for direct imports selected in the UI. Defaults to main.")
 
     override fun help(context: Context): String =
-        "Interactively browse, import, and publish marketplace offerings."
+        "Open the full-screen marketplace browser."
 
     override fun run() {
-        try {
-            MarketplaceTerminalUi(dispatcher).run(repoRoot = repo, ref = ref)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace ui failed", statusCode = failure.exitCode)
+        val exitCode = terminalUiLauncher.launch(repoRoot = repo, ref = ref)
+        if (exitCode != 0) {
+            throw CliktError("terminal UI exited with status $exitCode", statusCode = exitCode)
         }
     }
 }

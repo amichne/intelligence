@@ -39,37 +39,35 @@ class Intelligence < Formula
 
   on_macos do
     on_intel do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-macos-x64",
-          using: :nounzip
+      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-macos-x64.tar.gz"
       sha256 "0000000000000000000000000000000000000000000000000000000000000000"
     end
 
     on_arm do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-macos-arm64",
-          using: :nounzip
+      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-macos-arm64.tar.gz"
       sha256 "0000000000000000000000000000000000000000000000000000000000000000"
     end
   end
 
   on_linux do
     on_intel do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-linux-x64",
-          using: :nounzip
+      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-linux-x64.tar.gz"
       sha256 "0000000000000000000000000000000000000000000000000000000000000000"
     end
 
     on_arm do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-linux-arm64",
-          using: :nounzip
+      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-linux-arm64.tar.gz"
       sha256 "0000000000000000000000000000000000000000000000000000000000000000"
     end
   end
 
   def install
-    bin.install "intelligence-#{self.class.release_tag}-#{self.class.artifact_target}" => "intelligence"
+    bin.install "intelligence"
+    bin.install "intelligence-tui"
   end
 
   test do
     assert_match "portable plugin marketplaces", shell_output("#{bin}/intelligence --help")
+    assert_match "Usage: intelligence-tui", shell_output("#{bin}/intelligence-tui --help")
   end
 end

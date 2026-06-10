@@ -28,9 +28,10 @@ readme_content = readme.read_text(encoding="utf-8")
 state = json.loads(release_state.read_text(encoding="utf-8"))
 
 require('class Intelligence < Formula' in formula_content, "formula class must be Intelligence")
-require("using: :nounzip" in formula_content, "formula must install raw executable assets")
+require(".tar.gz" in formula_content, "formula must install release tarball assets")
 require("disable!" in formula_content, "formula template must be disabled until a native release renders real assets")
-require('bin.install "intelligence-#{self.class.release_tag}-#{self.class.artifact_target}" => "intelligence"' in formula_content, "formula must install the selected executable as intelligence")
+require('bin.install "intelligence"' in formula_content, "formula must install intelligence")
+require('bin.install "intelligence-tui"' in formula_content, "formula must install intelligence-tui")
 require(formula_content.count('sha256 "0000000000000000000000000000000000000000000000000000000000000000"') == 4, "formula template must contain four placeholder checksums")
 require("brew install amichne/intelligence/intelligence" in readme_content, "README must document direct tap installation")
 require("brew tap amichne/intelligence" in readme_content, "README must document manual tap installation")
@@ -62,13 +63,13 @@ with tempfile.TemporaryDirectory(prefix="intelligence-homebrew-test-") as temp:
     require('ARTIFACT_VERSION = "9.8.7"' in updated_formula, "updater must set the formula version")
     require("disable!" not in updated_formula, "updater must enable rendered release formulas")
     require(updated_state["current_release"] == "v9.8.7", "updater must set release-state current_release")
-    require("/v9.8.7/intelligence-v9.8.7-macos-arm64" in updated_readme, "updater must refresh README mirror example")
+    require("/v9.8.7/intelligence-v9.8.7-macos-arm64.tar.gz" in updated_readme, "updater must refresh README mirror example")
     for digest in ("1" * 64, "2" * 64, "3" * 64, "4" * 64):
         require(f'sha256 "{digest}"' in updated_formula, f"updater must set checksum {digest}")
 
     subprocess.run(["ruby", "-c", str(tap_root / "Formula" / "intelligence.rb")], check=True, stdout=subprocess.DEVNULL)
 
-    rendered_urls = re.findall(r'url "#\{cli_release_root\}/#\{release_tag\}/(.*?)",', updated_formula)
+    rendered_urls = re.findall(r'url "#\{cli_release_root\}/#\{release_tag\}/(.*?)"', updated_formula)
     require(len(rendered_urls) == 4, "formula must keep one URL per supported Homebrew platform")
 
 print("OK Homebrew formula")

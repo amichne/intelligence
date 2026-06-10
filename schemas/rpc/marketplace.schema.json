@@ -160,6 +160,14 @@
       "type": "string",
       "enum": [
         "marketplace.browse",
+        "marketplace.catalog",
+        "marketplace.installed.list",
+        "marketplace.versions.list",
+        "marketplace.pin",
+        "marketplace.unpin",
+        "marketplace.update",
+        "marketplace.updateAll",
+        "marketplace.primitive.import",
         "marketplace.remotes.list",
         "marketplace.remotes.add",
         "marketplace.remotes.remove",
@@ -177,7 +185,25 @@
           "$ref": "#/$defs/BrowseParams"
         },
         {
+          "$ref": "#/$defs/CatalogParams"
+        },
+        {
           "$ref": "#/$defs/RepoParams"
+        },
+        {
+          "$ref": "#/$defs/InstalledParams"
+        },
+        {
+          "$ref": "#/$defs/VersionsParams"
+        },
+        {
+          "$ref": "#/$defs/PluginParams"
+        },
+        {
+          "$ref": "#/$defs/PinParams"
+        },
+        {
+          "$ref": "#/$defs/PrimitiveImportParams"
         },
         {
           "$ref": "#/$defs/AddRemoteParams"
@@ -252,6 +278,28 @@
         }
       }
     },
+    "CatalogParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "repository"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "repository": {
+          "$ref": "#/$defs/RepositoryReference"
+        },
+        "provider": {
+          "$ref": "#/$defs/BrowseProvider"
+        },
+        "checkUpdates": {
+          "type": "boolean"
+        }
+      }
+    },
     "RepoParams": {
       "type": "object",
       "additionalProperties": false,
@@ -261,6 +309,124 @@
       "properties": {
         "repoRoot": {
           "$ref": "#/$defs/PathString"
+        }
+      }
+    },
+    "InstalledParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "checkUpdates": {
+          "type": "boolean"
+        }
+      }
+    },
+    "VersionsParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "target"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PluginParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "plugin"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "plugin": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PinParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "plugin",
+        "version"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "plugin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "PrimitiveImportParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "repository",
+        "kind",
+        "name"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "repository": {
+          "$ref": "#/$defs/RepositoryReference"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "skill",
+            "skills",
+            "agent",
+            "agents",
+            "hook",
+            "hooks",
+            "instruction",
+            "instructions",
+            "SKILL",
+            "AGENT",
+            "HOOK",
+            "INSTRUCTION"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
         }
       }
     },

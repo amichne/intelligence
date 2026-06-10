@@ -2,6 +2,7 @@ package intelligence.cli.rpc
 
 import intelligence.cli.io.JsonFiles
 import intelligence.cli.io.ProcessRunner
+import intelligence.cli.io.arrayValue
 import intelligence.cli.io.objectValue
 import intelligence.cli.io.putStringArray
 import intelligence.cli.io.toCliPath
@@ -10,10 +11,12 @@ import intelligence.cli.marketplace.MarketplaceBrowserService
 import intelligence.cli.marketplace.MarketplaceFailure
 import intelligence.cli.marketplace.MarketplaceProvider
 import intelligence.cli.marketplace.MarketplaceService
+import intelligence.cli.marketplace.PrimitiveKind
 import intelligence.cli.validation.ValidationFailure
 import intelligence.cli.validation.ValidationOptions
 import intelligence.cli.validation.ValidationService
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
@@ -44,6 +47,45 @@ internal class RpcDispatcher(
         try {
             when (method) {
                 RpcMethod.MarketplaceBrowse -> browse(params)
+                RpcMethod.MarketplaceCatalog -> catalog(params)
+                RpcMethod.MarketplaceInstalledList -> installedPlugins(params)
+                RpcMethod.MarketplaceVersionsList -> pluginVersions(params)
+                RpcMethod.MarketplacePin -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "plugin", "version")
+                    service.pinPlugin(
+                        repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                        plugin = params.requiredStringParam("plugin"),
+                        version = params.requiredStringParam("version"),
+                    )
+                }
+                RpcMethod.MarketplaceUnpin -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "plugin")
+                    service.unpinPlugin(
+                        repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                        plugin = params.requiredStringParam("plugin"),
+                    )
+                }
+                RpcMethod.MarketplaceUpdate -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "plugin")
+                    service.updatePlugin(
+                        repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                        plugin = params.requiredStringParam("plugin"),
+                    )
+                }
+                RpcMethod.MarketplaceUpdateAll -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot")
+                    service.updateAllPlugins(repoRoot = params.requiredStringParam("repoRoot").toCliPath())
+                }
+                RpcMethod.MarketplacePrimitiveImport -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "repository", "kind", "name", "ref")
+                    service.importPrimitive(
+                        repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                        repository = params.requiredStringParam("repository"),
+                        kind = primitiveKindParam(params, "kind"),
+                        name = params.requiredStringParam("name"),
+                        ref = params.optionalStringParam("ref"),
+                    )
+                }
                 RpcMethod.MarketplaceRemotesList -> listRemotes(params)
                 RpcMethod.MarketplaceRemotesAdd -> withMarketplaceMessages { service ->
                     params.requireOnlyParams("repoRoot", "name", "repository", "ref")
@@ -117,6 +159,45 @@ internal class RpcDispatcher(
             .toJson()
     }
 
+    private fun catalog(params: JsonObject): JsonObject {
+        params.requireOnlyParams("repoRoot", "repository", "provider", "checkUpdates")
+        val provider = browseProviderParam(params, "provider")
+        val catalog = browserService
+            .browse(repository = params.requiredStringParam("repository"), provider = provider)
+            .toJson()
+        val installedPlugins = runCatching {
+            MarketplaceService(processRunner = processRunner)
+                .installedPlugins(
+                    repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                    checkUpdates = params.booleanParam("checkUpdates", default = false),
+                )
+                .arrayValue("plugins")
+        }.getOrElse { JsonArray(emptyList()) }
+        return buildJsonObject {
+            catalog.forEach { (key, value) -> put(key, value) }
+            put("installed", installedPlugins)
+        }
+    }
+
+    private fun installedPlugins(params: JsonObject): JsonObject {
+        params.requireOnlyParams("repoRoot", "checkUpdates")
+        return MarketplaceService(processRunner = processRunner)
+            .installedPlugins(
+                repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                checkUpdates = params.booleanParam("checkUpdates", default = false),
+            )
+    }
+
+    private fun pluginVersions(params: JsonObject): JsonObject {
+        params.requireOnlyParams("repoRoot", "target", "ref")
+        return MarketplaceService(processRunner = processRunner)
+            .pluginVersions(
+                repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
+                target = params.requiredStringParam("target"),
+                ref = params.optionalStringParam("ref"),
+            )
+    }
+
     private fun listRemotes(params: JsonObject): JsonObject {
         params.requireOnlyParams("repoRoot")
         val messages = mutableListOf<String>()
@@ -174,6 +255,17 @@ internal class RpcDispatcher(
         params.optionalStringParam(name)
             ?.let(MarketplaceBrowseProvider::parse)
             ?: MarketplaceBrowseProvider.Auto
+
+    private fun primitiveKindParam(params: JsonObject, name: String): PrimitiveKind {
+        val value = params.requiredStringParam(name)
+        return PrimitiveKind.entries.firstOrNull { kind ->
+            value.equals(kind.sourceName, ignoreCase = true) ||
+                value.equals(kind.collectionName, ignoreCase = true) ||
+                value.equals(kind.collectionName.removeSuffix("s"), ignoreCase = true)
+        } ?: throw RpcFailure.invalidParams(
+            "kind must be one of: ${PrimitiveKind.entries.joinToString(", ") { it.collectionName }}"
+        )
+    }
 }
 
 private fun kotlinx.serialization.json.JsonObjectBuilder.putMessages(messages: List<String>) {

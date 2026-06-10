@@ -18,8 +18,9 @@ brew tap amichne/intelligence
 brew install intelligence
 ```
 
-`intelligence` installs the platform-specific GraalVM native executable from
-`amichne/intelligence`. It does not install or require a Homebrew-managed JVM.
+`intelligence` installs the platform-specific GraalVM native executable and the
+`intelligence-tui` Ratatui marketplace browser from `amichne/intelligence`. It
+does not install or require a Homebrew-managed JVM.
 
 ## Enterprise Mirrors
 
@@ -35,7 +36,7 @@ brew install amichne/intelligence/intelligence
 The shared mirror root must expose the same repository-shaped paths:
 
 ```text
-${HOMEBREW_INTELLIGENCE_ARTIFACT_ROOT}/intelligence/releases/download/v0.0.0/intelligence-v0.0.0-macos-arm64
+${HOMEBREW_INTELLIGENCE_ARTIFACT_ROOT}/intelligence/releases/download/v0.0.0/intelligence-v0.0.0-macos-arm64.tar.gz
 ```
 
 If your artifact layout points directly at the release directories, set the

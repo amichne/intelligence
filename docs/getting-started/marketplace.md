@@ -10,6 +10,7 @@ Browse a repository marketplace by reference. The command discovers supported
 entrypoints and shows plugins separately from standalone primitives.
 
 ```sh
+intelligence
 intelligence marketplace browse amichne/slopsentral
 intelligence marketplace browse amichne/slopsentral --format json
 intelligence marketplace ui
@@ -64,6 +65,7 @@ intelligence validate --repo /path/to/slopsentral --portable --hydrated /tmp/slo
 | `.intelligence/marketplace-lock.json` | Consumer repo | Resolved imported marketplace references and integrity evidence. |
 | `schemas/` | This repo | Provider-neutral and adapter JSON Schema definitions. |
 | `cli/` | This repo | Marketplace browsing, import, validation, materialization, and publication. |
+| `tui/` | This repo | Ratatui marketplace browsing, search, install, update, and pin workflows. |
 
 ## Publication
 

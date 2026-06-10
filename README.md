@@ -1,7 +1,8 @@
 # amichne-intelligence
 
-`amichne-intelligence` is the Kotlin CLI and schema contract repo for portable
-marketplace browsing, import, validation, materialization, and publishing.
+`amichne-intelligence` is the Kotlin CLI, Ratatui marketplace browser, and
+schema contract repo for portable marketplace browsing, import, validation,
+materialization, and publishing.
 
 Reusable personal skills and plugin families now live in
 [`amichne/slopsentral`](https://github.com/amichne/slopsentral). This repository
@@ -20,8 +21,10 @@ target repo.
 - `amichne/slopsentral` owns reusable skills, plugin families, hooks, agents,
   concepts, profiles, and generated provider payloads.
 - `schemas/` owns the public JSON contracts for source and provider payloads.
-- `cli/` owns browsing, validation, RPC dispatch, interactive marketplace
-  import, materialization, and publication.
+- `cli/` owns browsing, validation, RPC dispatch, marketplace import,
+  materialization, and publication.
+- `tui/` owns the Ratatui marketplace browser launched by bare `intelligence`
+  in interactive terminals.
 - `.intelligence/adaptable.marketplace.json` records install-only adaptable
   marketplace state for consumer repos.
 - `.intelligence/marketplace-lock.json` records imported marketplace references
@@ -33,6 +36,7 @@ Users with the CLI installed can browse a repository's marketplace without
 knowing provider entrypoints or plugin paths.
 
 ```sh
+intelligence
 intelligence marketplace browse amichne/slopsentral
 intelligence marketplace browse /path/to/slopsentral --provider source
 intelligence marketplace browse amichne/slopsentral --format json
@@ -82,6 +86,7 @@ does not mutate local Codex, Copilot, or other harness user configuration.
 
 ```sh
 ./gradlew :cli:test installDevelopmentCli
+cargo test --manifest-path tui/Cargo.toml
 intelligence validate --portable
 ```
 
@@ -114,11 +119,12 @@ Build the self-contained native CLI executable with:
 
 ```sh
 ./gradlew :cli:nativeCompile
+cargo build --release --manifest-path tui/Cargo.toml
 ```
 
-The release workflow publishes one GraalVM native executable per supported
-platform/architecture target, plus `SHA256SUMS`. It does not publish JVM
-application archives.
+The release workflow publishes one archive per supported platform/architecture
+target containing `intelligence` and `intelligence-tui`, plus `SHA256SUMS`. It
+does not publish JVM application archives.
 
 After a stable native release, install the CLI with Homebrew:
 

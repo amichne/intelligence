@@ -11,10 +11,11 @@ knowing provider branches, entrypoints, plugin paths, or primitive paths.
 
 | Operation | Command | Use When |
 |---|---|---|
+| Open marketplace TUI | `intelligence` | You want the searchable full-screen marketplace browser. |
 | Browse published offerings | `intelligence marketplace browse amichne/slopsentral` | You want the default marketplace view from a repository reference. |
 | Browse local source | `intelligence marketplace browse /path/to/slopsentral --provider source` | You are developing the marketplace repo and want the authored source catalog. |
 | Browse machine output | `intelligence marketplace browse amichne/slopsentral --format json` | You want a script-readable offering catalog. |
-| Interactive marketplace flow | `intelligence marketplace ui` | You want prompts for browse, import, and publish actions. |
+| Interactive marketplace flow | `intelligence marketplace ui` | You want to open the same full-screen marketplace browser explicitly. |
 
 ## Validate
 
@@ -95,8 +96,8 @@ printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","par
   | intelligence rpc
 ```
 
-Use this boundary for interactive clients such as a future Ratatui TUI instead
-of reimplementing marketplace normalization or referential resolution.
+The Ratatui TUI uses this boundary instead of reimplementing marketplace
+normalization or referential resolution.
 
 ## Build
 
@@ -106,6 +107,7 @@ marketplace browsing.
 | Operation | Command | Use When |
 |---|---|---|
 | Run CLI tests and install dev binary | `./gradlew :cli:test installDevelopmentCli` | You changed Kotlin CLI code. |
+| Run TUI tests | `cargo test --manifest-path tui/Cargo.toml` | You changed the Ratatui browser. |
 | Build native executable | `./gradlew :cli:nativeCompile` | You need the self-contained GraalVM binary. |
 | Install released CLI | `brew install amichne/intelligence/intelligence` | You want the stable installed `intelligence` command. |
 

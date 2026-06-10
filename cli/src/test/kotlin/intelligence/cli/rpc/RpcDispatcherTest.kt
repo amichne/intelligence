@@ -38,6 +38,50 @@ class RpcDispatcherTest {
     }
 
     @Test
+    fun `catalog returns browse results with installed plugin state`() {
+        val response = handle(
+            """
+            {
+              "jsonrpc": "2.0",
+              "id": "catalog",
+              "method": "marketplace.catalog",
+              "params": {
+                "repoRoot": "${repoRoot()}",
+                "repository": "${repoRoot()}",
+                "provider": "source",
+                "checkUpdates": false
+              }
+            }
+            """.trimIndent(),
+        )
+
+        val result = response.objectValue("result")
+        assertEquals("intelligence-cli", result.objectValue("marketplace").string("name"))
+        assertTrue(result["plugins"].toString().contains("kotlin-engineering"))
+        assertTrue(result["installed"].toString().contains("kotlin-engineering"))
+    }
+
+    @Test
+    fun `installed list accepts update check flag`() {
+        val response = handle(
+            """
+            {
+              "jsonrpc": "2.0",
+              "id": "installed",
+              "method": "marketplace.installed.list",
+              "params": {
+                "repoRoot": "${repoRoot()}",
+                "checkUpdates": false
+              }
+            }
+            """.trimIndent(),
+        )
+
+        val result = response.objectValue("result")
+        assertTrue(result["plugins"].toString().contains("kotlin-engineering"))
+    }
+
+    @Test
     fun `validation run returns exit code and messages`() {
         val response = handle(
             """
