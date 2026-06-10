@@ -71,8 +71,8 @@ def update_readme(root: Path, version: str) -> None:
 
     content = readme.read_text(encoding="utf-8")
     content, count = re.subn(
-        r"/v\d+\.\d+\.\d+/intelligence-v\d+\.\d+\.\d+-macos-arm64",
-        f"/v{version}/intelligence-v{version}-macos-arm64",
+        r"/v\d+\.\d+\.\d+/intelligence-v\d+\.\d+\.\d+-macos-arm64(?:\.tar\.gz)?",
+        f"/v{version}/intelligence-v{version}-macos-arm64.tar.gz",
         content,
     )
     require(count == 1, "README.md must contain exactly one CLI mirror example")

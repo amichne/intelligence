@@ -19,6 +19,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class MarketplaceServiceTest {
     @Test
@@ -466,6 +467,78 @@ class MarketplaceServiceTest {
         assertTrue(failure.message!!.contains("not requested version 9.9.9"))
     }
 
+    @Test
+    fun `installed plugins report lock and update status`() {
+        val repository = minimalMarketplaceRepository()
+        val external = repository.resolve("external").resolve("shared-tools")
+        val service = marketplaceService()
+
+        writeExternalMarketplace(external, version = "1.2.0")
+        service.addRemote(repository, "shared-tools", external.toString(), ref = null)
+        service.importPlugin(repository, "shared-tools/review-stack", "1.2.0")
+        writeExternalMarketplace(external, version = "1.3.0")
+
+        val installed = service.installedPlugins(repository, checkUpdates = true)
+        val plugin = installed.arrayValue("plugins").single().jsonObject
+
+        assertEquals("review-stack", plugin.stringValue("name"))
+        assertEquals("1.2.0", plugin.stringValue("version"))
+        assertEquals("1.3.0", plugin.stringValue("currentVersion"))
+        assertEquals("true", plugin["outdated"]!!.jsonPrimitive.content)
+        assertEquals("true", plugin["locked"]!!.jsonPrimitive.content)
+    }
+
+    @Test
+    fun `update plugin refreshes marketplace source version and lock`() {
+        val repository = minimalMarketplaceRepository()
+        val external = repository.resolve("external").resolve("shared-tools")
+        val service = marketplaceService()
+
+        writeExternalMarketplace(external, version = "1.2.0")
+        service.addRemote(repository, "shared-tools", external.toString(), ref = null)
+        service.importPlugin(repository, "shared-tools/review-stack", "1.2.0")
+        writeExternalMarketplace(external, version = "1.3.0")
+
+        service.updatePlugin(repository, "review-stack")
+
+        val marketplace = JsonFiles.readObject(repository.resolve("source").resolve("adaptable.marketplace.json"))
+        val source = marketplace.arrayValue("plugins")
+            .single()
+            .jsonObject
+            .objectValue("plugin")!!
+            .objectValue("source")!!
+        val lock = JsonFiles.readObject(repository.resolve(".intelligence").resolve("marketplace-lock.json"))
+        val lockEntry = lock.arrayValue("entries").single().jsonObject
+
+        assertEquals("1.3.0", source.stringValue("version"))
+        assertEquals("1.3.0", lockEntry.stringValue("version"))
+        assertEquals("1.3.0", lockEntry.objectValue("target")!!.stringValue("version"))
+    }
+
+    @Test
+    fun `standalone primitive import only imports explicit marketplace primitive`() {
+        val repository = minimalMarketplaceRepository()
+        val external = repository.resolve("external").resolve("shared-tools")
+        val service = marketplaceService()
+
+        writeExternalMarketplaceWithStandaloneSkill(external)
+
+        service.importPrimitive(
+            repoRoot = repository,
+            repository = external.toString(),
+            kind = PrimitiveKind.Skill,
+            name = "standalone-review",
+            ref = null,
+        )
+
+        val marketplace = JsonFiles.readObject(repository.resolve("source").resolve("adaptable.marketplace.json"))
+        val skill = marketplace.arrayValue("skills").single().jsonObject
+
+        assertEquals("standalone-review", skill.stringValue("name"))
+        assertEquals("LOCAL_SOURCE", skill.objectValue("source")!!.stringValue("type"))
+        assertEquals("external/shared-tools", skill.objectValue("source")!!.stringValue("path"))
+    }
+
     private fun repoRoot(): Path =
         generateSequence(Path.of(".").toAbsolutePath().normalize()) { it.parent }
             .first { it.resolve("source").resolve("adaptable.marketplace.json").toFile().isFile }
@@ -505,7 +578,7 @@ class MarketplaceServiceTest {
         return Files.createTempDirectory("intelligence-marketplace-consumer-")
     }
 
-    private fun writeExternalMarketplace(root: Path) {
+    private fun writeExternalMarketplace(root: Path, version: String = "1.2.0") {
         writeJson(
             root.resolve("source").resolve("adaptable.marketplace.json"),
             """
@@ -527,7 +600,7 @@ class MarketplaceServiceTest {
                       "type": "LOCAL_SOURCE",
                       "path": "./plugins/review-stack"
                     },
-                    "version": "1.2.0"
+                    "version": "$version"
                   },
                   "description": "Review stack.",
                   "tags": [
@@ -548,10 +621,51 @@ class MarketplaceServiceTest {
               "type": "PLUGIN",
               "schemaVersion": 1,
               "name": "review-stack",
-              "version": "1.2.0",
+              "version": "$version",
               "description": "Review stack.",
               "skills": []
             }
+            """.trimIndent(),
+        )
+    }
+
+    private fun writeExternalMarketplaceWithStandaloneSkill(root: Path) {
+        writeExternalMarketplace(root)
+        val marketplacePath = root.resolve("source").resolve("adaptable.marketplace.json")
+        writeJson(
+            marketplacePath,
+            """
+            {
+              "type": "MARKETPLACE",
+              "schemaVersion": 1,
+              "name": "shared-tools",
+              "owner": {
+                "name": "Shared Tools"
+              },
+              "plugins": [],
+              "skills": [
+                {
+                  "type": "SKILL",
+                  "name": "standalone-review",
+                  "path": "skills/standalone-review",
+                  "source": {
+                    "type": "LOCAL_SOURCE",
+                    "path": "./"
+                  }
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            root.resolve("source").resolve("skills").resolve("standalone-review").resolve("SKILL.md"),
+            """
+            ---
+            name: standalone-review
+            description: Standalone review workflow.
+            ---
+
+            # Standalone Review
             """.trimIndent(),
         )
     }

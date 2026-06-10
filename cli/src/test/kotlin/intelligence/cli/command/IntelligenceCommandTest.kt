@@ -20,6 +20,46 @@ class IntelligenceCommandTest {
         assertSectionOrder(result.stdout, "Commands:", "Options:")
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
+        assertTrue(result.stdout.contains("rpc"))
+    }
+
+    @Test
+    fun `bare command prints help outside an interactive terminal`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("Usage: intelligence [OPTIONS] [COMMAND]"))
+        assertTrue(result.stdout.contains("marketplace"))
+    }
+
+    @Test
+    fun `bare command launches terminal ui in an interactive terminal`() {
+        val runner = RecordingProcessRunner()
+        val result = IntelligenceCommand(
+            processRunner = runner,
+            terminalUiLauncher = testUiLauncher(runner),
+            isInteractiveTerminal = { true },
+        ).test("")
+
+        assertEquals(0, result.statusCode)
+        assertEquals(
+            listOf(
+                "intelligence-tui-test",
+                "--repo",
+                Path.of(".").toAbsolutePath().normalize().toString(),
+                "--intelligence-bin",
+                "intelligence-test",
+            ),
+            runner.command,
+        )
+    }
+
+    @Test
+    fun `rpc help exposes stdio contract`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("rpc --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("JSON-RPC stdio contract"))
     }
 
     @Test
@@ -95,17 +135,40 @@ class IntelligenceCommandTest {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace ui --help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Interactively browse"))
+        assertTrue(result.stdout.contains("full-screen marketplace browser"))
         assertTrue(result.stdout.contains("--ref"))
     }
 
     @Test
-    fun `marketplace ui fails clearly outside an interactive terminal`() {
-        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace ui")
+    fun `marketplace ui delegates to terminal ui launcher`() {
+        val runner = RecordingProcessRunner()
+        val result = IntelligenceCommand(
+            processRunner = runner,
+            terminalUiLauncher = testUiLauncher(runner),
+        ).test(
+            listOf(
+                "marketplace",
+                "ui",
+                "--repo",
+                repoRoot().toString(),
+                "--ref",
+                "main",
+            )
+        )
 
-        assertNotEquals(0, result.statusCode)
-        assertTrue(result.stderr.contains("requires an interactive terminal"))
-        assertTrue(result.stderr.contains("marketplace import"))
+        assertEquals(0, result.statusCode)
+        assertEquals(
+            listOf(
+                "intelligence-tui-test",
+                "--repo",
+                repoRoot().toString(),
+                "--intelligence-bin",
+                "intelligence-test",
+                "--ref",
+                "main",
+            ),
+            runner.command,
+        )
     }
 
     @Test
@@ -160,6 +223,13 @@ class IntelligenceCommandTest {
         assertTrue(secondIndex >= 0, "missing `$second` in help output")
         assertTrue(firstIndex < secondIndex, "`$first` should appear before `$second`")
     }
+
+    private fun testUiLauncher(runner: RecordingProcessRunner): TerminalUiLauncher =
+        TerminalUiLauncher(
+            processRunner = runner,
+            executableResolver = { "intelligence-tui-test" },
+            intelligenceResolver = { _ -> "intelligence-test" },
+        )
 
     @Test
     fun `invalid marketplace provider fails before materialization`() {

@@ -360,7 +360,7 @@ internal data class MarketplaceBrowseResult(
     fun renderJson(): String =
         JsonFiles.json.encodeToString(JsonElement.serializer(), toJson())
 
-    private fun toJson(): JsonObject =
+    internal fun toJson(): JsonObject =
         buildJsonObject {
             putJsonObject("marketplace") {
                 put("name", summary.name)
@@ -385,6 +385,63 @@ internal data class MarketplaceBrowseResult(
                 }
             }
         }
+}
+
+internal object MarketplaceBrowseText {
+    fun render(catalog: JsonObject): String {
+        val marketplace = catalog.objectValue("marketplace") ?: JsonObject(emptyMap())
+        val provider = marketplace.stringValue("provider")
+            ?.let { runCatching { MarketplaceBrowseProvider.parse(it).displayName }.getOrNull() }
+            ?: marketplace.stringValue("provider")
+            ?: "Unknown"
+        val lines = mutableListOf(
+            "Marketplace: ${marketplace.stringValue("name").orEmpty()}",
+            "Provider: $provider",
+            "Repository: ${marketplace.stringValue("repository").orEmpty()}",
+            "Entrypoint: ${marketplace.stringValue("entrypoint").orEmpty()}",
+        )
+        marketplace.stringValue("description")?.takeIf { it.isNotBlank() }?.let { description ->
+            lines += "Description: $description"
+        }
+        lines += ""
+        lines += "Plugins"
+        val plugins = catalog.arrayValue("plugins").objects().sortedBy { it.stringValue("name").orEmpty() }
+        if (plugins.isEmpty()) {
+            lines += "- none exposed"
+        } else {
+            lines += plugins.mapIndexed { index, plugin ->
+                val suffix = plugin.stringValue("description")?.takeIf { it.isNotBlank() }?.let { " - $it" }.orEmpty()
+                "${index + 1}. ${plugin.stringValue("name").orEmpty()}$suffix"
+            }
+        }
+
+        val standalone = catalog.objectValue("standalonePrimitives") ?: JsonObject(emptyMap())
+        val hasStandalone = PrimitiveKind.entries.any { kind -> standalone.arrayValue(kind.collectionName).isNotEmpty() }
+        if (!hasStandalone) {
+            lines += ""
+            lines += "Standalone primitives"
+            lines += "- none exposed"
+        } else {
+            PrimitiveKind.entries.forEach { kind ->
+                val primitives = standalone.arrayValue(kind.collectionName)
+                    .objects()
+                    .sortedBy { it.stringValue("name").orEmpty() }
+                if (primitives.isNotEmpty()) {
+                    lines += ""
+                    lines += standaloneTitle(kind)
+                    lines += primitives.mapIndexed { index, primitive ->
+                        val suffix = primitive.stringValue("description")
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let { " - $it" }
+                            .orEmpty()
+                        "${index + 1}. ${primitive.stringValue("name").orEmpty()}$suffix"
+                    }
+                }
+            }
+        }
+
+        return lines.joinToString("\n")
+    }
 }
 
 internal data class MarketplaceBrowseSummary(

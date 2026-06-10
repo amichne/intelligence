@@ -81,10 +81,15 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Validate CLI source
         run: |
           ./gradlew :cli:test installDevelopmentCli
+          cargo test --manifest-path tui/Cargo.toml
           .local/intelligence/bin/intelligence validate --portable
+          .local/intelligence/bin/intelligence-tui --help
           packaging/homebrew/scripts/test-formula.py
 
   native:
@@ -100,19 +105,19 @@ jobs:
           - target: linux-x64
             runner: ubuntu-24.04
             executable: intelligence
-            extension: ""
+            extension: ".tar.gz"
           - target: linux-arm64
             runner: ubuntu-24.04-arm
             executable: intelligence
-            extension: ""
+            extension: ".tar.gz"
           - target: macos-x64
             runner: macos-15-intel
             executable: intelligence
-            extension: ""
+            extension: ".tar.gz"
           - target: macos-arm64
             runner: macos-15
             executable: intelligence
-            extension: ""
+            extension: ".tar.gz"
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -126,6 +131,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
       - name: Build native executable
         run: |
           set -euo pipefail
@@ -133,12 +141,19 @@ jobs:
           target="${{ matrix.target }}"
           asset="dist/intelligence-${version}-${target}${{ matrix.extension }}"
           ./gradlew :cli:nativeCompile --no-daemon
+          cargo build --release --manifest-path tui/Cargo.toml
           mkdir -p dist
-          cp "cli/build/native/nativeCompile/${{ matrix.executable }}" "${asset}"
+          bundle="${RUNNER_TEMP:-/tmp}/intelligence-${version}-${target}"
+          rm -rf "${bundle}"
+          mkdir -p "${bundle}"
+          cp "cli/build/native/nativeCompile/${{ matrix.executable }}" "${bundle}/intelligence"
+          cp "target/release/intelligence-tui" "${bundle}/intelligence-tui"
           if [[ "${RUNNER_OS}" != "Windows" ]]; then
-            strip "${asset}" || true
+            strip "${bundle}/intelligence" || true
+            strip "${bundle}/intelligence-tui" || true
           fi
-          chmod 0755 "${asset}" || true
+          chmod 0755 "${bundle}/intelligence" "${bundle}/intelligence-tui" || true
+          tar -C "${bundle}" -czf "${asset}" intelligence intelligence-tui
           echo "asset=${asset}" >> "${GITHUB_ENV}"
 
       - name: Verify native executable
@@ -153,13 +168,17 @@ jobs:
           fi
           rm -rf "${smoke_root}"
           mkdir -p "${smoke_root}"
+          tar -xzf "${asset}" -C "${smoke_root}"
+          cli="${smoke_root}/intelligence"
+          tui="${smoke_root}/intelligence-tui"
 
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" --help
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" validate --repo "${repo}" --portable
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${asset}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" --help
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${tui}" --help
 
       - name: Verify no JVM linkage
         if: runner.os != 'Windows'
@@ -167,9 +186,11 @@ jobs:
           set -euo pipefail
           linkage="${RUNNER_TEMP:-/tmp}/intelligence-linkage.txt"
           if [[ "${RUNNER_OS}" == "macOS" ]]; then
-            otool -L "${asset}" | tee "${linkage}"
+            otool -L "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.metadata.outputs.version }}-${{ matrix.target }}/intelligence" | tee "${linkage}"
+            otool -L "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.metadata.outputs.version }}-${{ matrix.target }}/intelligence-tui" | tee -a "${linkage}"
           else
-            ldd "${asset}" | tee "${linkage}" || true
+            ldd "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.metadata.outputs.version }}-${{ matrix.target }}/intelligence" | tee "${linkage}" || true
+            ldd "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.metadata.outputs.version }}-${{ matrix.target }}/intelligence-tui" | tee -a "${linkage}" || true
           fi
           if grep -Eiq 'libjvm|libjli|JavaVirtualMachines|/java/' "${linkage}"; then
             echo "::error::native executable links against a JVM runtime"
@@ -256,10 +277,10 @@ jobs:
             awk -v name="$asset" '$2 == name { print $1 }' dist/SHA256SUMS
           }
 
-          sha_linux_x64="$(sha_for "intelligence-${tag}-linux-x64")"
-          sha_linux_arm64="$(sha_for "intelligence-${tag}-linux-arm64")"
-          sha_macos_x64="$(sha_for "intelligence-${tag}-macos-x64")"
-          sha_macos_arm64="$(sha_for "intelligence-${tag}-macos-arm64")"
+          sha_linux_x64="$(sha_for "intelligence-${tag}-linux-x64.tar.gz")"
+          sha_linux_arm64="$(sha_for "intelligence-${tag}-linux-arm64.tar.gz")"
+          sha_macos_x64="$(sha_for "intelligence-${tag}-macos-x64.tar.gz")"
+          sha_macos_arm64="$(sha_for "intelligence-${tag}-macos-arm64.tar.gz")"
           for value in "$sha_linux_x64" "$sha_linux_arm64" "$sha_macos_x64" "$sha_macos_arm64"; do
             [[ -n "$value" ]] || { echo "::error::Missing Homebrew checksum input"; exit 1; }
           done

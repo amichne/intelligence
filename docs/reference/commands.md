@@ -11,10 +11,11 @@ knowing provider branches, entrypoints, plugin paths, or primitive paths.
 
 | Operation | Command | Use When |
 |---|---|---|
+| Open marketplace TUI | `intelligence` | You want the searchable full-screen marketplace browser. |
 | Browse published offerings | `intelligence marketplace browse amichne/slopsentral` | You want the default marketplace view from a repository reference. |
 | Browse local source | `intelligence marketplace browse /path/to/slopsentral --provider source` | You are developing the marketplace repo and want the authored source catalog. |
 | Browse machine output | `intelligence marketplace browse amichne/slopsentral --format json` | You want a script-readable offering catalog. |
-| Interactive marketplace flow | `intelligence marketplace ui` | You want prompts for browse, import, and publish actions. |
+| Interactive marketplace flow | `intelligence marketplace ui` | You want to open the same full-screen marketplace browser explicitly. |
 
 ## Validate
 
@@ -83,6 +84,21 @@ root. Provider flags publish generated orphan branches from source. Use
 | Preview Codex branch | `intelligence marketplace publish --repo /path/to/slopsentral --codex --no-push` | You want to inspect the generated Codex branch locally. |
 | Preview GitHub Copilot branch | `intelligence marketplace publish --repo /path/to/slopsentral --github --no-push` | You want to inspect the generated GitHub branch locally. |
 
+## Automate
+
+Use `intelligence rpc` when another program needs the same marketplace and
+validation semantics as the CLI. The contract is JSON-RPC 2.0 over stdio: send
+one compact request object per line and read one compact response object per
+line. The public schema lives at `schemas/rpc/marketplace.schema.json`.
+
+```sh
+printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","params":{"repository":"amichne/slopsentral","provider":"auto"}}' \
+  | intelligence rpc
+```
+
+The Ratatui TUI uses this boundary instead of reimplementing marketplace
+normalization or referential resolution.
+
 ## Build
 
 Build commands are for repository development and release work, not normal
@@ -91,6 +107,7 @@ marketplace browsing.
 | Operation | Command | Use When |
 |---|---|---|
 | Run CLI tests and install dev binary | `./gradlew :cli:test installDevelopmentCli` | You changed Kotlin CLI code. |
+| Run TUI tests | `cargo test --manifest-path tui/Cargo.toml` | You changed the Ratatui browser. |
 | Build native executable | `./gradlew :cli:nativeCompile` | You need the self-contained GraalVM binary. |
 | Install released CLI | `brew install amichne/intelligence/intelligence` | You want the stable installed `intelligence` command. |
 
@@ -105,6 +122,7 @@ intelligence marketplace browse --help
 intelligence marketplace import --help
 intelligence marketplace install --help
 intelligence marketplace ui --help
+intelligence rpc --help
 intelligence validate --help
 ```
 

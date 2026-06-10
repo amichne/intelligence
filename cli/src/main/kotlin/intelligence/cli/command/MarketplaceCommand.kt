@@ -1,13 +1,15 @@
 package intelligence.cli.command
 
 import intelligence.cli.io.normalizedAbsolute
+import intelligence.cli.io.JsonFiles
+import intelligence.cli.io.arrayValue
 import intelligence.cli.io.toCliPath
 import intelligence.cli.marketplace.MarketplaceBrowseFormat
 import intelligence.cli.marketplace.MarketplaceBrowseProvider
-import intelligence.cli.marketplace.MarketplaceBrowserService
-import intelligence.cli.marketplace.MarketplaceFailure
+import intelligence.cli.marketplace.MarketplaceBrowseText
 import intelligence.cli.marketplace.MarketplaceProvider
-import intelligence.cli.marketplace.MarketplaceService
+import intelligence.cli.rpc.RpcDispatcher
+import intelligence.cli.rpc.RpcMethod
 import java.nio.file.Path
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
@@ -19,23 +21,28 @@ import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.options.required
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 internal class MarketplaceCommand(
-    marketplaceService: MarketplaceService,
-    browserService: MarketplaceBrowserService,
+    dispatcher: RpcDispatcher,
+    terminalUiLauncher: TerminalUiLauncher,
 ) : CliktCommand(
     name = "marketplace",
 ) {
     init {
         subcommands(
-            BrowseMarketplaceCommand(browserService),
-            RemoteMarketplaceCommand(marketplaceService),
-            ImportMarketplaceCommand(marketplaceService),
-            InstallMarketplaceCommand(marketplaceService),
-            MarketplaceUiCommand(marketplaceService, browserService),
-            MaterializeMarketplaceCommand(marketplaceService),
-            PublishMarketplaceCommand(marketplaceService),
-            PublishMarketplaceBranchCommand(marketplaceService),
+            BrowseMarketplaceCommand(dispatcher),
+            RemoteMarketplaceCommand(dispatcher),
+            ImportMarketplaceCommand(dispatcher),
+            InstallMarketplaceCommand(dispatcher),
+            MarketplaceUiCommand(terminalUiLauncher),
+            MaterializeMarketplaceCommand(dispatcher),
+            PublishMarketplaceCommand(dispatcher),
+            PublishMarketplaceBranchCommand(dispatcher),
         )
     }
 
@@ -46,7 +53,7 @@ internal class MarketplaceCommand(
 }
 
 private class BrowseMarketplaceCommand(
-    private val browserService: MarketplaceBrowserService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "browse",
 ) {
@@ -82,30 +89,34 @@ private class BrowseMarketplaceCommand(
         "Browse a repository marketplace by name or URL without typing marketplace paths."
 
     override fun run() {
-        try {
-            val result = browserService.browse(repository, provider)
-            echo(
-                when (format) {
-                    MarketplaceBrowseFormat.Text -> result.renderText()
-                    MarketplaceBrowseFormat.Json -> result.renderJson()
-                }
-            )
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace browse failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceBrowse,
+            params = buildJsonObject {
+                put("repository", repository)
+                put("provider", provider.cliName)
+            },
+            failureMessage = "marketplace browse failed",
+        )
+        echo(
+            when (format) {
+                MarketplaceBrowseFormat.Text -> MarketplaceBrowseText.render(result)
+                MarketplaceBrowseFormat.Json -> JsonFiles.json.encodeToString(JsonElement.serializer(), result)
+            }
+        )
     }
 }
 
 private class RemoteMarketplaceCommand(
-    marketplaceService: MarketplaceService,
+    dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "remote",
 ) {
     init {
         subcommands(
-            AddRemoteMarketplaceCommand(marketplaceService),
-            ListRemoteMarketplaceCommand(marketplaceService),
-            RemoveRemoteMarketplaceCommand(marketplaceService),
+            AddRemoteMarketplaceCommand(dispatcher),
+            ListRemoteMarketplaceCommand(dispatcher),
+            RemoveRemoteMarketplaceCommand(dispatcher),
         )
     }
 
@@ -116,7 +127,7 @@ private class RemoteMarketplaceCommand(
 }
 
 private class AddRemoteMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "add",
 ) {
@@ -138,16 +149,23 @@ private class AddRemoteMarketplaceCommand(
         "Add a named external marketplace to the source graph."
 
     override fun run() {
-        try {
-            marketplaceService.addRemote(repoRoot = repo, name = name, repository = repository, ref = ref)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace remote add failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceRemotesAdd,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("name", name)
+                put("repository", repository)
+                ref?.let { put("ref", it) }
+            },
+            failureMessage = "marketplace remote add failed",
+        )
+        echoRpcMessages(result)
     }
 }
 
 private class ListRemoteMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "list",
 ) {
@@ -157,16 +175,27 @@ private class ListRemoteMarketplaceCommand(
         "List named external marketplaces from the source graph."
 
     override fun run() {
-        try {
-            marketplaceService.listRemotes(repoRoot = repo)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace remote list failed", statusCode = failure.exitCode)
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceRemotesList,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+            },
+            failureMessage = "marketplace remote list failed",
+        )
+        val remotes = result.arrayValue("remotes").mapNotNull { it as? JsonObject }
+        if (remotes.isEmpty()) {
+            echoRpcMessages(result)
+        } else {
+            remotes.forEach { remote ->
+                echo("${remote["name"].asString()}\t${remote["source"].asString()}")
+            }
         }
     }
 }
 
 private class RemoveRemoteMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "remove",
 ) {
@@ -181,16 +210,21 @@ private class RemoveRemoteMarketplaceCommand(
         "Remove a named external marketplace from the source graph."
 
     override fun run() {
-        try {
-            marketplaceService.removeRemote(repoRoot = repo, name = name)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace remote remove failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceRemotesRemove,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("name", name)
+            },
+            failureMessage = "marketplace remote remove failed",
+        )
+        echoRpcMessages(result)
     }
 }
 
 private class ImportMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "import",
 ) {
@@ -209,16 +243,23 @@ private class ImportMarketplaceCommand(
         "Import a plugin by portable marketplace reference or direct repository/plugin reference."
 
     override fun run() {
-        try {
-            marketplaceService.importPlugin(repoRoot = repo, target = plugin, version = version, ref = ref)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace import failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceImport,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("target", plugin)
+                version?.let { put("version", it) }
+                ref?.let { put("ref", it) }
+            },
+            failureMessage = "marketplace import failed",
+        )
+        echoRpcMessages(result)
     }
 }
 
 private class InstallMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "install",
 ) {
@@ -235,17 +276,22 @@ private class InstallMarketplaceCommand(
         "Install every plugin exposed by an adaptable marketplace repository."
 
     override fun run() {
-        try {
-            marketplaceService.installMarketplace(repoRoot = repo, repository = repository, ref = ref)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace install failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceInstall,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("repository", repository)
+                ref?.let { put("ref", it) }
+            },
+            failureMessage = "marketplace install failed",
+        )
+        echoRpcMessages(result)
     }
 }
 
 private class MarketplaceUiCommand(
-    private val marketplaceService: MarketplaceService,
-    private val browserService: MarketplaceBrowserService,
+    private val terminalUiLauncher: TerminalUiLauncher,
 ) : CliktCommand(
     name = "ui",
 ) {
@@ -254,19 +300,18 @@ private class MarketplaceUiCommand(
     private val ref by option("--ref", help = "Branch, tag, or SHA for direct imports selected in the UI. Defaults to main.")
 
     override fun help(context: Context): String =
-        "Interactively browse, import, and publish marketplace offerings."
+        "Open the full-screen marketplace browser."
 
     override fun run() {
-        try {
-            MarketplaceTerminalUi(marketplaceService, browserService).run(repoRoot = repo, ref = ref)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace ui failed", statusCode = failure.exitCode)
+        val exitCode = terminalUiLauncher.launch(repoRoot = repo, ref = ref)
+        if (exitCode != 0) {
+            throw CliktError("terminal UI exited with status $exitCode", statusCode = exitCode)
         }
     }
 }
 
 private class MaterializeMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "materialize",
 ) {
@@ -282,16 +327,22 @@ private class MaterializeMarketplaceCommand(
         "Render provider marketplace files into an output directory."
 
     override fun run() {
-        try {
-            marketplaceService.materialize(repo, out, provider)
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace materialization failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceMaterialize,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("outRoot", out.toString())
+                put("provider", provider.cliName)
+            },
+            failureMessage = "marketplace materialization failed",
+        )
+        echoRpcMessages(result)
     }
 }
 
 private class PublishMarketplaceCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "publish",
 ) {
@@ -322,30 +373,39 @@ private class PublishMarketplaceCommand(
             }
         }
 
-        try {
-            if (branchProviders.isEmpty()) {
-                if (noPush) {
-                    throw CliktError("--no-push only applies when publishing --codex, --github, or --copilot")
-                }
-                marketplaceService.publishDefault(repoRoot = repo)
-            } else {
-                branchProviders.forEach { provider ->
-                    marketplaceService.publishBranch(
-                        repoRoot = repo,
-                        provider = provider,
-                        branch = null,
-                        noPush = noPush,
-                    )
-                }
+        if (branchProviders.isEmpty()) {
+            if (noPush) {
+                throw CliktError("--no-push only applies when publishing --codex, --github, or --copilot")
             }
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace publication failed", statusCode = failure.exitCode)
+            val result = executeRpc(
+                dispatcher = dispatcher,
+                method = RpcMethod.MarketplacePublishDefault,
+                params = buildJsonObject {
+                    put("repoRoot", repo.toString())
+                },
+                failureMessage = "marketplace publication failed",
+            )
+            echoRpcMessages(result)
+        } else {
+            branchProviders.forEach { provider ->
+                val result = executeRpc(
+                    dispatcher = dispatcher,
+                    method = RpcMethod.MarketplacePublishBranch,
+                    params = buildJsonObject {
+                        put("repoRoot", repo.toString())
+                        put("provider", provider.cliName)
+                        put("noPush", noPush)
+                    },
+                    failureMessage = "marketplace publication failed",
+                )
+                echoRpcMessages(result)
+            }
         }
     }
 }
 
 private class PublishMarketplaceBranchCommand(
-    private val marketplaceService: MarketplaceService,
+    private val dispatcher: RpcDispatcher,
 ) : CliktCommand(
     name = "publish-branch",
 ) {
@@ -364,16 +424,18 @@ private class PublishMarketplaceBranchCommand(
         "Publish generated provider files to an orphan branch."
 
     override fun run() {
-        try {
-            marketplaceService.publishBranch(
-                repoRoot = repo,
-                provider = provider,
-                branch = branch,
-                noPush = noPush,
-            )
-        } catch (failure: MarketplaceFailure) {
-            throw CliktError(failure.message ?: "marketplace publication failed", statusCode = failure.exitCode)
-        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplacePublishBranch,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("provider", provider.cliName)
+                branch?.let { put("branch", it) }
+                put("noPush", noPush)
+            },
+            failureMessage = "marketplace publication failed",
+        )
+        echoRpcMessages(result)
     }
 }
 
@@ -392,3 +454,6 @@ private fun CliktCommand.providerOption(default: MarketplaceProvider) =
             }
         }
         .default(default)
+
+private fun JsonElement?.asString(): String =
+    (this as? JsonPrimitive)?.content.orEmpty()
