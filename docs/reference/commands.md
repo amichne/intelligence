@@ -22,8 +22,8 @@ Validate before trusting source graph changes or generated provider output.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Validate source | `intelligence validate` | You changed source manifests, hooks, schemas, profiles, or marketplace entries. |
-| Validate portable source | `intelligence validate --portable` | You want checks that avoid host-local assumptions. |
+| Validate adaptable marketplace | `intelligence validate` | You changed authored source, installed marketplace state, hooks, schemas, profiles, or marketplace entries. |
+| Validate portable marketplace | `intelligence validate --portable` | You want checks that avoid host-local assumptions. |
 | Validate hydrated output | `intelligence validate --portable --hydrated /tmp/intelligence-marketplace` | You materialized provider output and want to check the generated shape. |
 
 ## Manage
@@ -40,22 +40,30 @@ commands are for explicit aliases and cleanup.
 
 ## Import
 
-Import by reference. The CLI writes `MARKETPLACE_SOURCE` entries and
-`.intelligence/marketplace-lock.json` evidence; it does not vendor provider
-payloads or mutate local harness config. Direct repository imports default to
-`main` unless `--ref` is supplied.
+Import by reference. The CLI writes `MARKETPLACE_SOURCE` entries into the
+authored marketplace or `.intelligence/adaptable.marketplace.json`, then records
+`.intelligence/marketplace-lock.json` evidence. It does not vendor provider
+payloads or mutate local harness config. Direct repository imports and installs
+default to `main` unless `--ref` is supplied. Resolved source assets are stored
+in the global marketplace asset root, which defaults to
+`~/.local/share/intelligence/marketplace-assets` and can be overridden with
+`INTELLIGENCE_MARKETPLACE_ASSET_ROOT`.
 
 | Operation | Command | Use When |
 |---|---|---|
 | Import direct reference | `intelligence marketplace import amichne/intelligence/kotlin-engineering` | You want a portable plugin entry from a remote marketplace without cloning it. |
 | Import pinned ref | `intelligence marketplace import amichne/intelligence/kotlin-engineering --ref v0.1.2` | You want to resolve from a specific branch, tag, or SHA. |
+| Install whole marketplace | `intelligence marketplace install amichne/intelligence` | You want every plugin exposed by an adaptable marketplace repository. |
+| Install pinned marketplace | `intelligence marketplace install amichne/intelligence --ref v0.1.2` | You want the whole marketplace resolved from a specific branch, tag, or SHA. |
 | Import named alias | `intelligence marketplace import shared-tools/review-stack` | You want a portable plugin entry resolved through managed marketplace metadata. |
 | Import into another repo | `intelligence marketplace import amichne/intelligence/kotlin-engineering --repo /path/to/repo` | You are managing a marketplace repo other than the current directory. |
 
 ## Project
 
 Materialize only when authoring or publishing provider marketplace payloads. The
-output directory is replaced.
+output directory is replaced. Imported `MARKETPLACE_SOURCE` plugins are read
+from the lock-backed global asset cache first, so materialization does not need
+the original remote source checkout when the assets were already resolved.
 
 | Operation | Command | Use When |
 |---|---|---|
@@ -95,6 +103,7 @@ intelligence --help
 intelligence marketplace --help
 intelligence marketplace browse --help
 intelligence marketplace import --help
+intelligence marketplace install --help
 intelligence marketplace ui --help
 intelligence validate --help
 ```

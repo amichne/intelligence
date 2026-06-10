@@ -20,8 +20,9 @@ not justified.
 
 ## Repository Map
 
-- `source/adaptable.marketplace.json` is the provider-neutral curated
-  marketplace catalog and the source of truth for plugin exposure.
+- `source/adaptable.marketplace.json` is this repository's provider-neutral
+  authored marketplace catalog and source of truth for published plugin
+  exposure.
 - `source/agents/` contains independent reusable agent profiles.
 - `source/skills/` contains independent reusable skills.
 - `source/concepts/` contains portable concept primitives meant to be copied,
@@ -31,6 +32,9 @@ not justified.
 - `source/profiles/` contains schema-validated workflow profiles that select
   marketplace plugins, hooks, and validation commands.
 - `source/templates/` contains primitive scaffold templates used by local tooling.
+- `.intelligence/adaptable.marketplace.json` records install-only adaptable
+  marketplace intent for consumer repositories that do not carry authored
+  `source/` resources.
 - `.intelligence/marketplace-lock.json` records resolved imported marketplace
   references and integrity evidence needed to reconstruct remote imports.
 - `schemas/` contains public-facing JSON Schema contracts for primitive,
@@ -47,9 +51,11 @@ not justified.
 - A primitive is an independent building block: skills, agents, hooks,
   instructions, prompts, and concepts.
 - A plugin is a composed installable workflow defined under `source/plugins/`.
-- Marketplace exposure is curated through `source/adaptable.marketplace.json`.
+- Marketplace exposure is curated through `source/adaptable.marketplace.json`
+  for this publisher repository, or through
+  `.intelligence/adaptable.marketplace.json` for install-only consumer state.
 - Marketplace imports are reconstructed through
-  `.intelligence/marketplace-lock.json`.
+  `.intelligence/marketplace-lock.json` and the global resolved asset cache.
 - Provider payloads are generated marketplace output, not authoring source.
   Treat tracked `.agents/plugins/` and `.github/plugin/` files as CI-owned
   publication artifacts.
@@ -61,6 +67,9 @@ not justified.
 - Keep `source/adaptable.marketplace.json` aligned with
   `schemas/marketplace/` and provider-neutral definitions in
   `schemas/core/`.
+- Do not require consumer repositories to retain imported marketplace source
+  directories. Installed intent belongs in `.intelligence/adaptable.marketplace.json`;
+  exact resolved content belongs in `.intelligence/marketplace-lock.json`.
 - Every persisted structured data file must have an owning schema, typed parser,
   generator, or equivalent boundary assertion. For JSON in this repository,
   `.local/intelligence/bin/intelligence validate` is the coverage gate and must
@@ -82,8 +91,9 @@ not justified.
 - Parse changed JSON hook assets with `python3 -m json.tool`.
 - Run `./gradlew :cli:test installDevelopmentCli` after changing Kotlin CLI code.
 - Run `.local/intelligence/bin/intelligence validate` after changing
-  `source/adaptable.marketplace.json`, `source/plugins/*/plugin.json`, hooks,
-  schemas, profiles, or any JSON manifest.
+  `source/adaptable.marketplace.json`,
+  `.intelligence/adaptable.marketplace.json`, `source/plugins/*/plugin.json`,
+  hooks, schemas, profiles, or any JSON manifest.
 - When changing schema-aligned hook metadata, check required fields,
   `additionalProperties`, relative paths, and kebab-case names against
   `schemas/core/hook.schema.json`.

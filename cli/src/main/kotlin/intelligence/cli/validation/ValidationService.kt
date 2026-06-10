@@ -30,8 +30,8 @@ internal class ValidationService(
 
         val issues = mutableListOf<String>()
         validateRetiredRootPaths(repository, issues)
-        validateJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
-        validateJsonSyntax(repository.resolve(SCHEMAS_ROOT), issues)
+        validateOptionalJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
+        validateOptionalJsonSyntax(repository.resolve(SCHEMAS_ROOT), issues)
         validateOptionalJsonSyntax(repository.resolve(INTELLIGENCE_ROOT), issues)
         validateMarketplaceSource(repository, issues)
 
@@ -40,7 +40,7 @@ internal class ValidationService(
         }
 
         return if (issues.isEmpty()) {
-            output("OK source marketplace")
+            output("OK adaptable marketplace")
             options.hydrated?.let { output("OK hydrated marketplace ${it.toAbsolutePath().normalize()}") }
             0
         } else {
@@ -80,8 +80,12 @@ internal class ValidationService(
     }
 
     private fun validateMarketplaceSource(repo: Path, issues: MutableList<String>) {
-        val sourceRoot = repo.resolve(SOURCE_ROOT)
-        val marketplacePath = sourceRoot.resolve("adaptable.marketplace.json")
+        val marketplacePath = existingMarketplacePath(repo)
+            ?: run {
+                issues += "missing adaptable marketplace: $ADAPTABLE_MARKETPLACE_PATH or $INSTALLED_MARKETPLACE_PATH"
+                return
+            }
+        val sourceRoot = marketplaceContentRoot(repo, marketplacePath)
         val marketplace = readObject(marketplacePath, repo, issues) ?: return
 
         requireValue(marketplace.stringValue("type") == "MARKETPLACE", marketplacePath, repo, "type must be MARKETPLACE", issues)
@@ -94,6 +98,7 @@ internal class ValidationService(
             .orEmpty()
             .toSet()
         val lock = readLock(repo, issues)
+        val lockedImportedMarketplaces = linkedSetOf<String>()
 
         val pluginEntries = marketplace.arrayValue("plugins")
         requireValue(pluginEntries.isNotEmpty(), marketplacePath, repo, "plugins must not be empty", issues)
@@ -120,26 +125,45 @@ internal class ValidationService(
                             issues += "${marketplacePath.relativeToUnix(repo)}: plugin `$entryName` must use a local source path"
                             return@forEachObject
                         }
-                        val manifestPath = resolveSourcePath(repo, sourcePath, issues) ?: return@forEachObject
+                        val manifestPath = resolveSourcePath(sourceRoot, sourcePath, issues) ?: return@forEachObject
                         val manifestFile = manifestPath.resolve("plugin.json")
                         val manifest = readObject(manifestFile, repo, issues) ?: return@forEachObject
-                        validatePluginManifest(repo, manifestFile, manifest, expectedName = entryName, issues)
+                        validatePluginManifest(
+                            repo = repo,
+                            sourceRoot = sourceRoot,
+                            path = manifestFile,
+                            manifest = manifest,
+                            expectedName = entryName,
+                            issues = issues,
+                        )
                     }
-                    "MARKETPLACE_SOURCE" -> validateMarketplacePluginReference(
-                        repo = repo,
-                        marketplacePath = marketplacePath,
-                        entryName = entryName,
-                        pluginRef = pluginRef,
-                        source = source,
-                        externalMarketplaces = externalMarketplaces,
-                        allowedExternalMarketplaces = allowedExternalMarketplaces,
-                        lock = lock,
-                        issues = issues,
-                    )
+                    "MARKETPLACE_SOURCE" -> {
+                        val imported = validateMarketplacePluginReference(
+                            repo = repo,
+                            marketplacePath = marketplacePath,
+                            entryName = entryName,
+                            pluginRef = pluginRef,
+                            source = source,
+                            externalMarketplaces = externalMarketplaces,
+                            allowedExternalMarketplaces = allowedExternalMarketplaces,
+                            lock = lock,
+                            issues = issues,
+                        )
+                        if (imported?.hasLock == true) {
+                            lockedImportedMarketplaces += imported.marketplace
+                        }
+                    }
                     else -> issues += "${marketplacePath.relativeToUnix(repo)}: plugin `$entryName` has unsupported source type `${source.stringValue("type")}`"
                 }
             }
         }
+        validateExternalMarketplaceAvailability(
+            repo = repo,
+            marketplacePath = marketplacePath,
+            externalMarketplaces = externalMarketplaces,
+            lockedImportedMarketplaces = lockedImportedMarketplaces,
+            issues = issues,
+        )
 
         val pluginRoot = sourceRoot.resolve("plugins")
         if (pluginRoot.exists()) {
@@ -158,18 +182,20 @@ internal class ValidationService(
         marketplacePath: Path,
         marketplace: JsonObject,
         issues: MutableList<String>,
-    ): Map<String, JsonObject> {
-        val byName = linkedMapOf<String, JsonObject>()
+    ): Map<String, ValidatedExternalMarketplace> {
+        val byName = linkedMapOf<String, ValidatedExternalMarketplace>()
         marketplace.arrayValue("externalMarketplaces").forEachObject { entry ->
             val name = requireString(entry, "name", marketplacePath, repo, issues) ?: return@forEachObject
-            if (byName.put(name, entry) != null) {
+            if (byName.containsKey(name)) {
                 issues += "${marketplacePath.relativeToUnix(repo)}: duplicate external marketplace `$name`"
             }
             val source = entry.objectValue("source")
             if (source == null) {
                 issues += "${marketplacePath.relativeToUnix(repo)}: external marketplace `$name` is missing source"
             } else {
-                validateExternalMarketplaceSource(repo, marketplacePath, name, source, issues)
+                byName[name] = ValidatedExternalMarketplace(
+                    missingLocalPath = validateExternalMarketplaceSource(repo, marketplacePath, name, source, issues),
+                )
             }
         }
         marketplace.objectValue("management")
@@ -179,7 +205,7 @@ internal class ValidationService(
             .forEach { name ->
                 issues += "${marketplacePath.relativeToUnix(repo)}: management allows unknown external marketplace `$name`"
             }
-        return byName.mapValues { it.value.objectValue("source") ?: JsonObject(emptyMap()) }
+        return byName
     }
 
     private fun validateExternalMarketplaceSource(
@@ -188,30 +214,48 @@ internal class ValidationService(
         name: String,
         source: JsonObject,
         issues: MutableList<String>,
-    ) {
+    ): Boolean =
         when (source.stringValue("type")) {
             "LOCAL_SOURCE" -> {
-                val path = requireString(source, "path", marketplacePath, repo, issues) ?: return
-                val root = resolveRelative(repo, path, issues) ?: return
-                if (!root.isDirectory()) {
-                    issues += "${marketplacePath.relativeToUnix(repo)}: external marketplace `$name` path is missing"
-                }
+                val path = requireString(source, "path", marketplacePath, repo, issues) ?: return false
+                val root = resolveRelative(repo, path, issues) ?: return false
+                !root.isDirectory()
             }
             "GITHUB_SOURCE" -> {
                 requireString(source, "repo", marketplacePath, repo, issues)
                 requireString(source, "ref", marketplacePath, repo, issues)
+                false
             }
             "GIT_SOURCE" -> {
                 requireString(source, "url", marketplacePath, repo, issues)
                 requireString(source, "ref", marketplacePath, repo, issues)
+                false
             }
             "GIT_SUBDIR_SOURCE" -> {
                 requireString(source, "url", marketplacePath, repo, issues)
                 requireString(source, "path", marketplacePath, repo, issues)
                 requireString(source, "ref", marketplacePath, repo, issues)
+                false
             }
-            else -> issues += "${marketplacePath.relativeToUnix(repo)}: external marketplace `$name` has unsupported source type `${source.stringValue("type")}`"
+            else -> {
+                issues += "${marketplacePath.relativeToUnix(repo)}: external marketplace `$name` has unsupported source type `${source.stringValue("type")}`"
+                false
+            }
         }
+
+    private fun validateExternalMarketplaceAvailability(
+        repo: Path,
+        marketplacePath: Path,
+        externalMarketplaces: Map<String, ValidatedExternalMarketplace>,
+        lockedImportedMarketplaces: Set<String>,
+        issues: MutableList<String>,
+    ) {
+        externalMarketplaces
+            .filterValues { it.missingLocalPath }
+            .filterKeys { name -> name !in lockedImportedMarketplaces }
+            .forEach { (name, _) ->
+                issues += "${marketplacePath.relativeToUnix(repo)}: external marketplace `$name` path is missing"
+            }
     }
 
     private fun validateMarketplacePluginReference(
@@ -220,14 +264,14 @@ internal class ValidationService(
         entryName: String,
         pluginRef: JsonObject,
         source: JsonObject,
-        externalMarketplaces: Map<String, JsonObject>,
+        externalMarketplaces: Map<String, ValidatedExternalMarketplace>,
         allowedExternalMarketplaces: Set<String>,
         lock: JsonObject?,
         issues: MutableList<String>,
-    ) {
-        val marketplace = requireString(source, "marketplace", marketplacePath, repo, issues) ?: return
-        val plugin = requireString(source, "plugin", marketplacePath, repo, issues) ?: return
-        val version = requireString(source, "version", marketplacePath, repo, issues) ?: return
+    ): ImportedPluginValidation? {
+        val marketplace = requireString(source, "marketplace", marketplacePath, repo, issues) ?: return null
+        val plugin = requireString(source, "plugin", marketplacePath, repo, issues) ?: return null
+        val version = requireString(source, "version", marketplacePath, repo, issues) ?: return null
         if (plugin != entryName || pluginRef.stringValue("name") != entryName) {
             issues += "${marketplacePath.relativeToUnix(repo)}: imported plugin `$entryName` must reference the same plugin name"
         }
@@ -254,7 +298,7 @@ internal class ValidationService(
             }
         if (lockEntry == null) {
             issues += "${MARKETPLACE_LOCK_PATH.relativeToUnix(repo)}: missing lock entry for imported plugin `$entryName`"
-            return
+            return ImportedPluginValidation(marketplace = marketplace, hasLock = false)
         }
         if (lockEntry.objectValue("resolvedSource") == null) {
             issues += "${MARKETPLACE_LOCK_PATH.relativeToUnix(repo)}: imported plugin `$entryName` is missing resolvedSource"
@@ -262,6 +306,7 @@ internal class ValidationService(
         if (!lockEntry.stringValue("integrity").orEmpty().startsWith("sha256:")) {
             issues += "${MARKETPLACE_LOCK_PATH.relativeToUnix(repo)}: imported plugin `$entryName` is missing sha256 integrity"
         }
+        return ImportedPluginValidation(marketplace = marketplace, hasLock = true)
     }
 
     private fun readLock(repo: Path, issues: MutableList<String>): JsonObject? {
@@ -277,6 +322,7 @@ internal class ValidationService(
 
     private fun validatePluginManifest(
         repo: Path,
+        sourceRoot: Path,
         path: Path,
         manifest: JsonObject,
         expectedName: String,
@@ -291,13 +337,13 @@ internal class ValidationService(
 
         PrimitiveKind.entries.forEach { kind ->
             manifest.arrayValue(kind.collectionName).forEachObject { primitive ->
-                validatePrimitiveReference(repo, path, primitive, kind, issues)
+                validatePrimitiveReference(repo, sourceRoot, path, primitive, kind, issues)
                 primitive.arrayValue("dependsOn").forEachObject { dependency ->
                     val dependencyKind = dependency.stringValue("type")?.let(PrimitiveKind::fromSourceName)
                     if (dependencyKind == null) {
                         issues += "${path.relativeToUnix(repo)}: unsupported dependency type `${dependency.stringValue("type")}`"
                     } else {
-                        validatePrimitiveReference(repo, path, dependency, dependencyKind, issues)
+                        validatePrimitiveReference(repo, sourceRoot, path, dependency, dependencyKind, issues)
                     }
                 }
             }
@@ -306,6 +352,7 @@ internal class ValidationService(
 
     private fun validatePrimitiveReference(
         repo: Path,
+        sourceRoot: Path,
         owner: Path,
         primitive: JsonObject,
         kind: PrimitiveKind,
@@ -319,7 +366,7 @@ internal class ValidationService(
         }
 
         val sourcePathValue = requireString(primitive, "path", owner, repo, issues) ?: return
-        val sourcePath = resolveSourcePath(repo, sourcePathValue, issues) ?: return
+        val sourcePath = resolveSourcePath(sourceRoot, sourcePathValue, issues) ?: return
         if (!sourcePath.exists()) {
             issues += "${owner.relativeToUnix(repo)}: missing ${kind.sourceName.lowercase()} `$primitiveName` at ${sourcePath.relativeToUnix(repo)}"
             return
@@ -328,7 +375,7 @@ internal class ValidationService(
         if (kind == PrimitiveKind.Hook) {
             val metadata = readObject(sourcePath, repo, issues) ?: return
             val adapterPathValue = metadata.stringValue("path") ?: sourcePathValue
-            val adapterPath = resolveSourcePath(repo, adapterPathValue, issues) ?: return
+            val adapterPath = resolveSourcePath(sourceRoot, adapterPathValue, issues) ?: return
             if (!adapterPath.exists()) {
                 issues += "${sourcePath.relativeToUnix(repo)}: missing hook adapter ${adapterPath.relativeToUnix(repo)}"
             }
@@ -463,8 +510,21 @@ internal class ValidationService(
         }
     }
 
-    private fun resolveSourcePath(repo: Path, pathValue: String, issues: MutableList<String>): Path? =
-        resolveRelative(repo.resolve(SOURCE_ROOT), pathValue.removePrefix("source/"), issues)
+    private fun resolveSourcePath(sourceRoot: Path, pathValue: String, issues: MutableList<String>): Path? =
+        resolveRelative(sourceRoot, pathValue.removePrefix("source/"), issues)
+
+    private fun existingMarketplacePath(repo: Path): Path? =
+        listOf(
+            repo.resolve(ADAPTABLE_MARKETPLACE_PATH),
+            repo.resolve(INSTALLED_MARKETPLACE_PATH),
+        ).firstOrNull { it.isRegularFile() }
+
+    private fun marketplaceContentRoot(repo: Path, marketplacePath: Path): Path =
+        if (marketplacePath == repo.resolve(ADAPTABLE_MARKETPLACE_PATH)) {
+            repo.resolve(SOURCE_ROOT)
+        } else {
+            marketplacePath.parent ?: repo
+        }
 
     private fun resolveRelative(base: Path, pathValue: String, issues: MutableList<String>): Path? {
         val relativeValue = pathValue.removePrefix("./")
@@ -504,10 +564,21 @@ internal class ValidationService(
         runCatching { base.relativize(this).toString().replace('\\', '/') }
             .getOrElse { toString().replace('\\', '/') }
 
+    private data class ValidatedExternalMarketplace(
+        val missingLocalPath: Boolean,
+    )
+
+    private data class ImportedPluginValidation(
+        val marketplace: String,
+        val hasLock: Boolean,
+    )
+
     private companion object {
         val SOURCE_ROOT: Path = Path.of("source")
+        val ADAPTABLE_MARKETPLACE_PATH: Path = SOURCE_ROOT.resolve("adaptable.marketplace.json")
         val SCHEMAS_ROOT: Path = Path.of("schemas")
         val INTELLIGENCE_ROOT: Path = Path.of(".intelligence")
+        val INSTALLED_MARKETPLACE_PATH: Path = INTELLIGENCE_ROOT.resolve("adaptable.marketplace.json")
         val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
         val RETIRED_ROOT_PATHS: List<Path> = listOf(
             Path.of("packages"),

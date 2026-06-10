@@ -1,9 +1,10 @@
 # Marketplace
 
 The marketplace is the portable distribution surface for project-agnostic plugin
-families. The source of truth is `source/adaptable.marketplace.json`; public
-contracts live under root `schemas/` so maintainers and consumers can inspect
-content shape without digging through generated provider output.
+families. This repository authors its own provider-neutral catalog in
+`source/adaptable.marketplace.json`; consumer repositories can instead keep only
+install intent in `.intelligence/adaptable.marketplace.json` plus exact lock
+evidence in `.intelligence/marketplace-lock.json`.
 
 `source/` keeps the authored reference graph. Provider-native payloads are
 produced by the Kotlin CLI in explicit output directories, CI-owned default
@@ -39,12 +40,18 @@ publish, and interactive UI import:
 
 Import plugins by reference instead of copying provider payloads. The direct
 form resolves the remote marketplace from the repository reference, defaults to
-`main` when `--ref` is omitted, writes a `MARKETPLACE_SOURCE` plugin entry, and
-records exact reconstruction evidence in `.intelligence/marketplace-lock.json`.
+`main` when `--ref` is omitted, writes a `MARKETPLACE_SOURCE` plugin entry into
+the existing authored marketplace or `.intelligence/adaptable.marketplace.json`,
+and records exact reconstruction evidence in
+`.intelligence/marketplace-lock.json`. The resolved source assets are stored
+globally at `~/.local/share/intelligence/marketplace-assets` by default, or under
+`INTELLIGENCE_MARKETPLACE_ASSET_ROOT` when configured, so provider projection can
+reuse the locked assets without the remote checkout still being present.
 
 ```sh
 intelligence marketplace import amichne/intelligence/kotlin-engineering
 intelligence marketplace import amichne/intelligence/kotlin-engineering --ref v0.1.2
+intelligence marketplace install amichne/intelligence
 ```
 
 The CLI leaves Codex or GitHub Copilot installation as a provider-specific next
@@ -78,6 +85,7 @@ remote plugin reference or manifest. Floating version ranges remain rejected.
 ## Projection Preview
 
 Preview provider payloads locally when changing marketplace projection logic.
+Imported plugin references use the lock-backed global asset cache first.
 
 ```sh
 intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace
@@ -102,6 +110,7 @@ name resolved under `metadata.pluginRoot`.
 |---|---|---|
 | `source/adaptable.marketplace.json` | Hand-authored source on `main` | Curated provider-neutral catalog. |
 | `source/plugins/*/plugin.json` | Hand-authored source on `main` | Plugin composition over source primitives. |
+| `.intelligence/adaptable.marketplace.json` | CLI-written source-controlled state | Install-only adaptable marketplace intent for consumer repos. |
 | `.intelligence/marketplace-lock.json` | CLI-written source-controlled state | Resolved imported marketplace references and integrity evidence. |
 | `schemas/` | Hand-authored public contracts | Provider-neutral and adapter JSON Schema definitions. |
 | `cli/` | Kotlin CLI source | Hydrates provider marketplace payloads. |

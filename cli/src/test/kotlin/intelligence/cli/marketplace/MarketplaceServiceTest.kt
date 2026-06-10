@@ -1,6 +1,7 @@
 package intelligence.cli.marketplace
 
 import intelligence.cli.io.arrayValue
+import intelligence.cli.io.FileSystem
 import intelligence.cli.io.JsonFiles
 import intelligence.cli.io.objectValue
 import intelligence.cli.io.stringValue
@@ -175,7 +176,7 @@ class MarketplaceServiceTest {
         val external = repository.resolve("external").resolve("shared-tools")
         writeExternalMarketplace(external)
         val output = Files.createTempDirectory("intelligence-imported-marketplace-")
-        val service = MarketplaceService(output = {})
+        val service = marketplaceService()
 
         service.addRemote(repository, "shared-tools", external.toString(), ref = null)
         service.importPlugin(repository, "shared-tools/review-stack", "1.2.0")
@@ -209,11 +210,132 @@ class MarketplaceServiceTest {
     }
 
     @Test
+    fun `materialize imported plugin from global resolved assets when external source is gone`() {
+        val repository = minimalMarketplaceRepository()
+        val external = repository.resolve("external").resolve("shared-tools")
+        writeExternalMarketplaceWithSkill(external)
+        val output = Files.createTempDirectory("intelligence-cached-imported-marketplace-")
+        val service = marketplaceService()
+
+        service.addRemote(repository, "shared-tools", external.toString(), ref = null)
+        service.importPlugin(repository, "shared-tools/review-stack", "1.2.0")
+        FileSystem.deleteRecursively(external)
+        service.materialize(repository, output, MarketplaceProvider.Codex)
+
+        assertTrue(
+            output.resolve(".agents")
+                .resolve("plugins")
+                .resolve("plugins")
+                .resolve("review-stack")
+                .resolve(".codex-plugin")
+                .resolve("plugin.json")
+                .exists()
+        )
+        assertTrue(
+            output.resolve(".agents")
+                .resolve("plugins")
+                .resolve("plugins")
+                .resolve("review-stack")
+                .resolve("skills")
+                .resolve("review")
+                .resolve("SKILL.md")
+                .exists()
+        )
+        assertEquals(
+            0,
+            ValidationService(output = {}).validate(
+                ValidationOptions(
+                    repo = repository,
+                    portable = true,
+                    hydrated = output,
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `validation still rejects missing external marketplace path without locked import`() {
+        val repository = minimalMarketplaceRepository()
+        writeJson(
+            repository.resolve("source").resolve("adaptable.marketplace.json"),
+            """
+            {
+              "type": "MARKETPLACE",
+              "schemaVersion": 1,
+              "name": "fixture-marketplace",
+              "owner": {
+                "name": "Fixture Owner"
+              },
+              "management": {
+                "type": "MANAGEMENT_POLICY",
+                "mode": "CURATED",
+                "allowExternalMarketplaces": [
+                  "shared-tools"
+                ]
+              },
+              "externalMarketplaces": [
+                {
+                  "type": "EXTERNAL_MARKETPLACE",
+                  "name": "shared-tools",
+                  "source": {
+                    "type": "LOCAL_SOURCE",
+                    "path": "external/shared-tools"
+                  }
+                }
+              ],
+              "plugins": [
+                {
+                  "name": "core-plugin",
+                  "plugin": {
+                    "source": {
+                      "type": "LOCAL_SOURCE",
+                      "path": "plugins/core-plugin"
+                    },
+                    "version": "0.1.0"
+                  },
+                  "tags": [
+                    "kotlin"
+                  ]
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            repository.resolve("source")
+                .resolve("plugins")
+                .resolve("core-plugin")
+                .resolve("plugin.json"),
+            """
+            {
+              "type": "PLUGIN",
+              "schemaVersion": 1,
+              "name": "core-plugin",
+              "version": "0.1.0",
+              "description": "Core plugin."
+            }
+            """.trimIndent(),
+        )
+        val lines = mutableListOf<String>()
+
+        val exit = ValidationService(output = lines::add).validate(
+            ValidationOptions(
+                repo = repository,
+                portable = true,
+                hydrated = null,
+            )
+        )
+
+        assertEquals(1, exit)
+        assertTrue(lines.any { it.contains("external marketplace `shared-tools` path is missing") })
+    }
+
+    @Test
     fun `direct remote import defaults to main and writes reconstructable lock`() {
         val repository = minimalMarketplaceRepository()
         val remote = bareGitMarketplace("shared-tools")
         val output = Files.createTempDirectory("intelligence-direct-imported-marketplace-")
-        val service = MarketplaceService(output = {})
+        val service = marketplaceService()
 
         service.importPlugin(repository, "${remote}/review-stack", version = null)
         service.materialize(repository, output, MarketplaceProvider.Codex)
@@ -258,6 +380,78 @@ class MarketplaceServiceTest {
     }
 
     @Test
+    fun `direct remote import can create install state without source root`() {
+        val repository = emptyConsumerRepository()
+        val remote = bareGitMarketplace("shared-tools")
+        val output = Files.createTempDirectory("intelligence-install-state-imported-marketplace-")
+        val service = marketplaceService()
+
+        service.importPlugin(repository, "${remote}/review-stack", version = null)
+        FileSystem.deleteRecursively(remote)
+        service.materialize(repository, output, MarketplaceProvider.Codex)
+
+        val marketplacePath = repository.resolve(".intelligence").resolve("adaptable.marketplace.json")
+        val marketplace = JsonFiles.readObject(marketplacePath)
+        val lock = JsonFiles.readObject(repository.resolve(".intelligence").resolve("marketplace-lock.json"))
+        val rootSource = lock.objectValue("root")!!.objectValue("source")!!
+
+        assertTrue(marketplacePath.exists())
+        assertTrue(!repository.resolve("source").exists())
+        assertEquals(".intelligence/adaptable.marketplace.json", rootSource.stringValue("path"))
+        assertEquals("review-stack", marketplace.arrayValue("plugins").single().jsonObject.stringValue("name"))
+        assertTrue(
+            output.resolve(".agents")
+                .resolve("plugins")
+                .resolve("plugins")
+                .resolve("review-stack")
+                .resolve(".codex-plugin")
+                .resolve("plugin.json")
+                .exists()
+        )
+        assertEquals(
+            0,
+            ValidationService(output = {}).validate(
+                ValidationOptions(
+                    repo = repository,
+                    portable = true,
+                    hydrated = output,
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `install marketplace imports every exposed plugin without source root`() {
+        val repository = emptyConsumerRepository()
+        val remote = bareGitMarketplace("shared-tools")
+        val output = Files.createTempDirectory("intelligence-installed-marketplace-")
+        val service = marketplaceService()
+
+        service.installMarketplace(repository, remote.toString(), ref = null)
+        FileSystem.deleteRecursively(remote)
+        service.materialize(repository, output, MarketplaceProvider.Codex)
+
+        val marketplacePath = repository.resolve(".intelligence").resolve("adaptable.marketplace.json")
+        val marketplace = JsonFiles.readObject(marketplacePath)
+        val lock = JsonFiles.readObject(repository.resolve(".intelligence").resolve("marketplace-lock.json"))
+
+        assertTrue(marketplacePath.exists())
+        assertTrue(!repository.resolve("source").exists())
+        assertEquals("shared-tools", marketplace.arrayValue("externalMarketplaces").single().jsonObject.stringValue("name"))
+        assertEquals("review-stack", marketplace.arrayValue("plugins").single().jsonObject.stringValue("name"))
+        assertEquals("review-stack", lock.arrayValue("entries").single().jsonObject.objectValue("target")!!.stringValue("name"))
+        assertTrue(
+            output.resolve(".agents")
+                .resolve("plugins")
+                .resolve("plugins")
+                .resolve("review-stack")
+                .resolve(".codex-plugin")
+                .resolve("plugin.json")
+                .exists()
+        )
+    }
+
+    @Test
     fun `import rejects requested version that does not match remote plugin`() {
         val repository = minimalMarketplaceRepository()
         val external = repository.resolve("external").resolve("shared-tools")
@@ -275,6 +469,12 @@ class MarketplaceServiceTest {
     private fun repoRoot(): Path =
         generateSequence(Path.of(".").toAbsolutePath().normalize()) { it.parent }
             .first { it.resolve("source").resolve("adaptable.marketplace.json").toFile().isFile }
+
+    private fun marketplaceService(output: (String) -> Unit = {}): MarketplaceService =
+        MarketplaceService(
+            output = output,
+            resolvedAssetRoot = Files.createTempDirectory("intelligence-marketplace-assets-"),
+        )
 
     private fun writeJson(path: Path, content: String) {
         path.parent.createDirectories()
@@ -299,6 +499,10 @@ class MarketplaceServiceTest {
             """.trimIndent(),
         )
         return repository
+    }
+
+    private fun emptyConsumerRepository(): Path {
+        return Files.createTempDirectory("intelligence-marketplace-consumer-")
     }
 
     private fun writeExternalMarketplace(root: Path) {
@@ -348,6 +552,83 @@ class MarketplaceServiceTest {
               "description": "Review stack.",
               "skills": []
             }
+            """.trimIndent(),
+        )
+    }
+
+    private fun writeExternalMarketplaceWithSkill(root: Path) {
+        writeJson(
+            root.resolve("source").resolve("adaptable.marketplace.json"),
+            """
+            {
+              "type": "MARKETPLACE",
+              "schemaVersion": 1,
+              "name": "shared-tools",
+              "owner": {
+                "name": "Shared Tools"
+              },
+              "plugins": [
+                {
+                  "type": "PLUGIN_ENTRY",
+                  "name": "review-stack",
+                  "plugin": {
+                    "type": "PLUGIN_REFERENCE",
+                    "name": "review-stack",
+                    "source": {
+                      "type": "LOCAL_SOURCE",
+                      "path": "./plugins/review-stack"
+                    },
+                    "version": "1.2.0"
+                  },
+                  "description": "Review stack.",
+                  "tags": [
+                    "review"
+                  ]
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            root.resolve("source")
+                .resolve("plugins")
+                .resolve("review-stack")
+                .resolve("plugin.json"),
+            """
+            {
+              "type": "PLUGIN",
+              "schemaVersion": 1,
+              "name": "review-stack",
+              "version": "1.2.0",
+              "description": "Review stack.",
+              "skills": [
+                {
+                  "type": "SKILL",
+                  "name": "review",
+                  "path": "skills/review",
+                  "source": {
+                    "type": "LOCAL_SOURCE",
+                    "path": "./"
+                  }
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            root.resolve("source")
+                .resolve("skills")
+                .resolve("review")
+                .resolve("SKILL.md"),
+            """
+            ---
+            name: review
+            description: Review imported marketplace resources.
+            ---
+
+            # Review
+
+            Use this skill for cached import proof.
             """.trimIndent(),
         )
     }
