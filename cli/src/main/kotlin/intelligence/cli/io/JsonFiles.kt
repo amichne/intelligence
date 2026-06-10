@@ -24,6 +24,10 @@ internal object JsonFiles {
         explicitNulls = false
     }
 
+    val compactJson: Json = Json {
+        explicitNulls = false
+    }
+
     fun readObject(path: Path): JsonObject =
         json.parseToJsonElement(path.readText()).jsonObject
 

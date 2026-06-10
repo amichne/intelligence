@@ -10,7 +10,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.contentOrNull
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 
@@ -92,6 +91,7 @@ internal fun parseRpcCall(input: String): RpcCall {
 
     val request = element as? JsonObject
         ?: throw RpcFailure.invalidRequest("RPC request must be a JSON object")
+    request.requireOnlyRequestKeys("jsonrpc", "id", "method", "params")
     val version = request.stringValue("jsonrpc")
     if (version != "2.0") {
         throw RpcFailure.invalidRequest("jsonrpc must be 2.0")
@@ -102,10 +102,15 @@ internal fun parseRpcCall(input: String): RpcCall {
     }
     val methodName = request.stringValue("method")
         ?: throw RpcFailure.invalidRequest("method is required")
-    val params = request.objectValue("params") ?: JsonObject(emptyMap())
+    val method = RpcMethod.parse(methodName)
+    val params = when (val rawParams = request["params"]) {
+        null -> throw RpcFailure.invalidParams("params is required")
+        is JsonObject -> rawParams
+        else -> throw RpcFailure.invalidParams("params must be an object")
+    }
     return RpcCall(
         id = id,
-        method = RpcMethod.parse(methodName),
+        method = method,
         params = params,
     )
 }
@@ -132,17 +137,53 @@ internal fun rpcError(id: JsonElement?, failure: RpcFailure): JsonObject =
     }
 
 internal fun JsonObject.requiredStringParam(name: String): String =
-    stringValue(name)?.takeIf { it.isNotBlank() }
+    strictString(name)?.takeIf { it.isNotBlank() }
         ?: throw RpcFailure.invalidParams("missing string param `$name`")
 
 internal fun JsonObject.optionalStringParam(name: String): String? =
-    stringValue(name)?.takeIf { it.isNotBlank() }
+    strictString(name)?.takeIf { it.isNotBlank() }
 
-internal fun JsonObject.booleanParam(name: String, default: Boolean): Boolean =
-    this[name]?.jsonPrimitive?.contentOrNull?.toBooleanStrictOrNull() ?: default
+internal fun JsonObject.booleanParam(name: String, default: Boolean): Boolean {
+    val element = this[name] ?: return default
+    val primitive = element as? JsonPrimitive
+        ?: throw RpcFailure.invalidParams("param `$name` must be boolean")
+    if (primitive.isString) {
+        throw RpcFailure.invalidParams("param `$name` must be boolean")
+    }
+    return primitive.contentOrNull?.toBooleanStrictOrNull()
+        ?: throw RpcFailure.invalidParams("param `$name` must be boolean")
+}
 
 internal fun JsonObject.stringArray(name: String): List<String> =
     arrayValue(name).mapNotNull { element -> (element as? JsonPrimitive)?.contentOrNull }
+
+internal fun JsonObject.requireOnlyParams(vararg names: String) {
+    requireOnlyKeys(*names)
+}
+
+private fun JsonObject.strictString(name: String): String? {
+    val primitive = this[name] as? JsonPrimitive ?: return null
+    if (!primitive.isString) {
+        throw RpcFailure.invalidParams("param `$name` must be a string")
+    }
+    return primitive.content
+}
+
+private fun JsonObject.requireOnlyKeys(vararg names: String) {
+    val allowed = names.toSet()
+    val unknown = keys.filterNot { it in allowed }
+    if (unknown.isNotEmpty()) {
+        throw RpcFailure.invalidParams("unknown param(s): ${unknown.sorted().joinToString(", ")}")
+    }
+}
+
+private fun JsonObject.requireOnlyRequestKeys(vararg names: String) {
+    val allowed = names.toSet()
+    val unknown = keys.filterNot { it in allowed }
+    if (unknown.isNotEmpty()) {
+        throw RpcFailure.invalidRequest("unknown request field(s): ${unknown.sorted().joinToString(", ")}")
+    }
+}
 
 private fun JsonElement.isSupportedRpcId(): Boolean {
     val primitive = this as? JsonPrimitive ?: return false

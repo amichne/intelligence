@@ -34,7 +34,8 @@
       "required": [
         "jsonrpc",
         "id",
-        "method"
+        "method",
+        "params"
       ],
       "properties": {
         "jsonrpc": {
@@ -171,8 +172,35 @@
       ]
     },
     "Params": {
-      "type": "object",
-      "additionalProperties": true
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BrowseParams"
+        },
+        {
+          "$ref": "#/$defs/RepoParams"
+        },
+        {
+          "$ref": "#/$defs/AddRemoteParams"
+        },
+        {
+          "$ref": "#/$defs/RemoveRemoteParams"
+        },
+        {
+          "$ref": "#/$defs/ImportParams"
+        },
+        {
+          "$ref": "#/$defs/InstallParams"
+        },
+        {
+          "$ref": "#/$defs/MaterializeParams"
+        },
+        {
+          "$ref": "#/$defs/PublishBranchParams"
+        },
+        {
+          "$ref": "#/$defs/ValidationParams"
+        }
+      ]
     },
     "Provider": {
       "type": "string",
@@ -192,6 +220,202 @@
         "copilot",
         "source"
       ]
+    },
+    "PathString": {
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "/Users/amichne/code/intelligence"
+      ]
+    },
+    "RepositoryReference": {
+      "type": "string",
+      "minLength": 1,
+      "examples": [
+        "amichne/slopsentral",
+        "https://github.com/amichne/slopsentral",
+        "/Users/amichne/code/slopsentral"
+      ]
+    },
+    "BrowseParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository"
+      ],
+      "properties": {
+        "repository": {
+          "$ref": "#/$defs/RepositoryReference"
+        },
+        "provider": {
+          "$ref": "#/$defs/BrowseProvider"
+        }
+      }
+    },
+    "RepoParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        }
+      }
+    },
+    "AddRemoteParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "name",
+        "repository"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "$ref": "#/$defs/RepositoryReference"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "RemoveRemoteParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "name"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ImportParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "target"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1,
+          "examples": [
+            "slopsentral/kotlin-engineering"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "InstallParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "repository"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "repository": {
+          "$ref": "#/$defs/RepositoryReference"
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "MaterializeParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "outRoot",
+        "provider"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "outRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "provider": {
+          "$ref": "#/$defs/Provider"
+        }
+      }
+    },
+    "PublishBranchParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "provider",
+        "noPush"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "provider": {
+          "$ref": "#/$defs/Provider"
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "noPush": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ValidationParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repoRoot",
+        "portable"
+      ],
+      "properties": {
+        "repoRoot": {
+          "$ref": "#/$defs/PathString"
+        },
+        "portable": {
+          "type": "boolean"
+        },
+        "hydrated": {
+          "$ref": "#/$defs/PathString"
+        }
+      }
     }
   }
 }

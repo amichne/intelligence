@@ -65,7 +65,10 @@ class RpcDispatcherTest {
             {
               "jsonrpc": "2.0",
               "id": "missing",
-              "method": "marketplace.nope"
+              "method": "marketplace.nope",
+              "params": {
+                "repoRoot": "${repoRoot()}"
+              }
             }
             """.trimIndent(),
         )
@@ -73,6 +76,47 @@ class RpcDispatcherTest {
         val error = response.objectValue("error")
         assertEquals("-32601", error["code"]!!.jsonPrimitive.content)
         assertEquals("METHOD_NOT_FOUND", error.objectValue("data").string("type"))
+    }
+
+    @Test
+    fun `unknown params return typed invalid params error`() {
+        val response = handle(
+            """
+            {
+              "jsonrpc": "2.0",
+              "id": "bad-param",
+              "method": "marketplace.browse",
+              "params": {
+                "repository": "${repoRoot()}",
+                "provider": "source",
+                "surprise": true
+              }
+            }
+            """.trimIndent(),
+        )
+
+        val error = response.objectValue("error")
+        assertEquals("-32602", error["code"]!!.jsonPrimitive.content)
+        assertEquals("INVALID_PARAMS", error.objectValue("data").string("type"))
+        assertTrue(error.string("message").contains("surprise"))
+    }
+
+    @Test
+    fun `missing params returns typed invalid params error`() {
+        val response = handle(
+            """
+            {
+              "jsonrpc": "2.0",
+              "id": "missing-params",
+              "method": "marketplace.browse"
+            }
+            """.trimIndent(),
+        )
+
+        val error = response.objectValue("error")
+        assertEquals("-32602", error["code"]!!.jsonPrimitive.content)
+        assertEquals("INVALID_PARAMS", error.objectValue("data").string("type"))
+        assertTrue(error.string("message").contains("params"))
     }
 
     @Test
@@ -109,6 +153,7 @@ class RpcDispatcherTest {
         val result = command.test("")
 
         assertEquals(0, result.statusCode)
+        assertEquals(1, result.stdout.trim().lines().size)
         assertFalse(result.stdout.contains("Marketplace:"))
         val response = JsonFiles.json.parseToJsonElement(result.stdout).jsonObject
         assertEquals("browse", response.string("id"))

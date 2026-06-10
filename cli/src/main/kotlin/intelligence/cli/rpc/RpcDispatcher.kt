@@ -37,7 +37,7 @@ internal class RpcDispatcher(
         } catch (failure: Throwable) {
             rpcError(id, RpcFailure.internal(failure.message ?: failure::class.simpleName.orEmpty()))
         }
-        return JsonFiles.json.encodeToString(JsonElement.serializer(), response)
+        return JsonFiles.compactJson.encodeToString(JsonElement.serializer(), response)
     }
 
     fun execute(method: RpcMethod, params: JsonObject): JsonElement =
@@ -46,6 +46,7 @@ internal class RpcDispatcher(
                 RpcMethod.MarketplaceBrowse -> browse(params)
                 RpcMethod.MarketplaceRemotesList -> listRemotes(params)
                 RpcMethod.MarketplaceRemotesAdd -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "name", "repository", "ref")
                     service.addRemote(
                         repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
                         name = params.requiredStringParam("name"),
@@ -54,12 +55,14 @@ internal class RpcDispatcher(
                     )
                 }
                 RpcMethod.MarketplaceRemotesRemove -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "name")
                     service.removeRemote(
                         repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
                         name = params.requiredStringParam("name"),
                     )
                 }
                 RpcMethod.MarketplaceImport -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "target", "version", "ref")
                     service.importPlugin(
                         repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
                         target = params.requiredStringParam("target"),
@@ -68,6 +71,7 @@ internal class RpcDispatcher(
                     )
                 }
                 RpcMethod.MarketplaceInstall -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "repository", "ref")
                     service.installMarketplace(
                         repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
                         repository = params.requiredStringParam("repository"),
@@ -75,6 +79,7 @@ internal class RpcDispatcher(
                     )
                 }
                 RpcMethod.MarketplaceMaterialize -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "outRoot", "provider")
                     service.materialize(
                         repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
                         outRoot = params.requiredStringParam("outRoot").toCliPath(),
@@ -82,9 +87,11 @@ internal class RpcDispatcher(
                     )
                 }
                 RpcMethod.MarketplacePublishDefault -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot")
                     service.publishDefault(repoRoot = params.requiredStringParam("repoRoot").toCliPath())
                 }
                 RpcMethod.MarketplacePublishBranch -> withMarketplaceMessages { service ->
+                    params.requireOnlyParams("repoRoot", "provider", "branch", "noPush")
                     service.publishBranch(
                         repoRoot = params.requiredStringParam("repoRoot").toCliPath(),
                         provider = providerParam(params, "provider"),
@@ -103,6 +110,7 @@ internal class RpcDispatcher(
         }
 
     private fun browse(params: JsonObject): JsonObject {
+        params.requireOnlyParams("repository", "provider")
         val provider = browseProviderParam(params, "provider")
         return browserService
             .browse(repository = params.requiredStringParam("repository"), provider = provider)
@@ -110,6 +118,7 @@ internal class RpcDispatcher(
     }
 
     private fun listRemotes(params: JsonObject): JsonObject {
+        params.requireOnlyParams("repoRoot")
         val messages = mutableListOf<String>()
         val service = MarketplaceService(processRunner = processRunner, output = messages::add)
         val remotes = service.remoteEntries(params.requiredStringParam("repoRoot").toCliPath())
@@ -132,6 +141,7 @@ internal class RpcDispatcher(
     }
 
     private fun validate(params: JsonObject): JsonObject {
+        params.requireOnlyParams("repoRoot", "portable", "hydrated")
         val messages = mutableListOf<String>()
         val service = ValidationService(output = messages::add)
         val exitCode = service.validate(
