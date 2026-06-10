@@ -1,17 +1,19 @@
 # Getting Started
 
-Start with the marketplace catalog. `source/adaptable.marketplace.json` exposes
-local plugin families and points each entry at `source/plugins/*/plugin.json`.
+Use `intelligence` to browse, import, validate, materialize, and publish portable
+marketplaces. For reusable personal skills and plugin families, use the
+`slopsentral` marketplace.
 
 ## Common Tasks
 
 | Task | Command |
 |---|---|
-| Browse marketplace offerings | `intelligence marketplace browse amichne/intelligence` |
-| Browse script-readable offerings | `intelligence marketplace browse amichne/intelligence --format json` |
-| Validate source contracts | `intelligence validate` |
-| Materialize Codex output | `intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace` |
-| Materialize GitHub output | `intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace` |
+| Browse marketplace offerings | `intelligence marketplace browse amichne/slopsentral` |
+| Browse script-readable offerings | `intelligence marketplace browse amichne/slopsentral --format json` |
+| Import Kotlin workflow | `intelligence marketplace import amichne/slopsentral/kotlin-engineering` |
+| Install all exposed plugins | `intelligence marketplace install amichne/slopsentral` |
+| Validate this CLI repo | `intelligence validate --portable` |
+| Inspect CLI import state | `intelligence marketplace browse . --provider source` |
 | Build docs | `zensical build --clean` |
 
 ## Next Pages
@@ -24,24 +26,11 @@ python3 -m venv .venv-docs
 python -m pip install -r requirements-docs.txt
 ```
 
-## Choose A Path
-
-Each path has a dry-run or validation command before it mutates anything.
-
-| Path | Command | Use When |
-|---|---|---|
-| Browse marketplace offerings | `intelligence marketplace browse amichne/intelligence` | You want to see available plugins and standalone primitives. |
-| Validate this repository | `intelligence validate` | You changed manifests, hooks, schemas, profiles, or marketplace files. |
-| Preview generated output | `intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace` | You changed marketplace exposure or projection logic. |
-| Build docs | `zensical build --clean` | You changed this documentation site or navigation. |
-
 ## First Validation
 
 Run the repo gate before trusting local state.
 
 ```sh
-intelligence validate
+./gradlew :cli:test installDevelopmentCli
+.local/intelligence/bin/intelligence validate --portable
 ```
-
-Use the expanded commands in [Validation](../how-it-works/validation.md) when
-you need to isolate a failing source or hydrated-output check.

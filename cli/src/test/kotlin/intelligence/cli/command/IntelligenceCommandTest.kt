@@ -121,11 +121,9 @@ class IntelligenceCommandTest {
         )
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("Marketplace: amichne-intelligence"))
+        assertTrue(result.stdout.contains("Marketplace: intelligence-cli"))
         assertTrue(result.stdout.contains("Plugins"))
-        assertTrue(result.stdout.contains("engineering-baseline"))
-        assertTrue(result.stdout.contains("Standalone skills"))
-        assertTrue(result.stdout.contains("repository-onboarding"))
+        assertTrue(result.stdout.contains("kotlin-engineering"))
     }
 
     @Test

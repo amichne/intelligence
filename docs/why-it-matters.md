@@ -1,16 +1,16 @@
 # Why It Matters
 
-Reusable agent behavior becomes difficult to trust when it is scattered across
-runtime caches, one-off prompts, or provider-specific plugin folders.
+Reusable agent behavior is hard to trust when authoring, provider projection,
+and local runtime installation are mixed together.
 
-`amichne-intelligence` keeps the durable boundary simple:
+`intelligence` keeps the boundary explicit:
 
-| Problem | Marketplace-only answer |
+| Problem | Boundary |
 |---|---|
-| Scattered skills and instructions | Canonical primitives under `source/skills/`, `source/agents/`, `source/hooks/`, and `source/concepts/`. |
-| Plugin payloads becoming the only copy | Plugins compose primitives by reference instead of owning them. |
-| Unclear marketplace surface | `source/adaptable.marketplace.json` curates generally useful, project-agnostic plugin families. |
-| Structured data drift | JSON manifests are covered by schemas and `intelligence validate`. |
+| Reusable skill ownership | Authored in `amichne/slopsentral`. |
+| Provider-specific payload drift | Generated through `intelligence marketplace materialize` and `publish`. |
+| Consumer repo installs | Recorded in `.intelligence/adaptable.marketplace.json` and `.intelligence/marketplace-lock.json`. |
+| Structured data drift | Checked by schemas and `intelligence validate`. |
 
-The repository is useful when the same agent behavior should survive across
+The CLI is useful when the same marketplace behavior should survive across
 repositories, machines, runtimes, or release cycles.

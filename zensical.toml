@@ -1,7 +1,7 @@
 [project]
 site_name = "amichne-intelligence"
 site_description = """
-Marketplace-only source graph for reusable AI tooling primitives.
+Portable marketplace CLI and schema contracts for reusable AI tooling.
 """
 site_author = "amichne"
 site_url = "https://github.com/amichne/intelligence"
@@ -19,7 +19,6 @@ nav = [
   { "Getting started" = [
     { "Overview" = "getting-started/index.md" },
     { "Marketplace" = "getting-started/marketplace.md" },
-    { "Author a primitive" = "getting-started/author-a-primitive.md" },
   ]},
   { "What is available" = [
     { "Overview" = "available/index.md" },
@@ -27,7 +26,7 @@ nav = [
     { "Primitives" = "available/primitives.md" },
   ]},
   { "How it works" = [
-    { "Source graph" = "how-it-works/package-graph.md" },
+    { "Marketplace projection" = "how-it-works/package-graph.md" },
     { "Validation" = "how-it-works/validation.md" },
   ]},
   { "Reference" = [
