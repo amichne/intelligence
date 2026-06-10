@@ -1,27 +1,55 @@
 # Marketplace
 
 The marketplace is the portable distribution surface for project-agnostic plugin
-families. This repository owns the CLI; `amichne/slopsentral` owns the reusable
-personal marketplace content.
+families. Most users should operate it through the
+[Terminal UI](tui.md), then drop to commands when they need a scriptable result,
+CI step, provider projection, or publication flow.
 
-## Browse First
+## TUI First
 
-Browse a repository marketplace by reference. The command discovers supported
-entrypoints and shows plugins separately from standalone primitives.
+Open the browser from the repository that should receive install intent.
 
 ```sh
 intelligence
+```
+
+Inside the browser, use the command palette for marketplace operations.
+
+| Goal | TUI Action |
+|---|---|
+| Preview a repository marketplace | `:browse amichne/slopsentral` |
+| Search loaded offerings | `/` |
+| Import the selected offering | `:import` |
+| Install every exposed plugin | `:install all` |
+| Update imported plugins | `:update` or `:update all` |
+| Pin an installed plugin | `:pin 1.2.3` |
+| Validate the target repository | `:validate` |
+
+The TUI discovers supported marketplace entrypoints and shows plugins separately
+from standalone primitives. It uses the same JSON-RPC boundary as the CLI
+commands, so confirmed operations write the same install intent and lock
+evidence.
+
+## Browse Without The TUI
+
+Use direct browsing when output needs to be copied, piped, or inspected outside
+the full-screen interface.
+
+```sh
 intelligence marketplace browse amichne/slopsentral
 intelligence marketplace browse amichne/slopsentral --format json
-intelligence marketplace ui
+intelligence marketplace browse /path/to/slopsentral --provider source
 ```
 
 ## Referential Imports
 
-Import plugins by reference instead of copying provider payloads. The CLI writes
-a portable `MARKETPLACE_SOURCE` plugin entry into the existing authored
-marketplace or `.intelligence/adaptable.marketplace.json`, then records exact
-reconstruction evidence in `.intelligence/marketplace-lock.json`.
+Import plugins by reference instead of copying provider payloads. In the TUI,
+`:import` imports the selected offering and `:install all` installs the loaded
+marketplace. The command equivalents are useful for automation and docs.
+
+The CLI writes a portable `MARKETPLACE_SOURCE` plugin entry into the existing
+authored marketplace or `.intelligence/adaptable.marketplace.json`, then records
+exact reconstruction evidence in `.intelligence/marketplace-lock.json`.
 
 ```sh
 intelligence marketplace import amichne/slopsentral/kotlin-engineering

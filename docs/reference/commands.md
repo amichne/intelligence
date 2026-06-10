@@ -1,21 +1,61 @@
 # Commands
 
-This catalog describes the portable marketplace operator commands by job. Use
+This catalog describes the portable marketplace operator surface by job. The
+terminal UI is the primary human workflow; direct commands are the scriptable
+forms behind the same marketplace and validation semantics. Use
 `intelligence --help` for the top-level command list, and add `--help` after any
 command group or command for focused usage.
 
+## Terminal UI
+
+Open the full-screen browser when you are deciding what to install, update, pin,
+or validate in a repository.
+
+| Operation | Command Or Key | Use When |
+|---|---|---|
+| Open marketplace browser | `intelligence` | You are in an interactive terminal and want the primary marketplace workflow. |
+| Open browser explicitly | `intelligence marketplace ui` | A script, alias, or docs snippet should name the UI command. |
+| Select target repository | `intelligence marketplace ui --repo /path/to/repo` | You want the TUI to write install intent somewhere other than the current directory. |
+| Resolve imports from a ref | `intelligence marketplace ui --ref main` | Direct imports selected in the UI should use a branch, tag, or SHA. |
+| Search loaded offerings | `/` | You want to filter the current marketplace catalog and locally installed plugins. |
+| Change search type | `Tab` while searching | You want to search by all fields, repository, user, plugin, primitive, or installed state. |
+| Move panes | `Tab` / `Shift-Tab` | You want to move focus through source, offerings, details, and staging panes. |
+| Show shortcuts | `?` | You want the keyboard reference without leaving the TUI. |
+| Stage selected action | `i` | You want to inspect an install, import, or update before confirming it. |
+| Stage install all | `a` | You want to stage installation of every exposed plugin from the loaded marketplace. |
+| Preview repository search | `r` | You want to preview the repository in the search box using the configured default Git host. |
+| Validate target | `v` | You want portable validation for the selected install target. |
+| Open command palette | `:` | You want to browse another repository, set host/target/search scope, import, install, update, pin, list remotes, validate, or quit. |
+
+The command palette accepts these operation names.
+
+| Palette Command | Result |
+|---|---|
+| `browse amichne/slopsentral` | Preview another repository marketplace. |
+| `preview amichne/slopsentral` | Preview a repository using the host-aware repository rules. |
+| `host github.enterprise.example` | Set the default host for `owner/repo` repository previews. |
+| `target /path/to/repo` | Select where install intent and validation should be applied. |
+| `scope plugin` | Switch the active search scope. |
+| `search installed kotlin` | Set both search scope and query from the palette. |
+| `stage` / `stage all` | Stage the selected action or full marketplace install. |
+| `run staged` / `clear staged` | Open the selected staged confirmation or clear staged actions. |
+| `import` or `install` | Import the selected offering. |
+| `install all` | Install every exposed plugin from the loaded marketplace. |
+| `update` / `update all` | Update selected or all imported plugins. |
+| `pin 1.2.3` / `unpin` | Manage the selected installed plugin pin. |
+| `remote list` | Inspect configured external marketplaces. |
+| `validate` | Run portable validation for the target repository. |
+
 ## Discover
 
-Browse first when you want to see what a repository marketplace offers without
-knowing provider branches, entrypoints, plugin paths, or primitive paths.
+Use direct discovery when you need printable or machine-readable output instead
+of the full-screen TUI.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Open marketplace TUI | `intelligence` | You want the searchable full-screen marketplace browser. |
 | Browse published offerings | `intelligence marketplace browse amichne/slopsentral` | You want the default marketplace view from a repository reference. |
 | Browse local source | `intelligence marketplace browse /path/to/slopsentral --provider source` | You are developing the marketplace repo and want the authored source catalog. |
 | Browse machine output | `intelligence marketplace browse amichne/slopsentral --format json` | You want a script-readable offering catalog. |
-| Interactive marketplace flow | `intelligence marketplace ui` | You want to open the same full-screen marketplace browser explicitly. |
 
 ## Validate
 

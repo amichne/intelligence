@@ -30,22 +30,30 @@ target repo.
 - `.intelligence/marketplace-lock.json` records imported marketplace references
   and resolved content evidence for reconstruction.
 
-## Browse Marketplace Offerings
+## Use The Marketplace Browser
 
-Users with the CLI installed can browse a repository's marketplace without
-knowing provider entrypoints or plugin paths.
+Users with the CLI installed should start with the Ratatui browser. It lets you
+preview repositories, search offerings, import selected plugins or primitives,
+install all exposed plugins, update, pin, and validate without memorizing
+provider entrypoints or plugin paths.
 
 ```sh
 intelligence
-intelligence marketplace browse amichne/slopsentral
-intelligence marketplace browse /path/to/slopsentral --provider source
-intelligence marketplace browse amichne/slopsentral --format json
 ```
 
-Automation and future interactive clients can use the same marketplace semantics
-through the JSON-RPC stdio contract:
+Inside the browser:
+
+```text
+:browse amichne/slopsentral
+/
+:import
+:validate
+```
+
+Use commands directly when you need script-readable output or automation.
 
 ```sh
+intelligence marketplace browse amichne/slopsentral --format json
 printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","params":{"repository":"amichne/slopsentral","provider":"auto"}}' \
   | intelligence rpc
 ```
@@ -68,7 +76,6 @@ checkout to still be present.
 intelligence marketplace import amichne/slopsentral/kotlin-engineering
 intelligence marketplace import amichne/slopsentral/kotlin-engineering --ref main
 intelligence marketplace install amichne/slopsentral
-intelligence marketplace ui
 ```
 
 Named remotes remain available when a repository wants stable local aliases:
