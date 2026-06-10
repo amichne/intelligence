@@ -83,6 +83,21 @@ root. Provider flags publish generated orphan branches from source. Use
 | Preview Codex branch | `intelligence marketplace publish --repo /path/to/slopsentral --codex --no-push` | You want to inspect the generated Codex branch locally. |
 | Preview GitHub Copilot branch | `intelligence marketplace publish --repo /path/to/slopsentral --github --no-push` | You want to inspect the generated GitHub branch locally. |
 
+## Automate
+
+Use `intelligence rpc` when another program needs the same marketplace and
+validation semantics as the CLI. The contract is JSON-RPC 2.0 over stdio: send
+one compact request object per line and read one compact response object per
+line. The public schema lives at `schemas/rpc/marketplace.schema.json`.
+
+```sh
+printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","params":{"repository":"amichne/slopsentral","provider":"auto"}}' \
+  | intelligence rpc
+```
+
+Use this boundary for interactive clients such as a future Ratatui TUI instead
+of reimplementing marketplace normalization or referential resolution.
+
 ## Build
 
 Build commands are for repository development and release work, not normal
@@ -105,6 +120,7 @@ intelligence marketplace browse --help
 intelligence marketplace import --help
 intelligence marketplace install --help
 intelligence marketplace ui --help
+intelligence rpc --help
 intelligence validate --help
 ```
 

@@ -20,8 +20,8 @@ target repo.
 - `amichne/slopsentral` owns reusable skills, plugin families, hooks, agents,
   concepts, profiles, and generated provider payloads.
 - `schemas/` owns the public JSON contracts for source and provider payloads.
-- `cli/` owns browsing, validation, interactive marketplace import,
-  materialization, and publication.
+- `cli/` owns browsing, validation, RPC dispatch, interactive marketplace
+  import, materialization, and publication.
 - `.intelligence/adaptable.marketplace.json` records install-only adaptable
   marketplace state for consumer repos.
 - `.intelligence/marketplace-lock.json` records imported marketplace references
@@ -36,6 +36,14 @@ knowing provider entrypoints or plugin paths.
 intelligence marketplace browse amichne/slopsentral
 intelligence marketplace browse /path/to/slopsentral --provider source
 intelligence marketplace browse amichne/slopsentral --format json
+```
+
+Automation and future interactive clients can use the same marketplace semantics
+through the JSON-RPC stdio contract:
+
+```sh
+printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","params":{"repository":"amichne/slopsentral","provider":"auto"}}' \
+  | intelligence rpc
 ```
 
 ## Import Marketplace References
