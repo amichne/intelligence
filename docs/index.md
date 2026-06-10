@@ -1,44 +1,42 @@
 # amichne-intelligence
 
-`amichne-intelligence` is a portable marketplace operator for reusable AI
-tooling primitives and plugin families. The source graph is authored under
-`source/`, public content contracts live under `schemas/`, and
-`source/adaptable.marketplace.json` controls marketplace exposure.
+`amichne-intelligence` is the CLI and schema contract layer for portable AI
+tooling marketplaces. The reusable personal marketplace source now lives in
+[`amichne/slopsentral`](https://github.com/amichne/slopsentral).
 
 ```mermaid
 flowchart LR
-  primitive[Independent primitives in source/]
-  plugin[source/plugins/*/plugin.json]
-  schemas[Root schemas/ contracts]
-  marketplace[source/adaptable.marketplace.json]
-  cli[Kotlin CLI]
-  output[Provider marketplace payloads]
-  runtime[Consumer runtimes]
+  Source[Marketplace repo]
+  CLI[intelligence CLI]
+  Codex[Codex payload]
+  Github[GitHub Copilot payload]
+  Consumer[Consumer repo state]
 
-  schemas --> marketplace
-  primitive --> plugin --> marketplace --> cli --> output --> runtime
+  Source --> CLI
+  CLI --> Codex
+  CLI --> Github
+  CLI --> Consumer
 ```
 
 ## Start Here
 
-Browse the marketplace from the installed CLI.
+Browse the canonical marketplace from the installed CLI.
 
 ```sh
-intelligence marketplace browse amichne/intelligence
-intelligence marketplace browse amichne/intelligence --format json
+intelligence marketplace browse amichne/slopsentral
+intelligence marketplace browse amichne/slopsentral --format json
 ```
 
-Validate the source graph when authoring this repository.
+Validate this CLI repository when changing code or schema contracts.
 
 ```sh
-intelligence validate
+intelligence validate --portable
 ```
 
 ## What You Can Do
 
 | Job | Entry Point | Result |
 |---|---|---|
-| Inspect plugin families | [What is available](available/index.md) | A map of plugin families and primitives. |
+| Inspect marketplace offerings | [What is available](available/index.md) | A pointer to the `slopsentral` plugin and primitive catalog. |
 | Operate marketplaces | [Marketplace](getting-started/marketplace.md) | Browse, manage, import, project, and publish portable marketplace offerings. |
-| Author a primitive | [Author a primitive](getting-started/author-a-primitive.md) | A source-owned primitive referenced by plugins. |
-| Validate publishing | [Validation](how-it-works/validation.md) | Source and hydrated output checks before release. |
+| Validate changes | [Validation](how-it-works/validation.md) | CLI, source, and hydrated-output checks before release. |

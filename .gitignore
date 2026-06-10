@@ -37,6 +37,8 @@ build/
 .agents/plugins/
 .github/plugin/
 marketplace-lock.json
+!.intelligence/
+!.intelligence/marketplace-lock.json
 plugins/
 
 # Local agent hook state, editor state, and OS metadata

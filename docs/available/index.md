@@ -1,16 +1,12 @@
 # What Is Available
 
-The marketplace exposes plugin families composed from independent source
-primitives.
+Reusable plugin families and standalone primitives are available from
+[`amichne/slopsentral`](https://github.com/amichne/slopsentral).
 
-| Surface | Path |
-|---|---|
-| Marketplace catalog | `source/adaptable.marketplace.json` |
-| Plugin manifests | `source/plugins/*/plugin.json` |
-| Skills | `source/skills/` |
-| Agents | `source/agents/` |
-| Instructions and concepts | `source/concepts/` |
-| Hooks | `source/hooks/` |
+```sh
+intelligence marketplace browse amichne/slopsentral
+intelligence marketplace browse amichne/slopsentral --provider source --format json
+```
 
-See [Plugin families](plugin-families.md) for the curated plugin list and
-[Primitives](primitives.md) for the primitive layout.
+This repository keeps schemas, CLI source, packaging, and documentation for the
+`intelligence` command.

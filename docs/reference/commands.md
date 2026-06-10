@@ -11,14 +11,14 @@ knowing provider branches, entrypoints, plugin paths, or primitive paths.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Browse published offerings | `intelligence marketplace browse amichne/intelligence` | You want the default marketplace view from a repository reference. |
-| Browse local source | `intelligence marketplace browse . --provider source` | You are developing this repository and want the authored source catalog. |
-| Browse machine output | `intelligence marketplace browse amichne/intelligence --format json` | You want a script-readable offering catalog. |
+| Browse published offerings | `intelligence marketplace browse amichne/slopsentral` | You want the default marketplace view from a repository reference. |
+| Browse local source | `intelligence marketplace browse /path/to/slopsentral --provider source` | You are developing the marketplace repo and want the authored source catalog. |
+| Browse machine output | `intelligence marketplace browse amichne/slopsentral --format json` | You want a script-readable offering catalog. |
 | Interactive marketplace flow | `intelligence marketplace ui` | You want prompts for browse, import, and publish actions. |
 
 ## Validate
 
-Validate before trusting source graph changes or generated provider output.
+Validate before trusting source changes or generated provider output.
 
 | Operation | Command | Use When |
 |---|---|---|
@@ -51,12 +51,12 @@ in the global marketplace asset root, which defaults to
 
 | Operation | Command | Use When |
 |---|---|---|
-| Import direct reference | `intelligence marketplace import amichne/intelligence/kotlin-engineering` | You want a portable plugin entry from a remote marketplace without cloning it. |
-| Import pinned ref | `intelligence marketplace import amichne/intelligence/kotlin-engineering --ref v0.1.2` | You want to resolve from a specific branch, tag, or SHA. |
-| Install whole marketplace | `intelligence marketplace install amichne/intelligence` | You want every plugin exposed by an adaptable marketplace repository. |
-| Install pinned marketplace | `intelligence marketplace install amichne/intelligence --ref v0.1.2` | You want the whole marketplace resolved from a specific branch, tag, or SHA. |
+| Import direct reference | `intelligence marketplace import amichne/slopsentral/kotlin-engineering` | You want a portable plugin entry from a remote marketplace without cloning it. |
+| Import pinned ref | `intelligence marketplace import amichne/slopsentral/kotlin-engineering --ref main` | You want to resolve from a specific branch, tag, or SHA. |
+| Install whole marketplace | `intelligence marketplace install amichne/slopsentral` | You want every plugin exposed by an adaptable marketplace repository. |
+| Install pinned marketplace | `intelligence marketplace install amichne/slopsentral --ref main` | You want the whole marketplace resolved from a specific branch, tag, or SHA. |
 | Import named alias | `intelligence marketplace import shared-tools/review-stack` | You want a portable plugin entry resolved through managed marketplace metadata. |
-| Import into another repo | `intelligence marketplace import amichne/intelligence/kotlin-engineering --repo /path/to/repo` | You are managing a marketplace repo other than the current directory. |
+| Import into another repo | `intelligence marketplace import amichne/slopsentral/kotlin-engineering --repo /path/to/repo` | You are managing a marketplace repo other than the current directory. |
 
 ## Project
 
@@ -67,21 +67,21 @@ the original remote source checkout when the assets were already resolved.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Render Codex output | `intelligence marketplace materialize --provider codex --out /tmp/intelligence-codex-marketplace` | You need the Codex marketplace payload. |
-| Render GitHub output | `intelligence marketplace materialize --provider github --out /tmp/intelligence-github-marketplace` | You need the GitHub Copilot marketplace payload. |
-| Render every provider | `intelligence marketplace materialize --provider all --out /tmp/intelligence-marketplace` | You changed provider-neutral exposure or projection logic. |
+| Render Codex output | `intelligence marketplace materialize --repo /path/to/slopsentral --provider codex --out /tmp/slopsentral-codex` | You need the Codex marketplace payload. |
+| Render GitHub output | `intelligence marketplace materialize --repo /path/to/slopsentral --provider github --out /tmp/slopsentral-github` | You need the GitHub Copilot marketplace payload. |
+| Render every provider | `intelligence marketplace materialize --repo /path/to/slopsentral --provider all --out /tmp/slopsentral-marketplace` | You changed provider-neutral exposure or projection logic. |
 
 ## Publish
 
-The default publish command writes CI-owned harness payloads into the repository
+The default publish command writes harness payloads into a marketplace repository
 root. Provider flags publish generated orphan branches from source. Use
 `--no-push` with provider flags for a local proof without updating remotes.
 
 | Operation | Command | Use When |
 |---|---|---|
-| Publish default harness payloads | `intelligence marketplace publish` | CI or a local maintainer needs `.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json` refreshed on `main`. |
-| Preview Codex branch | `intelligence marketplace publish --codex --no-push` | You want to inspect the generated Codex branch locally. |
-| Preview GitHub Copilot branch | `intelligence marketplace publish --github --no-push` | You want to inspect the generated GitHub branch locally. |
+| Publish default harness payloads | `intelligence marketplace publish --repo /path/to/slopsentral` | A local maintainer needs `.agents/plugins/marketplace.json` and `.github/plugin/marketplace.json` refreshed in the marketplace repo. |
+| Preview Codex branch | `intelligence marketplace publish --repo /path/to/slopsentral --codex --no-push` | You want to inspect the generated Codex branch locally. |
+| Preview GitHub Copilot branch | `intelligence marketplace publish --repo /path/to/slopsentral --github --no-push` | You want to inspect the generated GitHub branch locally. |
 
 ## Build
 
