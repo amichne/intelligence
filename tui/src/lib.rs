@@ -316,6 +316,49 @@ pub enum InputMode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum StatusSeverity {
+    Info,
+    Success,
+    Warning,
+    Error,
+}
+
+impl StatusSeverity {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Info => "INFO",
+            Self::Success => "SUCCESS",
+            Self::Warning => "WARNING",
+            Self::Error => "ERROR",
+        }
+    }
+
+    fn style(self) -> Style {
+        match self {
+            Self::Info => Style::new().fg(Color::Cyan),
+            Self::Success => Style::new().fg(Color::Green),
+            Self::Warning => Style::new().fg(Color::Yellow),
+            Self::Error => Style::new().fg(Color::Red),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct StatusMessage {
+    pub severity: StatusSeverity,
+    pub text: String,
+}
+
+impl StatusMessage {
+    fn new(severity: StatusSeverity, text: impl Into<String>) -> Self {
+        Self {
+            severity,
+            text: text.into(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SearchScope {
     All,
     Repository,
@@ -431,6 +474,133 @@ pub struct PendingAction {
     pub params: Value,
     pub validate_after: bool,
     pub reload_after: bool,
+    pub confirmation: ConfirmationKind,
+    pub provenance: ActionProvenance,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ConfirmationKind {
+    Inline,
+    Modal,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ActionProvenance {
+    PluginImport {
+        plugin: String,
+        repository: String,
+        target: String,
+        ref_name: Option<String>,
+    },
+    PrimitiveImport {
+        kind: String,
+        name: String,
+        repository: String,
+        target: String,
+        ref_name: Option<String>,
+    },
+    MarketplaceInstall {
+        repository: String,
+        target: String,
+        ref_name: Option<String>,
+    },
+    InstalledUpdate {
+        plugin: String,
+        source: Option<String>,
+        target: String,
+    },
+    InstalledPin {
+        plugin: String,
+        version: String,
+        target: String,
+    },
+    InstalledUnpin {
+        plugin: String,
+        target: String,
+    },
+    UpdateAll {
+        target: String,
+    },
+    Validate {
+        target: String,
+    },
+    RemoteList {
+        target: String,
+    },
+    Other {
+        action: String,
+        target: String,
+    },
+}
+
+impl ActionProvenance {
+    fn summary(&self) -> String {
+        match self {
+            Self::PluginImport {
+                plugin,
+                repository,
+                target,
+                ref_name,
+            } => format!(
+                "install plugin {plugin} from {} → {target}",
+                repository_with_ref(repository, ref_name.as_deref())
+            ),
+            Self::PrimitiveImport {
+                kind,
+                name,
+                repository,
+                target,
+                ref_name,
+            } => format!(
+                "import {kind} {name} from {} → {target}",
+                repository_with_ref(repository, ref_name.as_deref())
+            ),
+            Self::MarketplaceInstall {
+                repository,
+                target,
+                ref_name,
+            } => format!(
+                "install all plugins from {} → {target}",
+                repository_with_ref(repository, ref_name.as_deref())
+            ),
+            Self::InstalledUpdate {
+                plugin,
+                source,
+                target,
+            } => {
+                if let Some(source) = source {
+                    format!("update plugin {plugin} from {source} → {target}")
+                } else {
+                    format!("update plugin {plugin} → {target}")
+                }
+            }
+            Self::InstalledPin {
+                plugin,
+                version,
+                target,
+            } => format!("pin plugin {plugin} to {version} in {target}"),
+            Self::InstalledUnpin { plugin, target } => {
+                format!("unpin plugin {plugin} in {target}")
+            }
+            Self::UpdateAll { target } => format!("update all imported plugins in {target}"),
+            Self::Validate { target } => format!("validate {target}"),
+            Self::RemoteList { target } => format!("list remotes for {target}"),
+            Self::Other { action, target } => format!("{action} → {target}"),
+        }
+    }
+}
+
+fn repository_with_ref(repository: &str, ref_name: Option<&str>) -> String {
+    match ref_name.filter(|value| !value.trim().is_empty()) {
+        Some(ref_name) => format!("{repository}@{ref_name}"),
+        None => repository.to_string(),
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct CommandSuggestion {
+    pub command: &'static str,
+    pub applicable: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -439,6 +609,7 @@ pub enum UiEffect {
     Quit,
     LoadCatalog,
     Call {
+        title: String,
         method: String,
         params: Value,
         validate_after: bool,
@@ -463,7 +634,7 @@ pub struct App {
     pub search_scope: SearchScope,
     pub search_query: String,
     pub command_input: String,
-    pub status: String,
+    pub status: Option<StatusMessage>,
     pub pending: Option<PendingAction>,
     pub show_help: bool,
     pub should_quit: bool,
@@ -488,7 +659,10 @@ impl App {
             search_scope: SearchScope::All,
             search_query: String::new(),
             command_input: String::new(),
-            status: "Loading marketplace catalog...".to_string(),
+            status: Some(StatusMessage::new(
+                StatusSeverity::Info,
+                "Loading marketplace catalog...",
+            )),
             pending: None,
             show_help: false,
             should_quit: false,
@@ -507,15 +681,18 @@ impl App {
             &repository,
         );
         self.apply_filter();
-        self.status = format!(
-            "Loaded {} offerings from {}",
-            self.offerings.len(),
-            self.browse_repository
+        self.set_status(
+            StatusSeverity::Success,
+            format!(
+                "Loaded {} offerings from {}",
+                self.offerings.len(),
+                self.browse_repository
+            ),
         );
     }
 
     pub fn set_error(&mut self, error: String) {
-        self.status = format!("Error: {error}");
+        self.set_status(StatusSeverity::Error, error);
     }
 
     pub fn set_rpc_result(&mut self, method: &str, value: &Value) {
@@ -526,23 +703,42 @@ impl App {
                 .collect::<Vec<_>>()
                 .join("; ");
             if !text.is_empty() {
-                self.status = text;
+                self.set_status(StatusSeverity::Success, text);
                 return;
             }
         }
         if method == "validation.run" {
             let exit_code = value.get("exitCode").and_then(Value::as_i64).unwrap_or(1);
-            self.status = if exit_code == 0 {
-                "Validation passed".to_string()
+            if exit_code == 0 {
+                self.set_status(StatusSeverity::Success, "Validation passed");
             } else {
-                "Validation failed".to_string()
-            };
+                self.set_status(StatusSeverity::Error, "Validation failed");
+            }
         } else {
-            self.status = format!("{method} completed");
+            self.set_status(StatusSeverity::Success, format!("{method} completed"));
+        }
+    }
+
+    pub fn set_running(&mut self, title: &str) {
+        self.set_status(StatusSeverity::Info, format!("Running {title}…"));
+    }
+
+    fn set_status(&mut self, severity: StatusSeverity, text: impl Into<String>) {
+        self.status = Some(StatusMessage::new(severity, text));
+    }
+
+    fn validate_effect(&self) -> UiEffect {
+        UiEffect::Call {
+            title: "Validate target".to_string(),
+            method: "validation.run".to_string(),
+            params: json!({"repoRoot": self.repo_root, "portable": true}),
+            validate_after: false,
+            reload_after: false,
         }
     }
 
     pub fn handle_key(&mut self, key: KeyEvent) -> UiEffect {
+        self.status = None;
         if self.pending.is_some() {
             return self.handle_pending_key(key);
         }
@@ -564,49 +760,105 @@ impl App {
             .and_then(|index| self.offerings.get(*index))
     }
 
-    pub fn command_suggestions(&self) -> Vec<&'static str> {
-        let commands = [
-            "browse ",
-            "preview ",
-            "host ",
-            "target ",
-            "scope ",
-            "search ",
-            "stage",
-            "stage all",
-            "run staged",
-            "clear staged",
+    pub fn command_suggestions(&self) -> Vec<CommandSuggestion> {
+        const COMMANDS: [&str; 19] = [
             "import",
-            "install all",
+            "stage",
+            "update",
             "pin ",
             "unpin",
-            "update",
+            "run staged",
+            "clear staged",
+            "install all",
             "update all",
+            "stage all",
             "validate",
+            "browse ",
+            "preview ",
+            "search ",
+            "scope ",
+            "target ",
+            "host ",
             "remote list",
             "quit",
         ];
-        commands
+        let typed = self.command_input.trim();
+        let selected = self.selected_offering();
+        let selected_installed = selected.and_then(|offering| offering.installed.as_ref());
+        let selected_outdated = selected_installed.is_some_and(|installed| installed.outdated);
+        let staged_available = !self.staged.is_empty();
+
+        let mut suggestions = COMMANDS
             .into_iter()
-            .filter(|command| command.starts_with(self.command_input.trim()))
-            .take(4)
+            .map(|command| {
+                let applicable = match command {
+                    "import" | "stage" => selected.is_some(),
+                    "update" => selected_installed.is_some(),
+                    "pin " | "unpin" => selected_installed.is_some(),
+                    "run staged" | "clear staged" => staged_available,
+                    "update all" => self.installed.iter().any(|plugin| plugin.outdated),
+                    _ => true,
+                };
+                let context_rank = match command {
+                    "update" if selected_outdated => 0,
+                    "import" | "stage" if selected.is_some() => 1,
+                    "run staged" | "clear staged" if staged_available => 2,
+                    "pin " | "unpin" if selected_installed.is_some() => 3,
+                    "install all" | "update all" | "stage all" => 4,
+                    "validate" => 5,
+                    _ => 10,
+                };
+                let prefix_rank = if typed.is_empty() || command.starts_with(typed) {
+                    0
+                } else {
+                    1
+                };
+                let applicability_rank = if applicable { 0 } else { 1 };
+                (
+                    prefix_rank,
+                    applicability_rank,
+                    context_rank,
+                    CommandSuggestion {
+                        command,
+                        applicable,
+                    },
+                )
+            })
+            .collect::<Vec<_>>();
+        suggestions.sort_by_key(
+            |(prefix_rank, applicability_rank, context_rank, suggestion)| {
+                (
+                    *prefix_rank,
+                    *applicability_rank,
+                    *context_rank,
+                    suggestion.command,
+                )
+            },
+        );
+        suggestions
+            .into_iter()
+            .map(|(_, _, _, suggestion)| suggestion)
             .collect()
     }
 
     fn handle_pending_key(&mut self, key: KeyEvent) -> UiEffect {
         match key.code {
-            KeyCode::Esc => {
+            KeyCode::Esc | KeyCode::Char('n') => {
                 self.pending = None;
-                self.status = "Cancelled".to_string();
+                self.set_status(StatusSeverity::Warning, "Cancelled");
                 UiEffect::None
             }
-            KeyCode::Enter => {
-                let pending = self.pending.take().expect("pending action exists");
-                UiEffect::Call {
-                    method: pending.method,
-                    params: pending.params,
-                    validate_after: pending.validate_after,
-                    reload_after: pending.reload_after,
+            KeyCode::Enter | KeyCode::Char('y') => {
+                if let Some(pending) = self.pending.take() {
+                    UiEffect::Call {
+                        title: pending.title,
+                        method: pending.method,
+                        params: pending.params,
+                        validate_after: pending.validate_after,
+                        reload_after: pending.reload_after,
+                    }
+                } else {
+                    UiEffect::None
                 }
             }
             _ => UiEffect::None,
@@ -671,7 +923,10 @@ impl App {
                 {
                     self.preview_search_repository()
                 } else {
-                    self.status = selected_summary(self.selected_offering());
+                    self.set_status(
+                        StatusSeverity::Info,
+                        selected_summary(self.selected_offering()),
+                    );
                     UiEffect::None
                 }
             }
@@ -685,12 +940,7 @@ impl App {
                 self.pending = Some(self.update_all_action());
                 UiEffect::None
             }
-            KeyCode::Char('v') => UiEffect::Call {
-                method: "validation.run".to_string(),
-                params: json!({"repoRoot": self.repo_root, "portable": true}),
-                validate_after: false,
-                reload_after: false,
-            },
+            KeyCode::Char('v') => self.validate_effect(),
             KeyCode::Char('x') | KeyCode::Delete => {
                 if self.focus == FocusPane::Staging {
                     self.remove_staged_selected();
@@ -772,32 +1022,32 @@ impl App {
             return UiEffect::Quit;
         }
         if command == "validate" {
-            return UiEffect::Call {
-                method: "validation.run".to_string(),
-                params: json!({"repoRoot": self.repo_root, "portable": true}),
-                validate_after: false,
-                reload_after: false,
-            };
+            return self.validate_effect();
         }
         if let Some(host) = command.strip_prefix("host ") {
             match GitHost::parse(host) {
                 Ok(host) => {
                     self.default_git_host = host;
-                    self.status =
-                        format!("Default Git host set to {}", self.default_git_host.as_str());
+                    self.set_status(
+                        StatusSeverity::Success,
+                        format!("Default Git host set to {}", self.default_git_host.as_str()),
+                    );
                 }
-                Err(error) => self.status = error,
+                Err(error) => self.set_status(StatusSeverity::Error, error),
             }
             return UiEffect::None;
         }
         if let Some(target) = command.strip_prefix("target ") {
             let target = target.trim();
             if target.is_empty() {
-                self.status = "target requires a repository path".to_string();
+                self.set_status(StatusSeverity::Error, "target requires a repository path");
                 return UiEffect::None;
             }
             self.repo_root = target.to_string();
-            self.status = format!("Install target set to {target}");
+            self.set_status(
+                StatusSeverity::Success,
+                format!("Install target set to {target}"),
+            );
             return UiEffect::LoadCatalog;
         }
         if let Some(scope) = command.strip_prefix("scope ") {
@@ -805,9 +1055,15 @@ impl App {
                 Some(scope) => {
                     self.search_scope = scope;
                     self.apply_filter();
-                    self.status = format!("Search scope set to {}", scope.label());
+                    self.set_status(
+                        StatusSeverity::Success,
+                        format!("Search scope set to {}", scope.label()),
+                    );
                 }
-                None => self.status = format!("Unknown search scope: {}", scope.trim()),
+                None => self.set_status(
+                    StatusSeverity::Error,
+                    format!("Unknown search scope: {}", scope.trim()),
+                ),
             }
             return UiEffect::None;
         }
@@ -825,6 +1081,7 @@ impl App {
         }
         if command == "remote list" {
             return UiEffect::Call {
+                title: "List marketplace remotes".to_string(),
                 method: "marketplace.remotes.list".to_string(),
                 params: json!({"repoRoot": self.repo_root}),
                 validate_after: false,
@@ -850,7 +1107,7 @@ impl App {
         if command == "clear staged" {
             self.staged.clear();
             self.staged_selected = 0;
-            self.status = "Staging cleared".to_string();
+            self.set_status(StatusSeverity::Success, "Staging cleared");
             return UiEffect::None;
         }
         if command == "install all" {
@@ -885,14 +1142,14 @@ impl App {
                 Some(version.trim()),
             );
         }
-        self.status = format!("Unknown command: {command}");
+        self.set_status(StatusSeverity::Error, format!("Unknown command: {command}"));
         UiEffect::None
     }
 
     fn pending_import_selected(&mut self) -> UiEffect {
         match self.selected_install_or_update_action() {
             Ok(action) => self.pending = Some(action),
-            Err(error) => self.status = error,
+            Err(error) => self.set_status(StatusSeverity::Error, error),
         }
         UiEffect::None
     }
@@ -911,36 +1168,52 @@ impl App {
         }
         match offering.kind {
             OfferingKind::Plugin => {
-                let target = format!(
+                let plugin = offering.name.clone();
+                let import_target = format!(
                     "{}/{}",
                     self.browse_repository.trim_end_matches('/'),
-                    offering.name
+                    plugin
                 );
                 Ok(PendingAction {
-                    title: format!("Install plugin {target}"),
+                    title: format!("Install plugin {import_target}"),
                     method: "marketplace.import".to_string(),
-                    params: json!({"repoRoot": self.repo_root, "target": target, "ref": self.ref_name}),
+                    params: json!({"repoRoot": self.repo_root, "target": import_target, "ref": self.ref_name}),
                     validate_after: true,
                     reload_after: true,
+                    confirmation: ConfirmationKind::Inline,
+                    provenance: ActionProvenance::PluginImport {
+                        plugin,
+                        repository: self.browse_repository.clone(),
+                        target: self.repo_root.clone(),
+                        ref_name: self.ref_name.clone(),
+                    },
                 })
             }
-            _ => Ok(PendingAction {
-                title: format!(
-                    "Import {} primitive {}",
-                    offering.kind.label(),
-                    offering.name
-                ),
-                method: "marketplace.primitive.import".to_string(),
-                params: json!({
-                    "repoRoot": self.repo_root,
-                    "repository": self.browse_repository,
-                    "kind": offering.kind.label(),
-                    "name": offering.name,
-                    "ref": self.ref_name
-                }),
-                validate_after: true,
-                reload_after: true,
-            }),
+            _ => {
+                let kind = offering.kind.label().to_string();
+                let name = offering.name.clone();
+                Ok(PendingAction {
+                    title: format!("Import {kind} primitive {name}"),
+                    method: "marketplace.primitive.import".to_string(),
+                    params: json!({
+                        "repoRoot": self.repo_root,
+                        "repository": self.browse_repository,
+                        "kind": kind,
+                        "name": name,
+                        "ref": self.ref_name
+                    }),
+                    validate_after: true,
+                    reload_after: true,
+                    confirmation: ConfirmationKind::Inline,
+                    provenance: ActionProvenance::PrimitiveImport {
+                        kind,
+                        name,
+                        repository: self.browse_repository.clone(),
+                        target: self.repo_root.clone(),
+                        ref_name: self.ref_name.clone(),
+                    },
+                })
+            }
         }
     }
 
@@ -951,6 +1224,12 @@ impl App {
             params: json!({"repoRoot": self.repo_root, "repository": self.browse_repository, "ref": self.ref_name}),
             validate_after: true,
             reload_after: true,
+            confirmation: ConfirmationKind::Modal,
+            provenance: ActionProvenance::MarketplaceInstall {
+                repository: self.browse_repository.clone(),
+                target: self.repo_root.clone(),
+                ref_name: self.ref_name.clone(),
+            },
         }
     }
 
@@ -961,25 +1240,29 @@ impl App {
             params: json!({"repoRoot": self.repo_root}),
             validate_after: true,
             reload_after: true,
+            confirmation: ConfirmationKind::Modal,
+            provenance: ActionProvenance::UpdateAll {
+                target: self.repo_root.clone(),
+            },
         }
     }
 
     fn stage_selected_action(&mut self) -> UiEffect {
         match self.selected_install_or_update_action() {
             Ok(action) => {
-                self.status = format!("Staged {}", action.title);
+                self.set_status(StatusSeverity::Success, format!("Staged {}", action.title));
                 self.staged.push(action);
                 self.staged_selected = self.staged.len().saturating_sub(1);
                 self.focus = FocusPane::Staging;
             }
-            Err(error) => self.status = error,
+            Err(error) => self.set_status(StatusSeverity::Error, error),
         }
         UiEffect::None
     }
 
     fn stage_install_all(&mut self) -> UiEffect {
         let action = self.install_all_action();
-        self.status = format!("Staged {}", action.title);
+        self.set_status(StatusSeverity::Success, format!("Staged {}", action.title));
         self.staged.push(action);
         self.staged_selected = self.staged.len().saturating_sub(1);
         self.focus = FocusPane::Staging;
@@ -988,11 +1271,16 @@ impl App {
 
     fn confirm_staged_selected(&mut self) -> UiEffect {
         if self.staged.is_empty() {
-            self.status = "No staged install action".to_string();
+            self.set_status(StatusSeverity::Warning, "No staged install action");
             return UiEffect::None;
         }
+        let modal_confirmation = self.staged.len() > 1;
         let index = self.staged_selected.min(self.staged.len() - 1);
-        self.pending = Some(self.staged.remove(index));
+        let mut action = self.staged.remove(index);
+        if modal_confirmation {
+            action.confirmation = ConfirmationKind::Modal;
+        }
+        self.pending = Some(action);
         if self.staged_selected >= self.staged.len() {
             self.staged_selected = self.staged.len().saturating_sub(1);
         }
@@ -1001,7 +1289,7 @@ impl App {
 
     fn remove_staged_selected(&mut self) {
         if self.staged.is_empty() {
-            self.status = "No staged install action".to_string();
+            self.set_status(StatusSeverity::Warning, "No staged install action");
             return;
         }
         let index = self.staged_selected.min(self.staged.len() - 1);
@@ -1009,7 +1297,10 @@ impl App {
         if self.staged_selected >= self.staged.len() {
             self.staged_selected = self.staged.len().saturating_sub(1);
         }
-        self.status = format!("Removed {}", removed.title);
+        self.set_status(
+            StatusSeverity::Warning,
+            format!("Removed {}", removed.title),
+        );
     }
 
     fn pending_installed_action(
@@ -1024,7 +1315,7 @@ impl App {
             .and_then(|offering| self.installed_action_for(offering, method, title, version))
         {
             Ok(action) => self.pending = Some(action),
-            Err(error) => self.status = error,
+            Err(error) => self.set_status(StatusSeverity::Error, error),
         }
         UiEffect::None
     }
@@ -1047,12 +1338,37 @@ impl App {
         if let Some(version) = version {
             params["version"] = json!(version);
         }
+        let provenance = match method {
+            "marketplace.update" => ActionProvenance::InstalledUpdate {
+                plugin: installed.name.clone(),
+                source: offering
+                    .repository
+                    .clone()
+                    .or_else(|| installed.marketplace.clone()),
+                target: self.repo_root.clone(),
+            },
+            "marketplace.pin" => ActionProvenance::InstalledPin {
+                plugin: installed.name.clone(),
+                version: version.unwrap_or_default().to_string(),
+                target: self.repo_root.clone(),
+            },
+            "marketplace.unpin" => ActionProvenance::InstalledUnpin {
+                plugin: installed.name.clone(),
+                target: self.repo_root.clone(),
+            },
+            _ => ActionProvenance::Other {
+                action: title.to_string(),
+                target: self.repo_root.clone(),
+            },
+        };
         Ok(PendingAction {
             title: format!("{title}: {}", installed.name),
             method: method.to_string(),
             params,
             validate_after: true,
             reload_after: true,
+            confirmation: ConfirmationKind::Inline,
+            provenance,
         })
     }
 
@@ -1070,11 +1386,11 @@ impl App {
         match self.default_git_host.repository_ref(repository) {
             Ok(repository) => {
                 self.browse_repository = repository.clone();
-                self.status = format!("Previewing {repository}");
+                self.set_status(StatusSeverity::Info, format!("Previewing {repository}"));
                 UiEffect::LoadCatalog
             }
             Err(error) => {
-                self.status = error;
+                self.set_status(StatusSeverity::Error, error);
                 UiEffect::None
             }
         }
@@ -1381,6 +1697,221 @@ fn selected_summary(selected: Option<&Offering>) -> String {
         .unwrap_or_else(|| "No offering selected".to_string())
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum ModeBarMode {
+    Normal,
+    Search(SearchScope),
+    Command,
+    Confirm,
+    Help,
+}
+
+impl ModeBarMode {
+    fn from_app(app: &App) -> Self {
+        if app.pending.is_some() {
+            Self::Confirm
+        } else if app.show_help {
+            Self::Help
+        } else {
+            match app.input_mode {
+                InputMode::Normal => Self::Normal,
+                InputMode::Search => Self::Search(app.search_scope),
+                InputMode::Command => Self::Command,
+            }
+        }
+    }
+
+    fn label(&self) -> String {
+        match self {
+            Self::Normal => "NORMAL".to_string(),
+            Self::Search(scope) => format!("SEARCH {}", scope.label()),
+            Self::Command => "COMMAND".to_string(),
+            Self::Confirm => "CONFIRM".to_string(),
+            Self::Help => "HELP".to_string(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct ModeBarState {
+    mode: ModeBarMode,
+    severity: Option<StatusSeverity>,
+    row1: String,
+    row2: String,
+    row3: String,
+    suggestions: Vec<CommandSuggestion>,
+}
+
+impl ModeBarState {
+    fn from_app(app: &App) -> Self {
+        let mode = ModeBarMode::from_app(app);
+        let mode_label = mode.label();
+        match mode.clone() {
+            ModeBarMode::Normal => {
+                let status = app
+                    .status
+                    .as_ref()
+                    .map(|status| format!("{}: {}", status.severity.label(), status.text))
+                    .unwrap_or_else(|| "ready".to_string());
+                let suggestions = app.command_suggestions();
+                Self {
+                    mode,
+                    severity: app.status.as_ref().map(|status| status.severity),
+                    row1: format!("{mode_label} {status}"),
+                    row2: suggestions_plain(&suggestions),
+                    row3: normal_footer(app.focus),
+                    suggestions,
+                }
+            }
+            ModeBarMode::Search(scope) => {
+                let prompt = format!("/{} {}", scope.label(), app.search_query);
+                Self {
+                    mode,
+                    severity: None,
+                    row1: format!("{mode_label} {prompt}"),
+                    row2: search_detail(app, scope),
+                    row3: "tab scope  shift-tab previous  enter apply  esc normal".to_string(),
+                    suggestions: Vec::new(),
+                }
+            }
+            ModeBarMode::Command => {
+                let suggestions = app.command_suggestions();
+                Self {
+                    mode,
+                    severity: None,
+                    row1: format!("{mode_label} :{}", app.command_input),
+                    row2: suggestions_plain(&suggestions),
+                    row3: "enter run  esc normal  ? help".to_string(),
+                    suggestions,
+                }
+            }
+            ModeBarMode::Confirm => {
+                let pending = app.pending.as_ref();
+                Self {
+                    mode,
+                    severity: None,
+                    row1: format!(
+                        "{mode_label} {}",
+                        pending
+                            .map(|action| action.title.as_str())
+                            .unwrap_or("pending action")
+                    ),
+                    row2: pending
+                        .map(|action| action.provenance.summary())
+                        .unwrap_or_else(|| "pending action".to_string()),
+                    row3: "y confirm  enter confirm  esc cancel  n cancel".to_string(),
+                    suggestions: Vec::new(),
+                }
+            }
+            ModeBarMode::Help => Self {
+                mode,
+                severity: None,
+                row1: format!("{mode_label} shortcuts"),
+                row2: "shortcut reference is open".to_string(),
+                row3: "? close  esc close  q close".to_string(),
+                suggestions: Vec::new(),
+            },
+        }
+    }
+}
+
+fn normal_footer(focus: FocusPane) -> String {
+    match focus {
+        FocusPane::Sources => "tab offerings  r preview  / search  : palette  ? help",
+        FocusPane::Offerings => "tab details  enter details  i stage  a stage all  / search",
+        FocusPane::Details => "tab staging  enter details  / search  : palette  ? help",
+        FocusPane::Staging => "tab sources  enter confirm  x remove  : palette  ? help",
+    }
+    .to_string()
+}
+
+fn search_detail(app: &App, scope: SearchScope) -> String {
+    let mut detail = format!(
+        "SEARCH {} · {}/{}",
+        scope.label(),
+        app.filtered.len(),
+        app.offerings.len()
+    );
+    if scope == SearchScope::Repository {
+        let repository = app.search_query.trim();
+        let preview = if repository.is_empty() {
+            app.browse_repository.as_str()
+        } else {
+            repository
+        };
+        detail.push_str(&format!(" · enter previews {preview}"));
+    }
+    detail
+}
+
+fn suggestions_plain(suggestions: &[CommandSuggestion]) -> String {
+    let values = suggestions
+        .iter()
+        .map(|suggestion| {
+            if suggestion.applicable {
+                suggestion.command.to_string()
+            } else {
+                format!("({})", suggestion.command.trim_end())
+            }
+        })
+        .collect::<Vec<_>>();
+    format!("commands: {}", values.join("  "))
+}
+
+fn ellipsize(value: &str, width: u16) -> String {
+    let width = usize::from(width);
+    if value.chars().count() <= width {
+        return value.to_string();
+    }
+    if width == 0 {
+        return String::new();
+    }
+    if width == 1 {
+        return "…".to_string();
+    }
+    let mut truncated = value.chars().take(width - 1).collect::<String>();
+    truncated.push('…');
+    truncated
+}
+
+fn fit_suggestions_line(
+    prefix: &str,
+    suggestions: &[CommandSuggestion],
+    width: u16,
+) -> Line<'static> {
+    if suggestions.is_empty() {
+        return Line::from(ellipsize(prefix, width));
+    }
+    let width = usize::from(width);
+    let mut spans = vec![Span::from(prefix.to_string())];
+    let mut used = prefix.chars().count();
+    for suggestion in suggestions {
+        let label = if suggestion.applicable {
+            suggestion.command.to_string()
+        } else {
+            format!("({})", suggestion.command.trim_end())
+        };
+        let separator = if used == prefix.chars().count() {
+            " "
+        } else {
+            "  "
+        };
+        let needed = separator.chars().count() + label.chars().count();
+        if used + needed > width {
+            break;
+        }
+        spans.push(Span::from(separator.to_string()));
+        let style = if suggestion.applicable {
+            Style::new()
+        } else {
+            Style::new().add_modifier(Modifier::DIM)
+        };
+        spans.push(Span::styled(label, style));
+        used += needed;
+    }
+    Line::from(spans)
+}
+
 pub fn render(frame: &mut ratatui::Frame, app: &App) {
     let [title_area, main_area, command_area] = Layout::vertical([
         Constraint::Length(1),
@@ -1403,11 +1934,15 @@ pub fn render(frame: &mut ratatui::Frame, app: &App) {
     render_offerings(frame, center_area, app);
     render_details(frame, details_area, app);
     render_staging(frame, staging_area, app);
-    render_command(frame, command_area, app);
-    if app.show_help {
+    render_mode_bar(frame, command_area, app);
+    if app.pending.is_none() && app.show_help {
         render_shortcuts(frame);
     }
-    if let Some(pending) = &app.pending {
+    if let Some(pending) = app
+        .pending
+        .as_ref()
+        .filter(|action| action.confirmation == ConfirmationKind::Modal)
+    {
         render_pending(frame, pending);
     }
 }
@@ -1584,33 +2119,22 @@ fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     );
 }
 
-fn render_command(frame: &mut ratatui::Frame, area: Rect, app: &App) {
-    let prompt = match app.input_mode {
-        InputMode::Search => format!("/{} {}", app.search_scope.label(), app.search_query),
-        InputMode::Command => format!(":{}", app.command_input),
-        InputMode::Normal => app.status.clone(),
-    };
-    let suggestions = match app.input_mode {
-        InputMode::Command => {
-            let values = app.command_suggestions();
-            if values.is_empty() {
-                String::new()
-            } else {
-                format!("  {}", values.join("  "))
-            }
-        }
-        InputMode::Search => {
-            "  tab changes search type, enter previews repository scope".to_string()
-        }
-        InputMode::Normal => {
-            "  ? shortcuts   / search   : palette   enter preview/staged confirm".to_string()
-        }
-    };
-    frame.render_widget(
-        Paragraph::new(vec![Line::from(prompt), Line::from(suggestions)])
-            .block(Block::new().borders(Borders::ALL).title("Command")),
-        area,
+fn render_mode_bar(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+    let mode_bar = ModeBarState::from_app(app);
+    let row1 = Line::styled(
+        ellipsize(&mode_bar.row1, area.width),
+        mode_bar
+            .severity
+            .map(StatusSeverity::style)
+            .unwrap_or_default(),
     );
+    let row2 = if mode_bar.suggestions.is_empty() {
+        Line::from(ellipsize(&mode_bar.row2, area.width))
+    } else {
+        fit_suggestions_line("commands:", &mode_bar.suggestions, area.width)
+    };
+    let row3 = Line::from(ellipsize(&mode_bar.row3, area.width));
+    frame.render_widget(Paragraph::new(vec![row1, row2, row3]), area);
 }
 
 fn render_shortcuts(frame: &mut ratatui::Frame) {
@@ -1640,18 +2164,23 @@ fn render_shortcuts(frame: &mut ratatui::Frame) {
 fn render_pending(frame: &mut ratatui::Frame, pending: &PendingAction) {
     let area = centered_rect(70, 35, frame.area());
     frame.render_widget(Clear, area);
+    let inner_width = area.width.saturating_sub(2);
     let body = vec![
         Line::from(pending.title.clone()).bold(),
         Line::from(""),
-        Line::from(format!("method: {}", pending.method)),
-        Line::from(format!("params: {}", pending.params)),
+        Line::from(ellipsize(
+            &format!("method: {}", pending.method),
+            inner_width,
+        )),
+        Line::from(ellipsize(
+            &format!("params: {}", pending.params),
+            inner_width,
+        )),
         Line::from(""),
-        Line::from("Enter confirms. Esc cancels."),
+        Line::from("Y or Enter confirms. Esc or N cancels."),
     ];
     frame.render_widget(
-        Paragraph::new(body)
-            .wrap(Wrap { trim: true })
-            .block(Block::new().borders(Borders::ALL).title("Confirm")),
+        Paragraph::new(body).block(Block::new().borders(Borders::ALL).title("Confirm")),
         area,
     );
 }
@@ -1697,6 +2226,7 @@ pub fn unique_tags(offerings: &[Offering]) -> Vec<String> {
 mod tests {
     use super::*;
     use crossterm::event::{KeyEvent, KeyModifiers};
+    use ratatui::{backend::TestBackend, Terminal};
 
     fn test_config() -> Config {
         Config {
@@ -1706,6 +2236,406 @@ mod tests {
             browse_repository: "amichne/slopsentral".to_string(),
             default_git_host: GitHost::github(),
         }
+    }
+
+    fn installed_plugin(name: &str) -> InstalledPlugin {
+        InstalledPlugin {
+            name: name.to_string(),
+            version: Some("1.0.0".to_string()),
+            current_version: Some("1.1.0".to_string()),
+            imported: true,
+            locked: false,
+            outdated: true,
+            marketplace: Some("amichne/slopsentral".to_string()),
+            description: Some("Installed workflow".to_string()),
+            tags: vec!["installed".to_string()],
+        }
+    }
+
+    fn plugin_offering(name: &str, installed: Option<InstalledPlugin>) -> Offering {
+        Offering {
+            kind: OfferingKind::Plugin,
+            name: name.to_string(),
+            description: Some(format!("{name} description")),
+            tags: vec!["workflow".to_string()],
+            installed,
+            repository: Some("amichne/slopsentral".to_string()),
+            source: OfferingSource::Marketplace,
+        }
+    }
+
+    fn skill_offering(name: &str) -> Offering {
+        Offering {
+            kind: OfferingKind::Skill,
+            name: name.to_string(),
+            description: Some(format!("{name} skill")),
+            tags: Vec::new(),
+            installed: None,
+            repository: None,
+            source: OfferingSource::Marketplace,
+        }
+    }
+
+    fn select_offerings(app: &mut App, offerings: Vec<Offering>) {
+        app.offerings = offerings;
+        app.apply_filter();
+        app.selected = 0;
+    }
+
+    #[test]
+    fn mode_bar_derives_confirm_before_help_and_input_mode() {
+        let mut app = App::new(test_config());
+        app.input_mode = InputMode::Search;
+        app.show_help = true;
+        app.pending = Some(app.install_all_action());
+
+        let mode_bar = ModeBarState::from_app(&app);
+
+        assert_eq!(ModeBarMode::Confirm, mode_bar.mode);
+        assert!(mode_bar.row1.starts_with("CONFIRM "));
+    }
+
+    #[test]
+    fn mode_bar_labels_cover_normal_search_command_and_help() {
+        let mut app = App::new(test_config());
+        assert!(ModeBarState::from_app(&app).row1.starts_with("NORMAL "));
+
+        app.input_mode = InputMode::Search;
+        app.search_scope = SearchScope::Repository;
+        assert!(ModeBarState::from_app(&app)
+            .row1
+            .starts_with("SEARCH repository "));
+
+        app.input_mode = InputMode::Command;
+        assert!(ModeBarState::from_app(&app).row1.starts_with("COMMAND "));
+
+        app.show_help = true;
+        assert!(ModeBarState::from_app(&app).row1.starts_with("HELP "));
+    }
+
+    #[test]
+    fn pending_confirmation_keys_are_explicit_and_other_keys_are_inert() {
+        let mut app = App::new(test_config());
+        app.pending = Some(app.install_all_action());
+
+        let inert = app.handle_key(KeyEvent::new(KeyCode::Char('x'), KeyModifiers::NONE));
+        assert!(matches!(inert, UiEffect::None));
+        assert!(app.pending.is_some());
+
+        let confirmed = app.handle_key(KeyEvent::new(KeyCode::Char('y'), KeyModifiers::NONE));
+        assert!(matches!(
+            confirmed,
+            UiEffect::Call { method, .. } if method == "marketplace.install"
+        ));
+        assert!(app.pending.is_none());
+
+        app.pending = Some(app.install_all_action());
+        let cancelled = app.handle_key(KeyEvent::new(KeyCode::Char('n'), KeyModifiers::NONE));
+        assert!(matches!(cancelled, UiEffect::None));
+        assert!(app.pending.is_none());
+        assert_eq!(
+            Some(StatusSeverity::Warning),
+            app.status.as_ref().map(|status| status.severity)
+        );
+    }
+
+    #[test]
+    fn multi_action_staged_confirmation_uses_modal() {
+        let mut app = App::new(test_config());
+        select_offerings(&mut app, vec![plugin_offering("review-stack", None)]);
+        let first = app
+            .selected_install_or_update_action()
+            .expect("first staged action");
+        select_offerings(&mut app, vec![plugin_offering("release-stack", None)]);
+        let second = app
+            .selected_install_or_update_action()
+            .expect("second staged action");
+        app.staged = vec![first, second];
+
+        let effect = app.confirm_staged_selected();
+
+        assert!(matches!(effect, UiEffect::None));
+        assert_eq!(
+            Some(ConfirmationKind::Modal),
+            app.pending.as_ref().map(|action| action.confirmation)
+        );
+    }
+
+    #[test]
+    fn confirmation_provenance_describes_plugin_primitive_and_update_targets() {
+        let mut app = App::new(test_config());
+        select_offerings(&mut app, vec![plugin_offering("review-stack", None)]);
+        let plugin = app
+            .selected_install_or_update_action()
+            .expect("plugin action");
+        assert_eq!(ConfirmationKind::Inline, plugin.confirmation);
+        assert_eq!(
+            "install plugin review-stack from amichne/slopsentral → .",
+            plugin.provenance.summary()
+        );
+
+        app.ref_name = Some("main".to_string());
+        select_offerings(&mut app, vec![skill_offering("tui-design")]);
+        let primitive = app
+            .selected_install_or_update_action()
+            .expect("primitive action");
+        assert_eq!(
+            "import skill tui-design from amichne/slopsentral@main → .",
+            primitive.provenance.summary()
+        );
+
+        app.repo_root = "/tmp/target".to_string();
+        select_offerings(
+            &mut app,
+            vec![plugin_offering(
+                "kotlin-engineering",
+                Some(installed_plugin("kotlin-engineering")),
+            )],
+        );
+        let update = app
+            .selected_install_or_update_action()
+            .expect("update action");
+        assert_eq!(
+            "update plugin kotlin-engineering from amichne/slopsentral → /tmp/target",
+            update.provenance.summary()
+        );
+    }
+
+    #[test]
+    fn search_detail_reports_match_count_scope_and_repository_enter_effect() {
+        let mut app = App::new(test_config());
+        select_offerings(
+            &mut app,
+            vec![
+                Offering {
+                    repository: Some("amichne/tools".to_string()),
+                    ..plugin_offering("one", None)
+                },
+                Offering {
+                    repository: Some("acme/internal".to_string()),
+                    ..plugin_offering("two", None)
+                },
+                Offering {
+                    repository: Some("amichne/tools-extra".to_string()),
+                    ..plugin_offering("three", None)
+                },
+            ],
+        );
+        app.input_mode = InputMode::Search;
+        app.search_scope = SearchScope::Repository;
+        app.search_query = "amichne/tools".to_string();
+        app.apply_filter();
+
+        let mode_bar = ModeBarState::from_app(&app);
+
+        assert_eq!(
+            "SEARCH repository · 2/3 · enter previews amichne/tools",
+            mode_bar.row2
+        );
+    }
+
+    #[test]
+    fn status_messages_are_typed_and_clear_on_next_keypress() {
+        let mut app = App::new(test_config());
+        app.set_error("network failed".to_string());
+
+        assert_eq!(
+            Some(StatusSeverity::Error),
+            app.status.as_ref().map(|status| status.severity)
+        );
+        assert_eq!(
+            Some("network failed"),
+            app.status.as_ref().map(|status| status.text.as_str())
+        );
+
+        let effect = app.handle_key(KeyEvent::new(KeyCode::Char('z'), KeyModifiers::NONE));
+
+        assert!(matches!(effect, UiEffect::None));
+        assert!(app.status.is_none());
+    }
+
+    #[test]
+    fn command_suggestions_rank_context_and_keep_unavailable_commands() {
+        let mut app = App::new(test_config());
+        let suggestions = app.command_suggestions();
+        assert!(suggestions
+            .iter()
+            .any(|suggestion| suggestion.command == "import" && !suggestion.applicable));
+        assert!(
+            position_of_command(&suggestions, "validate")
+                < position_of_command(&suggestions, "import")
+        );
+
+        select_offerings(&mut app, vec![plugin_offering("review-stack", None)]);
+        let suggestions = app.command_suggestions();
+        assert_eq!("import", suggestions[0].command);
+        assert!(suggestions[0].applicable);
+
+        select_offerings(
+            &mut app,
+            vec![plugin_offering(
+                "kotlin-engineering",
+                Some(installed_plugin("kotlin-engineering")),
+            )],
+        );
+        let suggestions = app.command_suggestions();
+        assert_eq!("update", suggestions[0].command);
+    }
+
+    fn position_of_command(suggestions: &[CommandSuggestion], command: &str) -> usize {
+        suggestions
+            .iter()
+            .position(|suggestion| suggestion.command == command)
+            .unwrap_or(usize::MAX)
+    }
+
+    fn rendered_lines(app: &App, width: u16, height: u16) -> Vec<String> {
+        let mut terminal = Terminal::new(TestBackend::new(width, height)).expect("test terminal");
+        terminal
+            .draw(|frame| render(frame, app))
+            .expect("render frame");
+        let buffer = terminal.backend().buffer();
+        (0..buffer.area.height)
+            .map(|y| {
+                let mut line = String::new();
+                for x in 0..buffer.area.width {
+                    if let Some(cell) = buffer.cell((x, y)) {
+                        line.push_str(cell.symbol());
+                    }
+                }
+                line
+            })
+            .collect()
+    }
+
+    fn screen_text(lines: &[String]) -> String {
+        lines.join("\n")
+    }
+
+    #[test]
+    fn render_mode_bar_normal_mode_is_three_borderless_rows() {
+        let app = App::new(test_config());
+
+        let lines = rendered_lines(&app, 80, 24);
+
+        assert!(lines[21].starts_with("NORMAL INFO: Loading marketplace catalog..."));
+        assert!(lines[22].starts_with("commands:"));
+        assert!(lines[23].contains("/ search"));
+        assert!(!lines[21..24].iter().any(|line| line.contains("Command")));
+        assert!(!lines[21..24].iter().any(|line| line.contains('┌')));
+        assert!(!lines[21..24].iter().any(|line| line.contains('│')));
+    }
+
+    #[test]
+    fn render_mode_bar_search_mode_shows_match_count() {
+        let mut app = App::new(test_config());
+        select_offerings(
+            &mut app,
+            vec![
+                Offering {
+                    repository: Some("amichne/tooling".to_string()),
+                    ..plugin_offering("one", None)
+                },
+                Offering {
+                    repository: Some("acme/internal".to_string()),
+                    ..plugin_offering("two", None)
+                },
+            ],
+        );
+        app.input_mode = InputMode::Search;
+        app.search_scope = SearchScope::Repository;
+        app.search_query = "amichne/tooling".to_string();
+        app.apply_filter();
+
+        let lines = rendered_lines(&app, 80, 24);
+
+        assert!(lines[21].starts_with("SEARCH repository /repository amichne/tooling"));
+        assert!(lines[22].contains("SEARCH repository · 1/2"));
+        assert!(lines[22].contains("enter previews amichne/tooling"));
+        assert!(lines[23].contains("tab scope"));
+    }
+
+    #[test]
+    fn render_mode_bar_command_mode_shows_ranked_suggestions() {
+        let mut app = App::new(test_config());
+        app.input_mode = InputMode::Command;
+        app.command_input = "up".to_string();
+        select_offerings(
+            &mut app,
+            vec![plugin_offering(
+                "kotlin-engineering",
+                Some(installed_plugin("kotlin-engineering")),
+            )],
+        );
+
+        let lines = rendered_lines(&app, 80, 24);
+
+        assert!(lines[21].starts_with("COMMAND :up"));
+        assert!(lines[22].contains("update"));
+        assert!(lines[23].contains("enter run"));
+    }
+
+    #[test]
+    fn render_inline_confirm_uses_mode_bar_without_raw_rpc_modal() {
+        let mut app = App::new(test_config());
+        select_offerings(&mut app, vec![plugin_offering("review-stack", None)]);
+        app.pending = Some(
+            app.selected_install_or_update_action()
+                .expect("pending action"),
+        );
+        app.show_help = true;
+
+        let lines = rendered_lines(&app, 80, 24);
+        let screen = screen_text(&lines);
+
+        assert!(lines[21].starts_with("CONFIRM Install plugin"));
+        assert!(lines[22].contains("install plugin review-stack from amichne/slopsentral → ."));
+        assert_eq!(
+            "y confirm  enter confirm  esc cancel  n cancel",
+            lines[23].trim_end()
+        );
+        assert!(!screen.contains("Keyboard shortcuts"));
+        assert!(!screen.contains("method:"));
+        assert!(!screen.contains("params:"));
+    }
+
+    #[test]
+    fn render_batch_confirm_retains_modal_with_raw_rpc_details() {
+        let mut app = App::new(test_config());
+        app.pending = Some(app.install_all_action());
+
+        let lines = rendered_lines(&app, 80, 24);
+        let screen = screen_text(&lines);
+
+        assert!(lines[21].starts_with("CONFIRM Install every plugin"));
+        assert!(screen.contains("method: marketplace.install"));
+        assert!(screen.contains("params:"));
+        assert!(screen.contains("Y or Enter confirms. Esc or N cancels."));
+    }
+
+    #[test]
+    fn render_long_status_keeps_mode_label_and_ellipsizes_message() {
+        let mut app = App::new(test_config());
+        app.set_status(
+            StatusSeverity::Error,
+            "this status message is intentionally much longer than a narrow terminal can show",
+        );
+
+        let lines = rendered_lines(&app, 40, 24);
+
+        assert!(lines[21].starts_with("NORMAL "));
+        assert!(lines[21].contains('…'));
+        assert!(lines[22].starts_with("commands:"));
+    }
+
+    #[test]
+    fn render_severity_labels_remain_legible_without_color() {
+        let mut app = App::new(test_config());
+        app.set_error("network failed".to_string());
+
+        let lines = rendered_lines(&app, 80, 24);
+
+        assert!(lines[21].starts_with("NORMAL ERROR: network failed"));
     }
 
     #[test]

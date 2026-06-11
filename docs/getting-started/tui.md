@@ -33,11 +33,12 @@ inside a repository.
 | Offerings pane | Lists plugins and exposed standalone primitives from the loaded marketplace. |
 | Details pane | Shows the selected offering description, repository, tags, installed version, remote version, lock state, and install target. |
 | Staging / Install pane | Holds staged install, import, and update actions before confirmation. |
-| Command pane | Shows status, scoped search input, command input, suggestions, and confirmation prompts. |
+| Mode bar | Shows the current mode, status or prompt, contextual command suggestions or search feedback, and the active shortcut keys. |
 
 The selected offering is only previewed until you confirm an operation. Import,
 install, update, pin, and unpin operations open a confirmation prompt before
-they write repository state.
+they write repository state. Single selected actions confirm inline in the mode
+bar; batch actions keep the larger confirmation panel with raw RPC details.
 
 ## Keyboard Model
 
@@ -49,9 +50,11 @@ palette for operations that need a name, version, or repository reference.
 | `?` | Show the shortcut reference. |
 | `/` | Search the loaded marketplace catalog and local installed plugins. |
 | `Esc` | Leave search or command mode; cancel a pending confirmation. |
+| `y` / `Enter` | Confirm a pending operation. |
+| `n` | Cancel a pending operation. |
 | `Tab` / `Shift-Tab` | Move focus between panes. In search mode, cycle `all`, `repository`, `user`, `plugin`, `primitive`, and `installed` search scopes. |
 | `j` / `k` or arrow keys | Move through offerings. |
-| `Enter` | Preview the selected offering, open the selected staged action, or confirm a pending operation. |
+| `Enter` | Preview the selected offering or open the selected staged action when no confirmation is pending. |
 | `r` | Preview the repository in the search box using the configured default Git host. |
 | `i` | Stage the selected install, import, or update action. |
 | `a` | Stage installation of every exposed plugin from the loaded marketplace. |
@@ -63,12 +66,16 @@ palette for operations that need a name, version, or repository reference.
 Search filters the loaded catalog and local installed plugins by offering name,
 kind, description, tags, repository, user, installed state, version, and update
 state. Repository search can preview `owner/repo`, local paths, or Git URLs.
-The default shorthand host is GitHub; use `host <enterprise-host>` to make
-`owner/repo` preview an enterprise Git host instead.
+The mode bar shows the active scope, match count, and what `Enter` will preview
+for repository-scoped search. The default shorthand host is GitHub; use
+`host <enterprise-host>` to make `owner/repo` preview an enterprise Git host
+instead.
 
 ## Command Palette
 
-Open the palette with `:`. Suggestions appear in the command pane as you type.
+Open the palette with `:`. Suggestions appear in the mode bar as you type.
+Commands that fit the selected offering, staged state, and installed/update
+state rank first; unavailable commands remain visible but dimmed.
 
 | Command | Result |
 |---|---|
@@ -107,7 +114,7 @@ Most interactive use follows a browse, select, confirm, validate loop.
 3. Press `/` and search for the workflow, plugin, or primitive you want.
 4. Move with `j` / `k` or the arrow keys until the offering is selected.
 5. Type `:import` for one offering, or `:install all` for the whole marketplace.
-6. Press `Enter` on the confirmation prompt.
+6. Press `y` or `Enter` on the confirmation prompt.
 7. Type `:validate` before trusting or committing the changed repository state.
 
 The TUI writes the same install-only intent files as the CLI:
