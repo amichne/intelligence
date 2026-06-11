@@ -57,10 +57,14 @@ intelligence marketplace import amichne/slopsentral/kotlin-engineering --ref mai
 intelligence marketplace install amichne/slopsentral
 ```
 
+These commands validate the target repository after they write marketplace
+state. Use `--no-validate` only when a surrounding script runs validation
+separately.
+
 The CLI leaves Codex or GitHub Copilot installation as a provider-specific next
 step.
 
-## Manage Marketplaces
+## Advanced Aliases
 
 Direct imports add external marketplace metadata automatically. Name external
 marketplaces explicitly when a project wants stable local aliases.
@@ -77,11 +81,12 @@ Preview provider payloads locally when changing marketplace projection logic or
 validating a marketplace repository.
 
 ```sh
-intelligence marketplace materialize --repo /path/to/slopsentral --provider codex --out /tmp/slopsentral-codex
-intelligence validate --repo /path/to/slopsentral --portable --hydrated /tmp/slopsentral-codex
-intelligence marketplace materialize --repo /path/to/slopsentral --provider github --out /tmp/slopsentral-github
-intelligence validate --repo /path/to/slopsentral --portable --hydrated /tmp/slopsentral-github
+intelligence marketplace materialize --repo /path/to/slopsentral
 ```
+
+The default materializes all provider payloads into
+`build/intelligence/marketplace`. Add `--provider` or `--out` only for a custom
+proof target.
 
 ## Published Shape
 
@@ -100,7 +105,7 @@ intelligence validate --repo /path/to/slopsentral --portable --hydrated /tmp/slo
 Publish generated payloads from the marketplace repository.
 
 ```sh
-intelligence marketplace publish --repo /path/to/slopsentral
+intelligence marketplace publish --repo /path/to/slopsentral --check
 intelligence marketplace publish --repo /path/to/slopsentral --codex --no-push
 intelligence marketplace publish --repo /path/to/slopsentral --github --no-push
 ```

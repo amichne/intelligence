@@ -29,16 +29,27 @@ inside a repository.
 
 | Area | Purpose |
 |---|---|
-| Source / Operations pane | Shows the repository being browsed, default Git host, install target, search scope, installed count, update count, and core interaction hints. |
-| Offerings pane | Lists plugins and exposed standalone primitives from the loaded marketplace. |
-| Details pane | Shows the selected offering description, repository, tags, installed version, remote version, lock state, and install target. |
-| Staging / Install pane | Holds staged install, import, and update actions before confirmation. |
+| Context pane | Shows the target repository, installed-state files, lock evidence, browsed source, provider entrypoint, active flow, source kind, cache location, and personal source hint. |
+| Resources pane | Lists plugins, exposed standalone primitives, installed-only resources, and guided rows for discover, author, edit, and output workflows. |
+| Details pane | Explains the selected resource as `source -> operation -> target`, including flow, source scope, target scope, valid action, tags, lock state, and install target. |
+| Actions pane | Holds staged install, import, update, and batch actions before confirmation. |
 | Mode bar | Shows the current mode, status or prompt, contextual command suggestions or search feedback, and the active shortcut keys. |
+
+The browser separates three questions on screen:
+
+- **Target scope**: the repository receiving install intent, a personal source
+  repository, or generated provider output.
+- **Source scope**: current repository source, personal marketplace source,
+  remote marketplace source, installed state, or resolved cache.
+- **Operation**: read, import, install, create, edit, update, validate,
+  project, or publish.
 
 The selected offering is only previewed until you confirm an operation. Import,
 install, update, pin, and unpin operations open a confirmation prompt before
 they write repository state. Single selected actions confirm inline in the mode
 bar; batch actions keep the larger confirmation panel with raw RPC details.
+Guided author, edit, and output rows explain the owning source or command path
+without pretending those actions are implemented inside the TUI yet.
 
 ## Keyboard Model
 
@@ -75,7 +86,10 @@ instead.
 
 Open the palette with `:`. Suggestions appear in the mode bar as you type.
 Commands that fit the selected offering, staged state, and installed/update
-state rank first; unavailable commands remain visible but dimmed.
+state rank first; unavailable commands remain visible but dimmed. Suggestions
+are grouped by flow: discover, add, installed, author, edit, and outputs. The
+provider-output flow is guidance-only in the TUI; use the direct CLI command
+when you need to generate or publish payloads.
 
 | Command | Result |
 |---|---|
@@ -98,6 +112,9 @@ state rank first; unavailable commands remain visible but dimmed.
 | `unpin` | Remove the selected installed plugin pin. |
 | `remote list` | Show configured external marketplaces for the target repository. |
 | `validate` | Run portable validation for the target repository. |
+| `author` or `create skill` | Select the guided authoring path and show the owning source guidance. |
+| `edit` or `open source` | Select the guided edit path and explain where resource edits belong. |
+| `outputs` | Select the guided provider-output path and show the current CLI command path. |
 | `quit` | Exit the browser. |
 
 Repository references use the same rules as `marketplace browse`: an existing
@@ -121,6 +138,11 @@ The TUI writes the same install-only intent files as the CLI:
 `.intelligence/adaptable.marketplace.json` for consumer repositories and
 `.intelligence/marketplace-lock.json` for resolved content evidence.
 
+Authoring and editing reusable resources remains source-owned. For personal
+tooling, the owning local marketplace source is usually
+`/Users/amichne/code/slopsentral`; generated Codex and GitHub payloads are
+provider output, not source.
+
 ## When To Use Commands Instead
 
 Use the command line directly when the work is scripted, running in CI, or needs
@@ -131,5 +153,5 @@ machine-readable output.
 | Script-readable catalog | `intelligence marketplace browse amichne/slopsentral --format json` |
 | Non-interactive import | `intelligence marketplace import amichne/slopsentral/kotlin-engineering` |
 | Non-interactive full install | `intelligence marketplace install amichne/slopsentral` |
-| Materialize provider output | `intelligence marketplace materialize --repo /path/to/slopsentral --provider codex --out /tmp/slopsentral-codex` |
+| Materialize provider output | `intelligence marketplace materialize --repo /path/to/slopsentral` |
 | Build the docs site | `zensical build --clean` |

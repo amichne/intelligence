@@ -78,7 +78,12 @@ intelligence marketplace import amichne/slopsentral/kotlin-engineering --ref mai
 intelligence marketplace install amichne/slopsentral
 ```
 
-Named remotes remain available when a repository wants stable local aliases:
+Import, install, update, pin, and unpin commands run portable validation after
+writing marketplace state. Use `--no-validate` only when a script already has a
+separate validation gate.
+
+Named remotes remain available as an advanced path when a repository wants
+stable local aliases:
 
 ```sh
 intelligence marketplace remote add shared-tools acme/shared-tools
@@ -100,19 +105,20 @@ intelligence validate --portable
 ## Marketplace Materialization
 
 ```sh
-intelligence marketplace materialize --repo /path/to/slopsentral --provider codex --out /tmp/slopsentral-codex-marketplace
-intelligence validate --repo /path/to/slopsentral --portable --hydrated /tmp/slopsentral-codex-marketplace
-intelligence marketplace materialize --repo /path/to/slopsentral --provider github --out /tmp/slopsentral-github-marketplace
-intelligence validate --repo /path/to/slopsentral --portable --hydrated /tmp/slopsentral-github-marketplace
-intelligence marketplace materialize --repo /path/to/slopsentral --provider all --out /tmp/slopsentral-marketplace
+intelligence marketplace materialize --repo /path/to/slopsentral
 ```
+
+Materialization defaults to all providers and writes to
+`build/intelligence/marketplace` under the target repository. Use `--provider`
+or `--out` only when a script needs a single provider or a custom output root.
 
 ## Publication
 
-Publish default harness payloads from the marketplace repository:
+Publish default harness payloads from the marketplace repository, with source
+and hydrated-output checks first:
 
 ```sh
-intelligence marketplace publish --repo /path/to/slopsentral
+intelligence marketplace publish --repo /path/to/slopsentral --check
 ```
 
 Preview provider orphan branch publication locally with:

@@ -1,16 +1,205 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::env;
 use std::io::{BufRead, BufReader, Write};
 use std::process::{Child, ChildStdin, Command, Stdio};
 
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Color, Modifier, Style, Stylize};
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::symbols;
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{
-    Block, Borders, Clear, List, ListItem, ListState, Paragraph, Row, Table, TableState, Wrap,
+    Block, Borders, Cell, Clear, List, ListItem, ListState, Paragraph, Row, Table, TableState, Wrap,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ColorSupport {
+    Monochrome,
+    Ansi16,
+    Ansi256,
+    TrueColor,
+}
+
+impl ColorSupport {
+    fn from_env() -> Self {
+        Self::detect(
+            env::var_os("NO_COLOR").is_some(),
+            env::var("COLORTERM").ok().as_deref(),
+            env::var("TERM").ok().as_deref(),
+        )
+    }
+
+    fn detect(no_color: bool, colorterm: Option<&str>, term: Option<&str>) -> Self {
+        if no_color {
+            return Self::Monochrome;
+        }
+        if colorterm.is_some_and(|value| {
+            let normalized = value.to_ascii_lowercase();
+            normalized == "truecolor" || normalized == "24bit"
+        }) {
+            return Self::TrueColor;
+        }
+        if term.is_some_and(|value| value.contains("256color")) {
+            return Self::Ansi256;
+        }
+        Self::Ansi16
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ColorSlot {
+    Default,
+    Muted,
+    Emphasis,
+    Surface,
+    Overlay,
+    Selection,
+    AccentPrimary,
+    AccentSecondary,
+    Plugin,
+    Skill,
+    Agent,
+    Hook,
+    Instruction,
+    Catalog,
+    Local,
+    Info,
+    Success,
+    Warning,
+    Error,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct UiTheme {
+    color_support: ColorSupport,
+}
+
+impl UiTheme {
+    fn current() -> Self {
+        Self::with_color_support(ColorSupport::from_env())
+    }
+
+    fn with_color_support(color_support: ColorSupport) -> Self {
+        Self { color_support }
+    }
+
+    fn fg(self, slot: ColorSlot) -> Style {
+        apply_fg(Style::new(), self.color(slot))
+    }
+
+    fn bg(self, slot: ColorSlot) -> Style {
+        apply_bg(Style::new(), self.color(slot))
+    }
+
+    fn muted(self) -> Style {
+        self.fg(ColorSlot::Muted).add_modifier(Modifier::DIM)
+    }
+
+    fn emphasis(self) -> Style {
+        self.fg(ColorSlot::Emphasis).add_modifier(Modifier::BOLD)
+    }
+
+    fn panel_border(self, focused: bool) -> Style {
+        if focused {
+            self.fg(ColorSlot::AccentPrimary)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            self.fg(ColorSlot::Muted)
+        }
+    }
+
+    fn panel_title(self, focused: bool) -> Style {
+        if focused {
+            self.fg(ColorSlot::AccentPrimary)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            self.fg(ColorSlot::Emphasis)
+        }
+    }
+
+    fn selected(self) -> Style {
+        let style = if self.color_support == ColorSupport::Monochrome {
+            Style::new().add_modifier(Modifier::REVERSED)
+        } else {
+            apply_fg(
+                self.bg(ColorSlot::Selection),
+                self.color(ColorSlot::Emphasis),
+            )
+        };
+        style.add_modifier(Modifier::BOLD)
+    }
+
+    fn status(self, severity: StatusSeverity) -> Style {
+        let slot = match severity {
+            StatusSeverity::Info => ColorSlot::Info,
+            StatusSeverity::Success => ColorSlot::Success,
+            StatusSeverity::Warning => ColorSlot::Warning,
+            StatusSeverity::Error => ColorSlot::Error,
+        };
+        self.fg(slot).add_modifier(Modifier::BOLD)
+    }
+
+    fn color(self, slot: ColorSlot) -> Option<Color> {
+        match self.color_support {
+            ColorSupport::Monochrome => None,
+            ColorSupport::Ansi16 => Some(match slot {
+                ColorSlot::Default => Color::Gray,
+                ColorSlot::Muted | ColorSlot::Surface | ColorSlot::Overlay => Color::DarkGray,
+                ColorSlot::Emphasis | ColorSlot::Selection => Color::White,
+                ColorSlot::AccentPrimary | ColorSlot::Plugin | ColorSlot::Catalog => Color::Cyan,
+                ColorSlot::AccentSecondary | ColorSlot::Agent | ColorSlot::Local => Color::Magenta,
+                ColorSlot::Skill | ColorSlot::Instruction | ColorSlot::Warning => Color::Yellow,
+                ColorSlot::Hook | ColorSlot::Success => Color::Green,
+                ColorSlot::Info => Color::Cyan,
+                ColorSlot::Error => Color::Red,
+            }),
+            ColorSupport::Ansi256 => Some(Color::Indexed(match slot {
+                ColorSlot::Default => 252,
+                ColorSlot::Muted => 244,
+                ColorSlot::Emphasis => 15,
+                ColorSlot::Surface => 236,
+                ColorSlot::Overlay => 240,
+                ColorSlot::Selection => 24,
+                ColorSlot::AccentPrimary | ColorSlot::Plugin | ColorSlot::Catalog => 75,
+                ColorSlot::AccentSecondary | ColorSlot::Agent | ColorSlot::Local => 141,
+                ColorSlot::Skill | ColorSlot::Instruction | ColorSlot::Warning => 179,
+                ColorSlot::Hook | ColorSlot::Success => 114,
+                ColorSlot::Info => 81,
+                ColorSlot::Error => 203,
+            })),
+            ColorSupport::TrueColor => Some(match slot {
+                ColorSlot::Default => Color::Rgb(192, 202, 245),
+                ColorSlot::Muted => Color::Rgb(86, 95, 137),
+                ColorSlot::Emphasis => Color::Rgb(224, 224, 224),
+                ColorSlot::Surface => Color::Rgb(36, 40, 59),
+                ColorSlot::Overlay => Color::Rgb(65, 72, 104),
+                ColorSlot::Selection => Color::Rgb(54, 74, 130),
+                ColorSlot::AccentPrimary | ColorSlot::Plugin | ColorSlot::Catalog => {
+                    Color::Rgb(122, 162, 247)
+                }
+                ColorSlot::AccentSecondary | ColorSlot::Agent | ColorSlot::Local => {
+                    Color::Rgb(187, 154, 247)
+                }
+                ColorSlot::Skill | ColorSlot::Instruction | ColorSlot::Warning => {
+                    Color::Rgb(224, 175, 104)
+                }
+                ColorSlot::Hook | ColorSlot::Success => Color::Rgb(158, 206, 106),
+                ColorSlot::Info => Color::Rgb(125, 207, 255),
+                ColorSlot::Error => Color::Rgb(247, 118, 142),
+            }),
+        }
+    }
+}
+
+fn apply_fg(style: Style, color: Option<Color>) -> Style {
+    color.map_or(style, |color| style.fg(color))
+}
+
+fn apply_bg(style: Style, color: Option<Color>) -> Style {
+    color.map_or(style, |color| style.bg(color))
+}
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -333,13 +522,8 @@ impl StatusSeverity {
         }
     }
 
-    fn style(self) -> Style {
-        match self {
-            Self::Info => Style::new().fg(Color::Cyan),
-            Self::Success => Style::new().fg(Color::Green),
-            Self::Warning => Style::new().fg(Color::Yellow),
-            Self::Error => Style::new().fg(Color::Red),
-        }
+    fn style(self, theme: UiTheme) -> Style {
+        theme.status(self)
     }
 }
 
@@ -423,6 +607,7 @@ pub enum OfferingKind {
     Agent,
     Hook,
     Instruction,
+    Guided(GuidedActionKind),
 }
 
 impl OfferingKind {
@@ -433,11 +618,277 @@ impl OfferingKind {
             Self::Agent => "agent",
             Self::Hook => "hook",
             Self::Instruction => "instruction",
+            Self::Guided(kind) => kind.label(),
+        }
+    }
+
+    fn marker(&self) -> &'static str {
+        match self {
+            Self::Plugin => "●",
+            Self::Skill => "◆",
+            Self::Agent => "▲",
+            Self::Hook => "◇",
+            Self::Instruction => "■",
+            Self::Guided(kind) => kind.marker(),
+        }
+    }
+
+    fn table_label(&self) -> &'static str {
+        match self {
+            Self::Plugin => "plugin",
+            Self::Skill => "skill",
+            Self::Agent => "agent",
+            Self::Hook => "hook",
+            Self::Instruction => "instr",
+            Self::Guided(kind) => kind.table_label(),
+        }
+    }
+
+    fn color_slot(&self) -> ColorSlot {
+        match self {
+            Self::Plugin => ColorSlot::Plugin,
+            Self::Skill => ColorSlot::Skill,
+            Self::Agent => ColorSlot::Agent,
+            Self::Hook => ColorSlot::Hook,
+            Self::Instruction => ColorSlot::Instruction,
+            Self::Guided(kind) => kind.color_slot(),
+        }
+    }
+
+    fn style(&self, theme: UiTheme) -> Style {
+        let style = theme.fg(self.color_slot());
+        if matches!(self, Self::Plugin) {
+            style.add_modifier(Modifier::BOLD)
+        } else {
+            style
         }
     }
 
     fn is_primitive(&self) -> bool {
-        !matches!(self, Self::Plugin)
+        matches!(
+            self,
+            Self::Skill | Self::Agent | Self::Hook | Self::Instruction
+        )
+    }
+
+    fn guided_action(&self) -> Option<GuidedActionKind> {
+        match self {
+            Self::Guided(kind) => Some(*kind),
+            _ => None,
+        }
+    }
+
+    fn is_guided(&self) -> bool {
+        self.guided_action().is_some()
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GuidedActionKind {
+    DiscoverSource,
+    AuthorResource,
+    EditResource,
+    ProjectOutputs,
+}
+
+impl GuidedActionKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => "discover",
+            Self::AuthorResource => "author",
+            Self::EditResource => "edit",
+            Self::ProjectOutputs => "outputs",
+        }
+    }
+
+    fn marker(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => "?",
+            Self::AuthorResource => "+",
+            Self::EditResource => "~",
+            Self::ProjectOutputs => "▣",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => "find",
+            Self::AuthorResource => "author",
+            Self::EditResource => "edit",
+            Self::ProjectOutputs => "output",
+        }
+    }
+
+    fn color_slot(self) -> ColorSlot {
+        match self {
+            Self::DiscoverSource => ColorSlot::Info,
+            Self::AuthorResource => ColorSlot::Success,
+            Self::EditResource => ColorSlot::AccentSecondary,
+            Self::ProjectOutputs => ColorSlot::Warning,
+        }
+    }
+
+    fn flow_kind(self) -> FlowKind {
+        match self {
+            Self::DiscoverSource => FlowKind::Discover,
+            Self::AuthorResource => FlowKind::Author,
+            Self::EditResource => FlowKind::Edit,
+            Self::ProjectOutputs => FlowKind::Outputs,
+        }
+    }
+
+    fn source_scope(self) -> SourceScope {
+        match self {
+            Self::DiscoverSource => SourceScope::RemoteSource,
+            Self::AuthorResource | Self::EditResource => SourceScope::PersonalSource,
+            Self::ProjectOutputs => SourceScope::CurrentRepository,
+        }
+    }
+
+    fn target_scope(self) -> TargetScope {
+        match self {
+            Self::DiscoverSource => TargetScope::Repository,
+            Self::AuthorResource | Self::EditResource => TargetScope::PersonalSource,
+            Self::ProjectOutputs => TargetScope::ProviderOutput,
+        }
+    }
+
+    fn operation_kind(self) -> OperationKind {
+        match self {
+            Self::DiscoverSource => OperationKind::Read,
+            Self::AuthorResource => OperationKind::Create,
+            Self::EditResource => OperationKind::Edit,
+            Self::ProjectOutputs => OperationKind::Project,
+        }
+    }
+
+    fn guidance(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => {
+                "Use :browse owner/repo, :preview /path/to/source, or repository search to read another marketplace without writing state."
+            }
+            Self::AuthorResource => {
+                "Create reusable skills, plugins, hooks, and agents in the owning marketplace source, usually /Users/amichne/code/slopsentral; this TUI does not author files yet."
+            }
+            Self::EditResource => {
+                "Edit resources where they are authored: repository source for repo-owned content, or the personal marketplace source for reusable content."
+            }
+            Self::ProjectOutputs => {
+                "Provider output is generated from source and install state. Use marketplace materialize or marketplace publish outside the TUI for now."
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FlowKind {
+    Discover,
+    Installed,
+    AddToRepository,
+    Author,
+    Edit,
+    Outputs,
+}
+
+impl FlowKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Discover => "discover",
+            Self::Installed => "installed",
+            Self::AddToRepository => "add to repo",
+            Self::Author => "author",
+            Self::Edit => "edit",
+            Self::Outputs => "outputs",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::Discover => "find",
+            Self::Installed => "local",
+            Self::AddToRepository => "add",
+            Self::Author => "author",
+            Self::Edit => "edit",
+            Self::Outputs => "output",
+        }
+    }
+
+    fn rank(self) -> u8 {
+        match self {
+            Self::AddToRepository => 0,
+            Self::Installed => 1,
+            Self::Discover => 2,
+            Self::Author => 3,
+            Self::Edit => 4,
+            Self::Outputs => 5,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TargetScope {
+    Repository,
+    PersonalSource,
+    ProviderOutput,
+}
+
+impl TargetScope {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Repository => "repository",
+            Self::PersonalSource => "personal source",
+            Self::ProviderOutput => "provider output",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SourceScope {
+    CurrentRepository,
+    PersonalSource,
+    RemoteSource,
+    ResolvedCache,
+    InstalledState,
+}
+
+impl SourceScope {
+    fn label(self) -> &'static str {
+        match self {
+            Self::CurrentRepository => "current repository",
+            Self::PersonalSource => "personal source",
+            Self::RemoteSource => "remote source",
+            Self::ResolvedCache => "resolved cache",
+            Self::InstalledState => "installed state",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OperationKind {
+    Read,
+    Import,
+    Install,
+    Create,
+    Edit,
+    Update,
+    Validate,
+    Project,
+    Publish,
+}
+
+impl OperationKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Read => "read",
+            Self::Import => "import",
+            Self::Install => "install",
+            Self::Create => "create",
+            Self::Edit => "edit",
+            Self::Update => "update",
+            Self::Validate => "validate",
+            Self::Project => "project",
+            Self::Publish => "publish",
+        }
     }
 }
 
@@ -445,6 +896,7 @@ impl OfferingKind {
 pub enum OfferingSource {
     Marketplace,
     Installed,
+    Guidance,
 }
 
 impl OfferingSource {
@@ -452,6 +904,93 @@ impl OfferingSource {
         match self {
             Self::Marketplace => "catalog",
             Self::Installed => "local",
+            Self::Guidance => "guided path",
+        }
+    }
+
+    fn marker(self) -> &'static str {
+        match self {
+            Self::Marketplace => "◉",
+            Self::Installed => "○",
+            Self::Guidance => "◇",
+        }
+    }
+
+    fn style(self, theme: UiTheme) -> Style {
+        match self {
+            Self::Marketplace => theme.fg(ColorSlot::Catalog),
+            Self::Installed => theme.fg(ColorSlot::Local),
+            Self::Guidance => theme.fg(ColorSlot::Info),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OfferingInstallState {
+    Available,
+    Installed,
+    Pinned,
+    UpdateAvailable,
+    Guided,
+}
+
+impl OfferingInstallState {
+    fn from_offering(offering: &Offering) -> Self {
+        if offering.kind.is_guided() {
+            return Self::Guided;
+        }
+        offering
+            .installed
+            .as_ref()
+            .map(|installed| {
+                if installed.outdated {
+                    Self::UpdateAvailable
+                } else if installed.locked {
+                    Self::Pinned
+                } else {
+                    Self::Installed
+                }
+            })
+            .unwrap_or(Self::Available)
+    }
+
+    fn label(self) -> &'static str {
+        match self {
+            Self::Available => "available",
+            Self::Installed => "installed",
+            Self::Pinned => "pinned",
+            Self::UpdateAvailable => "update",
+            Self::Guided => "guided",
+        }
+    }
+
+    fn marker(self) -> &'static str {
+        match self {
+            Self::Available => "□",
+            Self::Installed => "✓",
+            Self::Pinned => "◆",
+            Self::UpdateAvailable => "▲",
+            Self::Guided => "?",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::Available => "avail",
+            Self::Installed => "inst",
+            Self::Pinned => "pin",
+            Self::UpdateAvailable => "update",
+            Self::Guided => "guide",
+        }
+    }
+
+    fn style(self, theme: UiTheme) -> Style {
+        match self {
+            Self::Available => theme.muted(),
+            Self::Installed => theme.fg(ColorSlot::Success),
+            Self::Pinned => theme.fg(ColorSlot::AccentSecondary),
+            Self::UpdateAvailable => theme.fg(ColorSlot::Warning).add_modifier(Modifier::BOLD),
+            Self::Guided => theme.fg(ColorSlot::Info),
         }
     }
 }
@@ -465,6 +1004,54 @@ pub struct Offering {
     pub installed: Option<InstalledPlugin>,
     pub repository: Option<String>,
     pub source: OfferingSource,
+}
+
+impl Offering {
+    fn flow_kind(&self) -> FlowKind {
+        if let Some(guided) = self.kind.guided_action() {
+            guided.flow_kind()
+        } else if self.installed.is_some() || self.source == OfferingSource::Installed {
+            FlowKind::Installed
+        } else {
+            FlowKind::AddToRepository
+        }
+    }
+
+    fn source_scope(&self) -> SourceScope {
+        if let Some(guided) = self.kind.guided_action() {
+            return guided.source_scope();
+        }
+        if self.source == OfferingSource::Installed || self.installed.is_some() {
+            return SourceScope::InstalledState;
+        }
+        self.repository
+            .as_deref()
+            .filter(|repository| looks_like_local_path(repository))
+            .map(|_| SourceScope::PersonalSource)
+            .unwrap_or(SourceScope::RemoteSource)
+    }
+
+    fn target_scope(&self) -> TargetScope {
+        self.kind
+            .guided_action()
+            .map(GuidedActionKind::target_scope)
+            .unwrap_or(TargetScope::Repository)
+    }
+
+    fn operation_kind(&self) -> OperationKind {
+        if let Some(guided) = self.kind.guided_action() {
+            return guided.operation_kind();
+        }
+        if self.installed.is_some() || self.source == OfferingSource::Installed {
+            OperationKind::Update
+        } else {
+            OperationKind::Import
+        }
+    }
+
+    fn guidance_message(&self) -> Option<&'static str> {
+        self.kind.guided_action().map(GuidedActionKind::guidance)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -601,6 +1188,7 @@ fn repository_with_ref(repository: &str, ref_name: Option<&str>) -> String {
 pub struct CommandSuggestion {
     pub command: &'static str,
     pub applicable: bool,
+    pub flow: FlowKind,
 }
 
 #[derive(Debug, Clone)]
@@ -681,11 +1269,20 @@ impl App {
             &repository,
         );
         self.apply_filter();
+        let marketplace_resources = self
+            .offerings
+            .iter()
+            .filter(|offering| !offering.kind.is_guided())
+            .count();
+        let guided_paths = self
+            .offerings
+            .iter()
+            .filter(|offering| offering.kind.is_guided())
+            .count();
         self.set_status(
             StatusSeverity::Success,
             format!(
-                "Loaded {} offerings from {}",
-                self.offerings.len(),
+                "Loaded {marketplace_resources} marketplace resources and {guided_paths} guided paths from {}",
                 self.browse_repository
             ),
         );
@@ -761,26 +1358,31 @@ impl App {
     }
 
     pub fn command_suggestions(&self) -> Vec<CommandSuggestion> {
-        const COMMANDS: [&str; 19] = [
-            "import",
-            "stage",
-            "update",
-            "pin ",
-            "unpin",
-            "run staged",
-            "clear staged",
-            "install all",
-            "update all",
-            "stage all",
-            "validate",
-            "browse ",
-            "preview ",
-            "search ",
-            "scope ",
-            "target ",
-            "host ",
-            "remote list",
-            "quit",
+        const COMMANDS: [(&str, FlowKind); 24] = [
+            ("browse ", FlowKind::Discover),
+            ("preview ", FlowKind::Discover),
+            ("search ", FlowKind::Discover),
+            ("scope ", FlowKind::Discover),
+            ("host ", FlowKind::Discover),
+            ("import", FlowKind::AddToRepository),
+            ("stage", FlowKind::AddToRepository),
+            ("run staged", FlowKind::AddToRepository),
+            ("clear staged", FlowKind::AddToRepository),
+            ("install all", FlowKind::AddToRepository),
+            ("stage all", FlowKind::AddToRepository),
+            ("update", FlowKind::Installed),
+            ("update all", FlowKind::Installed),
+            ("pin ", FlowKind::Installed),
+            ("unpin", FlowKind::Installed),
+            ("remote list", FlowKind::Installed),
+            ("target ", FlowKind::Installed),
+            ("validate", FlowKind::Installed),
+            ("author", FlowKind::Author),
+            ("create skill", FlowKind::Author),
+            ("edit", FlowKind::Edit),
+            ("open source", FlowKind::Edit),
+            ("outputs", FlowKind::Outputs),
+            ("quit", FlowKind::Discover),
         ];
         let typed = self.command_input.trim();
         let selected = self.selected_offering();
@@ -790,7 +1392,7 @@ impl App {
 
         let mut suggestions = COMMANDS
             .into_iter()
-            .map(|command| {
+            .map(|(command, flow)| {
                 let applicable = match command {
                     "import" | "stage" => selected.is_some(),
                     "update" => selected_installed.is_some(),
@@ -821,6 +1423,7 @@ impl App {
                     CommandSuggestion {
                         command,
                         applicable,
+                        flow,
                     },
                 )
             })
@@ -831,6 +1434,7 @@ impl App {
                     *prefix_rank,
                     *applicability_rank,
                     *context_rank,
+                    suggestion.flow.rank(),
                     suggestion.command,
                 )
             },
@@ -922,6 +1526,9 @@ impl App {
                     && self.search_scope == SearchScope::Repository
                 {
                     self.preview_search_repository()
+                } else if let Some(message) = self.selected_guidance_message() {
+                    self.set_status(StatusSeverity::Info, message);
+                    UiEffect::None
                 } else {
                     self.set_status(
                         StatusSeverity::Info,
@@ -1079,6 +1686,18 @@ impl App {
             self.apply_filter();
             return UiEffect::None;
         }
+        if command == "author" || command == "create skill" {
+            return self.show_guided_action(GuidedActionKind::AuthorResource);
+        }
+        if command == "edit" || command == "open source" {
+            return self.show_guided_action(GuidedActionKind::EditResource);
+        }
+        if matches!(
+            command.as_str(),
+            "outputs" | "materialize" | "publish" | "validate hydrated"
+        ) {
+            return self.show_guided_action(GuidedActionKind::ProjectOutputs);
+        }
         if command == "remote list" {
             return UiEffect::Call {
                 title: "List marketplace remotes".to_string(),
@@ -1147,6 +1766,10 @@ impl App {
     }
 
     fn pending_import_selected(&mut self) -> UiEffect {
+        if let Some(message) = self.selected_guidance_message() {
+            self.set_status(StatusSeverity::Info, message);
+            return UiEffect::None;
+        }
         match self.selected_install_or_update_action() {
             Ok(action) => self.pending = Some(action),
             Err(error) => self.set_status(StatusSeverity::Error, error),
@@ -1189,7 +1812,10 @@ impl App {
                     },
                 })
             }
-            _ => {
+            OfferingKind::Skill
+            | OfferingKind::Agent
+            | OfferingKind::Hook
+            | OfferingKind::Instruction => {
                 let kind = offering.kind.label().to_string();
                 let name = offering.name.clone();
                 Ok(PendingAction {
@@ -1214,6 +1840,10 @@ impl App {
                     },
                 })
             }
+            OfferingKind::Guided(_) => Err(offering
+                .guidance_message()
+                .unwrap_or("This guided path is not a repository mutation.")
+                .to_string()),
         }
     }
 
@@ -1248,6 +1878,11 @@ impl App {
     }
 
     fn stage_selected_action(&mut self) -> UiEffect {
+        if let Some(message) = self.selected_guidance_message() {
+            self.set_status(StatusSeverity::Info, message);
+            self.focus = FocusPane::Details;
+            return UiEffect::None;
+        }
         match self.selected_install_or_update_action() {
             Ok(action) => {
                 self.set_status(StatusSeverity::Success, format!("Staged {}", action.title));
@@ -1257,6 +1892,27 @@ impl App {
             }
             Err(error) => self.set_status(StatusSeverity::Error, error),
         }
+        UiEffect::None
+    }
+
+    fn selected_guidance_message(&self) -> Option<&'static str> {
+        self.selected_offering()
+            .and_then(Offering::guidance_message)
+    }
+
+    fn show_guided_action(&mut self, kind: GuidedActionKind) -> UiEffect {
+        if let Some(index) = self
+            .offerings
+            .iter()
+            .position(|offering| offering.kind == OfferingKind::Guided(kind))
+        {
+            self.apply_filter();
+            if let Some(filtered_index) = self.filtered.iter().position(|value| *value == index) {
+                self.selected = filtered_index;
+            }
+        }
+        self.focus = FocusPane::Details;
+        self.set_status(StatusSeverity::Info, kind.guidance());
         UiEffect::None
     }
 
@@ -1498,6 +2154,7 @@ fn offerings_from_catalog(
             source: OfferingSource::Installed,
         });
     }
+    offerings.extend(guided_offerings());
     offerings
 }
 
@@ -1510,6 +2167,52 @@ fn primitive_offering(kind: OfferingKind, primitive: PrimitiveOffering) -> Offer
         installed: None,
         repository: None,
         source: OfferingSource::Marketplace,
+    }
+}
+
+fn guided_offerings() -> Vec<Offering> {
+    vec![
+        guided_offering(
+            GuidedActionKind::DiscoverSource,
+            "Browse marketplace sources",
+            "Read repository, local, or remote marketplaces without changing target state.",
+            &["guided", "read", "discover", "browse"],
+        ),
+        guided_offering(
+            GuidedActionKind::AuthorResource,
+            "Create reusable resource",
+            "Author reusable skills, plugins, hooks, agents, and instructions in the owning marketplace source.",
+            &["guided", "author", "create", "personal-source"],
+        ),
+        guided_offering(
+            GuidedActionKind::EditResource,
+            "Edit owned resource",
+            "Edit resources where they are authored instead of changing generated provider output.",
+            &["guided", "edit", "source"],
+        ),
+        guided_offering(
+            GuidedActionKind::ProjectOutputs,
+            "Generate provider output",
+            "Materialize or publish Codex and GitHub provider payloads from source and install state.",
+            &["guided", "outputs", "materialize", "publish"],
+        ),
+    ]
+}
+
+fn guided_offering(
+    kind: GuidedActionKind,
+    name: &'static str,
+    description: &'static str,
+    tags: &[&'static str],
+) -> Offering {
+    Offering {
+        kind: OfferingKind::Guided(kind),
+        name: name.to_string(),
+        description: Some(description.to_string()),
+        tags: tags.iter().map(|tag| (*tag).to_string()).collect(),
+        installed: None,
+        repository: Some(kind.source_scope().label().to_string()),
+        source: OfferingSource::Guidance,
     }
 }
 
@@ -1588,6 +2291,10 @@ fn all_searchable_text(offering: &Offering, repository: &str) -> String {
     let mut values = vec![
         offering.name.clone(),
         offering.kind.label().to_string(),
+        offering.flow_kind().label().to_string(),
+        offering.source_scope().label().to_string(),
+        offering.target_scope().label().to_string(),
+        offering.operation_kind().label().to_string(),
         offering.description.clone().unwrap_or_default(),
         offering.tags.join(" "),
         repository.to_string(),
@@ -1687,6 +2394,9 @@ fn is_subsequence(needle: &str, haystack: &str) -> bool {
 fn selected_summary(selected: Option<&Offering>) -> String {
     selected
         .map(|offering| {
+            if let Some(message) = offering.guidance_message() {
+                return message.to_string();
+            }
             let version = offering
                 .installed
                 .as_ref()
@@ -1695,6 +2405,34 @@ fn selected_summary(selected: Option<&Offering>) -> String {
             format!("{} ({}) - {version}", offering.name, offering.kind.label())
         })
         .unwrap_or_else(|| "No offering selected".to_string())
+}
+
+fn provenance_path(offering: &Offering, app: &App) -> String {
+    let source = match offering.source_scope() {
+        SourceScope::CurrentRepository => "current repository".to_string(),
+        SourceScope::PersonalSource => offering
+            .repository
+            .clone()
+            .filter(|value| looks_like_local_path(value))
+            .unwrap_or_else(|| "/Users/amichne/code/slopsentral".to_string()),
+        SourceScope::RemoteSource => offering
+            .repository
+            .clone()
+            .unwrap_or_else(|| app.browse_repository.clone()),
+        SourceScope::ResolvedCache => "~/.local/share/intelligence/marketplace-assets".to_string(),
+        SourceScope::InstalledState => ".intelligence/adaptable.marketplace.json".to_string(),
+    };
+    format!(
+        "{} -> {} -> {} {}",
+        source,
+        offering.operation_kind().label(),
+        offering.target_scope().label(),
+        match offering.target_scope() {
+            TargetScope::Repository => app.repo_root.as_str(),
+            TargetScope::PersonalSource => "/Users/amichne/code/slopsentral",
+            TargetScope::ProviderOutput => ".agents/plugins or .github/plugin",
+        }
+    )
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -1817,10 +2555,10 @@ impl ModeBarState {
 
 fn normal_footer(focus: FocusPane) -> String {
     match focus {
-        FocusPane::Sources => "tab offerings  r preview  / search  : palette  ? help",
-        FocusPane::Offerings => "tab details  enter details  i stage  a stage all  / search",
-        FocusPane::Details => "tab staging  enter details  / search  : palette  ? help",
-        FocusPane::Staging => "tab sources  enter confirm  x remove  : palette  ? help",
+        FocusPane::Sources => "tab resources  r preview source  / search  : palette  ? help",
+        FocusPane::Offerings => "tab details  enter explain  i stage/add  a install all  / search",
+        FocusPane::Details => "tab actions  enter explain  / search  : palette  ? help",
+        FocusPane::Staging => "tab context  enter confirm  x remove  : palette  ? help",
     }
     .to_string()
 }
@@ -1845,17 +2583,7 @@ fn search_detail(app: &App, scope: SearchScope) -> String {
 }
 
 fn suggestions_plain(suggestions: &[CommandSuggestion]) -> String {
-    let values = suggestions
-        .iter()
-        .map(|suggestion| {
-            if suggestion.applicable {
-                suggestion.command.to_string()
-            } else {
-                format!("({})", suggestion.command.trim_end())
-            }
-        })
-        .collect::<Vec<_>>();
-    format!("commands: {}", values.join("  "))
+    format!("commands: {}", grouped_suggestions_plain(suggestions))
 }
 
 fn ellipsize(value: &str, width: u16) -> String {
@@ -1878,41 +2606,96 @@ fn fit_suggestions_line(
     prefix: &str,
     suggestions: &[CommandSuggestion],
     width: u16,
+    theme: UiTheme,
 ) -> Line<'static> {
     if suggestions.is_empty() {
-        return Line::from(ellipsize(prefix, width));
+        return Line::from(ellipsize(prefix, width)).style(theme.muted());
     }
     let width = usize::from(width);
-    let mut spans = vec![Span::from(prefix.to_string())];
+    let mut spans = vec![Span::styled(prefix.to_string(), theme.muted())];
     let mut used = prefix.chars().count();
-    for suggestion in suggestions {
-        let label = if suggestion.applicable {
-            suggestion.command.to_string()
-        } else {
-            format!("({})", suggestion.command.trim_end())
-        };
-        let separator = if used == prefix.chars().count() {
+    for group in grouped_suggestions(suggestions) {
+        let group_label = format!("{}:", group.flow.table_label());
+        let group_separator = if used == prefix.chars().count() {
             " "
         } else {
-            "  "
+            " | "
         };
-        let needed = separator.chars().count() + label.chars().count();
-        if used + needed > width {
+        let group_needed = group_separator.chars().count() + group_label.chars().count();
+        if used + group_needed > width {
             break;
         }
-        spans.push(Span::from(separator.to_string()));
-        let style = if suggestion.applicable {
-            Style::new()
-        } else {
-            Style::new().add_modifier(Modifier::DIM)
-        };
-        spans.push(Span::styled(label, style));
-        used += needed;
+        spans.push(Span::styled(group_separator.to_string(), theme.muted()));
+        spans.push(Span::styled(group_label, theme.muted()));
+        used += group_needed;
+        for suggestion in group.suggestions {
+            let label = suggestion_label(suggestion);
+            let needed = 1 + label.chars().count();
+            if used + needed > width {
+                return Line::from(spans);
+            }
+            spans.push(Span::styled(" ".to_string(), theme.muted()));
+            let style = if suggestion.applicable {
+                theme.fg(ColorSlot::AccentPrimary)
+            } else {
+                theme.muted()
+            };
+            spans.push(Span::styled(label, style));
+            used += needed;
+        }
     }
     Line::from(spans)
 }
 
+struct SuggestionGroup<'a> {
+    flow: FlowKind,
+    suggestions: Vec<&'a CommandSuggestion>,
+}
+
+fn grouped_suggestions(suggestions: &[CommandSuggestion]) -> Vec<SuggestionGroup<'_>> {
+    let mut groups = Vec::<SuggestionGroup<'_>>::new();
+    for suggestion in suggestions {
+        if let Some(group) = groups
+            .iter_mut()
+            .find(|group| group.flow == suggestion.flow)
+        {
+            group.suggestions.push(suggestion);
+        } else {
+            groups.push(SuggestionGroup {
+                flow: suggestion.flow,
+                suggestions: vec![suggestion],
+            });
+        }
+    }
+    groups
+}
+
+fn grouped_suggestions_plain(suggestions: &[CommandSuggestion]) -> String {
+    grouped_suggestions(suggestions)
+        .into_iter()
+        .map(|group| {
+            let values = group
+                .suggestions
+                .into_iter()
+                .map(suggestion_label)
+                .collect::<Vec<_>>()
+                .join(" ");
+            format!("{}: {values}", group.flow.table_label())
+        })
+        .collect::<Vec<_>>()
+        .join(" | ")
+}
+
+fn suggestion_label(suggestion: &CommandSuggestion) -> String {
+    if suggestion.applicable {
+        suggestion.command.to_string()
+    } else {
+        format!("({})", suggestion.command.trim_end())
+    }
+}
+
 pub fn render(frame: &mut ratatui::Frame, app: &App) {
+    let theme = UiTheme::current();
     let [title_area, main_area, command_area] = Layout::vertical([
         Constraint::Length(1),
         Constraint::Min(10),
@@ -1929,44 +2712,51 @@ pub fn render(frame: &mut ratatui::Frame, app: &App) {
         Layout::vertical([Constraint::Percentage(62), Constraint::Percentage(38)])
             .areas(right_area);
 
-    render_title(frame, title_area, app);
-    render_sources(frame, left_area, app);
-    render_offerings(frame, center_area, app);
-    render_details(frame, details_area, app);
-    render_staging(frame, staging_area, app);
-    render_mode_bar(frame, command_area, app);
+    render_title(frame, title_area, app, theme);
+    render_sources(frame, left_area, app, theme);
+    render_offerings(frame, center_area, app, theme);
+    render_details(frame, details_area, app, theme);
+    render_staging(frame, staging_area, app, theme);
+    render_mode_bar(frame, command_area, app, theme);
     if app.pending.is_none() && app.show_help {
-        render_shortcuts(frame);
+        render_shortcuts(frame, theme);
     }
     if let Some(pending) = app
         .pending
         .as_ref()
         .filter(|action| action.confirmation == ConfirmationKind::Modal)
     {
-        render_pending(frame, pending);
+        render_pending(frame, pending, theme);
     }
 }
 
-fn render_title(frame: &mut ratatui::Frame, area: Rect, app: &App) {
-    let title = app
-        .marketplace
-        .as_ref()
-        .map(|marketplace| {
-            format!(
-                " intelligence | {} | provider {} | target {} | / search | tab panes | ? shortcuts ",
-                marketplace.name, marketplace.provider, app.repo_root
-            )
-        })
-        .unwrap_or_else(|| {
-            format!(
-                " intelligence | target {} | / search | tab panes | ? shortcuts ",
-                app.repo_root
-            )
-        });
-    frame.render_widget(Line::from(title).bold(), area);
+fn render_title(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
+    let mut spans = vec![Span::styled(" intelligence ", theme.emphasis())];
+    if let Some(marketplace) = &app.marketplace {
+        spans.push(Span::styled("│ ", theme.muted()));
+        spans.push(Span::styled(
+            marketplace.name.clone(),
+            theme.fg(ColorSlot::Plugin).add_modifier(Modifier::BOLD),
+        ));
+        spans.push(Span::styled(" │ provider ", theme.muted()));
+        spans.push(Span::styled(
+            marketplace.provider.clone(),
+            theme.fg(ColorSlot::Catalog),
+        ));
+    }
+    spans.push(Span::styled(" │ target ", theme.muted()));
+    spans.push(Span::styled(
+        app.repo_root.clone(),
+        theme.fg(ColorSlot::Default),
+    ));
+    spans.push(Span::styled(
+        " │ / search │ tab panes │ ? shortcuts ",
+        theme.muted(),
+    ));
+    frame.render_widget(Line::from(spans), area);
 }
 
-fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let installed = app
         .installed
         .iter()
@@ -1977,131 +2767,232 @@ fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App) {
         .iter()
         .filter(|plugin| plugin.outdated)
         .count();
+    let plugin_count = app
+        .offerings
+        .iter()
+        .filter(|offering| offering.kind == OfferingKind::Plugin)
+        .count();
+    let primitive_count = app
+        .offerings
+        .iter()
+        .filter(|offering| offering.kind.is_primitive())
+        .count();
+    let guided_count = app
+        .offerings
+        .iter()
+        .filter(|offering| offering.kind.is_guided())
+        .count();
+    let active_flow = app
+        .selected_offering()
+        .map(Offering::flow_kind)
+        .unwrap_or(FlowKind::Discover);
+    let source_kind = app
+        .selected_offering()
+        .map(|offering| offering.source_scope().label())
+        .unwrap_or(SourceScope::RemoteSource.label());
+    let entrypoint = app
+        .marketplace
+        .as_ref()
+        .map(|marketplace| marketplace.entrypoint.as_str())
+        .unwrap_or("not loaded");
     let items = vec![
-        ListItem::new(format!("Remote: {}", app.browse_repository)),
-        ListItem::new(format!("Git host: {}", app.default_git_host.as_str())),
-        ListItem::new(format!("Target: {}", app.repo_root)),
-        ListItem::new(format!("Search: {}", app.search_scope.label())),
-        ListItem::new(format!("Local: {installed} installed, {outdated} updates")),
+        field_item("Target", app.repo_root.as_str(), theme),
+        field_item("Intent", ".intelligence/adaptable.marketplace.json", theme),
+        field_item("Lock", ".intelligence/marketplace-lock.json", theme),
+        field_item("Browse", app.browse_repository.as_str(), theme),
+        field_item("Entrypoint", entrypoint, theme),
+        field_item("Source", source_kind, theme),
+        field_item("Flow", active_flow.label(), theme),
+        field_item("Search", app.search_scope.label(), theme),
+        ListItem::new(Line::from(vec![
+            Span::styled("Local", theme.muted()),
+            Span::from(": "),
+            Span::styled(
+                format!("{installed} installed"),
+                theme.fg(ColorSlot::Success),
+            ),
+            Span::styled(", ", theme.muted()),
+            Span::styled(format!("{outdated} updates"), theme.fg(ColorSlot::Warning)),
+        ])),
         ListItem::new(""),
-        ListItem::new("Operations"),
-        ListItem::new("r preview remote"),
-        ListItem::new("i stage selected"),
-        ListItem::new("a stage install all"),
-        ListItem::new("v validate target"),
-        ListItem::new("/ search"),
-        ListItem::new("tab focus"),
-        ListItem::new(": palette"),
+        ListItem::new(Line::from(vec![
+            Span::styled("Plugins", theme.emphasis()),
+            Span::from(": "),
+            Span::styled("●", OfferingKind::Plugin.style(theme)),
+            Span::from(format!(" {plugin_count}")),
+        ])),
+        ListItem::new(Line::from(vec![
+            Span::styled("Primitives", theme.emphasis()),
+            Span::from(": "),
+            Span::styled("◆", theme.fg(ColorSlot::Skill)),
+            Span::from(format!(" {primitive_count}")),
+        ])),
+        ListItem::new(Line::from(vec![
+            Span::styled("Guides", theme.emphasis()),
+            Span::from(": "),
+            Span::styled("?", theme.fg(ColorSlot::Info)),
+            Span::from(format!(" {guided_count}")),
+        ])),
+        ListItem::new(""),
+        field_item(
+            "Cache",
+            "~/.local/share/intelligence/marketplace-assets",
+            theme,
+        ),
+        field_item("Personal", "/Users/amichne/code/slopsentral", theme),
     ];
-    let block = focused_block("Source / Operations", app.focus == FocusPane::Sources);
+    let block = focused_block("Context", app.focus == FocusPane::Sources, theme);
     frame.render_widget(List::new(items).block(block), area);
 }
 
-fn render_offerings(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_offerings(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let rows = app.filtered.iter().filter_map(|index| {
         let offering = app.offerings.get(*index)?;
-        let state = offering
-            .installed
-            .as_ref()
-            .map(|installed| {
-                if installed.outdated {
-                    "update"
-                } else if installed.locked {
-                    "pinned"
-                } else {
-                    "installed"
-                }
-            })
-            .unwrap_or("available");
+        let state = OfferingInstallState::from_offering(offering);
         let version = offering
             .installed
             .as_ref()
             .and_then(|installed| installed.version.clone())
             .unwrap_or_default();
         Some(Row::new(vec![
-            offering.kind.label().to_string(),
-            offering.name.clone(),
-            offering.source.label().to_string(),
-            state.to_string(),
-            version,
+            Cell::from(Line::from(vec![
+                Span::styled(offering.kind.marker(), offering.kind.style(theme)),
+                Span::styled(offering.kind.table_label(), offering.kind.style(theme)),
+            ])),
+            Cell::from(Span::styled(
+                offering.name.clone(),
+                theme.fg(ColorSlot::Default),
+            )),
+            Cell::from(Span::styled(
+                offering.flow_kind().table_label(),
+                theme.fg(ColorSlot::Info),
+            )),
+            Cell::from(Line::from(vec![
+                Span::styled(state.marker(), state.style(theme)),
+                Span::styled(state.table_label(), state.style(theme)),
+            ])),
+            Cell::from(Span::styled(version, theme.muted())),
         ]))
     });
     let table = Table::new(
         rows,
         [
-            Constraint::Length(11),
-            Constraint::Percentage(40),
             Constraint::Length(8),
-            Constraint::Length(10),
-            Constraint::Length(12),
+            Constraint::Min(10),
+            Constraint::Length(7),
+            Constraint::Length(8),
+            Constraint::Length(8),
         ],
     )
-    .header(Row::new(vec!["Type", "Name", "Source", "State", "Version"]).style(Style::new().bold()))
+    .header(Row::new(vec!["Type", "Name", "Flow", "State", "Version"]).style(theme.emphasis()))
     .block(focused_block(
-        "Offerings",
+        "Resources",
         app.focus == FocusPane::Offerings,
+        theme,
     ))
-    .row_highlight_style(Style::new().bg(Color::DarkGray))
-    .highlight_symbol("> ");
+    .row_highlight_style(theme.selected())
+    .highlight_symbol("▸ ");
     let mut state = TableState::default().with_selected(Some(app.selected));
     frame.render_stateful_widget(table, area, &mut state);
 }
 
-fn render_details(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_details(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let selected = app.selected_offering();
     let mut lines = Vec::new();
     if let Some(offering) = selected {
-        lines.push(Line::from(vec![Span::styled(
-            &offering.name,
-            Style::new().add_modifier(Modifier::BOLD),
-        )]));
-        lines.push(Line::from(format!(
-            "{} | {}",
-            offering.kind.label(),
-            offering.source.label()
-        )));
+        let state = OfferingInstallState::from_offering(offering);
+        lines.push(Line::from(vec![
+            Span::styled(offering.kind.marker(), offering.kind.style(theme)),
+            Span::from(" "),
+            Span::styled(&offering.name, theme.emphasis()),
+        ]));
+        lines.push(Line::from(vec![
+            Span::styled(offering.kind.label(), offering.kind.style(theme)),
+            Span::styled("  │  ", theme.muted()),
+            Span::styled(offering.source.marker(), offering.source.style(theme)),
+            Span::from(" "),
+            Span::styled(offering.source.label(), offering.source.style(theme)),
+            Span::styled("  │  ", theme.muted()),
+            Span::styled(state.marker(), state.style(theme)),
+            Span::from(" "),
+            Span::styled(state.label(), state.style(theme)),
+        ]));
+        lines.push(field_line("flow", offering.flow_kind().label(), theme));
+        lines.push(field_line(
+            "source scope",
+            offering.source_scope().label(),
+            theme,
+        ));
+        lines.push(field_line(
+            "operation",
+            offering.operation_kind().label(),
+            theme,
+        ));
+        lines.push(field_line(
+            "target scope",
+            offering.target_scope().label(),
+            theme,
+        ));
+        lines.push(field_line("path", provenance_path(offering, app), theme));
         if let Some(repository) = &offering.repository {
-            lines.push(Line::from(format!("repository: {repository}")));
+            lines.push(field_line("source", repository.as_str(), theme));
         }
         if let Some(description) = &offering.description {
             lines.push(Line::from(""));
-            lines.push(Line::from(description.clone()));
+            lines.push(Line::from(description.clone()).style(theme.fg(ColorSlot::Default)));
+        }
+        if let Some(guidance) = offering.guidance_message() {
+            lines.push(Line::from(""));
+            lines.push(Line::from(guidance).style(theme.fg(ColorSlot::Info)));
         }
         if !offering.tags.is_empty() {
             lines.push(Line::from(""));
-            lines.push(Line::from(format!("tags: {}", offering.tags.join(", "))));
+            lines.push(tag_line(&offering.tags, theme));
         }
         if let Some(installed) = &offering.installed {
             lines.push(Line::from(""));
-            lines.push(Line::from(format!(
-                "installed: {}",
-                installed.version.as_deref().unwrap_or("unknown")
-            )));
+            lines.push(field_line(
+                "installed",
+                installed.version.as_deref().unwrap_or("unknown"),
+                theme,
+            ));
             if let Some(current) = &installed.current_version {
-                lines.push(Line::from(format!("remote: {current}")));
+                lines.push(field_line("remote", current.as_str(), theme));
             }
-            lines.push(Line::from(format!("locked: {}", installed.locked)));
+            lines.push(field_line("locked", installed.locked.to_string(), theme));
         }
         lines.push(Line::from(""));
-        lines.push(Line::from(format!("install target: {}", app.repo_root)));
+        lines.push(field_line("target", app.repo_root.as_str(), theme));
     } else {
-        lines.push(Line::from("No offering selected"));
+        lines.push(Line::from("No offering selected").style(theme.muted()));
     }
     frame.render_widget(
         Paragraph::new(lines)
-            .block(focused_block("Details", app.focus == FocusPane::Details))
+            .block(focused_block(
+                "Details",
+                app.focus == FocusPane::Details,
+                theme,
+            ))
             .wrap(Wrap { trim: true }),
         area,
     );
 }
 
-fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let items = if app.staged.is_empty() {
-        vec![ListItem::new("No staged actions")]
+        vec![ListItem::new(
+            Line::from("No staged actions").style(theme.muted()),
+        )]
     } else {
         app.staged
             .iter()
-            .map(|action| ListItem::new(action.title.clone()))
+            .map(|action| {
+                ListItem::new(Line::from(vec![
+                    Span::styled("▶", theme.fg(ColorSlot::AccentPrimary)),
+                    Span::from(" "),
+                    Span::styled(action.provenance.summary(), theme.fg(ColorSlot::Default)),
+                ]))
+            })
             .collect()
     };
     let mut state =
@@ -2109,92 +3000,205 @@ fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App) {
     frame.render_stateful_widget(
         List::new(items)
             .block(focused_block(
-                "Staging / Install",
+                "Actions",
                 app.focus == FocusPane::Staging,
+                theme,
             ))
-            .highlight_symbol("> ")
-            .highlight_style(Style::new().bg(Color::DarkGray)),
+            .highlight_symbol("▸ ")
+            .highlight_style(theme.selected()),
         area,
         &mut state,
     );
 }
 
-fn render_mode_bar(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_mode_bar(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let mode_bar = ModeBarState::from_app(app);
-    let row1 = Line::styled(
-        ellipsize(&mode_bar.row1, area.width),
-        mode_bar
-            .severity
-            .map(StatusSeverity::style)
-            .unwrap_or_default(),
-    );
+    let row1_style = mode_bar
+        .severity
+        .map(|severity| severity.style(theme))
+        .unwrap_or_else(|| theme.emphasis());
+    let row1 = Line::styled(ellipsize(&mode_bar.row1, area.width), row1_style);
     let row2 = if mode_bar.suggestions.is_empty() {
-        Line::from(ellipsize(&mode_bar.row2, area.width))
+        Line::from(ellipsize(&mode_bar.row2, area.width)).style(theme.fg(ColorSlot::Default))
     } else {
-        fit_suggestions_line("commands:", &mode_bar.suggestions, area.width)
+        fit_suggestions_line("commands:", &mode_bar.suggestions, area.width, theme)
     };
-    let row3 = Line::from(ellipsize(&mode_bar.row3, area.width));
+    let row3 = shortcut_line(ellipsize(&mode_bar.row3, area.width), theme);
     frame.render_widget(Paragraph::new(vec![row1, row2, row3]), area);
 }
 
-fn render_shortcuts(frame: &mut ratatui::Frame) {
+fn render_shortcuts(frame: &mut ratatui::Frame, theme: UiTheme) {
     let area = centered_rect(72, 58, frame.area());
     frame.render_widget(Clear, area);
     let body = vec![
-        Line::from("Keyboard shortcuts").bold(),
+        Line::from("Keyboard shortcuts").style(theme.emphasis()),
         Line::from(""),
-        Line::from("/ search current catalog and local installed plugins"),
-        Line::from("tab / shift-tab move panes; in search, cycle all/repository/user/plugin/primitive/installed"),
-        Line::from("r preview remote from repository search, using the configured default Git host"),
-        Line::from("i stage selected install/update; a stage install all"),
-        Line::from("enter opens details or confirms the selected staged action"),
-        Line::from("v validate the selected install target"),
-        Line::from(": palette for browse, preview, host, target, scope, staging, update, pin, and remotes"),
-        Line::from("x removes a staged action when the staging pane is focused"),
-        Line::from("esc or ? closes this panel"),
+        Line::from("Scopes and flows").style(theme.emphasis()),
+        Line::from("target = repository state; source = marketplace, personal source, installed state, cache, or provider output"),
+        Line::from("flows: discover, add to repo, installed, author, edit, outputs"),
+        Line::from(""),
+        shortcut_line("/ search current catalog and local installed plugins", theme),
+        shortcut_line("tab / shift-tab move panes; in search, cycle all/repository/user/plugin/primitive/installed", theme),
+        shortcut_line("r preview remote from repository search, using the configured default Git host", theme),
+        shortcut_line("i stage selected install/update; a stage install all", theme),
+        shortcut_line("enter opens details or confirms the selected staged action", theme),
+        shortcut_line("v validate the selected install target", theme),
+        shortcut_line(": palette groups discover, add, installed, author, edit, and outputs commands", theme),
+        shortcut_line("x removes a staged action when the staging pane is focused", theme),
+        shortcut_line("esc or ? closes this panel", theme),
     ];
     frame.render_widget(
         Paragraph::new(body)
             .wrap(Wrap { trim: true })
-            .block(Block::new().borders(Borders::ALL).title("Shortcuts")),
+            .block(overlay_block("Shortcuts", theme)),
         area,
     );
 }
 
-fn render_pending(frame: &mut ratatui::Frame, pending: &PendingAction) {
+fn render_pending(frame: &mut ratatui::Frame, pending: &PendingAction, theme: UiTheme) {
     let area = centered_rect(70, 35, frame.area());
     frame.render_widget(Clear, area);
     let inner_width = area.width.saturating_sub(2);
     let body = vec![
-        Line::from(pending.title.clone()).bold(),
+        Line::from(pending.title.clone()).style(theme.emphasis()),
         Line::from(""),
-        Line::from(ellipsize(
-            &format!("method: {}", pending.method),
-            inner_width,
-        )),
-        Line::from(ellipsize(
-            &format!("params: {}", pending.params),
-            inner_width,
-        )),
+        field_line(
+            "method",
+            ellipsize(&pending.method, inner_width.saturating_sub(8)),
+            theme,
+        ),
+        field_line(
+            "params",
+            ellipsize(&pending.params.to_string(), inner_width.saturating_sub(8)),
+            theme,
+        ),
         Line::from(""),
-        Line::from("Y or Enter confirms. Esc or N cancels."),
+        shortcut_line("Y or Enter confirms. Esc or N cancels.", theme),
     ];
     frame.render_widget(
-        Paragraph::new(body).block(Block::new().borders(Borders::ALL).title("Confirm")),
+        Paragraph::new(body).block(overlay_block("Confirm", theme)),
         area,
     );
 }
 
-fn focused_block(title: &'static str, focused: bool) -> Block<'static> {
-    let style = if focused {
-        Style::new().fg(Color::Cyan)
+fn field_item<'a>(
+    label: &'static str,
+    value: impl Into<std::borrow::Cow<'a, str>>,
+    theme: UiTheme,
+) -> ListItem<'a> {
+    ListItem::new(field_line(label, value, theme))
+}
+
+fn field_line<'a>(
+    label: &'static str,
+    value: impl Into<std::borrow::Cow<'a, str>>,
+    theme: UiTheme,
+) -> Line<'a> {
+    Line::from(vec![
+        Span::styled(label, theme.muted()),
+        Span::from(": "),
+        Span::styled(value.into(), theme.fg(ColorSlot::Default)),
+    ])
+}
+
+fn tag_line<'a>(tags: &'a [String], theme: UiTheme) -> Line<'a> {
+    let mut spans = vec![Span::styled("tags", theme.muted()), Span::from(": ")];
+    for (index, tag) in tags.iter().enumerate() {
+        if index > 0 {
+            spans.push(Span::styled(", ", theme.muted()));
+        }
+        spans.push(Span::styled(
+            tag.as_str(),
+            theme.fg(ColorSlot::AccentSecondary),
+        ));
+    }
+    Line::from(spans)
+}
+
+fn shortcut_line<'a>(value: impl Into<std::borrow::Cow<'a, str>>, theme: UiTheme) -> Line<'a> {
+    let value = value.into();
+    let mut spans = Vec::new();
+    let mut chars = value.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch.is_ascii_alphanumeric() || matches!(ch, '/' | '?' | ':' | '-') {
+            let mut token = String::from(ch);
+            while let Some(next) = chars.peek().copied() {
+                if !(next.is_ascii_alphanumeric() || matches!(next, '/' | '?' | ':' | '-')) {
+                    break;
+                }
+                token.push(next);
+                chars.next();
+            }
+            let style = if is_shortcut_token(&token) {
+                theme
+                    .fg(ColorSlot::AccentPrimary)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                theme.fg(ColorSlot::Default)
+            };
+            spans.push(Span::styled(token, style));
+        } else {
+            spans.push(Span::from(ch.to_string()));
+        }
+    }
+    Line::from(spans)
+}
+
+fn is_shortcut_token(token: &str) -> bool {
+    matches!(
+        token,
+        "/" | "?"
+            | ":"
+            | "tab"
+            | "shift-tab"
+            | "enter"
+            | "esc"
+            | "q"
+            | "r"
+            | "i"
+            | "a"
+            | "v"
+            | "x"
+            | "y"
+            | "n"
+            | "Y"
+            | "Enter"
+            | "Esc"
+            | "N"
+    )
+}
+
+fn focused_block(title: &'static str, focused: bool, theme: UiTheme) -> Block<'static> {
+    let title = if focused {
+        format!("▸ {title}")
     } else {
-        Style::new()
+        format!("  {title}")
     };
     Block::new()
         .borders(Borders::ALL)
+        .border_set(if focused {
+            symbols::border::THICK
+        } else {
+            symbols::border::PLAIN
+        })
         .title(title)
-        .border_style(style)
+        .title_style(theme.panel_title(focused))
+        .style(theme.bg(ColorSlot::Surface))
+        .border_style(theme.panel_border(focused))
+}
+
+fn overlay_block(title: &'static str, theme: UiTheme) -> Block<'static> {
+    Block::new()
+        .borders(Borders::ALL)
+        .border_set(symbols::border::DOUBLE)
+        .title(format!(" ◆ {title} "))
+        .title_style(
+            theme
+                .fg(ColorSlot::AccentSecondary)
+                .add_modifier(Modifier::BOLD),
+        )
+        .style(theme.bg(ColorSlot::Overlay))
+        .border_style(theme.fg(ColorSlot::AccentSecondary))
 }
 
 fn centered_rect(percent_x: u16, percent_y: u16, area: Rect) -> Rect {
@@ -2280,6 +3284,53 @@ mod tests {
         app.offerings = offerings;
         app.apply_filter();
         app.selected = 0;
+    }
+
+    #[test]
+    fn color_support_detection_respects_no_color_and_terminal_capability() {
+        assert_eq!(
+            ColorSupport::Monochrome,
+            ColorSupport::detect(true, Some("truecolor"), Some("xterm-256color"))
+        );
+        assert_eq!(
+            ColorSupport::TrueColor,
+            ColorSupport::detect(false, Some("24bit"), Some("xterm-256color"))
+        );
+        assert_eq!(
+            ColorSupport::Ansi256,
+            ColorSupport::detect(false, None, Some("screen-256color"))
+        );
+        assert_eq!(
+            ColorSupport::Ansi16,
+            ColorSupport::detect(false, None, None)
+        );
+    }
+
+    #[test]
+    fn render_uses_non_color_markers_for_focus_kind_source_and_state() {
+        let mut app = App::new(test_config());
+        select_offerings(
+            &mut app,
+            vec![
+                plugin_offering("review-stack", None),
+                skill_offering("tui-design"),
+                plugin_offering(
+                    "kotlin-engineering",
+                    Some(installed_plugin("kotlin-engineering")),
+                ),
+            ],
+        );
+        app.selected = 0;
+
+        let lines = rendered_lines(&app, 120, 30);
+        let screen = screen_text(&lines);
+
+        assert!(screen.contains("▸ Resources"));
+        assert!(screen.contains("●plugin"));
+        assert!(screen.contains("◆skill"));
+        assert!(screen.contains("add"));
+        assert!(screen.contains("□avail"));
+        assert!(screen.contains("▲update"));
     }
 
     #[test]
@@ -2461,6 +3512,19 @@ mod tests {
         assert!(suggestions
             .iter()
             .any(|suggestion| suggestion.command == "import" && !suggestion.applicable));
+        assert!(suggestions.iter().any(
+            |suggestion| suggestion.command == "author" && suggestion.flow == FlowKind::Author
+        ));
+        assert!(suggestions
+            .iter()
+            .any(|suggestion| suggestion.command == "outputs"
+                && suggestion.flow == FlowKind::Outputs));
+        assert!(!suggestions
+            .iter()
+            .any(|suggestion| matches!(
+                suggestion.command,
+                "materialize" | "publish" | "validate hydrated"
+            )));
         assert!(
             position_of_command(&suggestions, "validate")
                 < position_of_command(&suggestions, "import")
@@ -2480,6 +3544,44 @@ mod tests {
         );
         let suggestions = app.command_suggestions();
         assert_eq!("update", suggestions[0].command);
+    }
+
+    #[test]
+    fn guided_resources_classify_flow_scope_and_operation_without_rpc_actions() {
+        let mut app = App::new(test_config());
+        let offerings = offerings_from_catalog(
+            Vec::new(),
+            StandalonePrimitives::default(),
+            &[],
+            "amichne/slopsentral",
+        );
+        select_offerings(&mut app, offerings);
+        let author = app
+            .offerings
+            .iter()
+            .find(|offering| {
+                offering.kind == OfferingKind::Guided(GuidedActionKind::AuthorResource)
+            })
+            .expect("author guide");
+        assert_eq!(FlowKind::Author, author.flow_kind());
+        assert_eq!(SourceScope::PersonalSource, author.source_scope());
+        assert_eq!(TargetScope::PersonalSource, author.target_scope());
+        assert_eq!(OperationKind::Create, author.operation_kind());
+
+        app.command_input = "author".to_string();
+        app.input_mode = InputMode::Command;
+        let effect = app.handle_key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert!(matches!(effect, UiEffect::None));
+        assert_eq!(FocusPane::Details, app.focus);
+        assert_eq!(
+            Some(StatusSeverity::Info),
+            app.status.as_ref().map(|status| status.severity)
+        );
+        assert!(app
+            .status
+            .as_ref()
+            .is_some_and(|status| status.text.contains("/Users/amichne/code/slopsentral")));
     }
 
     fn position_of_command(suggestions: &[CommandSuggestion], command: &str) -> usize {
@@ -2524,6 +3626,66 @@ mod tests {
         assert!(!lines[21..24].iter().any(|line| line.contains("Command")));
         assert!(!lines[21..24].iter().any(|line| line.contains('┌')));
         assert!(!lines[21..24].iter().any(|line| line.contains('│')));
+    }
+
+    #[test]
+    fn render_context_resources_and_actions_use_flow_language() {
+        let mut app = App::new(test_config());
+        let catalog = Catalog {
+            marketplace: MarketplaceSummary {
+                name: "slopsentral".to_string(),
+                provider: "source".to_string(),
+                repository: "amichne/slopsentral".to_string(),
+                entrypoint: "source/adaptable.marketplace.json".to_string(),
+                description: None,
+            },
+            plugins: vec![PluginOffering {
+                name: "kotlin-engineering".to_string(),
+                description: Some("Typed Kotlin workflow".to_string()),
+                category: None,
+                tags: vec!["kotlin".to_string()],
+            }],
+            standalone_primitives: StandalonePrimitives::default(),
+            installed: Vec::new(),
+        };
+        app.set_catalog(catalog);
+        app.staged = vec![app.install_all_action()];
+
+        let lines = rendered_lines(&app, 80, 24);
+        let screen = screen_text(&lines);
+
+        assert!(screen.contains("Context"));
+        assert!(screen.contains("Resources"));
+        assert!(screen.contains("Actions"));
+        assert!(screen.contains("Flow"));
+        assert!(screen.contains("add"));
+        assert!(screen.contains("install all"));
+    }
+
+    #[test]
+    fn render_guided_output_details_explain_source_operation_and_target() {
+        let mut app = App::new(test_config());
+        select_offerings(
+            &mut app,
+            vec![guided_offering(
+                GuidedActionKind::ProjectOutputs,
+                "Generate provider output",
+                "Materialize or publish provider payloads.",
+                &["outputs"],
+            )],
+        );
+        app.focus = FocusPane::Details;
+
+        let lines = rendered_lines(&app, 100, 30);
+        let screen = screen_text(&lines);
+
+        assert!(screen.contains("flow: outputs"));
+        assert!(screen.contains("source scope: current repository"));
+        assert!(screen.contains("operation: project"));
+        assert!(screen.contains("target scope: provider output"));
+        assert!(app.selected_offering().is_some_and(|offering| offering
+            .guidance_message()
+            .is_some_and(|message| message.contains("marketplace materialize"))));
     }
 
     #[test]
@@ -2783,8 +3945,12 @@ mod tests {
             "amichne/slopsentral",
         );
 
-        assert_eq!(1, offerings.len());
+        assert_eq!(5, offerings.len());
         assert_eq!(OfferingSource::Installed, offerings[0].source);
+        assert_eq!(
+            OfferingKind::Guided(GuidedActionKind::DiscoverSource),
+            offerings[1].kind
+        );
         assert!(
             search_score_scoped("enterprise", SearchScope::Repository, &offerings[0]).is_some()
         );
