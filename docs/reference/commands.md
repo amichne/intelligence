@@ -23,11 +23,22 @@ or validate in a repository.
 | Show shortcuts | `?` | You want the keyboard reference without leaving the TUI. |
 | Stage selected action | `i` | You want to inspect an install, import, or update before confirming it. |
 | Stage install all | `a` | You want to stage installation of every exposed plugin from the loaded marketplace. |
+| Confirm pending action | `y` / `Enter` | You want to run the pending install, import, update, pin, unpin, or validation operation. |
+| Cancel pending action | `Esc` / `n` | You want to leave the pending operation untouched. |
 | Preview repository search | `r` | You want to preview the repository in the search box using the configured default Git host. |
 | Validate target | `v` | You want portable validation for the selected install target. |
 | Open command palette | `:` | You want to browse another repository, set host/target/search scope, import, install, update, pin, list remotes, validate, or quit. |
 
+The bottom mode bar shows the active mode, status or prompt, ranked command
+suggestions, search match counts, confirmation provenance, and contextual keys.
+Repository-scoped search names the repository that `Enter` will preview.
+Single selected actions confirm inline; batch actions keep the modal with raw
+RPC method and params for inspection.
+
 The command palette accepts these operation names.
+Suggestions are context-ranked by the current selection, staged state, and
+installed/update state. Unavailable commands remain visible but dimmed so the
+available command surface does not disappear while browsing.
 
 | Palette Command | Result |
 |---|---|
