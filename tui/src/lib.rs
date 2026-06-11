@@ -1,16 +1,205 @@
 use std::collections::{BTreeMap, BTreeSet};
+use std::env;
 use std::io::{BufRead, BufReader, Write};
 use std::process::{Child, ChildStdin, Command, Stdio};
 
 use crossterm::event::{KeyCode, KeyEvent};
 use ratatui::layout::{Constraint, Layout, Rect};
-use ratatui::style::{Color, Modifier, Style, Stylize};
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::symbols;
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{
-    Block, Borders, Clear, List, ListItem, ListState, Paragraph, Row, Table, TableState, Wrap,
+    Block, Borders, Cell, Clear, List, ListItem, ListState, Paragraph, Row, Table, TableState, Wrap,
 };
 use serde::Deserialize;
 use serde_json::{json, Value};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ColorSupport {
+    Monochrome,
+    Ansi16,
+    Ansi256,
+    TrueColor,
+}
+
+impl ColorSupport {
+    fn from_env() -> Self {
+        Self::detect(
+            env::var_os("NO_COLOR").is_some(),
+            env::var("COLORTERM").ok().as_deref(),
+            env::var("TERM").ok().as_deref(),
+        )
+    }
+
+    fn detect(no_color: bool, colorterm: Option<&str>, term: Option<&str>) -> Self {
+        if no_color {
+            return Self::Monochrome;
+        }
+        if colorterm.is_some_and(|value| {
+            let normalized = value.to_ascii_lowercase();
+            normalized == "truecolor" || normalized == "24bit"
+        }) {
+            return Self::TrueColor;
+        }
+        if term.is_some_and(|value| value.contains("256color")) {
+            return Self::Ansi256;
+        }
+        Self::Ansi16
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum ColorSlot {
+    Default,
+    Muted,
+    Emphasis,
+    Surface,
+    Overlay,
+    Selection,
+    AccentPrimary,
+    AccentSecondary,
+    Plugin,
+    Skill,
+    Agent,
+    Hook,
+    Instruction,
+    Catalog,
+    Local,
+    Info,
+    Success,
+    Warning,
+    Error,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct UiTheme {
+    color_support: ColorSupport,
+}
+
+impl UiTheme {
+    fn current() -> Self {
+        Self::with_color_support(ColorSupport::from_env())
+    }
+
+    fn with_color_support(color_support: ColorSupport) -> Self {
+        Self { color_support }
+    }
+
+    fn fg(self, slot: ColorSlot) -> Style {
+        apply_fg(Style::new(), self.color(slot))
+    }
+
+    fn bg(self, slot: ColorSlot) -> Style {
+        apply_bg(Style::new(), self.color(slot))
+    }
+
+    fn muted(self) -> Style {
+        self.fg(ColorSlot::Muted).add_modifier(Modifier::DIM)
+    }
+
+    fn emphasis(self) -> Style {
+        self.fg(ColorSlot::Emphasis).add_modifier(Modifier::BOLD)
+    }
+
+    fn panel_border(self, focused: bool) -> Style {
+        if focused {
+            self.fg(ColorSlot::AccentPrimary)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            self.fg(ColorSlot::Muted)
+        }
+    }
+
+    fn panel_title(self, focused: bool) -> Style {
+        if focused {
+            self.fg(ColorSlot::AccentPrimary)
+                .add_modifier(Modifier::BOLD)
+        } else {
+            self.fg(ColorSlot::Emphasis)
+        }
+    }
+
+    fn selected(self) -> Style {
+        let style = if self.color_support == ColorSupport::Monochrome {
+            Style::new().add_modifier(Modifier::REVERSED)
+        } else {
+            apply_fg(
+                self.bg(ColorSlot::Selection),
+                self.color(ColorSlot::Emphasis),
+            )
+        };
+        style.add_modifier(Modifier::BOLD)
+    }
+
+    fn status(self, severity: StatusSeverity) -> Style {
+        let slot = match severity {
+            StatusSeverity::Info => ColorSlot::Info,
+            StatusSeverity::Success => ColorSlot::Success,
+            StatusSeverity::Warning => ColorSlot::Warning,
+            StatusSeverity::Error => ColorSlot::Error,
+        };
+        self.fg(slot).add_modifier(Modifier::BOLD)
+    }
+
+    fn color(self, slot: ColorSlot) -> Option<Color> {
+        match self.color_support {
+            ColorSupport::Monochrome => None,
+            ColorSupport::Ansi16 => Some(match slot {
+                ColorSlot::Default => Color::Gray,
+                ColorSlot::Muted | ColorSlot::Surface | ColorSlot::Overlay => Color::DarkGray,
+                ColorSlot::Emphasis | ColorSlot::Selection => Color::White,
+                ColorSlot::AccentPrimary | ColorSlot::Plugin | ColorSlot::Catalog => Color::Cyan,
+                ColorSlot::AccentSecondary | ColorSlot::Agent | ColorSlot::Local => Color::Magenta,
+                ColorSlot::Skill | ColorSlot::Instruction | ColorSlot::Warning => Color::Yellow,
+                ColorSlot::Hook | ColorSlot::Success => Color::Green,
+                ColorSlot::Info => Color::Cyan,
+                ColorSlot::Error => Color::Red,
+            }),
+            ColorSupport::Ansi256 => Some(Color::Indexed(match slot {
+                ColorSlot::Default => 252,
+                ColorSlot::Muted => 244,
+                ColorSlot::Emphasis => 15,
+                ColorSlot::Surface => 236,
+                ColorSlot::Overlay => 240,
+                ColorSlot::Selection => 24,
+                ColorSlot::AccentPrimary | ColorSlot::Plugin | ColorSlot::Catalog => 75,
+                ColorSlot::AccentSecondary | ColorSlot::Agent | ColorSlot::Local => 141,
+                ColorSlot::Skill | ColorSlot::Instruction | ColorSlot::Warning => 179,
+                ColorSlot::Hook | ColorSlot::Success => 114,
+                ColorSlot::Info => 81,
+                ColorSlot::Error => 203,
+            })),
+            ColorSupport::TrueColor => Some(match slot {
+                ColorSlot::Default => Color::Rgb(192, 202, 245),
+                ColorSlot::Muted => Color::Rgb(86, 95, 137),
+                ColorSlot::Emphasis => Color::Rgb(224, 224, 224),
+                ColorSlot::Surface => Color::Rgb(36, 40, 59),
+                ColorSlot::Overlay => Color::Rgb(65, 72, 104),
+                ColorSlot::Selection => Color::Rgb(54, 74, 130),
+                ColorSlot::AccentPrimary | ColorSlot::Plugin | ColorSlot::Catalog => {
+                    Color::Rgb(122, 162, 247)
+                }
+                ColorSlot::AccentSecondary | ColorSlot::Agent | ColorSlot::Local => {
+                    Color::Rgb(187, 154, 247)
+                }
+                ColorSlot::Skill | ColorSlot::Instruction | ColorSlot::Warning => {
+                    Color::Rgb(224, 175, 104)
+                }
+                ColorSlot::Hook | ColorSlot::Success => Color::Rgb(158, 206, 106),
+                ColorSlot::Info => Color::Rgb(125, 207, 255),
+                ColorSlot::Error => Color::Rgb(247, 118, 142),
+            }),
+        }
+    }
+}
+
+fn apply_fg(style: Style, color: Option<Color>) -> Style {
+    color.map_or(style, |color| style.fg(color))
+}
+
+fn apply_bg(style: Style, color: Option<Color>) -> Style {
+    color.map_or(style, |color| style.bg(color))
+}
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -333,13 +522,8 @@ impl StatusSeverity {
         }
     }
 
-    fn style(self) -> Style {
-        match self {
-            Self::Info => Style::new().fg(Color::Cyan),
-            Self::Success => Style::new().fg(Color::Green),
-            Self::Warning => Style::new().fg(Color::Yellow),
-            Self::Error => Style::new().fg(Color::Red),
-        }
+    fn style(self, theme: UiTheme) -> Style {
+        theme.status(self)
     }
 }
 
@@ -436,6 +620,45 @@ impl OfferingKind {
         }
     }
 
+    fn marker(&self) -> &'static str {
+        match self {
+            Self::Plugin => "●",
+            Self::Skill => "◆",
+            Self::Agent => "▲",
+            Self::Hook => "◇",
+            Self::Instruction => "■",
+        }
+    }
+
+    fn table_label(&self) -> &'static str {
+        match self {
+            Self::Plugin => "plugin",
+            Self::Skill => "skill",
+            Self::Agent => "agent",
+            Self::Hook => "hook",
+            Self::Instruction => "instr",
+        }
+    }
+
+    fn color_slot(&self) -> ColorSlot {
+        match self {
+            Self::Plugin => ColorSlot::Plugin,
+            Self::Skill => ColorSlot::Skill,
+            Self::Agent => ColorSlot::Agent,
+            Self::Hook => ColorSlot::Hook,
+            Self::Instruction => ColorSlot::Instruction,
+        }
+    }
+
+    fn style(&self, theme: UiTheme) -> Style {
+        let style = theme.fg(self.color_slot());
+        if matches!(self, Self::Plugin) {
+            style.add_modifier(Modifier::BOLD)
+        } else {
+            style
+        }
+    }
+
     fn is_primitive(&self) -> bool {
         !matches!(self, Self::Plugin)
     }
@@ -452,6 +675,89 @@ impl OfferingSource {
         match self {
             Self::Marketplace => "catalog",
             Self::Installed => "local",
+        }
+    }
+
+    fn marker(self) -> &'static str {
+        match self {
+            Self::Marketplace => "◉",
+            Self::Installed => "○",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::Marketplace => "cat",
+            Self::Installed => "loc",
+        }
+    }
+
+    fn style(self, theme: UiTheme) -> Style {
+        match self {
+            Self::Marketplace => theme.fg(ColorSlot::Catalog),
+            Self::Installed => theme.fg(ColorSlot::Local),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum OfferingInstallState {
+    Available,
+    Installed,
+    Pinned,
+    UpdateAvailable,
+}
+
+impl OfferingInstallState {
+    fn from_offering(offering: &Offering) -> Self {
+        offering
+            .installed
+            .as_ref()
+            .map(|installed| {
+                if installed.outdated {
+                    Self::UpdateAvailable
+                } else if installed.locked {
+                    Self::Pinned
+                } else {
+                    Self::Installed
+                }
+            })
+            .unwrap_or(Self::Available)
+    }
+
+    fn label(self) -> &'static str {
+        match self {
+            Self::Available => "available",
+            Self::Installed => "installed",
+            Self::Pinned => "pinned",
+            Self::UpdateAvailable => "update",
+        }
+    }
+
+    fn marker(self) -> &'static str {
+        match self {
+            Self::Available => "□",
+            Self::Installed => "✓",
+            Self::Pinned => "◆",
+            Self::UpdateAvailable => "▲",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::Available => "avail",
+            Self::Installed => "inst",
+            Self::Pinned => "pin",
+            Self::UpdateAvailable => "update",
+        }
+    }
+
+    fn style(self, theme: UiTheme) -> Style {
+        match self {
+            Self::Available => theme.muted(),
+            Self::Installed => theme.fg(ColorSlot::Success),
+            Self::Pinned => theme.fg(ColorSlot::AccentSecondary),
+            Self::UpdateAvailable => theme.fg(ColorSlot::Warning).add_modifier(Modifier::BOLD),
         }
     }
 }
@@ -1878,12 +2184,13 @@ fn fit_suggestions_line(
     prefix: &str,
     suggestions: &[CommandSuggestion],
     width: u16,
+    theme: UiTheme,
 ) -> Line<'static> {
     if suggestions.is_empty() {
-        return Line::from(ellipsize(prefix, width));
+        return Line::from(ellipsize(prefix, width)).style(theme.muted());
     }
     let width = usize::from(width);
-    let mut spans = vec![Span::from(prefix.to_string())];
+    let mut spans = vec![Span::styled(prefix.to_string(), theme.muted())];
     let mut used = prefix.chars().count();
     for suggestion in suggestions {
         let label = if suggestion.applicable {
@@ -1900,11 +2207,11 @@ fn fit_suggestions_line(
         if used + needed > width {
             break;
         }
-        spans.push(Span::from(separator.to_string()));
+        spans.push(Span::styled(separator.to_string(), theme.muted()));
         let style = if suggestion.applicable {
-            Style::new()
+            theme.fg(ColorSlot::AccentPrimary)
         } else {
-            Style::new().add_modifier(Modifier::DIM)
+            theme.muted()
         };
         spans.push(Span::styled(label, style));
         used += needed;
@@ -1913,6 +2220,7 @@ fn fit_suggestions_line(
 }
 
 pub fn render(frame: &mut ratatui::Frame, app: &App) {
+    let theme = UiTheme::current();
     let [title_area, main_area, command_area] = Layout::vertical([
         Constraint::Length(1),
         Constraint::Min(10),
@@ -1929,44 +2237,51 @@ pub fn render(frame: &mut ratatui::Frame, app: &App) {
         Layout::vertical([Constraint::Percentage(62), Constraint::Percentage(38)])
             .areas(right_area);
 
-    render_title(frame, title_area, app);
-    render_sources(frame, left_area, app);
-    render_offerings(frame, center_area, app);
-    render_details(frame, details_area, app);
-    render_staging(frame, staging_area, app);
-    render_mode_bar(frame, command_area, app);
+    render_title(frame, title_area, app, theme);
+    render_sources(frame, left_area, app, theme);
+    render_offerings(frame, center_area, app, theme);
+    render_details(frame, details_area, app, theme);
+    render_staging(frame, staging_area, app, theme);
+    render_mode_bar(frame, command_area, app, theme);
     if app.pending.is_none() && app.show_help {
-        render_shortcuts(frame);
+        render_shortcuts(frame, theme);
     }
     if let Some(pending) = app
         .pending
         .as_ref()
         .filter(|action| action.confirmation == ConfirmationKind::Modal)
     {
-        render_pending(frame, pending);
+        render_pending(frame, pending, theme);
     }
 }
 
-fn render_title(frame: &mut ratatui::Frame, area: Rect, app: &App) {
-    let title = app
-        .marketplace
-        .as_ref()
-        .map(|marketplace| {
-            format!(
-                " intelligence | {} | provider {} | target {} | / search | tab panes | ? shortcuts ",
-                marketplace.name, marketplace.provider, app.repo_root
-            )
-        })
-        .unwrap_or_else(|| {
-            format!(
-                " intelligence | target {} | / search | tab panes | ? shortcuts ",
-                app.repo_root
-            )
-        });
-    frame.render_widget(Line::from(title).bold(), area);
+fn render_title(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
+    let mut spans = vec![Span::styled(" intelligence ", theme.emphasis())];
+    if let Some(marketplace) = &app.marketplace {
+        spans.push(Span::styled("│ ", theme.muted()));
+        spans.push(Span::styled(
+            marketplace.name.clone(),
+            theme.fg(ColorSlot::Plugin).add_modifier(Modifier::BOLD),
+        ));
+        spans.push(Span::styled(" │ provider ", theme.muted()));
+        spans.push(Span::styled(
+            marketplace.provider.clone(),
+            theme.fg(ColorSlot::Catalog),
+        ));
+    }
+    spans.push(Span::styled(" │ target ", theme.muted()));
+    spans.push(Span::styled(
+        app.repo_root.clone(),
+        theme.fg(ColorSlot::Default),
+    ));
+    spans.push(Span::styled(
+        " │ / search │ tab panes │ ? shortcuts ",
+        theme.muted(),
+    ));
+    frame.render_widget(Line::from(spans), area);
 }
 
-fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let installed = app
         .installed
         .iter()
@@ -1977,131 +2292,185 @@ fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App) {
         .iter()
         .filter(|plugin| plugin.outdated)
         .count();
+    let plugin_count = app
+        .offerings
+        .iter()
+        .filter(|offering| offering.kind == OfferingKind::Plugin)
+        .count();
+    let primitive_count = app.offerings.len().saturating_sub(plugin_count);
     let items = vec![
-        ListItem::new(format!("Remote: {}", app.browse_repository)),
-        ListItem::new(format!("Git host: {}", app.default_git_host.as_str())),
-        ListItem::new(format!("Target: {}", app.repo_root)),
-        ListItem::new(format!("Search: {}", app.search_scope.label())),
-        ListItem::new(format!("Local: {installed} installed, {outdated} updates")),
+        field_item("Remote", app.browse_repository.as_str(), theme),
+        field_item("Git host", app.default_git_host.as_str(), theme),
+        field_item("Target", app.repo_root.as_str(), theme),
+        field_item("Search", app.search_scope.label(), theme),
+        ListItem::new(Line::from(vec![
+            Span::styled("Local", theme.muted()),
+            Span::from(": "),
+            Span::styled(
+                format!("{installed} installed"),
+                theme.fg(ColorSlot::Success),
+            ),
+            Span::styled(", ", theme.muted()),
+            Span::styled(format!("{outdated} updates"), theme.fg(ColorSlot::Warning)),
+        ])),
         ListItem::new(""),
-        ListItem::new("Operations"),
-        ListItem::new("r preview remote"),
-        ListItem::new("i stage selected"),
-        ListItem::new("a stage install all"),
-        ListItem::new("v validate target"),
-        ListItem::new("/ search"),
-        ListItem::new("tab focus"),
-        ListItem::new(": palette"),
+        ListItem::new(Line::from(vec![
+            Span::styled("Plugins", theme.emphasis()),
+            Span::from(": "),
+            Span::styled("●", OfferingKind::Plugin.style(theme)),
+            Span::from(format!(" {plugin_count}")),
+        ])),
+        ListItem::new(Line::from(vec![
+            Span::styled("Primitives", theme.emphasis()),
+            Span::from(": "),
+            Span::styled("◆", theme.fg(ColorSlot::Skill)),
+            Span::from(format!(" {primitive_count}")),
+        ])),
+        ListItem::new(""),
+        ListItem::new(Line::from("Operations").style(theme.emphasis())),
+        operation_item("r", "preview remote", theme),
+        operation_item("i", "stage selected", theme),
+        operation_item("a", "stage install all", theme),
+        operation_item("v", "validate target", theme),
+        operation_item("/", "search", theme),
+        operation_item("tab", "focus", theme),
+        operation_item(":", "palette", theme),
     ];
-    let block = focused_block("Source / Operations", app.focus == FocusPane::Sources);
+    let block = focused_block(
+        "Source / Operations",
+        app.focus == FocusPane::Sources,
+        theme,
+    );
     frame.render_widget(List::new(items).block(block), area);
 }
 
-fn render_offerings(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_offerings(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let rows = app.filtered.iter().filter_map(|index| {
         let offering = app.offerings.get(*index)?;
-        let state = offering
-            .installed
-            .as_ref()
-            .map(|installed| {
-                if installed.outdated {
-                    "update"
-                } else if installed.locked {
-                    "pinned"
-                } else {
-                    "installed"
-                }
-            })
-            .unwrap_or("available");
+        let state = OfferingInstallState::from_offering(offering);
         let version = offering
             .installed
             .as_ref()
             .and_then(|installed| installed.version.clone())
             .unwrap_or_default();
         Some(Row::new(vec![
-            offering.kind.label().to_string(),
-            offering.name.clone(),
-            offering.source.label().to_string(),
-            state.to_string(),
-            version,
+            Cell::from(Line::from(vec![
+                Span::styled(offering.kind.marker(), offering.kind.style(theme)),
+                Span::styled(offering.kind.table_label(), offering.kind.style(theme)),
+            ])),
+            Cell::from(Span::styled(
+                offering.name.clone(),
+                theme.fg(ColorSlot::Default),
+            )),
+            Cell::from(Line::from(vec![
+                Span::styled(offering.source.marker(), offering.source.style(theme)),
+                Span::styled(offering.source.table_label(), offering.source.style(theme)),
+            ])),
+            Cell::from(Line::from(vec![
+                Span::styled(state.marker(), state.style(theme)),
+                Span::styled(state.table_label(), state.style(theme)),
+            ])),
+            Cell::from(Span::styled(version, theme.muted())),
         ]))
     });
     let table = Table::new(
         rows,
         [
-            Constraint::Length(11),
-            Constraint::Percentage(40),
             Constraint::Length(8),
-            Constraint::Length(10),
-            Constraint::Length(12),
+            Constraint::Min(10),
+            Constraint::Length(5),
+            Constraint::Length(8),
+            Constraint::Length(8),
         ],
     )
-    .header(Row::new(vec!["Type", "Name", "Source", "State", "Version"]).style(Style::new().bold()))
+    .header(Row::new(vec!["Type", "Name", "Source", "State", "Version"]).style(theme.emphasis()))
     .block(focused_block(
         "Offerings",
         app.focus == FocusPane::Offerings,
+        theme,
     ))
-    .row_highlight_style(Style::new().bg(Color::DarkGray))
-    .highlight_symbol("> ");
+    .row_highlight_style(theme.selected())
+    .highlight_symbol("▸ ");
     let mut state = TableState::default().with_selected(Some(app.selected));
     frame.render_stateful_widget(table, area, &mut state);
 }
 
-fn render_details(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_details(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let selected = app.selected_offering();
     let mut lines = Vec::new();
     if let Some(offering) = selected {
-        lines.push(Line::from(vec![Span::styled(
-            &offering.name,
-            Style::new().add_modifier(Modifier::BOLD),
-        )]));
-        lines.push(Line::from(format!(
-            "{} | {}",
-            offering.kind.label(),
-            offering.source.label()
-        )));
+        let state = OfferingInstallState::from_offering(offering);
+        lines.push(Line::from(vec![
+            Span::styled(offering.kind.marker(), offering.kind.style(theme)),
+            Span::from(" "),
+            Span::styled(&offering.name, theme.emphasis()),
+        ]));
+        lines.push(Line::from(vec![
+            Span::styled(offering.kind.label(), offering.kind.style(theme)),
+            Span::styled("  │  ", theme.muted()),
+            Span::styled(offering.source.marker(), offering.source.style(theme)),
+            Span::from(" "),
+            Span::styled(offering.source.label(), offering.source.style(theme)),
+            Span::styled("  │  ", theme.muted()),
+            Span::styled(state.marker(), state.style(theme)),
+            Span::from(" "),
+            Span::styled(state.label(), state.style(theme)),
+        ]));
         if let Some(repository) = &offering.repository {
-            lines.push(Line::from(format!("repository: {repository}")));
+            lines.push(field_line("repository", repository.as_str(), theme));
         }
         if let Some(description) = &offering.description {
             lines.push(Line::from(""));
-            lines.push(Line::from(description.clone()));
+            lines.push(Line::from(description.clone()).style(theme.fg(ColorSlot::Default)));
         }
         if !offering.tags.is_empty() {
             lines.push(Line::from(""));
-            lines.push(Line::from(format!("tags: {}", offering.tags.join(", "))));
+            lines.push(tag_line(&offering.tags, theme));
         }
         if let Some(installed) = &offering.installed {
             lines.push(Line::from(""));
-            lines.push(Line::from(format!(
-                "installed: {}",
-                installed.version.as_deref().unwrap_or("unknown")
-            )));
+            lines.push(field_line(
+                "installed",
+                installed.version.as_deref().unwrap_or("unknown"),
+                theme,
+            ));
             if let Some(current) = &installed.current_version {
-                lines.push(Line::from(format!("remote: {current}")));
+                lines.push(field_line("remote", current.as_str(), theme));
             }
-            lines.push(Line::from(format!("locked: {}", installed.locked)));
+            lines.push(field_line("locked", installed.locked.to_string(), theme));
         }
         lines.push(Line::from(""));
-        lines.push(Line::from(format!("install target: {}", app.repo_root)));
+        lines.push(field_line("install target", app.repo_root.as_str(), theme));
     } else {
-        lines.push(Line::from("No offering selected"));
+        lines.push(Line::from("No offering selected").style(theme.muted()));
     }
     frame.render_widget(
         Paragraph::new(lines)
-            .block(focused_block("Details", app.focus == FocusPane::Details))
+            .block(focused_block(
+                "Details",
+                app.focus == FocusPane::Details,
+                theme,
+            ))
             .wrap(Wrap { trim: true }),
         area,
     );
 }
 
-fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let items = if app.staged.is_empty() {
-        vec![ListItem::new("No staged actions")]
+        vec![ListItem::new(
+            Line::from("No staged actions").style(theme.muted()),
+        )]
     } else {
         app.staged
             .iter()
-            .map(|action| ListItem::new(action.title.clone()))
+            .map(|action| {
+                ListItem::new(Line::from(vec![
+                    Span::styled("▶", theme.fg(ColorSlot::AccentPrimary)),
+                    Span::from(" "),
+                    Span::styled(action.title.clone(), theme.fg(ColorSlot::Default)),
+                ]))
+            })
             .collect()
     };
     let mut state =
@@ -2111,90 +2480,212 @@ fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App) {
             .block(focused_block(
                 "Staging / Install",
                 app.focus == FocusPane::Staging,
+                theme,
             ))
-            .highlight_symbol("> ")
-            .highlight_style(Style::new().bg(Color::DarkGray)),
+            .highlight_symbol("▸ ")
+            .highlight_style(theme.selected()),
         area,
         &mut state,
     );
 }
 
-fn render_mode_bar(frame: &mut ratatui::Frame, area: Rect, app: &App) {
+fn render_mode_bar(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTheme) {
     let mode_bar = ModeBarState::from_app(app);
-    let row1 = Line::styled(
-        ellipsize(&mode_bar.row1, area.width),
-        mode_bar
-            .severity
-            .map(StatusSeverity::style)
-            .unwrap_or_default(),
-    );
+    let row1_style = mode_bar
+        .severity
+        .map(|severity| severity.style(theme))
+        .unwrap_or_else(|| theme.emphasis());
+    let row1 = Line::styled(ellipsize(&mode_bar.row1, area.width), row1_style);
     let row2 = if mode_bar.suggestions.is_empty() {
-        Line::from(ellipsize(&mode_bar.row2, area.width))
+        Line::from(ellipsize(&mode_bar.row2, area.width)).style(theme.fg(ColorSlot::Default))
     } else {
-        fit_suggestions_line("commands:", &mode_bar.suggestions, area.width)
+        fit_suggestions_line("commands:", &mode_bar.suggestions, area.width, theme)
     };
-    let row3 = Line::from(ellipsize(&mode_bar.row3, area.width));
+    let row3 = shortcut_line(ellipsize(&mode_bar.row3, area.width), theme);
     frame.render_widget(Paragraph::new(vec![row1, row2, row3]), area);
 }
 
-fn render_shortcuts(frame: &mut ratatui::Frame) {
+fn render_shortcuts(frame: &mut ratatui::Frame, theme: UiTheme) {
     let area = centered_rect(72, 58, frame.area());
     frame.render_widget(Clear, area);
     let body = vec![
-        Line::from("Keyboard shortcuts").bold(),
+        Line::from("Keyboard shortcuts").style(theme.emphasis()),
         Line::from(""),
-        Line::from("/ search current catalog and local installed plugins"),
-        Line::from("tab / shift-tab move panes; in search, cycle all/repository/user/plugin/primitive/installed"),
-        Line::from("r preview remote from repository search, using the configured default Git host"),
-        Line::from("i stage selected install/update; a stage install all"),
-        Line::from("enter opens details or confirms the selected staged action"),
-        Line::from("v validate the selected install target"),
-        Line::from(": palette for browse, preview, host, target, scope, staging, update, pin, and remotes"),
-        Line::from("x removes a staged action when the staging pane is focused"),
-        Line::from("esc or ? closes this panel"),
+        shortcut_line("/ search current catalog and local installed plugins", theme),
+        shortcut_line("tab / shift-tab move panes; in search, cycle all/repository/user/plugin/primitive/installed", theme),
+        shortcut_line("r preview remote from repository search, using the configured default Git host", theme),
+        shortcut_line("i stage selected install/update; a stage install all", theme),
+        shortcut_line("enter opens details or confirms the selected staged action", theme),
+        shortcut_line("v validate the selected install target", theme),
+        shortcut_line(": palette for browse, preview, host, target, scope, staging, update, pin, and remotes", theme),
+        shortcut_line("x removes a staged action when the staging pane is focused", theme),
+        shortcut_line("esc or ? closes this panel", theme),
     ];
     frame.render_widget(
         Paragraph::new(body)
             .wrap(Wrap { trim: true })
-            .block(Block::new().borders(Borders::ALL).title("Shortcuts")),
+            .block(overlay_block("Shortcuts", theme)),
         area,
     );
 }
 
-fn render_pending(frame: &mut ratatui::Frame, pending: &PendingAction) {
+fn render_pending(frame: &mut ratatui::Frame, pending: &PendingAction, theme: UiTheme) {
     let area = centered_rect(70, 35, frame.area());
     frame.render_widget(Clear, area);
     let inner_width = area.width.saturating_sub(2);
     let body = vec![
-        Line::from(pending.title.clone()).bold(),
+        Line::from(pending.title.clone()).style(theme.emphasis()),
         Line::from(""),
-        Line::from(ellipsize(
-            &format!("method: {}", pending.method),
-            inner_width,
-        )),
-        Line::from(ellipsize(
-            &format!("params: {}", pending.params),
-            inner_width,
-        )),
+        field_line(
+            "method",
+            ellipsize(&pending.method, inner_width.saturating_sub(8)),
+            theme,
+        ),
+        field_line(
+            "params",
+            ellipsize(&pending.params.to_string(), inner_width.saturating_sub(8)),
+            theme,
+        ),
         Line::from(""),
-        Line::from("Y or Enter confirms. Esc or N cancels."),
+        shortcut_line("Y or Enter confirms. Esc or N cancels.", theme),
     ];
     frame.render_widget(
-        Paragraph::new(body).block(Block::new().borders(Borders::ALL).title("Confirm")),
+        Paragraph::new(body).block(overlay_block("Confirm", theme)),
         area,
     );
 }
 
-fn focused_block(title: &'static str, focused: bool) -> Block<'static> {
-    let style = if focused {
-        Style::new().fg(Color::Cyan)
+fn field_item<'a>(
+    label: &'static str,
+    value: impl Into<std::borrow::Cow<'a, str>>,
+    theme: UiTheme,
+) -> ListItem<'a> {
+    ListItem::new(field_line(label, value, theme))
+}
+
+fn field_line<'a>(
+    label: &'static str,
+    value: impl Into<std::borrow::Cow<'a, str>>,
+    theme: UiTheme,
+) -> Line<'a> {
+    Line::from(vec![
+        Span::styled(label, theme.muted()),
+        Span::from(": "),
+        Span::styled(value.into(), theme.fg(ColorSlot::Default)),
+    ])
+}
+
+fn operation_item<'a>(key: &'static str, label: &'static str, theme: UiTheme) -> ListItem<'a> {
+    ListItem::new(Line::from(vec![
+        Span::styled(
+            key,
+            theme
+                .fg(ColorSlot::AccentPrimary)
+                .add_modifier(Modifier::BOLD),
+        ),
+        Span::from(" "),
+        Span::styled(label, theme.fg(ColorSlot::Default)),
+    ]))
+}
+
+fn tag_line<'a>(tags: &'a [String], theme: UiTheme) -> Line<'a> {
+    let mut spans = vec![Span::styled("tags", theme.muted()), Span::from(": ")];
+    for (index, tag) in tags.iter().enumerate() {
+        if index > 0 {
+            spans.push(Span::styled(", ", theme.muted()));
+        }
+        spans.push(Span::styled(
+            tag.as_str(),
+            theme.fg(ColorSlot::AccentSecondary),
+        ));
+    }
+    Line::from(spans)
+}
+
+fn shortcut_line<'a>(value: impl Into<std::borrow::Cow<'a, str>>, theme: UiTheme) -> Line<'a> {
+    let value = value.into();
+    let mut spans = Vec::new();
+    let mut chars = value.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch.is_ascii_alphanumeric() || matches!(ch, '/' | '?' | ':' | '-') {
+            let mut token = String::from(ch);
+            while let Some(next) = chars.peek().copied() {
+                if !(next.is_ascii_alphanumeric() || matches!(next, '/' | '?' | ':' | '-')) {
+                    break;
+                }
+                token.push(next);
+                chars.next();
+            }
+            let style = if is_shortcut_token(&token) {
+                theme
+                    .fg(ColorSlot::AccentPrimary)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                theme.fg(ColorSlot::Default)
+            };
+            spans.push(Span::styled(token, style));
+        } else {
+            spans.push(Span::from(ch.to_string()));
+        }
+    }
+    Line::from(spans)
+}
+
+fn is_shortcut_token(token: &str) -> bool {
+    matches!(
+        token,
+        "/" | "?"
+            | ":"
+            | "tab"
+            | "shift-tab"
+            | "enter"
+            | "esc"
+            | "q"
+            | "r"
+            | "i"
+            | "a"
+            | "v"
+            | "x"
+            | "y"
+            | "n"
+            | "Y"
+            | "Enter"
+            | "Esc"
+            | "N"
+    )
+}
+
+fn focused_block(title: &'static str, focused: bool, theme: UiTheme) -> Block<'static> {
+    let title = if focused {
+        format!("▸ {title}")
     } else {
-        Style::new()
+        format!("  {title}")
     };
     Block::new()
         .borders(Borders::ALL)
+        .border_set(if focused {
+            symbols::border::THICK
+        } else {
+            symbols::border::PLAIN
+        })
         .title(title)
-        .border_style(style)
+        .title_style(theme.panel_title(focused))
+        .style(theme.bg(ColorSlot::Surface))
+        .border_style(theme.panel_border(focused))
+}
+
+fn overlay_block(title: &'static str, theme: UiTheme) -> Block<'static> {
+    Block::new()
+        .borders(Borders::ALL)
+        .border_set(symbols::border::DOUBLE)
+        .title(format!(" ◆ {title} "))
+        .title_style(
+            theme
+                .fg(ColorSlot::AccentSecondary)
+                .add_modifier(Modifier::BOLD),
+        )
+        .style(theme.bg(ColorSlot::Overlay))
+        .border_style(theme.fg(ColorSlot::AccentSecondary))
 }
 
 fn centered_rect(percent_x: u16, percent_y: u16, area: Rect) -> Rect {
@@ -2280,6 +2771,53 @@ mod tests {
         app.offerings = offerings;
         app.apply_filter();
         app.selected = 0;
+    }
+
+    #[test]
+    fn color_support_detection_respects_no_color_and_terminal_capability() {
+        assert_eq!(
+            ColorSupport::Monochrome,
+            ColorSupport::detect(true, Some("truecolor"), Some("xterm-256color"))
+        );
+        assert_eq!(
+            ColorSupport::TrueColor,
+            ColorSupport::detect(false, Some("24bit"), Some("xterm-256color"))
+        );
+        assert_eq!(
+            ColorSupport::Ansi256,
+            ColorSupport::detect(false, None, Some("screen-256color"))
+        );
+        assert_eq!(
+            ColorSupport::Ansi16,
+            ColorSupport::detect(false, None, None)
+        );
+    }
+
+    #[test]
+    fn render_uses_non_color_markers_for_focus_kind_source_and_state() {
+        let mut app = App::new(test_config());
+        select_offerings(
+            &mut app,
+            vec![
+                plugin_offering("review-stack", None),
+                skill_offering("tui-design"),
+                plugin_offering(
+                    "kotlin-engineering",
+                    Some(installed_plugin("kotlin-engineering")),
+                ),
+            ],
+        );
+        app.selected = 0;
+
+        let lines = rendered_lines(&app, 120, 30);
+        let screen = screen_text(&lines);
+
+        assert!(screen.contains("▸ Offerings"));
+        assert!(screen.contains("●plugin"));
+        assert!(screen.contains("◆skill"));
+        assert!(screen.contains("◉cat"));
+        assert!(screen.contains("□avail"));
+        assert!(screen.contains("▲update"));
     }
 
     #[test]
