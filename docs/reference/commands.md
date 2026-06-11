@@ -17,9 +17,9 @@ or validate in a repository.
 | Open browser explicitly | `intelligence marketplace ui` | A script, alias, or docs snippet should name the UI command. |
 | Select target repository | `intelligence marketplace ui --repo /path/to/repo` | You want the TUI to write install intent somewhere other than the current directory. |
 | Resolve imports from a ref | `intelligence marketplace ui --ref main` | Direct imports selected in the UI should use a branch, tag, or SHA. |
-| Search loaded offerings | `/` | You want to filter the current marketplace catalog and locally installed plugins. |
+| Search loaded resources | `/` | You want to filter the current marketplace catalog, locally installed plugins, and guided flow rows. |
 | Change search type | `Tab` while searching | You want to search by all fields, repository, user, plugin, primitive, or installed state. |
-| Move panes | `Tab` / `Shift-Tab` | You want to move focus through source, offerings, details, and staging panes. |
+| Move panes | `Tab` / `Shift-Tab` | You want to move focus through context, resources, details, and actions panes. |
 | Show shortcuts | `?` | You want the keyboard reference without leaving the TUI. |
 | Stage selected action | `i` | You want to inspect an install, import, or update before confirming it. |
 | Stage install all | `a` | You want to stage installation of every exposed plugin from the loaded marketplace. |
@@ -27,17 +27,20 @@ or validate in a repository.
 | Cancel pending action | `Esc` / `n` | You want to leave the pending operation untouched. |
 | Preview repository search | `r` | You want to preview the repository in the search box using the configured default Git host. |
 | Validate target | `v` | You want portable validation for the selected install target. |
-| Open command palette | `:` | You want to browse another repository, set host/target/search scope, import, install, update, pin, list remotes, validate, or quit. |
+| Open command palette | `:` | You want to browse another repository, set host/target/search scope, import, install, update, pin, list remotes, validate, inspect author/edit guidance, inspect output guidance, or quit. |
 
 The bottom mode bar shows the active mode, status or prompt, ranked command
 suggestions, search match counts, confirmation provenance, and contextual keys.
 Repository-scoped search names the repository that `Enter` will preview.
 Single selected actions confirm inline; batch actions keep the modal with raw
 RPC method and params for inspection.
+The Context, Resources, Details, and Actions panes keep the source, operation,
+and target split visible while browsing.
 
 The command palette accepts these operation names.
 Suggestions are context-ranked by the current selection, staged state, and
-installed/update state. Unavailable commands remain visible but dimmed so the
+installed/update state, then grouped by flow: discover, add, installed, author,
+edit, and outputs. Unavailable commands remain visible but dimmed so the
 available command surface does not disappear while browsing.
 
 | Palette Command | Result |
@@ -56,6 +59,9 @@ available command surface does not disappear while browsing.
 | `pin 1.2.3` / `unpin` | Manage the selected installed plugin pin. |
 | `remote list` | Inspect configured external marketplaces. |
 | `validate` | Run portable validation for the target repository. |
+| `author` / `create skill` | Show where reusable resources should be authored. |
+| `edit` / `open source` | Show where existing resources should be edited. |
+| `outputs` / `materialize` / `publish` / `validate hydrated` | Show provider-output generation guidance. |
 
 ## Discover
 

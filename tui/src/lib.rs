@@ -607,6 +607,7 @@ pub enum OfferingKind {
     Agent,
     Hook,
     Instruction,
+    Guided(GuidedActionKind),
 }
 
 impl OfferingKind {
@@ -617,6 +618,7 @@ impl OfferingKind {
             Self::Agent => "agent",
             Self::Hook => "hook",
             Self::Instruction => "instruction",
+            Self::Guided(kind) => kind.label(),
         }
     }
 
@@ -627,6 +629,7 @@ impl OfferingKind {
             Self::Agent => "▲",
             Self::Hook => "◇",
             Self::Instruction => "■",
+            Self::Guided(kind) => kind.marker(),
         }
     }
 
@@ -637,6 +640,7 @@ impl OfferingKind {
             Self::Agent => "agent",
             Self::Hook => "hook",
             Self::Instruction => "instr",
+            Self::Guided(kind) => kind.table_label(),
         }
     }
 
@@ -647,6 +651,7 @@ impl OfferingKind {
             Self::Agent => ColorSlot::Agent,
             Self::Hook => ColorSlot::Hook,
             Self::Instruction => ColorSlot::Instruction,
+            Self::Guided(kind) => kind.color_slot(),
         }
     }
 
@@ -660,7 +665,230 @@ impl OfferingKind {
     }
 
     fn is_primitive(&self) -> bool {
-        !matches!(self, Self::Plugin)
+        matches!(
+            self,
+            Self::Skill | Self::Agent | Self::Hook | Self::Instruction
+        )
+    }
+
+    fn guided_action(&self) -> Option<GuidedActionKind> {
+        match self {
+            Self::Guided(kind) => Some(*kind),
+            _ => None,
+        }
+    }
+
+    fn is_guided(&self) -> bool {
+        self.guided_action().is_some()
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum GuidedActionKind {
+    DiscoverSource,
+    AuthorResource,
+    EditResource,
+    ProjectOutputs,
+}
+
+impl GuidedActionKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => "discover",
+            Self::AuthorResource => "author",
+            Self::EditResource => "edit",
+            Self::ProjectOutputs => "outputs",
+        }
+    }
+
+    fn marker(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => "?",
+            Self::AuthorResource => "+",
+            Self::EditResource => "~",
+            Self::ProjectOutputs => "▣",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => "find",
+            Self::AuthorResource => "author",
+            Self::EditResource => "edit",
+            Self::ProjectOutputs => "output",
+        }
+    }
+
+    fn color_slot(self) -> ColorSlot {
+        match self {
+            Self::DiscoverSource => ColorSlot::Info,
+            Self::AuthorResource => ColorSlot::Success,
+            Self::EditResource => ColorSlot::AccentSecondary,
+            Self::ProjectOutputs => ColorSlot::Warning,
+        }
+    }
+
+    fn flow_kind(self) -> FlowKind {
+        match self {
+            Self::DiscoverSource => FlowKind::Discover,
+            Self::AuthorResource => FlowKind::Author,
+            Self::EditResource => FlowKind::Edit,
+            Self::ProjectOutputs => FlowKind::Outputs,
+        }
+    }
+
+    fn source_scope(self) -> SourceScope {
+        match self {
+            Self::DiscoverSource => SourceScope::RemoteSource,
+            Self::AuthorResource | Self::EditResource => SourceScope::PersonalSource,
+            Self::ProjectOutputs => SourceScope::CurrentRepository,
+        }
+    }
+
+    fn target_scope(self) -> TargetScope {
+        match self {
+            Self::DiscoverSource => TargetScope::Repository,
+            Self::AuthorResource | Self::EditResource => TargetScope::PersonalSource,
+            Self::ProjectOutputs => TargetScope::ProviderOutput,
+        }
+    }
+
+    fn operation_kind(self) -> OperationKind {
+        match self {
+            Self::DiscoverSource => OperationKind::Read,
+            Self::AuthorResource => OperationKind::Create,
+            Self::EditResource => OperationKind::Edit,
+            Self::ProjectOutputs => OperationKind::Project,
+        }
+    }
+
+    fn guidance(self) -> &'static str {
+        match self {
+            Self::DiscoverSource => {
+                "Use :browse owner/repo, :preview /path/to/source, or repository search to read another marketplace without writing state."
+            }
+            Self::AuthorResource => {
+                "Create reusable skills, plugins, hooks, and agents in the owning marketplace source, usually /Users/amichne/code/slopsentral; this TUI does not author files yet."
+            }
+            Self::EditResource => {
+                "Edit resources where they are authored: repository source for repo-owned content, or the personal marketplace source for reusable content."
+            }
+            Self::ProjectOutputs => {
+                "Provider output is generated from source and install state. Use marketplace materialize or marketplace publish outside the TUI for now."
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FlowKind {
+    Discover,
+    Installed,
+    AddToRepository,
+    Author,
+    Edit,
+    Outputs,
+}
+
+impl FlowKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Discover => "discover",
+            Self::Installed => "installed",
+            Self::AddToRepository => "add to repo",
+            Self::Author => "author",
+            Self::Edit => "edit",
+            Self::Outputs => "outputs",
+        }
+    }
+
+    fn table_label(self) -> &'static str {
+        match self {
+            Self::Discover => "find",
+            Self::Installed => "local",
+            Self::AddToRepository => "add",
+            Self::Author => "author",
+            Self::Edit => "edit",
+            Self::Outputs => "output",
+        }
+    }
+
+    fn rank(self) -> u8 {
+        match self {
+            Self::AddToRepository => 0,
+            Self::Installed => 1,
+            Self::Discover => 2,
+            Self::Author => 3,
+            Self::Edit => 4,
+            Self::Outputs => 5,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TargetScope {
+    Repository,
+    PersonalSource,
+    ProviderOutput,
+}
+
+impl TargetScope {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Repository => "repository",
+            Self::PersonalSource => "personal source",
+            Self::ProviderOutput => "provider output",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum SourceScope {
+    CurrentRepository,
+    PersonalSource,
+    RemoteSource,
+    ResolvedCache,
+    InstalledState,
+}
+
+impl SourceScope {
+    fn label(self) -> &'static str {
+        match self {
+            Self::CurrentRepository => "current repository",
+            Self::PersonalSource => "personal source",
+            Self::RemoteSource => "remote source",
+            Self::ResolvedCache => "resolved cache",
+            Self::InstalledState => "installed state",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OperationKind {
+    Read,
+    Import,
+    Install,
+    Create,
+    Edit,
+    Update,
+    Validate,
+    Project,
+    Publish,
+}
+
+impl OperationKind {
+    fn label(self) -> &'static str {
+        match self {
+            Self::Read => "read",
+            Self::Import => "import",
+            Self::Install => "install",
+            Self::Create => "create",
+            Self::Edit => "edit",
+            Self::Update => "update",
+            Self::Validate => "validate",
+            Self::Project => "project",
+            Self::Publish => "publish",
+        }
     }
 }
 
@@ -668,6 +896,7 @@ impl OfferingKind {
 pub enum OfferingSource {
     Marketplace,
     Installed,
+    Guidance,
 }
 
 impl OfferingSource {
@@ -675,6 +904,7 @@ impl OfferingSource {
         match self {
             Self::Marketplace => "catalog",
             Self::Installed => "local",
+            Self::Guidance => "guided path",
         }
     }
 
@@ -682,13 +912,7 @@ impl OfferingSource {
         match self {
             Self::Marketplace => "◉",
             Self::Installed => "○",
-        }
-    }
-
-    fn table_label(self) -> &'static str {
-        match self {
-            Self::Marketplace => "cat",
-            Self::Installed => "loc",
+            Self::Guidance => "◇",
         }
     }
 
@@ -696,6 +920,7 @@ impl OfferingSource {
         match self {
             Self::Marketplace => theme.fg(ColorSlot::Catalog),
             Self::Installed => theme.fg(ColorSlot::Local),
+            Self::Guidance => theme.fg(ColorSlot::Info),
         }
     }
 }
@@ -706,10 +931,14 @@ enum OfferingInstallState {
     Installed,
     Pinned,
     UpdateAvailable,
+    Guided,
 }
 
 impl OfferingInstallState {
     fn from_offering(offering: &Offering) -> Self {
+        if offering.kind.is_guided() {
+            return Self::Guided;
+        }
         offering
             .installed
             .as_ref()
@@ -731,6 +960,7 @@ impl OfferingInstallState {
             Self::Installed => "installed",
             Self::Pinned => "pinned",
             Self::UpdateAvailable => "update",
+            Self::Guided => "guided",
         }
     }
 
@@ -740,6 +970,7 @@ impl OfferingInstallState {
             Self::Installed => "✓",
             Self::Pinned => "◆",
             Self::UpdateAvailable => "▲",
+            Self::Guided => "?",
         }
     }
 
@@ -749,6 +980,7 @@ impl OfferingInstallState {
             Self::Installed => "inst",
             Self::Pinned => "pin",
             Self::UpdateAvailable => "update",
+            Self::Guided => "guide",
         }
     }
 
@@ -758,6 +990,7 @@ impl OfferingInstallState {
             Self::Installed => theme.fg(ColorSlot::Success),
             Self::Pinned => theme.fg(ColorSlot::AccentSecondary),
             Self::UpdateAvailable => theme.fg(ColorSlot::Warning).add_modifier(Modifier::BOLD),
+            Self::Guided => theme.fg(ColorSlot::Info),
         }
     }
 }
@@ -771,6 +1004,54 @@ pub struct Offering {
     pub installed: Option<InstalledPlugin>,
     pub repository: Option<String>,
     pub source: OfferingSource,
+}
+
+impl Offering {
+    fn flow_kind(&self) -> FlowKind {
+        if let Some(guided) = self.kind.guided_action() {
+            guided.flow_kind()
+        } else if self.installed.is_some() || self.source == OfferingSource::Installed {
+            FlowKind::Installed
+        } else {
+            FlowKind::AddToRepository
+        }
+    }
+
+    fn source_scope(&self) -> SourceScope {
+        if let Some(guided) = self.kind.guided_action() {
+            return guided.source_scope();
+        }
+        if self.source == OfferingSource::Installed || self.installed.is_some() {
+            return SourceScope::InstalledState;
+        }
+        self.repository
+            .as_deref()
+            .filter(|repository| looks_like_local_path(repository))
+            .map(|_| SourceScope::PersonalSource)
+            .unwrap_or(SourceScope::RemoteSource)
+    }
+
+    fn target_scope(&self) -> TargetScope {
+        self.kind
+            .guided_action()
+            .map(GuidedActionKind::target_scope)
+            .unwrap_or(TargetScope::Repository)
+    }
+
+    fn operation_kind(&self) -> OperationKind {
+        if let Some(guided) = self.kind.guided_action() {
+            return guided.operation_kind();
+        }
+        if self.installed.is_some() || self.source == OfferingSource::Installed {
+            OperationKind::Update
+        } else {
+            OperationKind::Import
+        }
+    }
+
+    fn guidance_message(&self) -> Option<&'static str> {
+        self.kind.guided_action().map(GuidedActionKind::guidance)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -907,6 +1188,7 @@ fn repository_with_ref(repository: &str, ref_name: Option<&str>) -> String {
 pub struct CommandSuggestion {
     pub command: &'static str,
     pub applicable: bool,
+    pub flow: FlowKind,
 }
 
 #[derive(Debug, Clone)]
@@ -987,11 +1269,20 @@ impl App {
             &repository,
         );
         self.apply_filter();
+        let marketplace_resources = self
+            .offerings
+            .iter()
+            .filter(|offering| !offering.kind.is_guided())
+            .count();
+        let guided_paths = self
+            .offerings
+            .iter()
+            .filter(|offering| offering.kind.is_guided())
+            .count();
         self.set_status(
             StatusSeverity::Success,
             format!(
-                "Loaded {} offerings from {}",
-                self.offerings.len(),
+                "Loaded {marketplace_resources} marketplace resources and {guided_paths} guided paths from {}",
                 self.browse_repository
             ),
         );
@@ -1067,26 +1358,34 @@ impl App {
     }
 
     pub fn command_suggestions(&self) -> Vec<CommandSuggestion> {
-        const COMMANDS: [&str; 19] = [
-            "import",
-            "stage",
-            "update",
-            "pin ",
-            "unpin",
-            "run staged",
-            "clear staged",
-            "install all",
-            "update all",
-            "stage all",
-            "validate",
-            "browse ",
-            "preview ",
-            "search ",
-            "scope ",
-            "target ",
-            "host ",
-            "remote list",
-            "quit",
+        const COMMANDS: [(&str, FlowKind); 27] = [
+            ("browse ", FlowKind::Discover),
+            ("preview ", FlowKind::Discover),
+            ("search ", FlowKind::Discover),
+            ("scope ", FlowKind::Discover),
+            ("host ", FlowKind::Discover),
+            ("import", FlowKind::AddToRepository),
+            ("stage", FlowKind::AddToRepository),
+            ("run staged", FlowKind::AddToRepository),
+            ("clear staged", FlowKind::AddToRepository),
+            ("install all", FlowKind::AddToRepository),
+            ("stage all", FlowKind::AddToRepository),
+            ("update", FlowKind::Installed),
+            ("update all", FlowKind::Installed),
+            ("pin ", FlowKind::Installed),
+            ("unpin", FlowKind::Installed),
+            ("remote list", FlowKind::Installed),
+            ("target ", FlowKind::Installed),
+            ("validate", FlowKind::Installed),
+            ("author", FlowKind::Author),
+            ("create skill", FlowKind::Author),
+            ("edit", FlowKind::Edit),
+            ("open source", FlowKind::Edit),
+            ("outputs", FlowKind::Outputs),
+            ("materialize", FlowKind::Outputs),
+            ("publish", FlowKind::Outputs),
+            ("validate hydrated", FlowKind::Outputs),
+            ("quit", FlowKind::Discover),
         ];
         let typed = self.command_input.trim();
         let selected = self.selected_offering();
@@ -1096,7 +1395,7 @@ impl App {
 
         let mut suggestions = COMMANDS
             .into_iter()
-            .map(|command| {
+            .map(|(command, flow)| {
                 let applicable = match command {
                     "import" | "stage" => selected.is_some(),
                     "update" => selected_installed.is_some(),
@@ -1127,6 +1426,7 @@ impl App {
                     CommandSuggestion {
                         command,
                         applicable,
+                        flow,
                     },
                 )
             })
@@ -1137,6 +1437,7 @@ impl App {
                     *prefix_rank,
                     *applicability_rank,
                     *context_rank,
+                    suggestion.flow.rank(),
                     suggestion.command,
                 )
             },
@@ -1228,6 +1529,9 @@ impl App {
                     && self.search_scope == SearchScope::Repository
                 {
                     self.preview_search_repository()
+                } else if let Some(message) = self.selected_guidance_message() {
+                    self.set_status(StatusSeverity::Info, message);
+                    UiEffect::None
                 } else {
                     self.set_status(
                         StatusSeverity::Info,
@@ -1385,6 +1689,18 @@ impl App {
             self.apply_filter();
             return UiEffect::None;
         }
+        if command == "author" || command == "create skill" {
+            return self.show_guided_action(GuidedActionKind::AuthorResource);
+        }
+        if command == "edit" || command == "open source" {
+            return self.show_guided_action(GuidedActionKind::EditResource);
+        }
+        if matches!(
+            command.as_str(),
+            "outputs" | "materialize" | "publish" | "validate hydrated"
+        ) {
+            return self.show_guided_action(GuidedActionKind::ProjectOutputs);
+        }
         if command == "remote list" {
             return UiEffect::Call {
                 title: "List marketplace remotes".to_string(),
@@ -1453,6 +1769,10 @@ impl App {
     }
 
     fn pending_import_selected(&mut self) -> UiEffect {
+        if let Some(message) = self.selected_guidance_message() {
+            self.set_status(StatusSeverity::Info, message);
+            return UiEffect::None;
+        }
         match self.selected_install_or_update_action() {
             Ok(action) => self.pending = Some(action),
             Err(error) => self.set_status(StatusSeverity::Error, error),
@@ -1495,7 +1815,10 @@ impl App {
                     },
                 })
             }
-            _ => {
+            OfferingKind::Skill
+            | OfferingKind::Agent
+            | OfferingKind::Hook
+            | OfferingKind::Instruction => {
                 let kind = offering.kind.label().to_string();
                 let name = offering.name.clone();
                 Ok(PendingAction {
@@ -1520,6 +1843,10 @@ impl App {
                     },
                 })
             }
+            OfferingKind::Guided(_) => Err(offering
+                .guidance_message()
+                .unwrap_or("This guided path is not a repository mutation.")
+                .to_string()),
         }
     }
 
@@ -1554,6 +1881,11 @@ impl App {
     }
 
     fn stage_selected_action(&mut self) -> UiEffect {
+        if let Some(message) = self.selected_guidance_message() {
+            self.set_status(StatusSeverity::Info, message);
+            self.focus = FocusPane::Details;
+            return UiEffect::None;
+        }
         match self.selected_install_or_update_action() {
             Ok(action) => {
                 self.set_status(StatusSeverity::Success, format!("Staged {}", action.title));
@@ -1563,6 +1895,27 @@ impl App {
             }
             Err(error) => self.set_status(StatusSeverity::Error, error),
         }
+        UiEffect::None
+    }
+
+    fn selected_guidance_message(&self) -> Option<&'static str> {
+        self.selected_offering()
+            .and_then(Offering::guidance_message)
+    }
+
+    fn show_guided_action(&mut self, kind: GuidedActionKind) -> UiEffect {
+        if let Some(index) = self
+            .offerings
+            .iter()
+            .position(|offering| offering.kind == OfferingKind::Guided(kind))
+        {
+            self.apply_filter();
+            if let Some(filtered_index) = self.filtered.iter().position(|value| *value == index) {
+                self.selected = filtered_index;
+            }
+        }
+        self.focus = FocusPane::Details;
+        self.set_status(StatusSeverity::Info, kind.guidance());
         UiEffect::None
     }
 
@@ -1804,6 +2157,7 @@ fn offerings_from_catalog(
             source: OfferingSource::Installed,
         });
     }
+    offerings.extend(guided_offerings());
     offerings
 }
 
@@ -1816,6 +2170,52 @@ fn primitive_offering(kind: OfferingKind, primitive: PrimitiveOffering) -> Offer
         installed: None,
         repository: None,
         source: OfferingSource::Marketplace,
+    }
+}
+
+fn guided_offerings() -> Vec<Offering> {
+    vec![
+        guided_offering(
+            GuidedActionKind::DiscoverSource,
+            "Browse marketplace sources",
+            "Read repository, local, or remote marketplaces without changing target state.",
+            &["guided", "read", "discover", "browse"],
+        ),
+        guided_offering(
+            GuidedActionKind::AuthorResource,
+            "Create reusable resource",
+            "Author reusable skills, plugins, hooks, agents, and instructions in the owning marketplace source.",
+            &["guided", "author", "create", "personal-source"],
+        ),
+        guided_offering(
+            GuidedActionKind::EditResource,
+            "Edit owned resource",
+            "Edit resources where they are authored instead of changing generated provider output.",
+            &["guided", "edit", "source"],
+        ),
+        guided_offering(
+            GuidedActionKind::ProjectOutputs,
+            "Generate provider output",
+            "Materialize or publish Codex and GitHub provider payloads from source and install state.",
+            &["guided", "outputs", "materialize", "publish"],
+        ),
+    ]
+}
+
+fn guided_offering(
+    kind: GuidedActionKind,
+    name: &'static str,
+    description: &'static str,
+    tags: &[&'static str],
+) -> Offering {
+    Offering {
+        kind: OfferingKind::Guided(kind),
+        name: name.to_string(),
+        description: Some(description.to_string()),
+        tags: tags.iter().map(|tag| (*tag).to_string()).collect(),
+        installed: None,
+        repository: Some(kind.source_scope().label().to_string()),
+        source: OfferingSource::Guidance,
     }
 }
 
@@ -1894,6 +2294,10 @@ fn all_searchable_text(offering: &Offering, repository: &str) -> String {
     let mut values = vec![
         offering.name.clone(),
         offering.kind.label().to_string(),
+        offering.flow_kind().label().to_string(),
+        offering.source_scope().label().to_string(),
+        offering.target_scope().label().to_string(),
+        offering.operation_kind().label().to_string(),
         offering.description.clone().unwrap_or_default(),
         offering.tags.join(" "),
         repository.to_string(),
@@ -1993,6 +2397,9 @@ fn is_subsequence(needle: &str, haystack: &str) -> bool {
 fn selected_summary(selected: Option<&Offering>) -> String {
     selected
         .map(|offering| {
+            if let Some(message) = offering.guidance_message() {
+                return message.to_string();
+            }
             let version = offering
                 .installed
                 .as_ref()
@@ -2001,6 +2408,34 @@ fn selected_summary(selected: Option<&Offering>) -> String {
             format!("{} ({}) - {version}", offering.name, offering.kind.label())
         })
         .unwrap_or_else(|| "No offering selected".to_string())
+}
+
+fn provenance_path(offering: &Offering, app: &App) -> String {
+    let source = match offering.source_scope() {
+        SourceScope::CurrentRepository => "current repository".to_string(),
+        SourceScope::PersonalSource => offering
+            .repository
+            .clone()
+            .filter(|value| looks_like_local_path(value))
+            .unwrap_or_else(|| "/Users/amichne/code/slopsentral".to_string()),
+        SourceScope::RemoteSource => offering
+            .repository
+            .clone()
+            .unwrap_or_else(|| app.browse_repository.clone()),
+        SourceScope::ResolvedCache => "~/.local/share/intelligence/marketplace-assets".to_string(),
+        SourceScope::InstalledState => ".intelligence/adaptable.marketplace.json".to_string(),
+    };
+    format!(
+        "{} -> {} -> {} {}",
+        source,
+        offering.operation_kind().label(),
+        offering.target_scope().label(),
+        match offering.target_scope() {
+            TargetScope::Repository => app.repo_root.as_str(),
+            TargetScope::PersonalSource => "/Users/amichne/code/slopsentral",
+            TargetScope::ProviderOutput => ".agents/plugins or .github/plugin",
+        }
+    )
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -2123,10 +2558,10 @@ impl ModeBarState {
 
 fn normal_footer(focus: FocusPane) -> String {
     match focus {
-        FocusPane::Sources => "tab offerings  r preview  / search  : palette  ? help",
-        FocusPane::Offerings => "tab details  enter details  i stage  a stage all  / search",
-        FocusPane::Details => "tab staging  enter details  / search  : palette  ? help",
-        FocusPane::Staging => "tab sources  enter confirm  x remove  : palette  ? help",
+        FocusPane::Sources => "tab resources  r preview source  / search  : palette  ? help",
+        FocusPane::Offerings => "tab details  enter explain  i stage/add  a install all  / search",
+        FocusPane::Details => "tab actions  enter explain  / search  : palette  ? help",
+        FocusPane::Staging => "tab context  enter confirm  x remove  : palette  ? help",
     }
     .to_string()
 }
@@ -2151,17 +2586,7 @@ fn search_detail(app: &App, scope: SearchScope) -> String {
 }
 
 fn suggestions_plain(suggestions: &[CommandSuggestion]) -> String {
-    let values = suggestions
-        .iter()
-        .map(|suggestion| {
-            if suggestion.applicable {
-                suggestion.command.to_string()
-            } else {
-                format!("({})", suggestion.command.trim_end())
-            }
-        })
-        .collect::<Vec<_>>();
-    format!("commands: {}", values.join("  "))
+    format!("commands: {}", grouped_suggestions_plain(suggestions))
 }
 
 fn ellipsize(value: &str, width: u16) -> String {
@@ -2192,31 +2617,84 @@ fn fit_suggestions_line(
     let width = usize::from(width);
     let mut spans = vec![Span::styled(prefix.to_string(), theme.muted())];
     let mut used = prefix.chars().count();
-    for suggestion in suggestions {
-        let label = if suggestion.applicable {
-            suggestion.command.to_string()
-        } else {
-            format!("({})", suggestion.command.trim_end())
-        };
-        let separator = if used == prefix.chars().count() {
+    for group in grouped_suggestions(suggestions) {
+        let group_label = format!("{}:", group.flow.table_label());
+        let group_separator = if used == prefix.chars().count() {
             " "
         } else {
-            "  "
+            " | "
         };
-        let needed = separator.chars().count() + label.chars().count();
-        if used + needed > width {
+        let group_needed = group_separator.chars().count() + group_label.chars().count();
+        if used + group_needed > width {
             break;
         }
-        spans.push(Span::styled(separator.to_string(), theme.muted()));
-        let style = if suggestion.applicable {
-            theme.fg(ColorSlot::AccentPrimary)
-        } else {
-            theme.muted()
-        };
-        spans.push(Span::styled(label, style));
-        used += needed;
+        spans.push(Span::styled(group_separator.to_string(), theme.muted()));
+        spans.push(Span::styled(group_label, theme.muted()));
+        used += group_needed;
+        for suggestion in group.suggestions {
+            let label = suggestion_label(suggestion);
+            let needed = 1 + label.chars().count();
+            if used + needed > width {
+                return Line::from(spans);
+            }
+            spans.push(Span::styled(" ".to_string(), theme.muted()));
+            let style = if suggestion.applicable {
+                theme.fg(ColorSlot::AccentPrimary)
+            } else {
+                theme.muted()
+            };
+            spans.push(Span::styled(label, style));
+            used += needed;
+        }
     }
     Line::from(spans)
+}
+
+struct SuggestionGroup<'a> {
+    flow: FlowKind,
+    suggestions: Vec<&'a CommandSuggestion>,
+}
+
+fn grouped_suggestions(suggestions: &[CommandSuggestion]) -> Vec<SuggestionGroup<'_>> {
+    let mut groups = Vec::<SuggestionGroup<'_>>::new();
+    for suggestion in suggestions {
+        if let Some(group) = groups
+            .iter_mut()
+            .find(|group| group.flow == suggestion.flow)
+        {
+            group.suggestions.push(suggestion);
+        } else {
+            groups.push(SuggestionGroup {
+                flow: suggestion.flow,
+                suggestions: vec![suggestion],
+            });
+        }
+    }
+    groups
+}
+
+fn grouped_suggestions_plain(suggestions: &[CommandSuggestion]) -> String {
+    grouped_suggestions(suggestions)
+        .into_iter()
+        .map(|group| {
+            let values = group
+                .suggestions
+                .into_iter()
+                .map(suggestion_label)
+                .collect::<Vec<_>>()
+                .join(" ");
+            format!("{}: {values}", group.flow.table_label())
+        })
+        .collect::<Vec<_>>()
+        .join(" | ")
+}
+
+fn suggestion_label(suggestion: &CommandSuggestion) -> String {
+    if suggestion.applicable {
+        suggestion.command.to_string()
+    } else {
+        format!("({})", suggestion.command.trim_end())
+    }
 }
 
 pub fn render(frame: &mut ratatui::Frame, app: &App) {
@@ -2297,11 +2775,37 @@ fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTh
         .iter()
         .filter(|offering| offering.kind == OfferingKind::Plugin)
         .count();
-    let primitive_count = app.offerings.len().saturating_sub(plugin_count);
+    let primitive_count = app
+        .offerings
+        .iter()
+        .filter(|offering| offering.kind.is_primitive())
+        .count();
+    let guided_count = app
+        .offerings
+        .iter()
+        .filter(|offering| offering.kind.is_guided())
+        .count();
+    let active_flow = app
+        .selected_offering()
+        .map(Offering::flow_kind)
+        .unwrap_or(FlowKind::Discover);
+    let source_kind = app
+        .selected_offering()
+        .map(|offering| offering.source_scope().label())
+        .unwrap_or(SourceScope::RemoteSource.label());
+    let entrypoint = app
+        .marketplace
+        .as_ref()
+        .map(|marketplace| marketplace.entrypoint.as_str())
+        .unwrap_or("not loaded");
     let items = vec![
-        field_item("Remote", app.browse_repository.as_str(), theme),
-        field_item("Git host", app.default_git_host.as_str(), theme),
         field_item("Target", app.repo_root.as_str(), theme),
+        field_item("Intent", ".intelligence/adaptable.marketplace.json", theme),
+        field_item("Lock", ".intelligence/marketplace-lock.json", theme),
+        field_item("Browse", app.browse_repository.as_str(), theme),
+        field_item("Entrypoint", entrypoint, theme),
+        field_item("Source", source_kind, theme),
+        field_item("Flow", active_flow.label(), theme),
         field_item("Search", app.search_scope.label(), theme),
         ListItem::new(Line::from(vec![
             Span::styled("Local", theme.muted()),
@@ -2326,21 +2830,21 @@ fn render_sources(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTh
             Span::styled("◆", theme.fg(ColorSlot::Skill)),
             Span::from(format!(" {primitive_count}")),
         ])),
+        ListItem::new(Line::from(vec![
+            Span::styled("Guides", theme.emphasis()),
+            Span::from(": "),
+            Span::styled("?", theme.fg(ColorSlot::Info)),
+            Span::from(format!(" {guided_count}")),
+        ])),
         ListItem::new(""),
-        ListItem::new(Line::from("Operations").style(theme.emphasis())),
-        operation_item("r", "preview remote", theme),
-        operation_item("i", "stage selected", theme),
-        operation_item("a", "stage install all", theme),
-        operation_item("v", "validate target", theme),
-        operation_item("/", "search", theme),
-        operation_item("tab", "focus", theme),
-        operation_item(":", "palette", theme),
+        field_item(
+            "Cache",
+            "~/.local/share/intelligence/marketplace-assets",
+            theme,
+        ),
+        field_item("Personal", "/Users/amichne/code/slopsentral", theme),
     ];
-    let block = focused_block(
-        "Source / Operations",
-        app.focus == FocusPane::Sources,
-        theme,
-    );
+    let block = focused_block("Context", app.focus == FocusPane::Sources, theme);
     frame.render_widget(List::new(items).block(block), area);
 }
 
@@ -2362,10 +2866,10 @@ fn render_offerings(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: Ui
                 offering.name.clone(),
                 theme.fg(ColorSlot::Default),
             )),
-            Cell::from(Line::from(vec![
-                Span::styled(offering.source.marker(), offering.source.style(theme)),
-                Span::styled(offering.source.table_label(), offering.source.style(theme)),
-            ])),
+            Cell::from(Span::styled(
+                offering.flow_kind().table_label(),
+                theme.fg(ColorSlot::Info),
+            )),
             Cell::from(Line::from(vec![
                 Span::styled(state.marker(), state.style(theme)),
                 Span::styled(state.table_label(), state.style(theme)),
@@ -2378,14 +2882,14 @@ fn render_offerings(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: Ui
         [
             Constraint::Length(8),
             Constraint::Min(10),
-            Constraint::Length(5),
+            Constraint::Length(7),
             Constraint::Length(8),
             Constraint::Length(8),
         ],
     )
-    .header(Row::new(vec!["Type", "Name", "Source", "State", "Version"]).style(theme.emphasis()))
+    .header(Row::new(vec!["Type", "Name", "Flow", "State", "Version"]).style(theme.emphasis()))
     .block(focused_block(
-        "Offerings",
+        "Resources",
         app.focus == FocusPane::Offerings,
         theme,
     ))
@@ -2416,12 +2920,33 @@ fn render_details(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTh
             Span::from(" "),
             Span::styled(state.label(), state.style(theme)),
         ]));
+        lines.push(field_line("flow", offering.flow_kind().label(), theme));
+        lines.push(field_line(
+            "source scope",
+            offering.source_scope().label(),
+            theme,
+        ));
+        lines.push(field_line(
+            "operation",
+            offering.operation_kind().label(),
+            theme,
+        ));
+        lines.push(field_line(
+            "target scope",
+            offering.target_scope().label(),
+            theme,
+        ));
+        lines.push(field_line("path", provenance_path(offering, app), theme));
         if let Some(repository) = &offering.repository {
-            lines.push(field_line("repository", repository.as_str(), theme));
+            lines.push(field_line("source", repository.as_str(), theme));
         }
         if let Some(description) = &offering.description {
             lines.push(Line::from(""));
             lines.push(Line::from(description.clone()).style(theme.fg(ColorSlot::Default)));
+        }
+        if let Some(guidance) = offering.guidance_message() {
+            lines.push(Line::from(""));
+            lines.push(Line::from(guidance).style(theme.fg(ColorSlot::Info)));
         }
         if !offering.tags.is_empty() {
             lines.push(Line::from(""));
@@ -2440,7 +2965,7 @@ fn render_details(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTh
             lines.push(field_line("locked", installed.locked.to_string(), theme));
         }
         lines.push(Line::from(""));
-        lines.push(field_line("install target", app.repo_root.as_str(), theme));
+        lines.push(field_line("target", app.repo_root.as_str(), theme));
     } else {
         lines.push(Line::from("No offering selected").style(theme.muted()));
     }
@@ -2468,7 +2993,7 @@ fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTh
                 ListItem::new(Line::from(vec![
                     Span::styled("▶", theme.fg(ColorSlot::AccentPrimary)),
                     Span::from(" "),
-                    Span::styled(action.title.clone(), theme.fg(ColorSlot::Default)),
+                    Span::styled(action.provenance.summary(), theme.fg(ColorSlot::Default)),
                 ]))
             })
             .collect()
@@ -2478,7 +3003,7 @@ fn render_staging(frame: &mut ratatui::Frame, area: Rect, app: &App, theme: UiTh
     frame.render_stateful_widget(
         List::new(items)
             .block(focused_block(
-                "Staging / Install",
+                "Actions",
                 app.focus == FocusPane::Staging,
                 theme,
             ))
@@ -2511,13 +3036,17 @@ fn render_shortcuts(frame: &mut ratatui::Frame, theme: UiTheme) {
     let body = vec![
         Line::from("Keyboard shortcuts").style(theme.emphasis()),
         Line::from(""),
+        Line::from("Scopes and flows").style(theme.emphasis()),
+        Line::from("target = repository state; source = marketplace, personal source, installed state, cache, or provider output"),
+        Line::from("flows: discover, add to repo, installed, author, edit, outputs"),
+        Line::from(""),
         shortcut_line("/ search current catalog and local installed plugins", theme),
         shortcut_line("tab / shift-tab move panes; in search, cycle all/repository/user/plugin/primitive/installed", theme),
         shortcut_line("r preview remote from repository search, using the configured default Git host", theme),
         shortcut_line("i stage selected install/update; a stage install all", theme),
         shortcut_line("enter opens details or confirms the selected staged action", theme),
         shortcut_line("v validate the selected install target", theme),
-        shortcut_line(": palette for browse, preview, host, target, scope, staging, update, pin, and remotes", theme),
+        shortcut_line(": palette groups discover, add, installed, author, edit, and outputs commands", theme),
         shortcut_line("x removes a staged action when the staging pane is focused", theme),
         shortcut_line("esc or ? closes this panel", theme),
     ];
@@ -2573,19 +3102,6 @@ fn field_line<'a>(
         Span::from(": "),
         Span::styled(value.into(), theme.fg(ColorSlot::Default)),
     ])
-}
-
-fn operation_item<'a>(key: &'static str, label: &'static str, theme: UiTheme) -> ListItem<'a> {
-    ListItem::new(Line::from(vec![
-        Span::styled(
-            key,
-            theme
-                .fg(ColorSlot::AccentPrimary)
-                .add_modifier(Modifier::BOLD),
-        ),
-        Span::from(" "),
-        Span::styled(label, theme.fg(ColorSlot::Default)),
-    ]))
 }
 
 fn tag_line<'a>(tags: &'a [String], theme: UiTheme) -> Line<'a> {
@@ -2812,10 +3328,10 @@ mod tests {
         let lines = rendered_lines(&app, 120, 30);
         let screen = screen_text(&lines);
 
-        assert!(screen.contains("▸ Offerings"));
+        assert!(screen.contains("▸ Resources"));
         assert!(screen.contains("●plugin"));
         assert!(screen.contains("◆skill"));
-        assert!(screen.contains("◉cat"));
+        assert!(screen.contains("add"));
         assert!(screen.contains("□avail"));
         assert!(screen.contains("▲update"));
     }
@@ -2999,6 +3515,13 @@ mod tests {
         assert!(suggestions
             .iter()
             .any(|suggestion| suggestion.command == "import" && !suggestion.applicable));
+        assert!(suggestions.iter().any(
+            |suggestion| suggestion.command == "author" && suggestion.flow == FlowKind::Author
+        ));
+        assert!(suggestions
+            .iter()
+            .any(|suggestion| suggestion.command == "materialize"
+                && suggestion.flow == FlowKind::Outputs));
         assert!(
             position_of_command(&suggestions, "validate")
                 < position_of_command(&suggestions, "import")
@@ -3018,6 +3541,44 @@ mod tests {
         );
         let suggestions = app.command_suggestions();
         assert_eq!("update", suggestions[0].command);
+    }
+
+    #[test]
+    fn guided_resources_classify_flow_scope_and_operation_without_rpc_actions() {
+        let mut app = App::new(test_config());
+        let offerings = offerings_from_catalog(
+            Vec::new(),
+            StandalonePrimitives::default(),
+            &[],
+            "amichne/slopsentral",
+        );
+        select_offerings(&mut app, offerings);
+        let author = app
+            .offerings
+            .iter()
+            .find(|offering| {
+                offering.kind == OfferingKind::Guided(GuidedActionKind::AuthorResource)
+            })
+            .expect("author guide");
+        assert_eq!(FlowKind::Author, author.flow_kind());
+        assert_eq!(SourceScope::PersonalSource, author.source_scope());
+        assert_eq!(TargetScope::PersonalSource, author.target_scope());
+        assert_eq!(OperationKind::Create, author.operation_kind());
+
+        app.command_input = "author".to_string();
+        app.input_mode = InputMode::Command;
+        let effect = app.handle_key(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert!(matches!(effect, UiEffect::None));
+        assert_eq!(FocusPane::Details, app.focus);
+        assert_eq!(
+            Some(StatusSeverity::Info),
+            app.status.as_ref().map(|status| status.severity)
+        );
+        assert!(app
+            .status
+            .as_ref()
+            .is_some_and(|status| status.text.contains("/Users/amichne/code/slopsentral")));
     }
 
     fn position_of_command(suggestions: &[CommandSuggestion], command: &str) -> usize {
@@ -3062,6 +3623,66 @@ mod tests {
         assert!(!lines[21..24].iter().any(|line| line.contains("Command")));
         assert!(!lines[21..24].iter().any(|line| line.contains('┌')));
         assert!(!lines[21..24].iter().any(|line| line.contains('│')));
+    }
+
+    #[test]
+    fn render_context_resources_and_actions_use_flow_language() {
+        let mut app = App::new(test_config());
+        let catalog = Catalog {
+            marketplace: MarketplaceSummary {
+                name: "slopsentral".to_string(),
+                provider: "source".to_string(),
+                repository: "amichne/slopsentral".to_string(),
+                entrypoint: "source/adaptable.marketplace.json".to_string(),
+                description: None,
+            },
+            plugins: vec![PluginOffering {
+                name: "kotlin-engineering".to_string(),
+                description: Some("Typed Kotlin workflow".to_string()),
+                category: None,
+                tags: vec!["kotlin".to_string()],
+            }],
+            standalone_primitives: StandalonePrimitives::default(),
+            installed: Vec::new(),
+        };
+        app.set_catalog(catalog);
+        app.staged = vec![app.install_all_action()];
+
+        let lines = rendered_lines(&app, 80, 24);
+        let screen = screen_text(&lines);
+
+        assert!(screen.contains("Context"));
+        assert!(screen.contains("Resources"));
+        assert!(screen.contains("Actions"));
+        assert!(screen.contains("Flow"));
+        assert!(screen.contains("add"));
+        assert!(screen.contains("install all"));
+    }
+
+    #[test]
+    fn render_guided_output_details_explain_source_operation_and_target() {
+        let mut app = App::new(test_config());
+        select_offerings(
+            &mut app,
+            vec![guided_offering(
+                GuidedActionKind::ProjectOutputs,
+                "Generate provider output",
+                "Materialize or publish provider payloads.",
+                &["outputs"],
+            )],
+        );
+        app.focus = FocusPane::Details;
+
+        let lines = rendered_lines(&app, 100, 30);
+        let screen = screen_text(&lines);
+
+        assert!(screen.contains("flow: outputs"));
+        assert!(screen.contains("source scope: current repository"));
+        assert!(screen.contains("operation: project"));
+        assert!(screen.contains("target scope: provider output"));
+        assert!(app.selected_offering().is_some_and(|offering| offering
+            .guidance_message()
+            .is_some_and(|message| message.contains("marketplace materialize"))));
     }
 
     #[test]
@@ -3321,8 +3942,12 @@ mod tests {
             "amichne/slopsentral",
         );
 
-        assert_eq!(1, offerings.len());
+        assert_eq!(5, offerings.len());
         assert_eq!(OfferingSource::Installed, offerings[0].source);
+        assert_eq!(
+            OfferingKind::Guided(GuidedActionKind::DiscoverSource),
+            offerings[1].kind
+        );
         assert!(
             search_score_scoped("enterprise", SearchScope::Repository, &offerings[0]).is_some()
         );
