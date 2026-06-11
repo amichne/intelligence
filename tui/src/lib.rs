@@ -1358,7 +1358,7 @@ impl App {
     }
 
     pub fn command_suggestions(&self) -> Vec<CommandSuggestion> {
-        const COMMANDS: [(&str, FlowKind); 27] = [
+        const COMMANDS: [(&str, FlowKind); 24] = [
             ("browse ", FlowKind::Discover),
             ("preview ", FlowKind::Discover),
             ("search ", FlowKind::Discover),
@@ -1382,9 +1382,6 @@ impl App {
             ("edit", FlowKind::Edit),
             ("open source", FlowKind::Edit),
             ("outputs", FlowKind::Outputs),
-            ("materialize", FlowKind::Outputs),
-            ("publish", FlowKind::Outputs),
-            ("validate hydrated", FlowKind::Outputs),
             ("quit", FlowKind::Discover),
         ];
         let typed = self.command_input.trim();
@@ -3520,8 +3517,14 @@ mod tests {
         ));
         assert!(suggestions
             .iter()
-            .any(|suggestion| suggestion.command == "materialize"
+            .any(|suggestion| suggestion.command == "outputs"
                 && suggestion.flow == FlowKind::Outputs));
+        assert!(!suggestions
+            .iter()
+            .any(|suggestion| matches!(
+                suggestion.command,
+                "materialize" | "publish" | "validate hydrated"
+            )));
         assert!(
             position_of_command(&suggestions, "validate")
                 < position_of_command(&suggestions, "import")

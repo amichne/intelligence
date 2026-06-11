@@ -1,8 +1,10 @@
 package intelligence.cli.command
 
 import intelligence.cli.io.normalizedAbsolute
+import intelligence.cli.io.FileSystem
 import intelligence.cli.io.JsonFiles
 import intelligence.cli.io.arrayValue
+import intelligence.cli.io.stringValue
 import intelligence.cli.io.toCliPath
 import intelligence.cli.marketplace.MarketplaceBrowseFormat
 import intelligence.cli.marketplace.MarketplaceBrowseProvider
@@ -10,17 +12,19 @@ import intelligence.cli.marketplace.MarketplaceBrowseText
 import intelligence.cli.marketplace.MarketplaceProvider
 import intelligence.cli.rpc.RpcDispatcher
 import intelligence.cli.rpc.RpcMethod
+import java.nio.file.Files
 import java.nio.file.Path
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.CliktError
 import com.github.ajalt.clikt.core.Context
+import com.github.ajalt.clikt.core.ProgramResult
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.arguments.optional
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
-import com.github.ajalt.clikt.parameters.options.required
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -39,6 +43,9 @@ internal class MarketplaceCommand(
             RemoteMarketplaceCommand(dispatcher),
             ImportMarketplaceCommand(dispatcher),
             InstallMarketplaceCommand(dispatcher),
+            UpdateMarketplaceCommand(dispatcher),
+            PinMarketplaceCommand(dispatcher),
+            UnpinMarketplaceCommand(dispatcher),
             MarketplaceUiCommand(terminalUiLauncher),
             MaterializeMarketplaceCommand(dispatcher),
             PublishMarketplaceCommand(dispatcher),
@@ -112,6 +119,8 @@ private class RemoteMarketplaceCommand(
 ) : CliktCommand(
     name = "remote",
 ) {
+    override val hiddenFromHelp: Boolean = true
+
     init {
         subcommands(
             AddRemoteMarketplaceCommand(dispatcher),
@@ -239,6 +248,8 @@ private class ImportMarketplaceCommand(
 
     private val ref by option("--ref", help = "Branch, tag, or SHA for direct repository imports. Defaults to main.")
 
+    private val noValidate by noValidateOption()
+
     override fun help(context: Context): String =
         "Import a plugin by portable marketplace reference or direct repository/plugin reference."
 
@@ -255,6 +266,7 @@ private class ImportMarketplaceCommand(
             failureMessage = "marketplace import failed",
         )
         echoRpcMessages(result)
+        validateAfterMutation(dispatcher, repo, enabled = !noValidate)
     }
 }
 
@@ -272,6 +284,8 @@ private class InstallMarketplaceCommand(
 
     private val ref by option("--ref", help = "Branch, tag, or SHA for repository resolution. Defaults to main.")
 
+    private val noValidate by noValidateOption()
+
     override fun help(context: Context): String =
         "Install every plugin exposed by an adaptable marketplace repository."
 
@@ -287,6 +301,108 @@ private class InstallMarketplaceCommand(
             failureMessage = "marketplace install failed",
         )
         echoRpcMessages(result)
+        validateAfterMutation(dispatcher, repo, enabled = !noValidate)
+    }
+}
+
+private class UpdateMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+) : CliktCommand(
+    name = "update",
+) {
+    private val repo by repoOption()
+
+    private val plugin by argument(
+        name = "plugin",
+        help = "Imported plugin to update. Omit with --all to update every imported plugin.",
+    ).optional()
+
+    private val all by option("--all", help = "Update every imported plugin.")
+        .flag(default = false)
+
+    private val noValidate by noValidateOption()
+
+    override fun help(context: Context): String =
+        "Update an imported plugin, or every imported plugin with --all."
+
+    override fun run() {
+        if (all && plugin != null) {
+            throw CliktError("--all cannot be combined with a plugin argument")
+        }
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = if (all) RpcMethod.MarketplaceUpdateAll else RpcMethod.MarketplaceUpdate,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                if (!all) {
+                    put("plugin", plugin ?: throw CliktError("missing argument \"plugin\" or --all"))
+                }
+            },
+            failureMessage = "marketplace update failed",
+        )
+        echoRpcMessages(result)
+        validateAfterMutation(dispatcher, repo, enabled = !noValidate)
+    }
+}
+
+private class PinMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+) : CliktCommand(
+    name = "pin",
+) {
+    private val repo by repoOption()
+
+    private val plugin by argument(name = "plugin", help = "Imported plugin to pin.")
+
+    private val version by argument(name = "version", help = "Exact version to pin.")
+
+    private val noValidate by noValidateOption()
+
+    override fun help(context: Context): String =
+        "Pin an imported plugin to an exact version."
+
+    override fun run() {
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplacePin,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("plugin", plugin)
+                put("version", version)
+            },
+            failureMessage = "marketplace pin failed",
+        )
+        echoRpcMessages(result)
+        validateAfterMutation(dispatcher, repo, enabled = !noValidate)
+    }
+}
+
+private class UnpinMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+) : CliktCommand(
+    name = "unpin",
+) {
+    private val repo by repoOption()
+
+    private val plugin by argument(name = "plugin", help = "Imported plugin to unpin.")
+
+    private val noValidate by noValidateOption()
+
+    override fun help(context: Context): String =
+        "Return an imported plugin to the remote current version."
+
+    override fun run() {
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceUnpin,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("plugin", plugin)
+            },
+            failureMessage = "marketplace unpin failed",
+        )
+        echoRpcMessages(result)
+        validateAfterMutation(dispatcher, repo, enabled = !noValidate)
     }
 }
 
@@ -317,22 +433,22 @@ private class MaterializeMarketplaceCommand(
 ) {
     private val repo by repoOption()
 
-    private val provider by providerOption(default = MarketplaceProvider.Codex)
+    private val provider by providerOption(default = MarketplaceProvider.All)
 
     private val out by option("--out", help = "Output directory to replace with generated provider files.")
         .convert("PATH") { it.toCliPath() }
-        .required()
 
     override fun help(context: Context): String =
         "Render provider marketplace files into an output directory."
 
     override fun run() {
+        val outRoot = out ?: repo.resolve("build").resolve("intelligence").resolve("marketplace")
         val result = executeRpc(
             dispatcher = dispatcher,
             method = RpcMethod.MarketplaceMaterialize,
             params = buildJsonObject {
                 put("repoRoot", repo.toString())
-                put("outRoot", out.toString())
+                put("outRoot", outRoot.toString())
                 put("provider", provider.cliName)
             },
             failureMessage = "marketplace materialization failed",
@@ -360,6 +476,9 @@ private class PublishMarketplaceCommand(
     private val noPush by option("--no-push", help = "Prepare provider branches locally without pushing.")
         .flag(default = false)
 
+    private val check by option("--check", help = "Validate source and hydrated provider output before publishing.")
+        .flag(default = false)
+
     override fun help(context: Context): String =
         "Publish default harness marketplaces or provider orphan branches."
 
@@ -377,6 +496,9 @@ private class PublishMarketplaceCommand(
             if (noPush) {
                 throw CliktError("--no-push only applies when publishing --codex, --github, or --copilot")
             }
+            if (check) {
+                runPublishCheck(dispatcher, repo, MarketplaceProvider.All)
+            }
             val result = executeRpc(
                 dispatcher = dispatcher,
                 method = RpcMethod.MarketplacePublishDefault,
@@ -388,6 +510,9 @@ private class PublishMarketplaceCommand(
             echoRpcMessages(result)
         } else {
             branchProviders.forEach { provider ->
+                if (check) {
+                    runPublishCheck(dispatcher, repo, provider)
+                }
                 val result = executeRpc(
                     dispatcher = dispatcher,
                     method = RpcMethod.MarketplacePublishBranch,
@@ -444,6 +569,10 @@ private fun CliktCommand.repoOption() =
         .convert("PATH") { it.toCliPath() }
         .default(Path.of(".").normalizedAbsolute())
 
+private fun CliktCommand.noValidateOption() =
+    option("--no-validate", help = "Skip portable validation after the marketplace state changes.")
+        .flag(default = false)
+
 private fun CliktCommand.providerOption(default: MarketplaceProvider) =
     option("--provider", help = "Marketplace provider: all, codex, or github.")
         .convert("PROVIDER") {
@@ -454,6 +583,82 @@ private fun CliktCommand.providerOption(default: MarketplaceProvider) =
             }
         }
         .default(default)
+
+private fun CliktCommand.validateAfterMutation(dispatcher: RpcDispatcher, repo: Path, enabled: Boolean) {
+    if (!enabled) {
+        return
+    }
+    val result = runValidation(
+        dispatcher = dispatcher,
+        repo = repo,
+        hydrated = null,
+        failureMessage = "post-change validation failed",
+    )
+    failOnValidationExit(result)
+}
+
+private fun CliktCommand.runPublishCheck(dispatcher: RpcDispatcher, repo: Path, provider: MarketplaceProvider) {
+    failOnValidationExit(
+        runValidation(
+            dispatcher = dispatcher,
+            repo = repo,
+            hydrated = null,
+            failureMessage = "source validation failed",
+        )
+    )
+
+    val output = Files.createTempDirectory("intelligence-marketplace-check-")
+    try {
+        val materialized = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceMaterialize,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("outRoot", output.toString())
+                put("provider", provider.cliName)
+            },
+            failureMessage = "marketplace check materialization failed",
+        )
+        echoRpcMessages(materialized)
+        failOnValidationExit(
+            runValidation(
+                dispatcher = dispatcher,
+                repo = repo,
+                hydrated = output,
+                failureMessage = "hydrated validation failed",
+            )
+        )
+    } finally {
+        FileSystem.deleteRecursively(output)
+    }
+}
+
+private fun CliktCommand.runValidation(
+    dispatcher: RpcDispatcher,
+    repo: Path,
+    hydrated: Path?,
+    failureMessage: String,
+): JsonObject {
+    val result = executeRpc(
+        dispatcher = dispatcher,
+        method = RpcMethod.ValidationRun,
+        params = buildJsonObject {
+            put("repoRoot", repo.toString())
+            put("portable", true)
+            hydrated?.let { put("hydrated", it.toString()) }
+        },
+        failureMessage = failureMessage,
+    )
+    echoRpcMessages(result)
+    return result
+}
+
+private fun failOnValidationExit(result: JsonObject) {
+    val exitCode = result.stringValue("exitCode")?.toIntOrNull() ?: 0
+    if (exitCode != 0) {
+        throw ProgramResult(exitCode)
+    }
+}
 
 private fun JsonElement?.asString(): String =
     (this as? JsonPrimitive)?.content.orEmpty()

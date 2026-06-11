@@ -1317,6 +1317,10 @@ internal class MarketplaceService(
     }
 
     private fun refuseRepositoryOutput(repoRoot: Path, outRoot: Path) {
+        val derivedBuildOutput = repoRoot.resolve("build").resolve("intelligence").resolve("marketplace").normalizedAbsolute()
+        if (outRoot == derivedBuildOutput || outRoot.startsWith(derivedBuildOutput)) {
+            return
+        }
         if (outRoot == repoRoot || outRoot.startsWith(repoRoot)) {
             throw MarketplaceFailure.InvalidSource("refusing to materialize inside repository root: $outRoot")
         }

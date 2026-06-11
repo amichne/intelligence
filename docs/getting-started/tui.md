@@ -87,7 +87,9 @@ instead.
 Open the palette with `:`. Suggestions appear in the mode bar as you type.
 Commands that fit the selected offering, staged state, and installed/update
 state rank first; unavailable commands remain visible but dimmed. Suggestions
-are grouped by flow: discover, add, installed, author, edit, and outputs.
+are grouped by flow: discover, add, installed, author, edit, and outputs. The
+provider-output flow is guidance-only in the TUI; use the direct CLI command
+when you need to generate or publish payloads.
 
 | Command | Result |
 |---|---|
@@ -112,7 +114,7 @@ are grouped by flow: discover, add, installed, author, edit, and outputs.
 | `validate` | Run portable validation for the target repository. |
 | `author` or `create skill` | Select the guided authoring path and show the owning source guidance. |
 | `edit` or `open source` | Select the guided edit path and explain where resource edits belong. |
-| `outputs`, `materialize`, `publish`, or `validate hydrated` | Select the guided provider-output path and show the current CLI command path. |
+| `outputs` | Select the guided provider-output path and show the current CLI command path. |
 | `quit` | Exit the browser. |
 
 Repository references use the same rules as `marketplace browse`: an existing
@@ -151,5 +153,5 @@ machine-readable output.
 | Script-readable catalog | `intelligence marketplace browse amichne/slopsentral --format json` |
 | Non-interactive import | `intelligence marketplace import amichne/slopsentral/kotlin-engineering` |
 | Non-interactive full install | `intelligence marketplace install amichne/slopsentral` |
-| Materialize provider output | `intelligence marketplace materialize --repo /path/to/slopsentral --provider codex --out /tmp/slopsentral-codex` |
+| Materialize provider output | `intelligence marketplace materialize --repo /path/to/slopsentral` |
 | Build the docs site | `zensical build --clean` |

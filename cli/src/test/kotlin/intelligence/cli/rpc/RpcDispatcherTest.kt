@@ -174,6 +174,32 @@ class RpcDispatcherTest {
     }
 
     @Test
+    fun `rpc schema allows null response id for request level errors`() {
+        val schema = JsonFiles.readObject(repoRoot().resolve("schemas").resolve("rpc").resolve("marketplace.schema.json"))
+        val responseId = schema
+            .objectValue("\$defs")
+            .objectValue("RpcResponse")
+            .objectValue("properties")
+            .objectValue("id")
+
+        assertTrue(responseId.toString().contains("\"null\""))
+    }
+
+    @Test
+    fun `rpc schema binds request params to their method`() {
+        val schema = JsonFiles.readObject(repoRoot().resolve("schemas").resolve("rpc").resolve("marketplace.schema.json"))
+        val defs = schema.objectValue("\$defs")
+        val request = defs.objectValue("RpcRequest")
+        val methodParams = defs.objectValue("MethodParams")
+
+        assertTrue(request["allOf"].toString().contains("MethodParams"))
+        assertTrue(methodParams.toString().contains("marketplace.pin"))
+        assertTrue(methodParams.toString().contains("PinParams"))
+        assertTrue(methodParams.toString().contains("marketplace.materialize"))
+        assertTrue(methodParams.toString().contains("MaterializeParams"))
+    }
+
+    @Test
     fun `rpc command writes one JSON response per request`() {
         val command = RpcCommand(
             dispatcher = RpcDispatcher(),
