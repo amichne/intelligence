@@ -422,7 +422,7 @@ internal class ValidationService(
                 return@forEachObject
             }
 
-            val pluginRoot = resolveCodexPluginRoot(root, marketplacePath, sourcePath, issues) ?: return@forEachObject
+            val pluginRoot = resolveCodexPluginRoot(root, sourcePath, issues) ?: return@forEachObject
             if (!pluginRoot.isDirectory()) {
                 issues += "${marketplacePath.relativeToUnix(root)}: missing Codex plugin payload ${pluginRoot.relativeToUnix(root)}"
                 return@forEachObject
@@ -437,18 +437,10 @@ internal class ValidationService(
 
     private fun resolveCodexPluginRoot(
         root: Path,
-        marketplacePath: Path,
         sourcePath: String,
         issues: MutableList<String>,
     ): Path? {
-        val marketplaceRoot = marketplacePath.parent ?: root
-        val marketplaceRelative = resolveRelative(marketplaceRoot, sourcePath, issues) ?: return null
-        if (marketplaceRelative.isDirectory()) {
-            return marketplaceRelative
-        }
-
-        val rootRelative = resolveRelative(root, sourcePath, mutableListOf()) ?: return marketplaceRelative
-        return if (rootRelative.isDirectory()) rootRelative else marketplaceRelative
+        return resolveRelative(root, sourcePath, issues)
     }
 
     private fun validateGithubMarketplace(root: Path, marketplacePath: Path, issues: MutableList<String>) {

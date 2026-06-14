@@ -39,6 +39,16 @@ class MarketplaceServiceTest {
         )
 
         assertTrue(output.resolve(".agents").resolve("plugins").resolve("marketplace.json").exists())
+        val codexMarketplace =
+            JsonFiles.readObject(output.resolve(".agents").resolve("plugins").resolve("marketplace.json"))
+        val kotlinEngineeringEntry =
+            codexMarketplace.arrayValue("plugins").single {
+                it.jsonObject.stringValue("name") == "kotlin-engineering"
+            }.jsonObject
+        assertEquals(
+            "./.agents/plugins/plugins/kotlin-engineering",
+            kotlinEngineeringEntry.objectValue("source")!!.stringValue("path"),
+        )
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
@@ -119,6 +129,16 @@ class MarketplaceServiceTest {
         MarketplaceService(output = {}).publishDefault(repository)
 
         assertTrue(repository.resolve(".agents").resolve("plugins").resolve("marketplace.json").exists())
+        val codexMarketplace =
+            JsonFiles.readObject(repository.resolve(".agents").resolve("plugins").resolve("marketplace.json"))
+        val corePluginEntry =
+            codexMarketplace.arrayValue("plugins").single {
+                it.jsonObject.stringValue("name") == "core-plugin"
+            }.jsonObject
+        assertEquals(
+            "./.agents/plugins/plugins/core-plugin",
+            corePluginEntry.objectValue("source")!!.stringValue("path"),
+        )
         assertTrue(
             repository.resolve(".agents")
                 .resolve("plugins")
@@ -147,6 +167,58 @@ class MarketplaceServiceTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `hydrated codex validation rejects stale root plugin source paths`() {
+        val repository = Files.createTempDirectory("intelligence-marketplace-stale-codex-path-")
+        writeJson(
+            repository.resolve(".agents").resolve("plugins").resolve("marketplace.json"),
+            """
+            {
+              "name": "fixture-marketplace",
+              "plugins": [
+                {
+                  "name": "core-plugin",
+                  "source": {
+                    "source": "local",
+                    "path": "./plugins/core-plugin"
+                  },
+                  "policy": {
+                    "installation": "AVAILABLE",
+                    "authentication": "ON_INSTALL"
+                  },
+                  "category": "Engineering"
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            repository.resolve(".agents")
+                .resolve("plugins")
+                .resolve("plugins")
+                .resolve("core-plugin")
+                .resolve(".codex-plugin")
+                .resolve("plugin.json"),
+            """
+            {
+              "name": "core-plugin",
+              "version": "0.1.0",
+              "description": "Nested generated Codex plugin."
+            }
+            """.trimIndent(),
+        )
+
+        val result = ValidationService(output = {}).validate(
+            ValidationOptions(
+                repo = repository,
+                portable = true,
+                hydrated = repository,
+            ),
+        )
+
+        assertTrue(result != 0)
     }
 
     @Test
