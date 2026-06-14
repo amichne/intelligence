@@ -8,7 +8,7 @@
       "name": "browser",
       "source": {
         "source": "local",
-        "path": "./plugins/browser"
+        "path": "./.agents/plugins/plugins/browser"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -20,7 +20,7 @@
       "name": "chrome",
       "source": {
         "source": "local",
-        "path": "./plugins/chrome"
+        "path": "./.agents/plugins/plugins/chrome"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -32,7 +32,7 @@
       "name": "computer-use",
       "source": {
         "source": "local",
-        "path": "./plugins/computer-use"
+        "path": "./.agents/plugins/plugins/computer-use"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -44,7 +44,7 @@
       "name": "latex",
       "source": {
         "source": "local",
-        "path": "./plugins/latex"
+        "path": "./.agents/plugins/plugins/latex"
       },
       "policy": {
         "installation": "AVAILABLE",
