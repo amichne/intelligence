@@ -216,6 +216,9 @@ marketplace browsing.
 | Build native executable | `./gradlew :cli:nativeCompile` | You need the self-contained GraalVM binary. |
 | Install released CLI | `brew install amichne/intelligence/intelligence` | You want the stable installed `intelligence` command. |
 
+Use [Publication](publication.md) for the full release checklist, including tag
+source, native asset verification, JVM linkage checks, and Homebrew proof.
+
 ## Help
 
 Every command group supports focused help.

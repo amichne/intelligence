@@ -33,6 +33,7 @@ nav = [
   { "Reference" = [
     { "Repository map" = "reference/repository-map.md" },
     { "Commands" = "reference/commands.md" },
+    { "Publication" = "reference/publication.md" },
     { "Documentation site" = "reference/documentation-site.md" },
     { "Glossary" = "reference/glossary.md" },
   ]},

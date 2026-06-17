@@ -156,6 +156,10 @@ The release workflow publishes one archive per supported platform/architecture
 target containing `intelligence` and `intelligence-tui`, plus `SHA256SUMS`. It
 does not publish JVM application archives.
 
+Use the release checklist in
+[`docs/reference/publication.md`](docs/reference/publication.md) before cutting
+the first stable native CLI release.
+
 After a stable native release, install the CLI with Homebrew:
 
 ```sh
