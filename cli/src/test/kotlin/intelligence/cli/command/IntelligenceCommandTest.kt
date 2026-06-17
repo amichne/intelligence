@@ -1,5 +1,8 @@
 package intelligence.cli.command
 
+import intelligence.cli.github.GitHubCli
+import intelligence.cli.io.ProcessCapture
+import intelligence.cli.io.ProcessCaptureRunner
 import intelligence.cli.io.ProcessRunner
 import java.nio.file.Path
 import java.nio.file.Files
@@ -25,38 +28,68 @@ class IntelligenceCommandTest {
         assertSectionOrder(result.stdout, "Commands:", "Options:")
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
+        assertTrue(result.stdout.contains("doctor"))
         assertTrue(result.stdout.contains("rpc"))
     }
 
     @Test
-    fun `bare command prints help outside an interactive terminal`() {
+    fun `bare command prints cli first help`() {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("")
 
         assertEquals(0, result.statusCode)
         assertTrue(result.stdout.contains("Usage: intelligence [OPTIONS] [COMMAND]"))
         assertTrue(result.stdout.contains("marketplace"))
+        assertTrue(result.stdout.contains("doctor"))
     }
 
     @Test
-    fun `bare command launches terminal ui in an interactive terminal`() {
+    fun `bare command does not launch terminal ui`() {
         val runner = RecordingProcessRunner()
         val result = IntelligenceCommand(
             processRunner = runner,
             terminalUiLauncher = testUiLauncher(runner),
-            isInteractiveTerminal = { true },
         ).test("")
 
         assertEquals(0, result.statusCode)
-        assertEquals(
-            listOf(
-                "intelligence-tui-test",
-                "--repo",
-                Path.of(".").toAbsolutePath().normalize().toString(),
-                "--intelligence-bin",
-                "intelligence-test",
+        assertEquals(null, runner.command)
+    }
+
+    @Test
+    fun `doctor json reports GitHub host state without token fields`() {
+        val result = IntelligenceCommand(
+            processRunner = RecordingProcessRunner(),
+            github = GitHubCli(
+                runner = CaptureRunner {
+                    ProcessCapture(
+                        exitCode = 0,
+                        stdout = """
+                        {
+                          "hosts": {
+                            "github.enterprise.example": [
+                              {
+                                "state": "success",
+                                "active": true,
+                                "host": "github.enterprise.example",
+                                "login": "octo",
+                                "tokenSource": "keyring",
+                                "gitProtocol": "ssh",
+                                "scopes": "repo"
+                              }
+                            ]
+                          }
+                        }
+                        """.trimIndent(),
+                        stderr = "",
+                    )
+                },
             ),
-            runner.command,
-        )
+        ).test("doctor --format json")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("\"defaultHost\": \"github.enterprise.example\""))
+        assertTrue(result.stdout.contains("\"login\": \"octo\""))
+        assertFalse(result.stdout.contains("scopes"))
+        assertFalse(result.stdout.contains("token\""))
     }
 
     @Test
@@ -78,13 +111,17 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("browse"))
         assertTrue(result.stdout.contains("import"))
         assertTrue(result.stdout.contains("install"))
+        assertTrue(result.stdout.contains("search"))
+        assertTrue(result.stdout.contains("inspect"))
+        assertTrue(result.stdout.contains("installed"))
+        assertTrue(result.stdout.contains("versions"))
+        assertTrue(result.stdout.contains("remote"))
         assertTrue(result.stdout.contains("update"))
         assertTrue(result.stdout.contains("pin"))
         assertTrue(result.stdout.contains("unpin"))
         assertTrue(result.stdout.contains("ui"))
         assertTrue(result.stdout.contains("materialize"))
         assertTrue(result.stdout.contains("publish"))
-        assertFalse(result.stdout.lines().any { it.trimStart().startsWith("remote") })
         assertFalse(result.stdout.contains("publish-branch"))
     }
 
@@ -97,6 +134,73 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("paths"))
         assertTrue(result.stdout.contains("owner/repo shorthand"))
         assertTrue(result.stdout.contains("Auto tries published provider marketplaces"))
+    }
+
+    @Test
+    fun `marketplace search can use gh repository search JSON`() {
+        val result = IntelligenceCommand(
+            processRunner = RecordingProcessRunner(),
+            github = GitHubCli(
+                runner = CaptureRunner { command ->
+                    when (command.take(4)) {
+                        listOf("gh", "auth", "status", "--json") -> ProcessCapture(
+                            exitCode = 0,
+                            stdout = """{"hosts":{"github.enterprise.example":[{"state":"success","active":true,"host":"github.enterprise.example","login":"octo","tokenSource":"keyring","gitProtocol":"ssh"}]}}""",
+                            stderr = "",
+                        )
+                        listOf("gh", "search", "repos", "kotlin") -> ProcessCapture(
+                            exitCode = 0,
+                            stdout = """[{"fullName":"acme/tools","url":"https://github.enterprise.example/acme/tools","description":"Tools","visibility":"private"}]""",
+                            stderr = "",
+                        )
+                        else -> ProcessCapture(exitCode = 1, stdout = "", stderr = "unexpected command: $command")
+                    }
+                },
+            ),
+        ).test("marketplace search kotlin --format json")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("\"host\": \"github.enterprise.example\""))
+        assertTrue(result.stdout.contains("\"nameWithOwner\": \"acme/tools\""))
+    }
+
+    @Test
+    fun `marketplace search can filter a local catalog`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test(
+            listOf(
+                "marketplace",
+                "search",
+                "kotlin",
+                "--repository",
+                repoRoot().toString(),
+                "--provider",
+                "source",
+                "--format",
+                "json",
+            )
+        )
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("\"query\": \"kotlin\""))
+        assertTrue(result.stdout.contains("kotlin-engineering"))
+    }
+
+    @Test
+    fun `marketplace installed list exposes installed plugins`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test(
+            listOf(
+                "marketplace",
+                "installed",
+                "list",
+                "--repo",
+                repoRoot().toString(),
+                "--format",
+                "json",
+            )
+        )
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("kotlin-engineering"))
     }
 
     @Test
@@ -358,14 +462,21 @@ class IntelligenceCommandTest {
     private class RecordingProcessRunner(
         private val exitCode: Int = 0,
     ) : ProcessRunner {
-        lateinit var command: List<String>
-        lateinit var cwd: Path
+        var command: List<String>? = null
+        var cwd: Path? = null
 
         override fun run(command: List<String>, cwd: Path): Int {
             this.command = command
             this.cwd = cwd
             return exitCode
         }
+    }
+
+    private class CaptureRunner(
+        private val response: (List<String>) -> ProcessCapture,
+    ) : ProcessCaptureRunner {
+        override fun run(command: List<String>, cwd: Path, environment: Map<String, String>): ProcessCapture =
+            response(command)
     }
 
     private fun emptyConsumerRepository(): Path =

@@ -1,25 +1,26 @@
 # Getting Started
 
-Use `intelligence` as a full-screen marketplace browser first. The command-line
-forms are still available for scripts, CI, publication, and exact copyable
-operations, but a human should normally start in the terminal UI.
+Use `intelligence` as a CLI-first marketplace operator. Start with discovery
+commands, switch to JSON when composing with automation, and open the terminal
+UI only when a full-screen browser is useful.
 
 ## Common Tasks
 
 | Task | Primary Path |
 |---|---|
-| Open the marketplace browser | `intelligence` |
-| Preview the canonical marketplace | `:browse amichne/slopsentral` inside the TUI |
-| Search offerings | `/` inside the TUI |
-| Import the selected offering | `:import` inside the TUI |
-| Install all exposed plugins | `:install all` inside the TUI |
-| Validate install state | `:validate` inside the TUI |
+| Check CLI and GitHub host state | `intelligence doctor` |
+| Search GitHub repositories | `intelligence marketplace search kotlin` |
+| Inspect the canonical marketplace | `intelligence marketplace inspect amichne/slopsentral` |
+| Search offerings inside a marketplace | `intelligence marketplace search kotlin --repository amichne/slopsentral` |
+| Import a selected offering | `intelligence marketplace import amichne/slopsentral/kotlin-engineering` |
+| Validate install state | `intelligence validate --portable` |
 
-Use direct commands when the result needs to be scripted or captured.
+Use JSON when the result needs to be scripted or captured.
 
 | Task | Command |
 |---|---|
-| Browse script-readable offerings | `intelligence marketplace browse amichne/slopsentral --format json` |
+| Inspect script-readable offerings | `intelligence marketplace inspect amichne/slopsentral --format json` |
+| List installed marketplace state | `intelligence marketplace installed list --format json` |
 | Import Kotlin workflow | `intelligence marketplace import amichne/slopsentral/kotlin-engineering` |
 | Install all exposed plugins | `intelligence marketplace install amichne/slopsentral` |
 | Validate this CLI repo | `intelligence validate --portable` |
@@ -27,9 +28,9 @@ Use direct commands when the result needs to be scripted or captured.
 
 ## Next Pages
 
-Start with the [Terminal UI](tui.md) page for the interactive workflow. Use the
-[Marketplace](marketplace.md) page when you need exact non-interactive command
-forms for imports, materialization, publication, or automation.
+Start with the [Marketplace](marketplace.md) page for discovery and exact
+command forms. Use the [Terminal UI](tui.md) page for the optional interactive
+browser.
 
 Install the docs toolchain only if `zensical` is not already available.
 
