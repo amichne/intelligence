@@ -40,6 +40,7 @@ entrypoints.
 
 ```sh
 intelligence doctor
+intelligence --version
 intelligence marketplace search kotlin
 intelligence marketplace inspect amichne/slopsentral
 intelligence marketplace search kotlin --repository amichne/slopsentral

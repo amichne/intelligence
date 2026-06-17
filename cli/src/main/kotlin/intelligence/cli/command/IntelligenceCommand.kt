@@ -1,5 +1,6 @@
 package intelligence.cli.command
 
+import intelligence.cli.BuildInfo
 import intelligence.cli.github.GitHubCli
 import intelligence.cli.io.ProcessRunner
 import intelligence.cli.rpc.RpcDispatcher
@@ -7,6 +8,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.parameters.options.versionOption
 
 internal class IntelligenceCommand(
     processRunner: ProcessRunner = ProcessRunner.system(),
@@ -21,6 +23,7 @@ internal class IntelligenceCommand(
         context {
             helpFormatter = { IntelligenceHelpFormatter(it) }
         }
+        versionOption(BuildInfo.VERSION)
         val dispatcher = RpcDispatcher(processRunner = processRunner)
         subcommands(
             DoctorCommand(github),

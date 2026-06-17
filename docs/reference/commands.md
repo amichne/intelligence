@@ -15,6 +15,7 @@ shorthand will target.
 
 | Operation | Command | Use When |
 |---|---|---|
+| Print packaged version | `intelligence --version` | You want to confirm which published or development build is on PATH. |
 | Check CLI dependencies | `intelligence doctor` | You want human-readable repository and GitHub host state. |
 | Check machine-readable dependencies | `intelligence doctor --format json` | Another tool needs stable host/auth metadata. |
 
@@ -221,6 +222,7 @@ Every command group supports focused help.
 
 ```sh
 intelligence --help
+intelligence --version
 intelligence doctor --help
 intelligence marketplace --help
 intelligence marketplace search --help

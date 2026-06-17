@@ -9,8 +9,40 @@ application {
     applicationName = "intelligence"
 }
 
+val intelligenceVersion = providers.gradleProperty("intelligenceVersion")
+    .orElse("dev")
+
+val generatedBuildInfoDir = layout.buildDirectory.dir("generated/sources/build-info/kotlin")
+
+val generateBuildInfo by tasks.registering {
+    inputs.property("intelligenceVersion", intelligenceVersion)
+    outputs.dir(generatedBuildInfoDir)
+
+    doLast {
+        val escapedVersion = intelligenceVersion.get()
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+        val output = generatedBuildInfoDir.get()
+            .file("intelligence/cli/BuildInfo.kt")
+            .asFile
+        output.parentFile.mkdirs()
+        output.writeText(
+            """
+            package intelligence.cli
+
+            internal object BuildInfo {
+                const val VERSION: String = "$escapedVersion"
+            }
+            """.trimIndent() + "\n",
+        )
+    }
+}
+
 kotlin {
     jvmToolchain(21)
+    sourceSets.named("main") {
+        kotlin.srcDir(generatedBuildInfoDir)
+    }
 }
 
 dependencies {
@@ -22,6 +54,10 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.named("compileKotlin") {
+    dependsOn(generateBuildInfo)
 }
 
 tasks.withType<AbstractArchiveTask>().configureEach {

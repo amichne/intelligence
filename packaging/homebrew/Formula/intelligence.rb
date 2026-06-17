@@ -26,7 +26,7 @@ class Intelligence < Formula
     end
   end
 
-  desc "Validate and publish amichne-intelligence marketplace primitives"
+  desc "Operate portable AI tooling marketplaces"
   homepage "https://github.com/amichne/intelligence"
   version ARTIFACT_VERSION
   license "Apache-2.0"
@@ -68,6 +68,7 @@ class Intelligence < Formula
 
   test do
     assert_match "portable plugin marketplaces", shell_output("#{bin}/intelligence --help")
+    assert_match "intelligence version", shell_output("#{bin}/intelligence --version")
     assert_match "Usage: intelligence-tui", shell_output("#{bin}/intelligence-tui --help")
   end
 end

@@ -55,6 +55,14 @@ class IntelligenceCommandTest {
     }
 
     @Test
+    fun `version option prints packaged version`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("--version")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.trim().startsWith("intelligence version "))
+    }
+
+    @Test
     fun `doctor json reports GitHub host state without token fields`() {
         val result = IntelligenceCommand(
             processRunner = RecordingProcessRunner(),
