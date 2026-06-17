@@ -1,17 +1,19 @@
 package intelligence.cli.command
 
+import intelligence.cli.BuildInfo
+import intelligence.cli.github.GitHubCli
 import intelligence.cli.io.ProcessRunner
 import intelligence.cli.rpc.RpcDispatcher
-import java.nio.file.Path
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.core.subcommands
+import com.github.ajalt.clikt.parameters.options.versionOption
 
 internal class IntelligenceCommand(
     processRunner: ProcessRunner = ProcessRunner.system(),
+    github: GitHubCli = GitHubCli(),
     private val terminalUiLauncher: TerminalUiLauncher = TerminalUiLauncher(processRunner),
-    private val isInteractiveTerminal: () -> Boolean = { System.console() != null },
 ) : CliktCommand(
     name = "intelligence",
 ) {
@@ -21,10 +23,12 @@ internal class IntelligenceCommand(
         context {
             helpFormatter = { IntelligenceHelpFormatter(it) }
         }
+        versionOption(BuildInfo.VERSION)
         val dispatcher = RpcDispatcher(processRunner = processRunner)
         subcommands(
+            DoctorCommand(github),
             ValidateCommand(dispatcher),
-            MarketplaceCommand(dispatcher, terminalUiLauncher),
+            MarketplaceCommand(dispatcher, terminalUiLauncher, github),
             RpcCommand(dispatcher),
         )
     }
@@ -36,16 +40,6 @@ internal class IntelligenceCommand(
         if (currentContext.invokedSubcommand != null) {
             return
         }
-        if (!isInteractiveTerminal()) {
-            echoFormattedHelp()
-            return
-        }
-        val exitCode = terminalUiLauncher.launch(repoRoot = Path.of(".").toAbsolutePath().normalize())
-        if (exitCode != 0) {
-            throw com.github.ajalt.clikt.core.CliktError(
-                "terminal UI exited with status $exitCode",
-                statusCode = exitCode,
-            )
-        }
+        echoFormattedHelp()
     }
 }

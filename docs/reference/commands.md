@@ -1,19 +1,61 @@
 # Commands
 
 This catalog describes the portable marketplace operator surface by job. The
-terminal UI is the primary human workflow; direct commands are the scriptable
-forms behind the same marketplace and validation semantics. Use
-`intelligence --help` for the top-level command list, and add `--help` after any
-command group or command for focused usage.
+CLI is the primary human and automation workflow. The terminal UI remains an
+explicit full-screen client over the same marketplace and validation semantics.
+Use `intelligence --help` for the top-level command list, and add `--help`
+after any command group or command for focused usage.
+
+## Doctor
+
+Start with `doctor` when remote discovery depends on GitHub host configuration.
+The command never prints tokens; JSON output reports whether `gh` is available,
+which hosts are configured, which account is active, and which host owner/repo
+shorthand will target.
+
+| Operation | Command | Use When |
+|---|---|---|
+| Print packaged version | `intelligence --version` | You want to confirm which published or development build is on PATH. |
+| Check CLI dependencies | `intelligence doctor` | You want human-readable repository and GitHub host state. |
+| Check machine-readable dependencies | `intelligence doctor --format json` | Another tool needs stable host/auth metadata. |
+
+## Discover
+
+Use direct discovery when you need printable or machine-readable output.
+Owner/repo shorthand resolves through the active host reported by
+`gh auth status --json hosts`; pass `--host` to target a specific GitHub or
+GitHub Enterprise host.
+
+| Operation | Command | Use When |
+|---|---|---|
+| Search GitHub repositories | `intelligence marketplace search kotlin` | You want candidate repositories through the active `gh` host. |
+| Search an enterprise host | `intelligence marketplace search kotlin --host github.enterprise.example` | You want a configured GitHub Enterprise host. |
+| Inspect a marketplace | `intelligence marketplace inspect amichne/slopsentral` | You want provider, entrypoint, plugin, primitive, and next-command guidance. |
+| Search one marketplace catalog | `intelligence marketplace search kotlin --repository amichne/slopsentral` | You want offerings from a known marketplace repository. |
+| Inspect one plugin | `intelligence marketplace inspect amichne/slopsentral --plugin kotlin-engineering` | You want one marketplace plugin entry. |
+| Browse published offerings | `intelligence marketplace browse amichne/slopsentral` | You want the legacy marketplace view from a repository reference. |
+| Browse local source | `intelligence marketplace browse /path/to/slopsentral --provider source` | You are developing the marketplace repo and want the authored source catalog. |
+| Browse machine output | `intelligence marketplace browse amichne/slopsentral --format json` | You want a script-readable offering catalog. |
+
+## Installed State
+
+Inspect installed marketplace state before updating, pinning, or debugging lock
+evidence.
+
+| Operation | Command | Use When |
+|---|---|---|
+| List installed plugins | `intelligence marketplace installed list` | You want installed plugin, lock, source, and target state. |
+| List installed plugins as JSON | `intelligence marketplace installed list --format json` | Another tool needs stable installed-state output. |
+| Check installed versions | `intelligence marketplace versions kotlin-engineering` | You want installed and remote-current version evidence. |
+| Check update state while listing | `intelligence marketplace installed list --check-updates` | You want remote current versions resolved when possible. |
 
 ## Terminal UI
 
 Open the full-screen browser when you are deciding what to install, update, pin,
-or validate in a repository.
+or validate in a repository and prefer an interactive view.
 
 | Operation | Command Or Key | Use When |
 |---|---|---|
-| Open marketplace browser | `intelligence` | You are in an interactive terminal and want the primary marketplace workflow. |
 | Open browser explicitly | `intelligence marketplace ui` | A script, alias, or docs snippet should name the UI command. |
 | Select target repository | `intelligence marketplace ui --repo /path/to/repo` | You want the TUI to write install intent somewhere other than the current directory. |
 | Resolve imports from a ref | `intelligence marketplace ui --ref main` | Direct imports selected in the UI should use a branch, tag, or SHA. |
@@ -62,17 +104,6 @@ available command surface does not disappear while browsing.
 | `author` / `create skill` | Show where reusable resources should be authored. |
 | `edit` / `open source` | Show where existing resources should be edited. |
 | `outputs` | Show provider-output generation guidance. |
-
-## Discover
-
-Use direct discovery when you need printable or machine-readable output instead
-of the full-screen TUI.
-
-| Operation | Command | Use When |
-|---|---|---|
-| Browse published offerings | `intelligence marketplace browse amichne/slopsentral` | You want the default marketplace view from a repository reference. |
-| Browse local source | `intelligence marketplace browse /path/to/slopsentral --provider source` | You are developing the marketplace repo and want the authored source catalog. |
-| Browse machine output | `intelligence marketplace browse amichne/slopsentral --format json` | You want a script-readable offering catalog. |
 
 ## Validate
 
@@ -185,16 +216,26 @@ marketplace browsing.
 | Build native executable | `./gradlew :cli:nativeCompile` | You need the self-contained GraalVM binary. |
 | Install released CLI | `brew install amichne/intelligence/intelligence` | You want the stable installed `intelligence` command. |
 
+Use [Publication](publication.md) for the full release checklist, including tag
+source, native asset verification, JVM linkage checks, and Homebrew proof.
+
 ## Help
 
 Every command group supports focused help.
 
 ```sh
 intelligence --help
+intelligence --version
+intelligence doctor --help
 intelligence marketplace --help
+intelligence marketplace search --help
+intelligence marketplace inspect --help
 intelligence marketplace browse --help
+intelligence marketplace installed list --help
+intelligence marketplace versions --help
 intelligence marketplace import --help
 intelligence marketplace install --help
+intelligence marketplace remote --help
 intelligence marketplace update --help
 intelligence marketplace pin --help
 intelligence marketplace unpin --help

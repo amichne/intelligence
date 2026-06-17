@@ -1,9 +1,12 @@
 package intelligence.cli.command
 
+import intelligence.cli.github.GitHubCli
+import intelligence.cli.github.GitHubCliFailure
 import intelligence.cli.io.normalizedAbsolute
 import intelligence.cli.io.FileSystem
 import intelligence.cli.io.JsonFiles
 import intelligence.cli.io.arrayValue
+import intelligence.cli.io.objectValue
 import intelligence.cli.io.stringValue
 import intelligence.cli.io.toCliPath
 import intelligence.cli.marketplace.MarketplaceBrowseFormat
@@ -25,24 +28,34 @@ import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.int
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
+import kotlinx.serialization.json.putJsonObject
 
 internal class MarketplaceCommand(
     dispatcher: RpcDispatcher,
     terminalUiLauncher: TerminalUiLauncher,
+    github: GitHubCli,
 ) : CliktCommand(
     name = "marketplace",
 ) {
     init {
         subcommands(
-            BrowseMarketplaceCommand(dispatcher),
-            RemoteMarketplaceCommand(dispatcher),
-            ImportMarketplaceCommand(dispatcher),
-            InstallMarketplaceCommand(dispatcher),
+            BrowseMarketplaceCommand(dispatcher, github),
+            SearchMarketplaceCommand(dispatcher, github),
+            InspectMarketplaceCommand(dispatcher, github),
+            InstalledMarketplaceCommand(dispatcher),
+            VersionsMarketplaceCommand(dispatcher),
+            RemoteMarketplaceCommand(dispatcher, github),
+            ImportMarketplaceCommand(dispatcher, github),
+            InstallMarketplaceCommand(dispatcher, github),
             UpdateMarketplaceCommand(dispatcher),
             PinMarketplaceCommand(dispatcher),
             UnpinMarketplaceCommand(dispatcher),
@@ -61,6 +74,7 @@ internal class MarketplaceCommand(
 
 private class BrowseMarketplaceCommand(
     private val dispatcher: RpcDispatcher,
+    private val github: GitHubCli,
 ) : CliktCommand(
     name = "browse",
 ) {
@@ -82,6 +96,8 @@ private class BrowseMarketplaceCommand(
         }
         .default(MarketplaceBrowseProvider.Auto)
 
+    private val host by hostOption()
+
     private val format by option("--format", help = "Output format for the offering catalog: text or json.")
         .convert("FORMAT") {
             try {
@@ -100,7 +116,7 @@ private class BrowseMarketplaceCommand(
             dispatcher = dispatcher,
             method = RpcMethod.MarketplaceBrowse,
             params = buildJsonObject {
-                put("repository", repository)
+                put("repository", github.normalizeRepository(repository, host))
                 put("provider", provider.cliName)
             },
             failureMessage = "marketplace browse failed",
@@ -114,16 +130,113 @@ private class BrowseMarketplaceCommand(
     }
 }
 
+private class SearchMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+    private val github: GitHubCli,
+) : CliktCommand(
+    name = "search",
+) {
+    private val query by argument(name = "query", help = "Text to search in repositories or marketplace offerings.")
+
+    private val repository by option(
+        "--repository",
+        help = "Marketplace repository to search. Omit to search GitHub repositories with gh.",
+    )
+
+    private val provider by browseProviderOption()
+
+    private val host by hostOption()
+
+    private val limit by limitOption(default = 20)
+
+    private val format by outputFormatOption()
+
+    override fun help(context: Context): String =
+        "Search GitHub repositories or a specific marketplace catalog from the shell."
+
+    override fun run() {
+        val result = repository
+            ?.let { searchMarketplace(github.normalizeRepository(it, host)) }
+            ?: searchGitHub()
+        echo(renderJsonOrText(result, format, ::renderSearch))
+    }
+
+    private fun searchMarketplace(repository: String): JsonObject {
+        val catalog = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceBrowse,
+            params = buildJsonObject {
+                put("repository", repository)
+                put("provider", provider.cliName)
+            },
+            failureMessage = "marketplace search failed",
+        )
+        return filterCatalog(catalog, query, limit)
+    }
+
+    private fun searchGitHub(): JsonObject =
+        try {
+            github.searchRepositories(query = query, explicitHost = host, limit = limit).toJson()
+        } catch (failure: GitHubCliFailure) {
+            throw CliktError(failure.message ?: "GitHub search failed")
+        }
+}
+
+private class InspectMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+    private val github: GitHubCli,
+) : CliktCommand(
+    name = "inspect",
+) {
+    private val repository by argument(
+        name = "repository",
+        help = "Local path, GitHub URL, owner/repo shorthand, or git URL to inspect.",
+    )
+
+    private val plugin by option("--plugin", help = "Limit output to one plugin name.")
+
+    private val provider by browseProviderOption()
+
+    private val host by hostOption()
+
+    private val format by outputFormatOption()
+
+    override fun help(context: Context): String =
+        "Inspect a marketplace repository, optionally narrowed to one plugin."
+
+    override fun run() {
+        val normalized = github.normalizeRepository(repository, host)
+        val catalog = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceBrowse,
+            params = buildJsonObject {
+                put("repository", normalized)
+                put("provider", provider.cliName)
+            },
+            failureMessage = "marketplace inspect failed",
+        )
+        val inspected = plugin
+            ?.let { filterCatalog(catalog, it, limit = Int.MAX_VALUE, exactPlugin = true) }
+            ?: catalog
+        val withRepositoryInfo = github.inspectRepository(repository, host)?.let { repositoryInfo ->
+            buildJsonObject {
+                put("repositoryInfo", repositoryInfo.toJson())
+                inspected.forEach { (key, value) -> put(key, value) }
+            }
+        } ?: inspected
+        echo(renderJsonOrText(withRepositoryInfo, format, ::renderInspect))
+    }
+}
+
 private class RemoteMarketplaceCommand(
     dispatcher: RpcDispatcher,
+    github: GitHubCli,
 ) : CliktCommand(
     name = "remote",
 ) {
-    override val hiddenFromHelp: Boolean = true
-
     init {
         subcommands(
-            AddRemoteMarketplaceCommand(dispatcher),
+            AddRemoteMarketplaceCommand(dispatcher, github),
             ListRemoteMarketplaceCommand(dispatcher),
             RemoveRemoteMarketplaceCommand(dispatcher),
         )
@@ -137,6 +250,7 @@ private class RemoteMarketplaceCommand(
 
 private class AddRemoteMarketplaceCommand(
     private val dispatcher: RpcDispatcher,
+    private val github: GitHubCli,
 ) : CliktCommand(
     name = "add",
 ) {
@@ -154,6 +268,8 @@ private class AddRemoteMarketplaceCommand(
 
     private val ref by option("--ref", help = "Exact branch, tag, or SHA for git-backed marketplaces.")
 
+    private val host by hostOption()
+
     override fun help(context: Context): String =
         "Add a named external marketplace to the source graph."
 
@@ -164,7 +280,7 @@ private class AddRemoteMarketplaceCommand(
             params = buildJsonObject {
                 put("repoRoot", repo.toString())
                 put("name", name)
-                put("repository", repository)
+                put("repository", github.normalizeRepository(repository, host))
                 ref?.let { put("ref", it) }
             },
             failureMessage = "marketplace remote add failed",
@@ -180,6 +296,8 @@ private class ListRemoteMarketplaceCommand(
 ) {
     private val repo by repoOption()
 
+    private val format by outputFormatOption()
+
     override fun help(context: Context): String =
         "List named external marketplaces from the source graph."
 
@@ -193,11 +311,16 @@ private class ListRemoteMarketplaceCommand(
             failureMessage = "marketplace remote list failed",
         )
         val remotes = result.arrayValue("remotes").mapNotNull { it as? JsonObject }
-        if (remotes.isEmpty()) {
-            echoRpcMessages(result)
-        } else {
-            remotes.forEach { remote ->
-                echo("${remote["name"].asString()}\t${remote["source"].asString()}")
+        when (format) {
+            CommandOutputFormat.Json -> echo(JsonFiles.json.encodeToString(JsonElement.serializer(), result))
+            CommandOutputFormat.Text -> {
+                if (remotes.isEmpty()) {
+                    echoRpcMessages(result)
+                } else {
+                    remotes.forEach { remote ->
+                        echo("${remote["name"].asString()}\t${remote["source"].asString()}")
+                    }
+                }
             }
         }
     }
@@ -234,6 +357,7 @@ private class RemoveRemoteMarketplaceCommand(
 
 private class ImportMarketplaceCommand(
     private val dispatcher: RpcDispatcher,
+    private val github: GitHubCli,
 ) : CliktCommand(
     name = "import",
 ) {
@@ -248,6 +372,8 @@ private class ImportMarketplaceCommand(
 
     private val ref by option("--ref", help = "Branch, tag, or SHA for direct repository imports. Defaults to main.")
 
+    private val host by hostOption()
+
     private val noValidate by noValidateOption()
 
     override fun help(context: Context): String =
@@ -259,7 +385,7 @@ private class ImportMarketplaceCommand(
             method = RpcMethod.MarketplaceImport,
             params = buildJsonObject {
                 put("repoRoot", repo.toString())
-                put("target", plugin)
+                put("target", github.normalizeImportTarget(plugin, host))
                 version?.let { put("version", it) }
                 ref?.let { put("ref", it) }
             },
@@ -272,6 +398,7 @@ private class ImportMarketplaceCommand(
 
 private class InstallMarketplaceCommand(
     private val dispatcher: RpcDispatcher,
+    private val github: GitHubCli,
 ) : CliktCommand(
     name = "install",
 ) {
@@ -284,6 +411,8 @@ private class InstallMarketplaceCommand(
 
     private val ref by option("--ref", help = "Branch, tag, or SHA for repository resolution. Defaults to main.")
 
+    private val host by hostOption()
+
     private val noValidate by noValidateOption()
 
     override fun help(context: Context): String =
@@ -295,7 +424,7 @@ private class InstallMarketplaceCommand(
             method = RpcMethod.MarketplaceInstall,
             params = buildJsonObject {
                 put("repoRoot", repo.toString())
-                put("repository", repository)
+                put("repository", github.normalizeRepository(repository, host))
                 ref?.let { put("ref", it) }
             },
             failureMessage = "marketplace install failed",
@@ -403,6 +532,84 @@ private class UnpinMarketplaceCommand(
         )
         echoRpcMessages(result)
         validateAfterMutation(dispatcher, repo, enabled = !noValidate)
+    }
+}
+
+private class InstalledMarketplaceCommand(
+    dispatcher: RpcDispatcher,
+) : CliktCommand(
+    name = "installed",
+) {
+    init {
+        subcommands(ListInstalledMarketplaceCommand(dispatcher))
+    }
+
+    override fun help(context: Context): String =
+        "Inspect marketplace entries installed in the target repository."
+
+    override fun run() = Unit
+}
+
+private class ListInstalledMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+) : CliktCommand(
+    name = "list",
+) {
+    private val repo by repoOption()
+
+    private val checkUpdates by option("--check-updates", help = "Resolve remote current versions when possible.")
+        .flag(default = false)
+
+    private val format by outputFormatOption()
+
+    override fun help(context: Context): String =
+        "List installed marketplace plugins and lock state."
+
+    override fun run() {
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceInstalledList,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("checkUpdates", checkUpdates)
+            },
+            failureMessage = "marketplace installed list failed",
+        )
+        echo(renderJsonOrText(result, format, ::renderInstalled))
+    }
+}
+
+private class VersionsMarketplaceCommand(
+    private val dispatcher: RpcDispatcher,
+) : CliktCommand(
+    name = "versions",
+) {
+    private val repo by repoOption()
+
+    private val target by argument(
+        name = "plugin-or-reference",
+        help = "Installed plugin name or marketplace/plugin reference.",
+    )
+
+    private val ref by option("--ref", help = "Branch, tag, or SHA for direct repository version checks.")
+
+    private val format by outputFormatOption()
+
+    override fun help(context: Context): String =
+        "List installed and remote-current versions for an imported plugin."
+
+    override fun run() {
+        val result = executeRpc(
+            dispatcher = dispatcher,
+            method = RpcMethod.MarketplaceVersionsList,
+            params = buildJsonObject {
+                put("repoRoot", repo.toString())
+                put("target", target)
+                ref?.let { put("ref", it) }
+            },
+            failureMessage = "marketplace versions failed",
+        )
+        echo(renderJsonOrText(result, format, ::renderVersions))
     }
 }
 
@@ -564,6 +771,28 @@ private class PublishMarketplaceBranchCommand(
     }
 }
 
+private fun CliktCommand.browseProviderOption(default: MarketplaceBrowseProvider = MarketplaceBrowseProvider.Auto) =
+    option(
+        "--provider",
+        help = "Provider to inspect: auto, codex, github, or source.",
+    )
+        .convert("PROVIDER") {
+            try {
+                MarketplaceBrowseProvider.parse(it)
+            } catch (error: IllegalArgumentException) {
+                fail(error.message ?: "invalid provider")
+            }
+        }
+        .default(default)
+
+private fun CliktCommand.hostOption() =
+    option("--host", help = "GitHub host for owner/repo shorthand. Defaults to the active gh host.")
+
+private fun CliktCommand.limitOption(default: Int) =
+    option("--limit", help = "Maximum number of results to return.")
+        .int()
+        .default(default)
+
 private fun CliktCommand.repoOption() =
     option("--repo", help = "Repository root containing an adaptable marketplace or install state.")
         .convert("PATH") { it.toCliPath() }
@@ -583,6 +812,195 @@ private fun CliktCommand.providerOption(default: MarketplaceProvider) =
             }
         }
         .default(default)
+
+private fun renderJsonOrText(
+    result: JsonObject,
+    format: CommandOutputFormat,
+    text: (JsonObject) -> String,
+): String =
+    when (format) {
+        CommandOutputFormat.Text -> text(result)
+        CommandOutputFormat.Json -> JsonFiles.json.encodeToString(JsonElement.serializer(), result)
+    }
+
+private fun filterCatalog(
+    catalog: JsonObject,
+    query: String,
+    limit: Int,
+    exactPlugin: Boolean = false,
+): JsonObject {
+    val plugins = catalog.arrayValue("plugins")
+        .jsonObjects()
+        .filter { plugin ->
+            if (exactPlugin) {
+                plugin.stringValue("name") == query
+            } else {
+                plugin.matchesQuery(query)
+            }
+        }
+        .take(limit)
+    val standalone = catalog.objectValue("standalonePrimitives") ?: JsonObject(emptyMap())
+    return buildJsonObject {
+        put("query", query)
+        catalog["marketplace"]?.let { put("marketplace", it) }
+        putJsonArray("plugins") {
+            plugins.forEach { plugin -> add(plugin) }
+        }
+        putJsonObject("standalonePrimitives") {
+            standalone.forEach { (kind, values) ->
+                val matches = (values as? JsonArray).orEmpty()
+                    .jsonObjects()
+                    .filter { primitive -> primitive.matchesQuery(query) }
+                    .take(limit)
+                putJsonArray(kind) {
+                    matches.forEach { primitive -> add(primitive) }
+                }
+            }
+        }
+    }
+}
+
+private fun renderSearch(result: JsonObject): String =
+    if (result["repositories"] is JsonArray) {
+        renderRepositorySearch(result)
+    } else {
+        renderMarketplaceSearch(result)
+    }
+
+private fun renderRepositorySearch(result: JsonObject): String {
+    val query = result.stringValue("query").orEmpty()
+    val host = result.stringValue("host").orEmpty()
+    val repositories = result.arrayValue("repositories").jsonObjects()
+    val lines = mutableListOf("GitHub repositories matching `$query` on $host")
+    if (repositories.isEmpty()) {
+        lines += "- none found"
+    } else {
+        repositories.forEach { repository ->
+            val name = repository.stringValue("nameWithOwner").orEmpty()
+            val description = repository.stringValue("description")?.takeIf { it.isNotBlank() }
+            lines += "- $name${description?.let { " - $it" }.orEmpty()}"
+        }
+        repositories.firstOrNull()?.stringValue("nameWithOwner")?.let { first ->
+            lines += ""
+            lines += "Next: intelligence marketplace inspect $first"
+        }
+    }
+    return lines.joinToString("\n")
+}
+
+private fun renderMarketplaceSearch(result: JsonObject): String {
+    val query = result.stringValue("query").orEmpty()
+    val marketplace = result.objectValue("marketplace") ?: JsonObject(emptyMap())
+    val lines = mutableListOf(
+        "Marketplace matches for `$query`",
+        "Repository: ${marketplace.stringValue("repository").orEmpty()}",
+    )
+    val plugins = result.arrayValue("plugins").jsonObjects()
+    lines += ""
+    lines += "Plugins"
+    if (plugins.isEmpty()) {
+        lines += "- none found"
+    } else {
+        plugins.forEach { plugin ->
+            lines += "- ${plugin.stringValue("name").orEmpty()}${plugin.stringValue("description")?.let { " - $it" }.orEmpty()}"
+        }
+    }
+
+    val standalone = result.objectValue("standalonePrimitives") ?: JsonObject(emptyMap())
+    val primitives = standalone.values.flatMap { (it as? JsonArray).orEmpty().jsonObjects() }
+    lines += ""
+    lines += "Standalone primitives"
+    if (primitives.isEmpty()) {
+        lines += "- none found"
+    } else {
+        primitives.forEach { primitive ->
+            lines += "- ${primitive.stringValue("type").orEmpty()}:${primitive.stringValue("name").orEmpty()}"
+        }
+    }
+    return lines.joinToString("\n")
+}
+
+private fun renderInspect(result: JsonObject): String {
+    val lines = mutableListOf<String>()
+    result.objectValue("repositoryInfo")?.let { repository ->
+        lines += "Repository: ${repository.stringValue("nameWithOwner").orEmpty()}"
+        repository.stringValue("description")?.takeIf { it.isNotBlank() }?.let { description ->
+            lines += "Description: $description"
+        }
+        repository.stringValue("defaultBranch")?.let { branch -> lines += "Default branch: $branch" }
+        lines += ""
+    }
+    lines += MarketplaceBrowseText.render(result)
+    val marketplace = result.objectValue("marketplace") ?: JsonObject(emptyMap())
+    val repository = marketplace.stringValue("repository").orEmpty()
+    val firstPlugin = result.arrayValue("plugins").jsonObjects().firstOrNull()?.stringValue("name")
+    if (repository.isNotBlank()) {
+        lines += ""
+        lines += "Next"
+        lines += "- Search: intelligence marketplace search <query> --repository $repository"
+        firstPlugin?.let { plugin -> lines += "- Import: intelligence marketplace import $repository/$plugin" }
+        lines += "- Install all: intelligence marketplace install $repository"
+        lines += "- Validate: intelligence validate --portable"
+    }
+    return lines.joinToString("\n")
+}
+
+private fun renderInstalled(result: JsonObject): String {
+    val plugins = result.arrayValue("plugins").jsonObjects()
+    val lines = mutableListOf(
+        "Installed marketplace plugins",
+        "Repository: ${result.stringValue("repoRoot").orEmpty()}",
+        "Marketplace state: ${result.stringValue("marketplacePath").orEmpty()}",
+        "",
+    )
+    if (plugins.isEmpty()) {
+        lines += "- none installed"
+    } else {
+        plugins.forEach { plugin ->
+            val name = plugin.stringValue("name").orEmpty()
+            val version = plugin.stringValue("version")?.let { " version=$it" }.orEmpty()
+            val target = plugin.stringValue("target")?.let { " target=$it" }.orEmpty()
+            val locked = plugin.stringValue("locked")?.let { " locked=$it" }.orEmpty()
+            val remote = plugin.stringValue("remoteVersion")?.let { " remote=$it" }.orEmpty()
+            lines += "- $name$version$remote$locked$target"
+        }
+    }
+    return lines.joinToString("\n")
+}
+
+private fun renderVersions(result: JsonObject): String {
+    val lines = mutableListOf(
+        "Versions for ${result.stringValue("target").orEmpty()}",
+        "Marketplace: ${result.stringValue("marketplace").orEmpty()}",
+        "Plugin: ${result.stringValue("plugin").orEmpty()}",
+    )
+    result.stringValue("installedVersion")?.let { lines += "Installed: $it" }
+    result.stringValue("currentVersion")?.let { lines += "Remote current: $it" }
+    val versions = result.arrayValue("versions").jsonObjects()
+    if (versions.isNotEmpty()) {
+        lines += ""
+        lines += "Known versions"
+        versions.forEach { version ->
+            lines += "- ${version.stringValue("version").orEmpty()} (${version.stringValue("kind").orEmpty()})"
+        }
+    }
+    return lines.joinToString("\n")
+}
+
+private fun Iterable<JsonElement>.jsonObjects(): List<JsonObject> =
+    mapNotNull { it as? JsonObject }
+
+private fun JsonObject.matchesQuery(query: String): Boolean {
+    val normalized = query.lowercase()
+    return values.any { element -> element.containsText(normalized) }
+}
+
+private fun JsonElement.containsText(query: String): Boolean =
+    when (this) {
+        is JsonPrimitive -> content.lowercase().contains(query)
+        is JsonArray -> any { it.containsText(query) }
+        is JsonObject -> values.any { it.containsText(query) }
+    }
 
 private fun CliktCommand.validateAfterMutation(dispatcher: RpcDispatcher, repo: Path, enabled: Boolean) {
     if (!enabled) {

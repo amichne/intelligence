@@ -23,34 +23,51 @@ target repo.
 - `schemas/` owns the public JSON contracts for source and provider payloads.
 - `cli/` owns browsing, validation, RPC dispatch, marketplace import,
   materialization, and publication.
-- `tui/` owns the Ratatui marketplace browser launched by bare `intelligence`
-  in interactive terminals.
+- `tui/` owns the optional Ratatui marketplace browser launched explicitly with
+  `intelligence marketplace ui`.
 - `.intelligence/adaptable.marketplace.json` records install-only adaptable
   marketplace state for consumer repos.
 - `.intelligence/marketplace-lock.json` records imported marketplace references
   and resolved content evidence for reconstruction.
 
-## Use The Marketplace Browser
+## Start With The CLI
 
-Users with the CLI installed should start with the Ratatui browser. It lets you
-preview repositories, search offerings, import selected plugins or primitives,
-install all exposed plugins, update, pin, and validate without memorizing
-provider entrypoints or plugin paths.
+Users with the CLI installed should start from shell discovery. The CLI can
+check its GitHub host configuration, search repositories through the active
+`gh` host, inspect marketplace offerings, import selected plugins, install all
+exposed plugins, update, pin, and validate without memorizing provider
+entrypoints.
 
 ```sh
-intelligence
+intelligence doctor
+intelligence --version
+intelligence marketplace search kotlin
+intelligence marketplace inspect amichne/slopsentral
+intelligence marketplace search kotlin --repository amichne/slopsentral
 ```
 
-Inside the browser:
+Owner/repo shorthand resolves through the active GitHub CLI host. If `gh` is
+configured for GitHub Enterprise, `intelligence marketplace search` and
+`intelligence marketplace inspect acme/tools` use that host by default. Use
+`--host github.enterprise.example` to target a specific configured host.
 
-```text
-:browse amichne/slopsentral
-/
-:import
-:validate
+Use JSON when another program or agent needs stable output.
+
+```sh
+intelligence doctor --format json
+intelligence marketplace search kotlin --format json
+intelligence marketplace inspect amichne/slopsentral --format json
+intelligence marketplace installed list --format json
 ```
 
-Use commands directly when you need script-readable output or automation.
+Open the Ratatui browser explicitly when a full-screen marketplace view is more
+useful than shell output.
+
+```sh
+intelligence marketplace ui
+```
+
+The JSON-RPC boundary remains available for custom clients.
 
 ```sh
 intelligence marketplace browse amichne/slopsentral --format json
@@ -138,6 +155,10 @@ cargo build --release --manifest-path tui/Cargo.toml
 The release workflow publishes one archive per supported platform/architecture
 target containing `intelligence` and `intelligence-tui`, plus `SHA256SUMS`. It
 does not publish JVM application archives.
+
+Use the release checklist in
+[`docs/reference/publication.md`](docs/reference/publication.md) before cutting
+the first stable native CLI release.
 
 After a stable native release, install the CLI with Homebrew:
 

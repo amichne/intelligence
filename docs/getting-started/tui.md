@@ -1,20 +1,16 @@
 # Terminal UI
 
-The terminal UI is the primary workflow for people using `intelligence` by
-hand. It gives the same marketplace semantics as the command line without
-making you memorize provider entrypoints, source paths, lock files, or import
-commands.
+The terminal UI is the optional full-screen browser for people using
+`intelligence` by hand. It gives the same marketplace semantics as the command
+line when an interactive view is more useful than shell output.
 
 ## Open The Browser
 
-Use bare `intelligence` in an interactive terminal. The explicit subcommand is
-available when a shell alias, script, or wrapper should be clear about opening
-the full-screen browser.
+Use the explicit subcommand to open the full-screen browser.
 
 | Situation | Command |
 |---|---|
-| Browse from the current repository | `intelligence` |
-| Open the browser explicitly | `intelligence marketplace ui` |
+| Browse from the current repository | `intelligence marketplace ui` |
 | Install into another repository | `intelligence marketplace ui --repo /path/to/repo` |
 | Resolve direct imports from a branch, tag, or SHA | `intelligence marketplace ui --ref main` |
 

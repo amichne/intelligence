@@ -1,45 +1,43 @@
 # Marketplace
 
 The marketplace is the portable distribution surface for project-agnostic plugin
-families. Most users should operate it through the
-[Terminal UI](tui.md), then drop to commands when they need a scriptable result,
-CI step, provider projection, or publication flow.
+families. Most users should operate it through CLI discovery first, then open
+the [Terminal UI](tui.md) only when they want a full-screen browser.
 
-## TUI First
+## CLI First
 
-Open the browser from the repository that should receive install intent.
+Check local dependencies and GitHub host configuration before exploring remote
+repositories. Owner/repo shorthand uses the active host reported by
+`gh auth status --json hosts`; pass `--host` to target a specific configured
+GitHub or GitHub Enterprise host.
 
 ```sh
-intelligence
+intelligence doctor
+intelligence doctor --format json
+intelligence marketplace search kotlin
+intelligence marketplace search kotlin --host github.enterprise.example
 ```
 
-Inside the browser, use the command palette for marketplace operations.
+Inspect a marketplace before importing from it. Use JSON when the output should
+be parsed by a script or another agent.
 
-| Goal | TUI Action |
+```sh
+intelligence marketplace inspect amichne/slopsentral
+intelligence marketplace search kotlin --repository amichne/slopsentral
+intelligence marketplace inspect amichne/slopsentral --format json
+```
+
+Useful read-only commands are:
+
+| Goal | Command |
 |---|---|
-| Preview a repository marketplace | `:browse amichne/slopsentral` |
-| Search loaded offerings | `/` |
-| Import the selected offering | `:import` |
-| Install every exposed plugin | `:install all` |
-| Update imported plugins | `:update` or `:update all` |
-| Pin an installed plugin | `:pin 1.2.3` |
-| Validate the target repository | `:validate` |
-
-The TUI discovers supported marketplace entrypoints and shows plugins separately
-from standalone primitives. It uses the same JSON-RPC boundary as the CLI
-commands, so confirmed operations write the same install intent and lock
-evidence.
-
-## Browse Without The TUI
-
-Use direct browsing when output needs to be copied, piped, or inspected outside
-the full-screen interface.
-
-```sh
-intelligence marketplace browse amichne/slopsentral
-intelligence marketplace browse amichne/slopsentral --format json
-intelligence marketplace browse /path/to/slopsentral --provider source
-```
+| Check host and auth state | `intelligence doctor` |
+| Search repositories through `gh` | `intelligence marketplace search kotlin` |
+| Inspect one marketplace | `intelligence marketplace inspect amichne/slopsentral` |
+| Search one marketplace catalog | `intelligence marketplace search kotlin --repository amichne/slopsentral` |
+| List installed plugins | `intelligence marketplace installed list` |
+| Check versions for an import | `intelligence marketplace versions kotlin-engineering` |
+| Browse legacy script output | `intelligence marketplace browse amichne/slopsentral --format json` |
 
 ## Referential Imports
 
