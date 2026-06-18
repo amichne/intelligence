@@ -1,0 +1,494 @@
+name: Release
+run-name: >-
+  Release
+  ${{
+    github.event_name == 'workflow_dispatch'
+      && format('{0} ({1})', inputs.release_type, github.ref_name)
+      || github.ref_name
+  }}
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: >
+          Release type. Stable releases increment the latest vX.Y.Z tag.
+          Beta releases append the short commit SHA.
+        required: true
+        default: patch
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+          - beta
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release-preflight:
+    name: Preflight release automation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Classify release
+        id: classify
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          RELEASE_TYPE: ${{ inputs.release_type }}
+        run: |
+          set -euo pipefail
+          requires_homebrew=false
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            if [[ "$RELEASE_TYPE" != "beta" ]]; then
+              requires_homebrew=true
+            fi
+          elif [[ "$REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            requires_homebrew=true
+          fi
+          printf 'requires_homebrew=%s\n' "$requires_homebrew" >> "$GITHUB_OUTPUT"
+
+      - name: Require Homebrew token for stable releases
+        if: steps.classify.outputs.requires_homebrew == 'true'
+        env:
+          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${HOMEBREW_TAP_TOKEN:-}" ]]; then
+            echo "::error::Missing HOMEBREW_TAP_TOKEN secret; stable releases cannot update amichne/homebrew-intelligence."
+            exit 1
+          fi
+
+  bump-version:
+    name: Bump version (${{ inputs.release_type }})
+    needs:
+      - release-preflight
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      release_tag: ${{ steps.bump.outputs.release_tag }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute next semver tag and push
+        id: bump
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_REF_NAME}" != "main" ]]; then
+            echo "::error::Release workflow_dispatch must run from main; got ${GITHUB_REF_NAME}."
+            exit 1
+          fi
+
+          release_type="${{ inputs.release_type }}"
+          short_sha="${GITHUB_SHA:0:7}"
+          latest_stable="$(git tag --list 'v*' --sort=-version:refname \
+            | awk '/^v[0-9]+\.[0-9]+\.[0-9]+$/ { print; exit }')"
+          if [[ -z "$latest_stable" ]]; then
+            latest_stable="v0.0.0"
+          fi
+          base="${latest_stable#v}"
+          IFS='.' read -r major minor patch <<< "$base"
+          major="${major:-0}"
+          minor="${minor:-0}"
+          patch="${patch:-0}"
+
+          case "$release_type" in
+            major)
+              major=$((major + 1))
+              minor=0
+              patch=0
+              new_tag="v${major}.${minor}.${patch}"
+              ;;
+            minor)
+              minor=$((minor + 1))
+              patch=0
+              new_tag="v${major}.${minor}.${patch}"
+              ;;
+            patch)
+              patch=$((patch + 1))
+              new_tag="v${major}.${minor}.${patch}"
+              ;;
+            beta)
+              patch=$((patch + 1))
+              new_tag="v${major}.${minor}.${patch}-beta.${short_sha}"
+              ;;
+            *)
+              echo "Unknown release_type: ${release_type}" >&2
+              exit 1
+              ;;
+          esac
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag --annotate "$new_tag" --message "intelligence ${new_tag}"
+          git push origin "$new_tag"
+          printf 'release_tag=%s\n' "$new_tag" >> "$GITHUB_OUTPUT"
+
+  prepare-release:
+    name: Prepare release
+    needs:
+      - release-preflight
+      - bump-version
+    if: always() && needs.release-preflight.result == 'success' && (needs.bump-version.result == 'success' || needs.bump-version.result == 'skipped')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      release_tag: ${{ steps.release-tag.outputs.value }}
+      release_version: ${{ steps.release-tag.outputs.version }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+
+      - name: Resolve release tag
+        id: release-tag
+        run: |
+          set -euo pipefail
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            tag="${{ needs.bump-version.outputs.release_tag }}"
+          else
+            tag="${GITHUB_REF_NAME}"
+          fi
+          [[ "$tag" == v* ]] || { echo "release tag must start with v: $tag" >&2; exit 1; }
+          printf 'value=%s\n' "$tag" >> "$GITHUB_OUTPUT"
+          printf 'version=%s\n' "${tag#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure draft release exists
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag="${{ steps.release-tag.outputs.value }}"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release already exists: $tag"
+          else
+            gh release create "$tag" \
+              --draft \
+              --verify-tag \
+              --title "$tag" \
+              --generate-notes
+          fi
+
+  validate:
+    name: Validate CLI source
+    needs:
+      - prepare-release
+    if: always() && needs.prepare-release.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare-release.outputs.release_tag }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate CLI source
+        run: |
+          set -euo pipefail
+          ./gradlew :cli:test installDevelopmentCli
+          cargo test --manifest-path tui/Cargo.toml
+          .local/intelligence/bin/intelligence --version
+          .local/intelligence/bin/intelligence doctor --format json
+          .local/intelligence/bin/intelligence marketplace inspect "${PWD}" --provider source --format json
+          .local/intelligence/bin/intelligence marketplace search kotlin --repository "${PWD}" --provider source --format json | grep -F "kotlin-engineering"
+          .local/intelligence/bin/intelligence validate --portable
+          .local/intelligence/bin/intelligence-tui --help
+          packaging/homebrew/scripts/test-formula.py
+          .github/scripts/test-release-asset-verifier.sh
+          .github/scripts/test-release-workflow-contract.sh
+
+  native:
+    name: Build native CLI (${{ matrix.target }})
+    needs:
+      - prepare-release
+      - validate
+    if: always() && needs.prepare-release.result == 'success' && needs.validate.result == 'success'
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: linux-x64
+            runner: ubuntu-24.04
+            executable: intelligence
+            extension: ".tar.gz"
+          - target: linux-arm64
+            runner: ubuntu-24.04-arm
+            executable: intelligence
+            extension: ".tar.gz"
+          - target: macos-x64
+            runner: macos-15-intel
+            executable: intelligence
+            extension: ".tar.gz"
+          - target: macos-arm64
+            runner: macos-15
+            executable: intelligence
+            extension: ".tar.gz"
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare-release.outputs.release_tag }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: graalvm
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build native executable
+        run: |
+          set -euo pipefail
+          version="${{ needs.prepare-release.outputs.release_tag }}"
+          target="${{ matrix.target }}"
+          asset="dist/intelligence-${version}-${target}${{ matrix.extension }}"
+          ./gradlew :cli:nativeCompile --no-daemon -PintelligenceVersion="${version}"
+          cargo build --release --manifest-path tui/Cargo.toml
+          mkdir -p dist
+          bundle="${RUNNER_TEMP:-/tmp}/intelligence-${version}-${target}"
+          rm -rf "${bundle}"
+          mkdir -p "${bundle}"
+          cp "cli/build/native/nativeCompile/${{ matrix.executable }}" "${bundle}/intelligence"
+          cp "target/release/intelligence-tui" "${bundle}/intelligence-tui"
+          if [[ "${RUNNER_OS}" != "Windows" ]]; then
+            strip "${bundle}/intelligence" || true
+            strip "${bundle}/intelligence-tui" || true
+          fi
+          chmod 0755 "${bundle}/intelligence" "${bundle}/intelligence-tui" || true
+          tar -C "${bundle}" -czf "${asset}" intelligence intelligence-tui
+          echo "asset=${asset}" >> "${GITHUB_ENV}"
+
+      - name: Verify native executable
+        run: |
+          set -euo pipefail
+          target="${{ matrix.target }}"
+          repo="${PWD}"
+          smoke_root="${RUNNER_TEMP:-/tmp}/intelligence-smoke-${target}"
+          if command -v cygpath >/dev/null 2>&1; then
+            repo="$(cygpath -m "${PWD}")"
+            smoke_root="$(cygpath -m "${smoke_root}")"
+          fi
+          rm -rf "${smoke_root}"
+          mkdir -p "${smoke_root}"
+          tar -xzf "${asset}" -C "${smoke_root}"
+          cli="${smoke_root}/intelligence"
+          tui="${smoke_root}/intelligence-tui"
+          version="${{ needs.prepare-release.outputs.release_tag }}"
+
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" --help
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" --version | grep -F "intelligence version ${version}"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" doctor --format json
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace inspect "${repo}" --provider source --format json
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace search kotlin --repository "${repo}" --provider source --format json | grep -F "kotlin-engineering"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
+          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${tui}" --help
+
+      - name: Verify no JVM linkage
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          linkage="${RUNNER_TEMP:-/tmp}/intelligence-linkage.txt"
+          if [[ "${RUNNER_OS}" == "macOS" ]]; then
+            otool -L "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence" | tee "${linkage}"
+            otool -L "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence-tui" | tee -a "${linkage}"
+          else
+            ldd "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence" | tee "${linkage}" || true
+            ldd "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence-tui" | tee -a "${linkage}" || true
+          fi
+          if grep -Eiq 'libjvm|libjli|JavaVirtualMachines|/java/' "${linkage}"; then
+            echo "::error::native executable links against a JVM runtime"
+            exit 1
+          fi
+
+      - name: Upload CLI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}
+          path: ${{ env.asset }}
+          if-no-files-found: error
+
+  publish-release:
+    name: Publish release
+    needs:
+      - prepare-release
+      - native
+    if: always() && needs.prepare-release.result == 'success' && needs.native.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare-release.outputs.release_tag }}
+
+      - name: Download CLI artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: intelligence-${{ needs.prepare-release.outputs.release_tag }}-*
+          path: dist
+          merge-multiple: true
+
+      - name: Generate and verify SHA256SUMS
+        run: |
+          set -euo pipefail
+          (cd dist && sha256sum intelligence-* > SHA256SUMS)
+          .github/scripts/verify-release-assets.sh \
+            --release-dir dist \
+            --tag "${{ needs.prepare-release.outputs.release_tag }}"
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag="${{ needs.prepare-release.outputs.release_tag }}"
+          gh release upload "$tag" dist/* --clobber
+
+      - name: Publish draft release with CI annotation
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN || github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          tag="${{ needs.prepare-release.outputs.release_tag }}"
+          run_url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          release_flags=("--draft=false")
+          if [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            release_flags+=(--latest)
+          else
+            release_flags+=(--prerelease)
+          fi
+          gh release edit "$tag" "${release_flags[@]}" \
+            --notes "$(gh release view "$tag" --json body -q .body)
+
+          ---
+          **Build:** [CI Run #${{ github.run_number }}]($run_url)"
+
+      - name: Render and push Homebrew tap
+        if: ${{ !contains(needs.prepare-release.outputs.release_tag, '-') }}
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+        run: |
+          set -euo pipefail
+          tag="${{ needs.prepare-release.outputs.release_tag }}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Skipping Homebrew tap update for non-stable release tag ${tag}"
+            exit 0
+          fi
+          [[ -n "${GH_TOKEN:-}" ]] || { echo "::error::Missing HOMEBREW_TAP_TOKEN secret"; exit 1; }
+
+          sha_for() {
+            local asset="$1"
+            awk -v name="$asset" '$2 == name { print $1 }' dist/SHA256SUMS
+          }
+
+          sha_linux_x64="$(sha_for "intelligence-${tag}-linux-x64.tar.gz")"
+          sha_linux_arm64="$(sha_for "intelligence-${tag}-linux-arm64.tar.gz")"
+          sha_macos_x64="$(sha_for "intelligence-${tag}-macos-x64.tar.gz")"
+          sha_macos_arm64="$(sha_for "intelligence-${tag}-macos-arm64.tar.gz")"
+          for value in "$sha_linux_x64" "$sha_linux_arm64" "$sha_macos_x64" "$sha_macos_arm64"; do
+            [[ -n "$value" ]] || { echo "::error::Missing Homebrew checksum input"; exit 1; }
+          done
+
+          gh repo clone amichne/homebrew-intelligence homebrew-tap -- --depth 1
+          git -C homebrew-tap remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/amichne/homebrew-intelligence.git"
+          mkdir -p homebrew-tap/Formula
+          rsync -a --delete packaging/homebrew/Formula/ homebrew-tap/Formula/
+          cp packaging/homebrew/README.md homebrew-tap/README.md
+          cp packaging/homebrew/release-state.json homebrew-tap/release-state.json
+
+          INTELLIGENCE_TAP_ROOT=homebrew-tap \
+          VERSION="$tag" \
+          SHA256_MACOS_X64="$sha_macos_x64" \
+          SHA256_MACOS_ARM64="$sha_macos_arm64" \
+          SHA256_LINUX_X64="$sha_linux_x64" \
+          SHA256_LINUX_ARM64="$sha_linux_arm64" \
+          packaging/homebrew/scripts/update-formula.py
+
+          ruby -c homebrew-tap/Formula/intelligence.rb
+          git -C homebrew-tap diff --check
+
+          tap_status="$(git -C homebrew-tap status --porcelain --untracked-files=all)"
+          if [[ -z "$tap_status" ]]; then
+            echo "Homebrew tap already up to date for ${tag}"
+            exit 0
+          fi
+          git -C homebrew-tap config user.name "github-actions[bot]"
+          git -C homebrew-tap config user.email "github-actions[bot]@users.noreply.github.com"
+          git -C homebrew-tap add -A
+          git -C homebrew-tap diff --cached --check
+          git -C homebrew-tap commit -m "intelligence ${tag}"
+          git -C homebrew-tap push
+
+  verify-release-state:
+    name: Verify published release state
+    needs:
+      - prepare-release
+      - publish-release
+    if: always() && needs.prepare-release.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prepare-release.outputs.release_tag }}
+
+      - name: Verify published release state
+        env:
+          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN || secrets.RELEASE_GITHUB_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          if [[ "${{ needs.publish-release.result }}" != "success" ]]; then
+            echo "::error::Publish release finished with result ${{ needs.publish-release.result }}."
+            exit 1
+          fi
+          .github/scripts/verify-release-state.sh \
+            --tag "${{ needs.prepare-release.outputs.release_tag }}" \
+            --repository "${{ github.repository }}"

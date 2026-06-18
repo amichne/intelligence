@@ -4,20 +4,7 @@ on:
   push:
     branches:
       - main
-    tags:
-      - "v*"
   pull_request:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: Optional version label for artifact names.
-        required: false
-        type: string
-      publish_release:
-        description: Create or update a GitHub Release for this version.
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: read
@@ -44,17 +31,9 @@ jobs:
 
       - name: Resolve artifact version
         id: version
-        env:
-          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
           set -euo pipefail
-          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" && -n "${INPUT_VERSION}" ]]; then
-            version="${INPUT_VERSION}"
-          elif [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            version="${GITHUB_REF_NAME}"
-          else
-            version="$(git rev-parse --short=12 HEAD)"
-          fi
+          version="$(git rev-parse --short=12 HEAD)"
           version="$(printf '%s' "${version}" | tr -c 'A-Za-z0-9._-' '-')"
           version="${version##[-._]}"
           version="${version%%[-._]}"
@@ -95,6 +74,8 @@ jobs:
           .local/intelligence/bin/intelligence validate --portable
           .local/intelligence/bin/intelligence-tui --help
           packaging/homebrew/scripts/test-formula.py
+          .github/scripts/test-release-asset-verifier.sh
+          .github/scripts/test-release-workflow-contract.sh
 
   native:
     name: Build native CLI (${{ matrix.target }})
@@ -212,114 +193,3 @@ jobs:
           name: intelligence-${{ needs.metadata.outputs.version }}-${{ matrix.target }}
           path: ${{ env.asset }}
           if-no-files-found: error
-
-  release:
-    name: Publish release assets
-    if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_release == 'true')
-    needs:
-      - metadata
-      - native
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out source
-        uses: actions/checkout@v4
-
-      - name: Download CLI artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: intelligence-${{ needs.metadata.outputs.version }}-*
-          path: dist
-          merge-multiple: true
-
-      - name: Create checksums
-        run: |
-          set -euo pipefail
-          cd dist
-          shasum -a 256 intelligence-* > SHA256SUMS
-
-      - name: Resolve release tag
-        id: tag
-        env:
-          INPUT_VERSION: ${{ github.event.inputs.version }}
-        run: |
-          set -euo pipefail
-          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            tag="${GITHUB_REF_NAME}"
-          else
-            tag="${INPUT_VERSION}"
-            if [[ -z "${tag}" ]]; then
-              echo "::error::workflow_dispatch release publishing requires the version input"
-              exit 1
-            fi
-          fi
-          echo "tag=${tag}" >> "${GITHUB_OUTPUT}"
-
-      - name: Publish release assets
-        env:
-          GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          tag="${{ steps.tag.outputs.tag }}"
-          if gh release view "${tag}" >/dev/null 2>&1; then
-            gh release upload "${tag}" dist/* --clobber
-          else
-            gh release create "${tag}" dist/* --generate-notes --title "${tag}"
-          fi
-
-      - name: Render and push Homebrew tap
-        env:
-          GH_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-        run: |
-          set -euo pipefail
-          tag="${{ steps.tag.outputs.tag }}"
-          if [[ ! "${tag}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Skipping Homebrew tap update for non-stable release tag ${tag}"
-            exit 0
-          fi
-          [[ -n "${GH_TOKEN:-}" ]] || { echo "::error::Missing HOMEBREW_TAP_TOKEN secret; stable releases cannot update amichne/homebrew-intelligence."; exit 1; }
-
-          sha_for() {
-            local asset="$1"
-            awk -v name="$asset" '$2 == name { print $1 }' dist/SHA256SUMS
-          }
-
-          sha_linux_x64="$(sha_for "intelligence-${tag}-linux-x64.tar.gz")"
-          sha_linux_arm64="$(sha_for "intelligence-${tag}-linux-arm64.tar.gz")"
-          sha_macos_x64="$(sha_for "intelligence-${tag}-macos-x64.tar.gz")"
-          sha_macos_arm64="$(sha_for "intelligence-${tag}-macos-arm64.tar.gz")"
-          for value in "$sha_linux_x64" "$sha_linux_arm64" "$sha_macos_x64" "$sha_macos_arm64"; do
-            [[ -n "$value" ]] || { echo "::error::Missing Homebrew checksum input"; exit 1; }
-          done
-
-          gh repo clone amichne/homebrew-intelligence homebrew-tap -- --depth 1
-          git -C homebrew-tap remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/amichne/homebrew-intelligence.git"
-          mkdir -p homebrew-tap/Formula
-          rsync -a --delete packaging/homebrew/Formula/ homebrew-tap/Formula/
-          cp packaging/homebrew/README.md homebrew-tap/README.md
-          cp packaging/homebrew/release-state.json homebrew-tap/release-state.json
-
-          INTELLIGENCE_TAP_ROOT=homebrew-tap \
-          VERSION="$tag" \
-          SHA256_MACOS_X64="$sha_macos_x64" \
-          SHA256_MACOS_ARM64="$sha_macos_arm64" \
-          SHA256_LINUX_X64="$sha_linux_x64" \
-          SHA256_LINUX_ARM64="$sha_linux_arm64" \
-          packaging/homebrew/scripts/update-formula.py
-
-          ruby -c homebrew-tap/Formula/intelligence.rb
-          git -C homebrew-tap diff --check
-
-          tap_status="$(git -C homebrew-tap status --porcelain --untracked-files=all)"
-          if [[ -z "$tap_status" ]]; then
-            echo "Homebrew tap already up to date for ${tag}"
-            exit 0
-          fi
-          git -C homebrew-tap config user.name "github-actions[bot]"
-          git -C homebrew-tap config user.email "github-actions[bot]@users.noreply.github.com"
-          git -C homebrew-tap add -A
-          git -C homebrew-tap diff --cached --check
-          git -C homebrew-tap commit -m "intelligence ${tag}"
-          git -C homebrew-tap push
