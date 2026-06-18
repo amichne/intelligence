@@ -1139,7 +1139,7 @@ internal class MarketplaceService(
             put("name", pluginName)
             putJsonObject("source") {
                 put("source", "local")
-                put("path", "./plugins/$pluginName")
+                put("path", codexPluginSourcePath(pluginName))
             }
             putJsonObject("policy") {
                 put("installation", "AVAILABLE")
@@ -1147,6 +1147,9 @@ internal class MarketplaceService(
             }
             put("category", category)
         }
+
+    private fun codexPluginSourcePath(pluginName: String): String =
+        "./${CODEX_BRANCH_PLUGINS_PATH.resolve(pluginName).toString().replace('\\', '/')}"
 
     private fun codexPluginManifest(
         plugin: PluginProjection,
