@@ -28,31 +28,30 @@ Before merging, confirm the pull request checks are complete and successful.
 gh pr view <number> --json mergeStateStatus,statusCheckRollup,url
 ```
 
-## Tag
+## Start Release
 
-Merge the pull request, wait for any required `main` publication workflow to
-finish, then tag the final published `main` SHA.
+Merge the pull request, wait for the `main` distribution workflow to finish,
+then run the release workflow from `main`. The workflow computes the next tag,
+creates a draft GitHub Release, publishes native assets, renders the Homebrew
+tap, and verifies the final published state.
 
 ```sh
 git fetch origin main --tags
-git switch main
-git pull --ff-only origin main
-
-release_tag=v0.2.1
-git tag --annotate "${release_tag}" -m "intelligence ${release_tag}"
-git push origin "${release_tag}"
+gh workflow run Release --ref main -f release_type=patch
 ```
 
-Stable tags must use `vMAJOR.MINOR.PATCH`. The release workflow accepts other
-`v*` tags, but only stable semver tags update the Homebrew tap.
+Use `release_type=major`, `minor`, or `patch` for stable Homebrew releases. Use
+`release_type=beta` for a prerelease that publishes GitHub assets but does not
+update the tap. Stable tags use `vMAJOR.MINOR.PATCH`; beta tags append the short
+commit SHA.
 
 ## Watch
 
-Watch the tag-triggered `Distribute Intelligence CLI` workflow until every
-native matrix job and the release job complete successfully.
+Watch the `Release` workflow until every validation, native matrix, publication,
+and final verification job completes successfully.
 
 ```sh
-gh run list --workflow "Distribute Intelligence CLI" --event push --limit 10
+gh run list --workflow Release --event workflow_dispatch --limit 10
 gh run view <run-id> --json status,conclusion,jobs,url
 ```
 
@@ -68,8 +67,16 @@ The release workflow must publish these assets:
 
 ## Verify Release Assets
 
-Download the published release and verify checksums before testing one unpacked
-archive.
+The release workflow runs the checked-in final verifier. You can rerun it
+locally for the published tag when auditing a release.
+
+```sh
+release_tag=v0.2.1
+.github/scripts/verify-release-state.sh --tag "${release_tag}" --repository amichne/intelligence
+```
+
+For manual asset inspection, download the published release and verify checksums
+before testing one unpacked archive.
 
 ```sh
 release_tag=v0.2.1
