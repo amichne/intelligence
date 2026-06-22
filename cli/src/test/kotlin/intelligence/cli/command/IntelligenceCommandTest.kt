@@ -26,6 +26,7 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.startsWith("Operate portable plugin marketplaces"))
         assertTrue(result.stdout.contains("Usage: intelligence [OPTIONS] [COMMAND]"))
         assertSectionOrder(result.stdout, "Commands:", "Options:")
+        assertTrue(result.stdout.contains("setup"))
         assertTrue(result.stdout.contains("validate"))
         assertTrue(result.stdout.contains("marketplace"))
         assertTrue(result.stdout.contains("doctor"))
@@ -38,6 +39,7 @@ class IntelligenceCommandTest {
 
         assertEquals(0, result.statusCode)
         assertTrue(result.stdout.contains("Usage: intelligence [OPTIONS] [COMMAND]"))
+        assertTrue(result.stdout.contains("setup"))
         assertTrue(result.stdout.contains("marketplace"))
         assertTrue(result.stdout.contains("doctor"))
     }
@@ -142,6 +144,22 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("paths"))
         assertTrue(result.stdout.contains("owner/repo shorthand"))
         assertTrue(result.stdout.contains("Auto tries published provider marketplaces"))
+    }
+
+    @Test
+    fun `setup help exposes default locked consumer flow`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("setup --help")
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("locked Intelligence marketplace"))
+        assertTrue(result.stdout.contains("--marketplace"))
+        assertTrue(result.stdout.contains("amichne/slopsentral"))
+        assertTrue(result.stdout.contains("--plugin"))
+        assertTrue(result.stdout.contains("kotlin-engineering"))
+        assertTrue(result.stdout.contains("--version"))
+        assertTrue(result.stdout.contains("--ref"))
+        assertTrue(result.stdout.contains("--host"))
+        assertTrue(result.stdout.contains("--no-validate"))
     }
 
     @Test
@@ -386,6 +404,55 @@ class IntelligenceCommandTest {
 
         assertEquals(0, result.statusCode)
         assertTrue(result.stdout.contains("imported shared-tools/review-stack"))
+        assertFalse(result.stdout.contains("OK adaptable marketplace"))
+    }
+
+    @Test
+    fun `setup imports default consumer plugin and validates target repository`() {
+        val repository = emptyConsumerRepository()
+        val remote = bareGitMarketplace("shared-tools")
+
+        val result = IntelligenceCommand().test(
+            listOf(
+                "setup",
+                "--repo",
+                repository.toString(),
+                "--marketplace",
+                remote.toString(),
+                "--plugin",
+                "review-stack",
+            )
+        )
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("imported shared-tools/review-stack"))
+        assertTrue(result.stdout.contains("OK adaptable marketplace"))
+        assertTrue(result.stdout.contains("setup complete"))
+        assertTrue(repository.resolve(".intelligence").resolve("adaptable.marketplace.json").exists())
+        assertTrue(repository.resolve(".intelligence").resolve("marketplace-lock.json").exists())
+    }
+
+    @Test
+    fun `setup can skip default validation`() {
+        val repository = emptyConsumerRepository()
+        val remote = bareGitMarketplace("shared-tools")
+
+        val result = IntelligenceCommand().test(
+            listOf(
+                "setup",
+                "--repo",
+                repository.toString(),
+                "--marketplace",
+                remote.toString(),
+                "--plugin",
+                "review-stack",
+                "--no-validate",
+            )
+        )
+
+        assertEquals(0, result.statusCode)
+        assertTrue(result.stdout.contains("imported shared-tools/review-stack"))
+        assertTrue(result.stdout.contains("setup complete"))
         assertFalse(result.stdout.contains("OK adaptable marketplace"))
     }
 

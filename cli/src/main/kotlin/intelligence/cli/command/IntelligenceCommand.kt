@@ -27,6 +27,7 @@ internal class IntelligenceCommand(
         val dispatcher = RpcDispatcher(processRunner = processRunner)
         subcommands(
             DoctorCommand(github),
+            SetupCommand(dispatcher, github),
             ValidateCommand(dispatcher),
             MarketplaceCommand(dispatcher, terminalUiLauncher, github),
             RpcCommand(dispatcher),

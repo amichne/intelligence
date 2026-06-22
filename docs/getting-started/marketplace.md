@@ -39,6 +39,24 @@ Useful read-only commands are:
 | Check versions for an import | `intelligence marketplace versions kotlin-engineering` |
 | Browse legacy script output | `intelligence marketplace browse amichne/slopsentral --format json` |
 
+## Setup
+
+Use `setup` for a new consumer repository that wants the default locked
+Intelligence workflow. The command imports `kotlin-engineering` from
+`amichne/slopsentral`, writes `.intelligence/adaptable.marketplace.json`, records
+the resolved plugin version and source integrity in
+`.intelligence/marketplace-lock.json`, and runs portable validation.
+
+```sh
+intelligence setup
+intelligence setup --repo /path/to/repo
+```
+
+Pass `--marketplace`, `--plugin`, `--version`, or `--ref` when the first import
+should use a different source repository, plugin, exact plugin version, or Git
+ref. Generated JSON uses the same canonical writer and validation path as
+explicit marketplace imports.
+
 ## Referential Imports
 
 Import plugins by reference instead of copying provider payloads. In the TUI,
@@ -50,6 +68,7 @@ authored marketplace or `.intelligence/adaptable.marketplace.json`, then records
 exact reconstruction evidence in `.intelligence/marketplace-lock.json`.
 
 ```sh
+intelligence setup
 intelligence marketplace import amichne/slopsentral/kotlin-engineering
 intelligence marketplace import amichne/slopsentral/kotlin-engineering --ref main
 intelligence marketplace install amichne/slopsentral

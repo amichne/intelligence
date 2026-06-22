@@ -19,6 +19,23 @@ shorthand will target.
 | Check CLI dependencies | `intelligence doctor` | You want human-readable repository and GitHub host state. |
 | Check machine-readable dependencies | `intelligence doctor --format json` | Another tool needs stable host/auth metadata. |
 
+## Setup
+
+Use `setup` for the first write in a new consumer repository. It imports the
+default `kotlin-engineering` plugin from `amichne/slopsentral`, creates
+`.intelligence/adaptable.marketplace.json`, records exact resolved evidence in
+`.intelligence/marketplace-lock.json`, and runs portable validation. It is a
+convenience wrapper over the same import and lock semantics used by
+`marketplace import`.
+
+| Operation | Command | Use When |
+|---|---|---|
+| Set up the current repo | `intelligence setup` | You want the default locked Intelligence workflow in the current repository. |
+| Set up another repo | `intelligence setup --repo /path/to/repo` | You are initializing a different repository. |
+| Set up from another marketplace | `intelligence setup --marketplace acme/tools --plugin review-stack` | You want the same first-run flow with a different marketplace plugin. |
+| Lock an exact plugin version | `intelligence setup --version 1.2.3` | You want the first import held to one exact plugin version. |
+| Resolve from a source ref | `intelligence setup --ref main` | You want the initial import resolved from a branch, tag, or SHA. |
+
 ## Discover
 
 Use direct discovery when you need printable or machine-readable output.
@@ -227,6 +244,7 @@ Every command group supports focused help.
 intelligence --help
 intelligence --version
 intelligence doctor --help
+intelligence setup --help
 intelligence marketplace --help
 intelligence marketplace search --help
 intelligence marketplace inspect --help
