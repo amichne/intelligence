@@ -27,6 +27,7 @@ import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
@@ -729,7 +730,7 @@ internal class MarketplaceService(
             - `.agents/plugins/marketplace.json`
             - `.github/plugin/marketplace.json`
 
-            Each provider entrypoint owns its own `plugins/` payloads so marketplace-relative paths stay provider-native.
+            Each provider entrypoint owns its plugin payload directories beside its `marketplace.json` so provider-default paths stay native.
             """.trimIndent() + "\n",
             Charsets.UTF_8,
         )
@@ -751,7 +752,7 @@ internal class MarketplaceService(
 
             This branch is generated from the referential source graph on `main`.
 
-            Codex expects the marketplace manifest at `.agents/plugins/marketplace.json` and plugin payloads under `.agents/plugins/plugins/`. Each plugin payload is fully hydrated from the provider-neutral primitives and contains its own `.codex-plugin/plugin.json`.
+            Codex expects the marketplace manifest at `.agents/plugins/marketplace.json` and plugin payloads under `.agents/plugins/<plugin>/`. Each plugin payload is fully hydrated from the provider-neutral primitives and contains its own `.codex-plugin/plugin.json`.
 
             Install with:
 
@@ -777,7 +778,7 @@ internal class MarketplaceService(
 
             This branch is generated from the referential source graph on `main`.
 
-            GitHub Copilot marketplace consumers expect the marketplace manifest at `.github/plugin/marketplace.json` and plugin payloads under `.github/plugin/plugins/`. Each plugin payload is fully hydrated from the provider-neutral primitives.
+            GitHub Copilot marketplace consumers expect the marketplace manifest at `.github/plugin/marketplace.json` and plugin payloads under `.github/plugin/<plugin>/`. Each plugin payload is fully hydrated from the provider-neutral primitives.
             """.trimIndent() + "\n",
             Charsets.UTF_8,
         )
@@ -881,6 +882,7 @@ internal class MarketplaceService(
             tags = tags,
             category = categoryFor(tags),
             owner = personFor(owner, ownerName),
+            interfaceMetadata = CodexPluginInterface.fromManifest(manifest, manifestPath),
         )
     }
 
@@ -1174,6 +1176,7 @@ internal class MarketplaceService(
                 putStringArray("capabilities", capabilitiesFor(hydrated))
                 put("brandColor", brandColorFor(plugin.category))
                 put("defaultPrompt", defaultPrompts(plugin.name))
+                plugin.interfaceMetadata.writeTo(this)
             }
             if (hydrated.skills.isNotEmpty()) {
                 put("skills", "./skills/")
@@ -2007,9 +2010,68 @@ internal class MarketplaceService(
         val tags: List<String>,
         val category: String,
         val owner: JsonObject,
+        val interfaceMetadata: CodexPluginInterface,
     ) {
         val version: String =
             manifest.stringValue("version") ?: pluginRef.stringValue("version") ?: "0.1.0"
+    }
+
+    private data class CodexPluginInterface(
+        val websiteUrl: HttpsUrl?,
+        val privacyPolicyUrl: HttpsUrl?,
+        val termsOfServiceUrl: HttpsUrl?,
+    ) {
+        fun writeTo(builder: JsonObjectBuilder) {
+            websiteUrl?.let { builder.put("websiteURL", it.value) }
+            privacyPolicyUrl?.let { builder.put("privacyPolicyURL", it.value) }
+            termsOfServiceUrl?.let { builder.put("termsOfServiceURL", it.value) }
+        }
+
+        companion object {
+            private val supportedFields = setOf(
+                "websiteURL",
+                "privacyPolicyURL",
+                "termsOfServiceURL",
+            )
+
+            fun fromManifest(manifest: JsonObject, manifestPath: Path): CodexPluginInterface {
+                val payload = manifest["interface"] ?: return empty
+                val source = payload as? JsonObject
+                    ?: throw MarketplaceFailure.InvalidSource("${manifestPath}: interface must be an object")
+                val unknownFields = source.keys - supportedFields
+                if (unknownFields.isNotEmpty()) {
+                    throw MarketplaceFailure.InvalidSource(
+                        "${manifestPath}: unsupported interface field(s): ${unknownFields.sorted().joinToString(", ")}"
+                    )
+                }
+                return CodexPluginInterface(
+                    websiteUrl = source.httpsUrl("websiteURL", manifestPath),
+                    privacyPolicyUrl = source.httpsUrl("privacyPolicyURL", manifestPath),
+                    termsOfServiceUrl = source.httpsUrl("termsOfServiceURL", manifestPath),
+                )
+            }
+
+            private val empty = CodexPluginInterface(
+                websiteUrl = null,
+                privacyPolicyUrl = null,
+                termsOfServiceUrl = null,
+            )
+
+            private fun JsonObject.httpsUrl(field: String, manifestPath: Path): HttpsUrl? =
+                stringValue(field)?.let { HttpsUrl.parse(it, manifestPath, field) }
+        }
+    }
+
+    private class HttpsUrl private constructor(val value: String) {
+        companion object {
+            fun parse(value: String, manifestPath: Path, field: String): HttpsUrl {
+                val normalized = value.trim()
+                if (!normalized.startsWith("https://") || normalized.length == "https://".length) {
+                    throw MarketplaceFailure.InvalidSource("${manifestPath}: interface.$field must be an https URL")
+                }
+                return HttpsUrl(normalized)
+            }
+        }
     }
 
     private companion object {
@@ -2020,12 +2082,12 @@ internal class MarketplaceService(
         val INSTALLED_MARKETPLACE_PATH: Path = INTELLIGENCE_ROOT.resolve("adaptable.marketplace.json")
         val CODEX_MARKETPLACE_ROOT: Path = Path.of(".agents").resolve("plugins")
         val CODEX_BRANCH_MARKETPLACE_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("marketplace.json")
-        val CODEX_BRANCH_PLUGINS_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("plugins")
+        val CODEX_BRANCH_PLUGINS_PATH: Path = CODEX_MARKETPLACE_ROOT
         val CODEX_BRANCH_LOCK_PATH: Path = CODEX_MARKETPLACE_ROOT.resolve("marketplace-lock.json")
         val GITHUB_COPILOT_PROVIDER_PATH: Path = Path.of(".github").resolve("plugin")
         val GITHUB_BRANCH_MARKETPLACE_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("marketplace.json")
-        val GITHUB_BRANCH_PLUGINS_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("plugins")
-        const val GITHUB_MARKETPLACE_PLUGIN_ROOT = ".github/plugin/plugins"
+        val GITHUB_BRANCH_PLUGINS_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH
+        const val GITHUB_MARKETPLACE_PLUGIN_ROOT = ".github/plugin"
         val HOOK_COMMAND_PATH_RE = Regex("\\bhooks/[A-Za-z0-9_.-]+")
         val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
         val GITHUB_SHORTHAND = Regex("[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+")

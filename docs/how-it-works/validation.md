@@ -23,6 +23,10 @@ intelligence marketplace materialize --repo /path/to/slopsentral
 intelligence validate --repo /path/to/slopsentral --portable --hydrated /path/to/slopsentral/build/intelligence/marketplace
 ```
 
+`--portable` keeps the check structural and host-independent. Without
+`--portable`, hydrated validation also runs provider-native install smoke checks
+through the installed Codex CLI and GitHub Copilot CLI using temporary homes.
+
 ## Publish Proof Path
 
 For publish flows, let the CLI validate source, materialize provider output into

@@ -37,6 +37,38 @@
         "Review workflow assets composed from shared skills and hooks."
       ]
     },
+    "interface": {
+      "type": "object",
+      "description": "Provider-neutral plugin interface metadata copied into supported runtime adapters.",
+      "properties": {
+        "websiteURL": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "Public plugin or marketplace website URL."
+        },
+        "privacyPolicyURL": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "Public privacy policy URL."
+        },
+        "termsOfServiceURL": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://",
+          "description": "Public terms of service URL."
+        }
+      },
+      "additionalProperties": false,
+      "examples": [
+        {
+          "websiteURL": "https://github.com/acme/tools",
+          "privacyPolicyURL": "https://github.com/acme/tools",
+          "termsOfServiceURL": "https://github.com/acme/tools"
+        }
+      ]
+    },
     "extends": {
       "type": "array",
       "description": "Plugins inherited before this plugin's own primitives are applied.",

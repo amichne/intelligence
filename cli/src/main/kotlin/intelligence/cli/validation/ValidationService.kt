@@ -1,6 +1,9 @@
 package intelligence.cli.validation
 
+import intelligence.cli.io.FileSystem
 import intelligence.cli.io.JsonFiles
+import intelligence.cli.io.ProcessCapture
+import intelligence.cli.io.ProcessCaptureRunner
 import intelligence.cli.io.arrayValue
 import intelligence.cli.io.objectValue
 import intelligence.cli.io.stringList
@@ -21,6 +24,7 @@ import kotlinx.serialization.json.jsonObject
 
 internal class ValidationService(
     private val output: (String) -> Unit = ::println,
+    private val processRunner: ProcessCaptureRunner = ProcessCaptureRunner.system(),
 ) {
     fun validate(options: ValidationOptions): Int {
         val repository = options.repo.toAbsolutePath().normalize()
@@ -29,19 +33,28 @@ internal class ValidationService(
         }
 
         val issues = mutableListOf<String>()
+        val notes = mutableListOf<String>()
         validateRetiredRootPaths(repository, issues)
         validateOptionalJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
         validateOptionalJsonSyntax(repository.resolve(SCHEMAS_ROOT), issues)
         validateOptionalJsonSyntax(repository.resolve(INTELLIGENCE_ROOT), issues)
         validateMarketplaceSource(repository, issues)
 
-        options.hydrated?.let { hydrated ->
-            validateHydratedOutput(hydrated.toAbsolutePath().normalize(), issues)
+        val hydratedProviders = options.hydrated
+            ?.let { hydrated -> validateHydratedOutput(hydrated.toAbsolutePath().normalize(), issues) }
+            .orEmpty()
+        if (hydratedProviders.isNotEmpty()) {
+            if (options.portable) {
+                notes += "SKIP native provider CLI validation (--portable)"
+            } else if (issues.isEmpty()) {
+                validateNativeProviderCli(hydratedProviders, issues, notes)
+            }
         }
 
         return if (issues.isEmpty()) {
             output("OK adaptable marketplace")
             options.hydrated?.let { output("OK hydrated marketplace ${it.toAbsolutePath().normalize()}") }
+            notes.forEach(output)
             0
         } else {
             issues.forEach { issue -> output("FAIL $issue") }
@@ -334,6 +347,7 @@ internal class ValidationService(
         if (name != null && name != expectedName) {
             issues += "${path.relativeToUnix(repo)}: plugin name `$name` does not match marketplace entry `$expectedName`"
         }
+        validatePluginInterface(repo, path, manifest, issues)
 
         PrimitiveKind.entries.forEach { kind ->
             manifest.arrayValue(kind.collectionName).forEachObject { primitive ->
@@ -345,6 +359,35 @@ internal class ValidationService(
                     } else {
                         validatePrimitiveReference(repo, sourceRoot, path, dependency, dependencyKind, issues)
                     }
+                }
+            }
+        }
+    }
+
+    private fun validatePluginInterface(
+        repo: Path,
+        path: Path,
+        manifest: JsonObject,
+        issues: MutableList<String>,
+    ) {
+        if (!manifest.containsKey("interface")) {
+            return
+        }
+        val interfaceValue = manifest.objectValue("interface")
+        if (interfaceValue == null) {
+            issues += "${path.relativeToUnix(repo)}: interface must be an object"
+            return
+        }
+
+        val unknownFields = interfaceValue.keys - CODEX_PLUGIN_INTERFACE_URL_FIELDS
+        if (unknownFields.isNotEmpty()) {
+            issues += "${path.relativeToUnix(repo)}: unsupported interface field(s): ${unknownFields.sorted().joinToString(", ")}"
+        }
+        CODEX_PLUGIN_INTERFACE_URL_FIELDS.forEach { field ->
+            if (interfaceValue.containsKey(field)) {
+                val value = interfaceValue.stringValue(field)?.trim()
+                if (value.isNullOrBlank() || !value.startsWith("https://")) {
+                    issues += "${path.relativeToUnix(repo)}: interface.$field must be an https URL"
                 }
             }
         }
@@ -382,47 +425,73 @@ internal class ValidationService(
         }
     }
 
-    private fun validateHydratedOutput(root: Path, issues: MutableList<String>) {
+    private fun validateHydratedOutput(root: Path, issues: MutableList<String>): List<HydratedMarketplace> {
         if (!root.isDirectory()) {
             issues += "hydrated output does not exist: $root"
-            return
+            return emptyList()
         }
 
+        val providers = mutableListOf<HydratedMarketplace>()
         var foundProvider = false
         val branchCodexMarketplace = root.resolve(".agents").resolve("plugins").resolve("marketplace.json")
         if (branchCodexMarketplace.exists()) {
             foundProvider = true
-            validateCodexMarketplace(root, branchCodexMarketplace, issues)
+            validateCodexMarketplace(
+                root = root,
+                marketplacePath = branchCodexMarketplace,
+                providerRoot = root.resolve(CODEX_PROVIDER_ROOT),
+                issues = issues,
+            )?.let(providers::add)
         }
 
         val nestedCodexMarketplace = root.resolve("codex").resolve("marketplace.json")
         if (nestedCodexMarketplace.exists()) {
             foundProvider = true
-            validateCodexMarketplace(root.resolve("codex"), nestedCodexMarketplace, issues)
+            validateCodexMarketplace(
+                root = root,
+                marketplacePath = nestedCodexMarketplace,
+                providerRoot = root.resolve("codex"),
+                issues = issues,
+            )?.let(providers::add)
         }
 
         val githubMarketplace = root.resolve(".github").resolve("plugin").resolve("marketplace.json")
         if (githubMarketplace.exists()) {
             foundProvider = true
-            validateGithubMarketplace(root, githubMarketplace, issues)
+            validateGithubMarketplace(root, githubMarketplace, issues)?.let(providers::add)
         }
 
         if (!foundProvider) {
             issues += "hydrated output has no supported marketplace entrypoint: $root"
         }
+        return providers
     }
 
-    private fun validateCodexMarketplace(root: Path, marketplacePath: Path, issues: MutableList<String>) {
-        val marketplace = readObject(marketplacePath, root, issues) ?: return
+    private fun validateCodexMarketplace(
+        root: Path,
+        marketplacePath: Path,
+        providerRoot: Path,
+        issues: MutableList<String>,
+    ): CodexHydratedMarketplace? {
+        val marketplace = readObject(marketplacePath, root, issues) ?: return null
+        requireString(marketplace, "name", marketplacePath, root, issues)
         marketplace.arrayValue("plugins").forEachObject { entry ->
             val name = requireString(entry, "name", marketplacePath, root, issues) ?: return@forEachObject
+            val expectedPluginRoot = providerRoot.resolve(name).normalize()
+            val expectedSourcePath = "./${expectedPluginRoot.relativeToUnix(root)}"
             val sourcePath = entry.objectValue("source")?.stringValue("path")
             if (sourcePath.isNullOrBlank()) {
                 issues += "${marketplacePath.relativeToUnix(root)}: Codex plugin `$name` has no source.path"
                 return@forEachObject
             }
+            if (sourcePath != expectedSourcePath) {
+                issues += "${marketplacePath.relativeToUnix(root)}: Codex plugin `$name` source.path must be `$expectedSourcePath`"
+            }
 
             val pluginRoot = resolveCodexPluginRoot(root, sourcePath, issues) ?: return@forEachObject
+            if (pluginRoot.normalize() != expectedPluginRoot) {
+                issues += "${marketplacePath.relativeToUnix(root)}: Codex plugin `$name` payload must live at ${expectedPluginRoot.relativeToUnix(root)}"
+            }
             if (!pluginRoot.isDirectory()) {
                 issues += "${marketplacePath.relativeToUnix(root)}: missing Codex plugin payload ${pluginRoot.relativeToUnix(root)}"
                 return@forEachObject
@@ -431,8 +500,20 @@ internal class ValidationService(
             val manifest = pluginRoot.resolve(".codex-plugin").resolve("plugin.json")
             if (!manifest.isRegularFile()) {
                 issues += "${pluginRoot.relativeToUnix(root)}: missing .codex-plugin/plugin.json"
+            } else {
+                readObject(manifest, root, issues)?.let { payload ->
+                    validateHydratedPluginManifest(
+                        root = root,
+                        manifestPath = manifest,
+                        manifest = payload,
+                        expectedName = name,
+                        providerName = "Codex",
+                        issues = issues,
+                    )
+                }
             }
         }
+        return CodexHydratedMarketplace(root = root, marketplacePath = marketplacePath, marketplace = marketplace)
     }
 
     private fun resolveCodexPluginRoot(
@@ -443,24 +524,182 @@ internal class ValidationService(
         return resolveRelative(root, sourcePath, issues)
     }
 
-    private fun validateGithubMarketplace(root: Path, marketplacePath: Path, issues: MutableList<String>) {
-        val marketplace = readObject(marketplacePath, root, issues) ?: return
-        val pluginRoot = marketplace.objectValue("metadata")
-            ?.stringValue("pluginRoot")
+    private fun validateGithubMarketplace(
+        root: Path,
+        marketplacePath: Path,
+        issues: MutableList<String>,
+    ): GitHubHydratedMarketplace? {
+        val marketplace = readObject(marketplacePath, root, issues) ?: return null
+        requireString(marketplace, "name", marketplacePath, root, issues)
+        val pluginRootValue = marketplace.objectValue("metadata")?.stringValue("pluginRoot")
+        val expectedPluginRoot = root.resolve(GITHUB_PROVIDER_ROOT).normalize()
+        val expectedPluginRootValue = GITHUB_PROVIDER_ROOT.toUnixString()
+        if (pluginRootValue != expectedPluginRootValue) {
+            issues += "${marketplacePath.relativeToUnix(root)}: GitHub metadata.pluginRoot must be `$expectedPluginRootValue`"
+        }
+        val pluginRoot = pluginRootValue
             ?.let { resolveRelative(root, it, issues) }
             ?: run {
                 issues += "${marketplacePath.relativeToUnix(root)}: missing metadata.pluginRoot"
-                return
+                return GitHubHydratedMarketplace(root = root, marketplacePath = marketplacePath, marketplace = marketplace)
             }
+        if (pluginRoot.normalize() != expectedPluginRoot) {
+            issues += "${marketplacePath.relativeToUnix(root)}: GitHub plugin payload root must be ${expectedPluginRoot.relativeToUnix(root)}"
+        }
 
         marketplace.arrayValue("plugins").forEachObject { entry ->
             val name = requireString(entry, "name", marketplacePath, root, issues) ?: return@forEachObject
             val source = requireString(entry, "source", marketplacePath, root, issues) ?: return@forEachObject
+            if (source != name) {
+                issues += "${marketplacePath.relativeToUnix(root)}: GitHub plugin `$name` source must be `$name`"
+            }
             val payload = pluginRoot.resolve(source).normalize()
+            val expectedPayload = expectedPluginRoot.resolve(name).normalize()
+            if (payload != expectedPayload) {
+                issues += "${marketplacePath.relativeToUnix(root)}: GitHub plugin `$name` payload must live at ${expectedPayload.relativeToUnix(root)}"
+            }
             if (!payload.startsWith(pluginRoot) || !payload.isDirectory()) {
                 issues += "${marketplacePath.relativeToUnix(root)}: missing GitHub plugin payload for `$name`"
             }
         }
+        return GitHubHydratedMarketplace(root = root, marketplacePath = marketplacePath, marketplace = marketplace)
+    }
+
+    private fun validateHydratedPluginManifest(
+        root: Path,
+        manifestPath: Path,
+        manifest: JsonObject,
+        expectedName: String,
+        providerName: String,
+        issues: MutableList<String>,
+    ) {
+        val name = requireString(manifest, "name", manifestPath, root, issues)
+        if (name != null && name != expectedName) {
+            issues += "${manifestPath.relativeToUnix(root)}: $providerName plugin name `$name` does not match marketplace entry `$expectedName`"
+        }
+        requireString(manifest, "version", manifestPath, root, issues)
+    }
+
+    private fun validateNativeProviderCli(
+        providers: List<HydratedMarketplace>,
+        issues: MutableList<String>,
+        notes: MutableList<String>,
+    ) {
+        providers.forEach { provider ->
+            when (provider) {
+                is CodexHydratedMarketplace -> validateCodexCli(provider, issues, notes)
+                is GitHubHydratedMarketplace -> validateGitHubCopilotCli(provider, issues, notes)
+            }
+        }
+    }
+
+    private fun validateCodexCli(
+        provider: CodexHydratedMarketplace,
+        issues: MutableList<String>,
+        notes: MutableList<String>,
+    ) {
+        val marketplaceName = provider.marketplace.stringValue("name") ?: return
+        val pluginNames = provider.pluginNames()
+        val tempRoot = Files.createTempDirectory("intelligence-codex-validation-")
+        val home = tempRoot.resolve("home")
+        val codexHome = tempRoot.resolve("codex-home")
+        Files.createDirectories(home)
+        Files.createDirectories(codexHome)
+        val environment = mapOf(
+            "HOME" to home.toString(),
+            "CODEX_HOME" to codexHome.toString(),
+        )
+
+        try {
+            val addMarketplace = runProviderCommand(
+                command = listOf("codex", "plugin", "marketplace", "add", provider.root.toString(), "--json"),
+                cwd = provider.root,
+                environment = environment,
+            )
+            if (!addMarketplace.ok) {
+                issues += providerCliFailure("Codex", addMarketplace)
+                return
+            }
+            pluginNames.forEach { pluginName ->
+                val install = runProviderCommand(
+                    command = listOf("codex", "plugin", "add", "$pluginName@$marketplaceName", "--json"),
+                    cwd = provider.root,
+                    environment = environment,
+                )
+                if (!install.ok) {
+                    issues += providerCliFailure("Codex", install)
+                    return
+                }
+            }
+            notes += "OK native Codex provider validation (${pluginNames.size} plugins)"
+        } finally {
+            FileSystem.deleteRecursively(tempRoot)
+        }
+    }
+
+    private fun validateGitHubCopilotCli(
+        provider: GitHubHydratedMarketplace,
+        issues: MutableList<String>,
+        notes: MutableList<String>,
+    ) {
+        val marketplaceName = provider.marketplace.stringValue("name") ?: return
+        val pluginNames = provider.pluginNames()
+        val tempRoot = Files.createTempDirectory("intelligence-github-validation-")
+        val home = tempRoot.resolve("home")
+        Files.createDirectories(home)
+        val environment = mapOf("HOME" to home.toString())
+
+        try {
+            val addMarketplace = runProviderCommand(
+                command = listOf("gh", "copilot", "--", "plugin", "marketplace", "add", provider.root.toString()),
+                cwd = provider.root,
+                environment = environment,
+            )
+            if (!addMarketplace.ok) {
+                issues += providerCliFailure("GitHub Copilot", addMarketplace)
+                return
+            }
+            pluginNames.forEach { pluginName ->
+                val install = runProviderCommand(
+                    command = listOf("gh", "copilot", "--", "plugin", "install", "$pluginName@$marketplaceName"),
+                    cwd = provider.root,
+                    environment = environment,
+                )
+                if (!install.ok) {
+                    issues += providerCliFailure("GitHub Copilot", install)
+                    return
+                }
+            }
+            notes += "OK native GitHub Copilot provider validation (${pluginNames.size} plugins)"
+        } finally {
+            FileSystem.deleteRecursively(tempRoot)
+        }
+    }
+
+    private fun runProviderCommand(
+        command: List<String>,
+        cwd: Path,
+        environment: Map<String, String>,
+    ): ProviderCommandResult =
+        ProviderCommandResult(
+            command = command,
+            capture = processRunner.run(command, cwd, environment),
+        )
+
+    private fun providerCliFailure(providerName: String, result: ProviderCommandResult): String {
+        val command = result.command.joinToString(" ")
+        val detail = result.capture.stderr
+            .lineSequence()
+            .plus(result.capture.stdout.lineSequence())
+            .map(String::trim)
+            .firstOrNull(String::isNotBlank)
+            ?.take(240)
+        val prefix = if (result.capture.exitCode == ProcessCaptureRunner.COMMAND_NOT_FOUND) {
+            "native $providerName provider validation requires its CLI to be installed"
+        } else {
+            "native $providerName provider validation failed: `$command` exited ${result.capture.exitCode}"
+        }
+        return listOfNotNull(prefix, detail).joinToString(": ")
     }
 
     private fun readObject(path: Path, displayRoot: Path, issues: MutableList<String>): JsonObject? {
@@ -556,6 +795,12 @@ internal class ValidationService(
         runCatching { base.relativize(this).toString().replace('\\', '/') }
             .getOrElse { toString().replace('\\', '/') }
 
+    private fun Path.toUnixString(): String =
+        toString().replace('\\', '/')
+
+    private fun HydratedMarketplace.pluginNames(): List<String> =
+        marketplace.arrayValue("plugins").objects().mapNotNull { entry -> entry.stringValue("name") }
+
     private data class ValidatedExternalMarketplace(
         val missingLocalPath: Boolean,
     )
@@ -565,6 +810,31 @@ internal class ValidationService(
         val hasLock: Boolean,
     )
 
+    private sealed interface HydratedMarketplace {
+        val root: Path
+        val marketplacePath: Path
+        val marketplace: JsonObject
+    }
+
+    private data class CodexHydratedMarketplace(
+        override val root: Path,
+        override val marketplacePath: Path,
+        override val marketplace: JsonObject,
+    ) : HydratedMarketplace
+
+    private data class GitHubHydratedMarketplace(
+        override val root: Path,
+        override val marketplacePath: Path,
+        override val marketplace: JsonObject,
+    ) : HydratedMarketplace
+
+    private data class ProviderCommandResult(
+        val command: List<String>,
+        val capture: ProcessCapture,
+    ) {
+        val ok: Boolean = capture.exitCode == 0
+    }
+
     private companion object {
         val SOURCE_ROOT: Path = Path.of("source")
         val ADAPTABLE_MARKETPLACE_PATH: Path = SOURCE_ROOT.resolve("adaptable.marketplace.json")
@@ -572,6 +842,13 @@ internal class ValidationService(
         val INTELLIGENCE_ROOT: Path = Path.of(".intelligence")
         val INSTALLED_MARKETPLACE_PATH: Path = INTELLIGENCE_ROOT.resolve("adaptable.marketplace.json")
         val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
+        val CODEX_PROVIDER_ROOT: Path = Path.of(".agents").resolve("plugins")
+        val GITHUB_PROVIDER_ROOT: Path = Path.of(".github").resolve("plugin")
+        val CODEX_PLUGIN_INTERFACE_URL_FIELDS: Set<String> = setOf(
+            "websiteURL",
+            "privacyPolicyURL",
+            "termsOfServiceURL",
+        )
         val RETIRED_ROOT_PATHS: List<Path> = listOf(
             Path.of("packages"),
             Path.of("scripts"),

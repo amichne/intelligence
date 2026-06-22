@@ -145,6 +145,9 @@ intelligence marketplace materialize --repo /path/to/slopsentral
 Materialization defaults to all providers and writes to
 `build/intelligence/marketplace` under the target repository. Use `--provider`
 or `--out` only when a script needs a single provider or a custom output root.
+Portable hydrated validation checks each provider's generated manifest and
+payload shape. Omit `--portable` when you also want installed provider CLIs to
+smoke-install the hydrated Codex and GitHub Copilot plugins in temporary homes.
 
 ## Publication
 
