@@ -34,13 +34,14 @@ target repo.
 
 Users with the CLI installed should start from shell discovery. The CLI can
 check its GitHub host configuration, search repositories through the active
-`gh` host, inspect marketplace offerings, import selected plugins, install all
-exposed plugins, update, pin, and validate without memorizing provider
-entrypoints.
+`gh` host, inspect marketplace offerings, set up a new consumer repository,
+import selected plugins, install all exposed plugins, update, pin, and validate
+without memorizing provider entrypoints.
 
 ```sh
 intelligence doctor
 intelligence --version
+intelligence setup
 intelligence marketplace search kotlin
 intelligence marketplace inspect amichne/slopsentral
 intelligence marketplace search kotlin --repository amichne/slopsentral
@@ -74,6 +75,22 @@ intelligence marketplace browse amichne/slopsentral --format json
 printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","params":{"repository":"amichne/slopsentral","provider":"auto"}}' \
   | intelligence rpc
 ```
+
+## Set Up Marketplace Consumption
+
+For a new consumer repository, start with `setup`. The command imports the
+default `kotlin-engineering` plugin from `amichne/slopsentral`, writes
+`.intelligence/adaptable.marketplace.json`, records the resolved plugin version
+and source integrity in `.intelligence/marketplace-lock.json`, and runs portable
+validation.
+
+```sh
+intelligence setup
+intelligence setup --repo /path/to/repo
+```
+
+Use `--marketplace`, `--plugin`, `--version`, or `--ref` when a repository needs
+a different marketplace, plugin, exact plugin version, or source ref.
 
 ## Import Marketplace References
 
