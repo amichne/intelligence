@@ -23,10 +23,13 @@ connector mappings, and presentation assets. Skills remain the reusable
 workflow authoring format; plugins are the installable distribution unit.
 
 Codex does not document first-class plugin component slots for agents, prompts,
-instructions, concepts, schemas, or general documentation. `AGENTS.md` is a
-separate repository-guidance mechanism discovered from the user's filesystem,
-not a plugin component. A portable projection therefore cannot claim to
-preserve an unsupported primitive merely by copying it into a plugin folder.
+instructions, concepts, schemas, or general documentation. Custom agents are
+first-class local configuration under `.codex/agents`, but they are not a
+plugin component and their authoring format is explicitly described as subject
+to evolution. `AGENTS.md` is a separate repository-guidance mechanism
+discovered from the user's filesystem, not a plugin component. A portable
+projection therefore cannot claim to preserve an unsupported primitive merely
+by copying it into a plugin folder.
 
 The projection contract should expose a typed support result for every
 primitive. A required primitive without a semantics-preserving Codex mapping
@@ -96,7 +99,7 @@ The official surface supports the following conservative mapping.
 | Hook | Supported as plugin lifecycle configuration and owned executable assets. | Execution still requires separate trust review. |
 | External tool dependency | Supported through plugin MCP configuration or a skill's `agents/openai.yaml` dependency declaration. | User policy controls enablement and approvals. |
 | App or connector mapping | Supported through `.app.json`. | The app is a provider integration, not portable source. |
-| Agent | No documented first-class plugin component. | Must have an explicitly specified semantics-preserving lowering or fail. |
+| Agent | No documented first-class plugin component. | Custom agents are project or user configuration, not plugin payload. |
 | Prompt | No documented first-class plugin component. | `interface.defaultPrompt` is presentation metadata, not a general prompt primitive. |
 | Instruction | No documented first-class plugin component. | `AGENTS.md` is project guidance outside plugin packaging. |
 | Concept, schema, or docs | No documented runtime plugin component. | May accompany a skill only when that skill consumes it; copying alone is not projection. |
@@ -153,8 +156,10 @@ portable source requirements.
    distinction between skill authoring and plugin distribution.
 3. [Hooks](https://developers.openai.com/codex/hooks/) — hook discovery,
    event configuration, plugin packaging, and hash-based trust review.
-4. [Custom instructions with AGENTS.md](https://developers.openai.com/codex/agent-configuration/agents-md/)
+4. [Subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents) —
+   custom-agent configuration locations and the evolving authoring boundary.
+5. [Custom instructions with AGENTS.md](https://developers.openai.com/codex/agent-configuration/agents-md/)
    — repository guidance discovery, precedence, scope, and runtime loading.
-5. [Submit plugins](https://developers.openai.com/codex/submit-plugins/) —
+6. [Submit plugins](https://developers.openai.com/codex/submit-plugins/) —
    public listing, identity, test-case, and review requirements that are
    separate from local artifact validity.

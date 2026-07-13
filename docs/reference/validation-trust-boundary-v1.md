@@ -133,8 +133,7 @@ supporting asset owned by exactly one primitive. Missing, unreferenced, multiply
 owned, or out-of-root files fail validation.
 
 Primitive identities are unique by package, kind, and name. The kind must be
-one of `skill`, `agent`, `hook`, `instruction`, `prompt`, `concept`, `schema`,
-or `document`.
+one of `skill` or `hook`.
 
 All primitive definitions use their owning kind-specific schema and the common
 rules below:
@@ -146,11 +145,11 @@ rules below:
 - no provider directory or provider-specific generated path is authoring
   source.
 
-The Markdown-backed kinds—skill, agent, instruction, prompt, concept, and
-document—require non-empty UTF-8 Markdown without NUL characters. Schema
-primitives require a valid offline JSON Schema 2020-12 resource. Hook
-primitives require the strict provider-neutral hook schema; provider-specific
-event support is checked by the requested projection gate.
+Skill definitions require non-empty UTF-8 Markdown without NUL characters.
+Hook primitives require the strict provider-neutral hook schema;
+provider-specific event support is checked by the requested projection gate.
+Markdown, schemas, scripts, and other files consumed by a skill or hook are
+validated as private supporting assets, not standalone primitives.
 
 ## Package Bundle and Snapshot Index
 

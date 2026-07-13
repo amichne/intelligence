@@ -87,14 +87,8 @@ conflicts, and cross-package reach-through from the first implementation.
 
 The closed V1 primitive-kind set is:
 
-- `skill`;
-- `agent`;
-- `hook`;
-- `instruction`;
-- `prompt`;
-- `concept`;
-- `schema`; and
-- `document`.
+- `skill`; and
+- `hook`.
 
 Unknown primitive kinds fail validation. Primitive names are unique within a
 package and kind, so different kinds may share the same name. Every declared
@@ -104,6 +98,13 @@ There are no per-primitive visibility, selection, or version controls.
 Supporting assets are not primitives. They have no public name, version,
 dependency coordinate, or exposure lifecycle. They are immutable package
 content and are accessible only through a primitive definition.
+
+Agent profiles, instructions, prompts, concepts, schemas, and documents may be
+private supporting files owned and consumed by a skill or hook. They are not
+standalone V1 primitives. This is deliberate: Codex and GitHub Copilot do not
+share semantics-preserving installable plugin components for those kinds.
+Treating them as public would either make some valid packages unprojectable or
+require a lossy lowering that silently changes behavior.
 
 ## Reproducibility Rules
 
@@ -163,7 +164,7 @@ rows intentionally supersede earlier exploratory decisions.
 |---|---|
 | Package is the sole public selection and exposure unit. | Accepted. |
 | Primitive identity includes package, kind, and name. | Accepted. |
-| Primitive kinds form a closed contract-versioned set. | Accepted with the eight kinds listed above. |
+| Primitive kinds form a closed contract-versioned set. | Accepted; narrowed to skill and hook after provider research established the native portable intersection. |
 | Tags are discovery metadata only. | Accepted. |
 | Exactly one default package exists per marketplace snapshot. | Accepted. |
 | Supporting assets remain private package content. | Accepted. |
