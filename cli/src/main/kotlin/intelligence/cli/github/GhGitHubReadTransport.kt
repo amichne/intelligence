@@ -175,7 +175,7 @@ internal class GhGitHubReadTransport(
         runner.run(listOf("gh", "api", "--method", "GET", endpoint), cwd, emptyMap())
 }
 
-private fun decodeRelease(
+internal fun decodeRelease(
     repository: GitHubRepository,
     payload: JsonObject,
 ): GitHubExactRelease? {
@@ -201,7 +201,7 @@ private fun decodeRelease(
     return GitHubExactRelease(repository, releaseId, snapshotId, commitSha, immutable, draft, assets)
 }
 
-private fun decodeAsset(payload: JsonObject): GitHubReleaseAsset? {
+internal fun decodeAsset(payload: JsonObject): GitHubReleaseAsset? {
     if (payload.string("state") != "uploaded") return null
     val id =
         when (val parsed = GitHubAssetId.parse(payload.long("id") ?: return null)) {

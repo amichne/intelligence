@@ -17,6 +17,31 @@ class MarketplaceReleaseDirectoryTest {
     lateinit var temporaryDirectory: Path
 
     @Test
+    fun `materialized release directory can be strictly reopened for publication`() {
+        val output = temporaryDirectory.resolve("publication-input")
+        val marketplaceId = marketplaceId("example-marketplace")
+        val snapshotId = snapshotId("snapshot-one")
+        val archive = packageArchive("alpha-tools", "alpha")
+        assertIs<MarketplaceReleaseDirectoryMaterialization.Written>(
+            MarketplaceReleaseDirectory.materialize(
+                output,
+                marketplaceId,
+                snapshotId,
+                packageName("alpha-tools"),
+                listOf(archive),
+            ),
+        )
+
+        val inspected = assertIs<MarketplaceReleaseDirectoryInspection.Inspected>(
+            MarketplaceReleaseDirectory.inspect(output),
+        )
+
+        assertEquals(snapshotId, inspected.release.snapshotId)
+        assertEquals(marketplaceId, inspected.release.marketplaceId)
+        assertEquals(output.toAbsolutePath().normalize(), inspected.directory)
+    }
+
+    @Test
     fun `materialization writes exact staged assets and repeats as an unchanged no-op`() {
         val output = temporaryDirectory.resolve("release")
         val packages = listOf(packageArchive("zeta-tools", "zeta"), packageArchive("alpha-tools", "alpha"))

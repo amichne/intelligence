@@ -65,6 +65,78 @@ internal class MarketplaceRelease private constructor(
         verifyMarketplaceRelease(files, actualFiles)
 
     companion object {
+        fun inspect(files: List<ReleaseFile>): MarketplaceReleaseInspection {
+            val filesByName = files.associateBy(ReleaseFile::name)
+            if (filesByName.size != files.size) {
+                return MarketplaceReleaseInspection.Rejected(MarketplaceReleaseInspectionRejection.DuplicateAsset)
+            }
+            val indexName = ReleaseAssetName.snapshotIndex()
+            val indexFile = filesByName[indexName]
+                ?: return MarketplaceReleaseInspection.Rejected(
+                    MarketplaceReleaseInspectionRejection.MissingAsset(indexName),
+                )
+            val index =
+                when (val parsed = MarketplaceSnapshotIndex.parse(indexFile.bytes())) {
+                    is MarketplaceSnapshotIndexParsing.Parsed -> parsed.index
+                    is MarketplaceSnapshotIndexParsing.Rejected -> {
+                        return MarketplaceReleaseInspection.Rejected(
+                            MarketplaceReleaseInspectionRejection.IndexRejected(parsed.reason),
+                        )
+                    }
+                }
+            val packages = mutableListOf<PackageArchive>()
+            index.packages.forEach { record ->
+                val file = filesByName[record.archive.name]
+                    ?: return MarketplaceReleaseInspection.Rejected(
+                        MarketplaceReleaseInspectionRejection.MissingAsset(record.archive.name),
+                    )
+                if (file.byteSize != record.archive.byteSize || file.sha256 != record.archive.sha256) {
+                    return MarketplaceReleaseInspection.Rejected(
+                        MarketplaceReleaseInspectionRejection.PackageEvidenceMismatch(record.name),
+                    )
+                }
+                val archive =
+                    when (val parsed = PackageArchive.parse(file.bytes())) {
+                        is PackageArchiveParsing.Parsed -> parsed.archive
+                        is PackageArchiveParsing.Rejected -> {
+                            return MarketplaceReleaseInspection.Rejected(
+                                MarketplaceReleaseInspectionRejection.PackageRejected(record.name, parsed.reason),
+                            )
+                        }
+                    }
+                if (archive.marketplaceId != index.marketplaceId || archive.packageName != record.name) {
+                    return MarketplaceReleaseInspection.Rejected(
+                        MarketplaceReleaseInspectionRejection.PackageIdentityMismatch(record.name),
+                    )
+                }
+                packages += archive
+            }
+            val expected =
+                when (
+                    val materialized =
+                        materialize(
+                            index.marketplaceId,
+                            index.snapshotId,
+                            index.defaultPackage,
+                            packages,
+                        )
+                ) {
+                    is MarketplaceReleaseMaterialization.Materialized -> materialized.release
+                    is MarketplaceReleaseMaterialization.Rejected -> {
+                        return MarketplaceReleaseInspection.Rejected(
+                            MarketplaceReleaseInspectionRejection.BuildRejected(materialized.reason),
+                        )
+                    }
+                }
+            return when (val verification = expected.verify(files)) {
+                MarketplaceReleaseVerification.Verified -> MarketplaceReleaseInspection.Inspected(expected)
+                is MarketplaceReleaseVerification.Rejected ->
+                    MarketplaceReleaseInspection.Rejected(
+                        MarketplaceReleaseInspectionRejection.ContentRejected(verification.reason),
+                    )
+            }
+        }
+
         fun materialize(
             marketplaceId: MarketplaceId,
             snapshotId: SnapshotId,
@@ -175,6 +247,33 @@ internal class MarketplaceRelease private constructor(
             return MarketplaceReleaseMaterialization.Materialized(release)
         }
     }
+}
+
+internal sealed interface MarketplaceReleaseInspection {
+    data class Inspected(val release: MarketplaceRelease) : MarketplaceReleaseInspection
+
+    data class Rejected(val reason: MarketplaceReleaseInspectionRejection) : MarketplaceReleaseInspection
+}
+
+internal sealed interface MarketplaceReleaseInspectionRejection {
+    data object DuplicateAsset : MarketplaceReleaseInspectionRejection
+
+    data class MissingAsset(val name: ReleaseAssetName) : MarketplaceReleaseInspectionRejection
+
+    data class IndexRejected(val reason: MarketplaceSnapshotIndexRejection) : MarketplaceReleaseInspectionRejection
+
+    data class PackageEvidenceMismatch(val packageName: PackageName) : MarketplaceReleaseInspectionRejection
+
+    data class PackageRejected(
+        val packageName: PackageName,
+        val reason: PackageArchiveParseRejection,
+    ) : MarketplaceReleaseInspectionRejection
+
+    data class PackageIdentityMismatch(val packageName: PackageName) : MarketplaceReleaseInspectionRejection
+
+    data class BuildRejected(val reason: MarketplaceReleaseRejection) : MarketplaceReleaseInspectionRejection
+
+    data class ContentRejected(val reason: MarketplaceReleaseVerificationRejection) : MarketplaceReleaseInspectionRejection
 }
 
 internal sealed interface MarketplaceReleaseMaterialization {

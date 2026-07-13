@@ -9,6 +9,27 @@ import java.nio.file.StandardOpenOption
 import java.util.Comparator
 
 internal object MarketplaceReleaseDirectory {
+    fun inspect(directory: Path): MarketplaceReleaseDirectoryInspection {
+        val normalized = directory.toAbsolutePath().normalize()
+        val files =
+            when (val reading = readReleaseDirectory(normalized)) {
+                is ReleaseDirectoryReading.Read -> reading.files
+                is ReleaseDirectoryReading.Rejected -> {
+                    return MarketplaceReleaseDirectoryInspection.Rejected(
+                        MarketplaceReleaseDirectoryInspectionRejection.ReadRejected(reading.reason),
+                    )
+                }
+            }
+        return when (val inspection = MarketplaceRelease.inspect(files)) {
+            is MarketplaceReleaseInspection.Inspected ->
+                MarketplaceReleaseDirectoryInspection.Inspected(normalized, inspection.release)
+            is MarketplaceReleaseInspection.Rejected ->
+                MarketplaceReleaseDirectoryInspection.Rejected(
+                    MarketplaceReleaseDirectoryInspectionRejection.ReleaseRejected(inspection.reason),
+                )
+        }
+    }
+
     fun materialize(
         output: Path,
         marketplaceId: MarketplaceId,
@@ -166,6 +187,25 @@ internal object MarketplaceReleaseDirectory {
         }
         return MarketplaceReleaseDirectoryMaterialization.Written(normalizedOutput, first)
     }
+}
+
+internal sealed interface MarketplaceReleaseDirectoryInspection {
+    data class Inspected(
+        val directory: Path,
+        val release: MarketplaceRelease,
+    ) : MarketplaceReleaseDirectoryInspection
+
+    data class Rejected(
+        val reason: MarketplaceReleaseDirectoryInspectionRejection,
+    ) : MarketplaceReleaseDirectoryInspection
+}
+
+internal sealed interface MarketplaceReleaseDirectoryInspectionRejection {
+    data class ReadRejected(val reason: ReleaseDirectoryReadRejection) :
+        MarketplaceReleaseDirectoryInspectionRejection
+
+    data class ReleaseRejected(val reason: MarketplaceReleaseInspectionRejection) :
+        MarketplaceReleaseDirectoryInspectionRejection
 }
 
 internal enum class MarketplaceReleaseBuildPass {

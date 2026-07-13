@@ -1,6 +1,28 @@
 package intelligence.cli.portable
 
 @JvmInline
+internal value class GitHubRepositoryId private constructor(
+    private val value: Long,
+) {
+    fun render(): Long = value
+
+    companion object {
+        fun parse(candidate: Long): GitHubRepositoryIdParsing =
+            if (candidate in 1..MAX_SAFE_EVIDENCE_ID) {
+                GitHubRepositoryIdParsing.Parsed(GitHubRepositoryId(candidate))
+            } else {
+                GitHubRepositoryIdParsing.Rejected(PositiveEvidenceIdRejection.OutOfRange(candidate))
+            }
+    }
+}
+
+internal sealed interface GitHubRepositoryIdParsing {
+    data class Parsed(val id: GitHubRepositoryId) : GitHubRepositoryIdParsing
+
+    data class Rejected(val reason: PositiveEvidenceIdRejection) : GitHubRepositoryIdParsing
+}
+
+@JvmInline
 internal value class GitHubReleaseId private constructor(
     private val value: Long,
 ) {
