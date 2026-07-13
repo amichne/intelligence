@@ -73,6 +73,9 @@ internal class CacheBlobExpectation private constructor(
 
         fun from(asset: SnapshotAssetEvidence): CacheBlobExpectation =
             CacheBlobExpectation(asset.byteSize, asset.sha256)
+
+        fun from(asset: GitHubReleaseAsset): CacheBlobExpectation =
+            CacheBlobExpectation(asset.byteSize, asset.sha256)
     }
 }
 

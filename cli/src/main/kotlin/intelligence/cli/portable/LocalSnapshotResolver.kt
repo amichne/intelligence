@@ -471,7 +471,7 @@ private fun acquireLockedAsset(
 private fun LockedAsset.expectation(): CacheBlobExpectation =
     CacheBlobExpectation.from(this)
 
-private fun releaseChecksumMatches(
+internal fun releaseChecksumMatches(
     index: MarketplaceSnapshotIndex,
     indexBytes: ByteArray,
     checksumBytes: ByteArray,
@@ -498,7 +498,7 @@ private fun releaseChecksumMatches(
     return expected.contentEquals(checksumBytes)
 }
 
-private fun verifyLockedMarketplace(
+internal fun verifyLockedMarketplace(
     lockEntry: MarketplaceLockEntry,
     indexBytes: ByteArray,
     checksumBytes: ByteArray,

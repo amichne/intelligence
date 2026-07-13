@@ -17,6 +17,10 @@ internal sealed interface MarketplaceResolution {
 internal sealed interface MarketplaceResolutionRejection {
     data class LocalSourceRequired(val marketplaceId: MarketplaceId) : MarketplaceResolutionRejection
 
+    data class GitHubSourceRequired(val marketplaceId: MarketplaceId) : MarketplaceResolutionRejection
+
+    data class GitHubRejected(val reason: GitHubSnapshotRejection) : MarketplaceResolutionRejection
+
     data class LocalDirectoryRejected(
         val directory: ConsumerRelativeDirectory,
         val reason: LocalSnapshotDirectoryRejection,
