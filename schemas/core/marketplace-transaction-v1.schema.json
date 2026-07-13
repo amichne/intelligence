@@ -11,7 +11,14 @@
           "$ref": "#/$defs/transactionPath"
         },
         "newSha256": {
-          "$ref": "#/$defs/digest"
+          "oneOf": [
+            {
+              "$ref": "#/$defs/digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
         },
         "oldSha256": {
           "oneOf": [

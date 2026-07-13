@@ -162,6 +162,34 @@ class ConsumerStateRepositoryTest {
         assertTrue(Files.isSymbolicLink(intentPath()))
     }
 
+    @Test
+    fun `deleting the final pair is planned without effects and executes as uninitialized state`() {
+        val pair = pair("alpha-tools")
+        commit(pair)
+        val plan = assertIs<ConsumerDeletionPlanning.Planned>(
+            ConsumerStateRepository.planDeletion(repository),
+        ).plan
+        assertIs<ConsumerState.Resolved>(plan.before)
+        assertTrue(plan.changed)
+        assertTrue(Files.exists(intentPath()))
+        assertTrue(Files.exists(lockPath()))
+
+        assertIs<ConsumerDeletionExecution.Deleted>(ConsumerStateRepository.execute(plan))
+        assertFalse(Files.exists(intentPath()))
+        assertFalse(Files.exists(lockPath()))
+        assertFalse(Files.exists(journalPath()))
+        assertEquals(
+            ConsumerState.Uninitialized,
+            assertIs<ConsumerStateReading.Read>(ConsumerStateRepository.read(repository)).state,
+        )
+
+        val repeated = assertIs<ConsumerDeletionPlanning.Planned>(
+            ConsumerStateRepository.planDeletion(repository),
+        ).plan
+        assertFalse(repeated.changed)
+        assertIs<ConsumerDeletionExecution.Unchanged>(ConsumerStateRepository.execute(repeated))
+    }
+
     private fun commit(pair: PairEvidence) {
         val plan = assertIs<ConsumerCommitPlanning.Planned>(
             ConsumerStateRepository.planCommit(repository, pair.intent, pair.lock),

@@ -26,8 +26,8 @@ internal value class MarketplaceTransactionId private constructor(
         internal fun derive(
             oldIntent: Sha256Digest?,
             oldLock: Sha256Digest?,
-            newIntent: Sha256Digest,
-            newLock: Sha256Digest,
+            newIntent: Sha256Digest?,
+            newLock: Sha256Digest?,
         ): MarketplaceTransactionId {
             val preimage =
                 buildString {
@@ -36,9 +36,9 @@ internal value class MarketplaceTransactionId private constructor(
                     append('\n')
                     append(oldLock?.render() ?: "ABSENT")
                     append('\n')
-                    append(newIntent.render())
+                    append(newIntent?.render() ?: "ABSENT")
                     append('\n')
-                    append(newLock.render())
+                    append(newLock?.render() ?: "ABSENT")
                     append('\n')
                 }.encodeToByteArray()
             return MarketplaceTransactionId(Sha256Digest.compute(preimage))
@@ -99,7 +99,7 @@ internal sealed interface MarketplaceTransactionPathParsing {
 internal data class TransactionFileRecord(
     val file: ConsumerPersistedFile,
     val oldSha256: Sha256Digest?,
-    val newSha256: Sha256Digest,
+    val newSha256: Sha256Digest?,
     val stagedPath: MarketplaceTransactionPath,
     val backupPath: MarketplaceTransactionPath,
 )
@@ -158,9 +158,14 @@ internal class MarketplaceTransactionJournal private constructor(
         fun materialize(
             oldIntentSha256: Sha256Digest?,
             oldLockSha256: Sha256Digest?,
-            newIntentSha256: Sha256Digest,
-            newLockSha256: Sha256Digest,
+            newIntentSha256: Sha256Digest?,
+            newLockSha256: Sha256Digest?,
         ): MarketplaceTransactionJournalMaterialization {
+            if ((newIntentSha256 == null) != (newLockSha256 == null)) {
+                return MarketplaceTransactionJournalMaterialization.Rejected(
+                    MarketplaceTransactionJournalRejection.IncompleteNewPair,
+                )
+            }
             val transactionId =
                 MarketplaceTransactionId.derive(
                     oldIntentSha256,
@@ -255,6 +260,7 @@ internal sealed interface MarketplaceTransactionRecovery {
 internal sealed interface MarketplaceTransactionRecoveryAction {
     data class KeepNew(val file: ConsumerPersistedFile) : MarketplaceTransactionRecoveryAction
     data class PromoteStaged(val file: ConsumerPersistedFile) : MarketplaceTransactionRecoveryAction
+    data class RemoveTarget(val file: ConsumerPersistedFile) : MarketplaceTransactionRecoveryAction
     data class KeepOld(val file: ConsumerPersistedFile) : MarketplaceTransactionRecoveryAction
     data class RestoreBackup(val file: ConsumerPersistedFile) : MarketplaceTransactionRecoveryAction
     data class RemoveNew(val file: ConsumerPersistedFile) : MarketplaceTransactionRecoveryAction
@@ -278,6 +284,7 @@ internal sealed interface MarketplaceTransactionJournalRejection {
     data class UnsupportedSchemaVersion(val actual: Long) : MarketplaceTransactionJournalRejection
     data class InvalidTransactionId(val reason: Sha256DigestRejection) : MarketplaceTransactionJournalRejection
     data object UnexpectedTransactionId : MarketplaceTransactionJournalRejection
+    data object IncompleteNewPair : MarketplaceTransactionJournalRejection
     data object UnexpectedFileSet : MarketplaceTransactionJournalRejection
     data class InvalidTargetPath(val index: Int, val actual: String) : MarketplaceTransactionJournalRejection
     data class InvalidDigest(val path: String, val reason: Sha256DigestRejection) : MarketplaceTransactionJournalRejection
@@ -290,12 +297,20 @@ private fun completionAction(
     record: TransactionFileRecord,
     observation: TransactionFileObservation,
 ): MarketplaceTransactionRecoveryAction? =
-    when {
-        observation.targetSha256 == record.newSha256 ->
-            MarketplaceTransactionRecoveryAction.KeepNew(record.file)
-        targetMatchesOld(record, observation) && observation.stagedSha256 == record.newSha256 ->
-            MarketplaceTransactionRecoveryAction.PromoteStaged(record.file)
-        else -> null
+    if (record.newSha256 == null) {
+        when (observation.targetSha256) {
+            null -> MarketplaceTransactionRecoveryAction.KeepNew(record.file)
+            record.oldSha256 -> MarketplaceTransactionRecoveryAction.RemoveTarget(record.file)
+            else -> null
+        }
+    } else {
+        when {
+            observation.targetSha256 == record.newSha256 ->
+                MarketplaceTransactionRecoveryAction.KeepNew(record.file)
+            targetMatchesOld(record, observation) && observation.stagedSha256 == record.newSha256 ->
+                MarketplaceTransactionRecoveryAction.PromoteStaged(record.file)
+            else -> null
+        }
     }
 
 private fun restorationAction(
@@ -327,7 +342,7 @@ private fun targetMatchesOld(
 private fun TransactionFileRecord.canonicalValue(): CanonicalJsonValue =
     canonicalJsonObject(
         "backupPath" to canonicalJsonString(backupPath.render()),
-        "newSha256" to canonicalJsonString(newSha256.render()),
+        "newSha256" to (newSha256?.let { digest -> canonicalJsonString(digest.render()) } ?: CanonicalJsonNull),
         "oldSha256" to (oldSha256?.let { digest -> canonicalJsonString(digest.render()) } ?: CanonicalJsonNull),
         "path" to canonicalJsonString(file.targetPath),
         "stagedPath" to canonicalJsonString(stagedPath.render()),

@@ -120,6 +120,70 @@ class ConsumerStateTest {
     }
 
     @Test
+    fun `pair deletion is journaled as one closed absent target state`() {
+        val oldIntent = digest("old-intent")
+        val oldLock = digest("old-lock")
+        val journal = assertIs<MarketplaceTransactionJournalMaterialization.Materialized>(
+            MarketplaceTransactionJournal.materialize(
+                oldIntentSha256 = oldIntent,
+                oldLockSha256 = oldLock,
+                newIntentSha256 = null,
+                newLockSha256 = null,
+            ),
+        ).journal
+        assertEquals(listOf(null, null), journal.records.map(TransactionFileRecord::newSha256))
+        assertContentEquals(
+            journal.canonicalBytes(),
+            assertIs<MarketplaceTransactionJournalParsing.Parsed>(
+                MarketplaceTransactionJournal.parse(journal.canonicalBytes()),
+            ).journal.canonicalBytes(),
+        )
+        assertEquals(
+            MarketplaceTransactionRecovery.CompleteNew(
+                listOf(
+                    MarketplaceTransactionRecoveryAction.RemoveTarget(ConsumerPersistedFile.INTENT),
+                    MarketplaceTransactionRecoveryAction.RemoveTarget(ConsumerPersistedFile.LOCK),
+                ),
+            ),
+            journal.recovery(
+                observations(
+                    intent = observation(target = oldIntent),
+                    lock = observation(target = oldLock),
+                ),
+            ),
+        )
+        assertEquals(
+            MarketplaceTransactionRecovery.CompleteNew(
+                listOf(
+                    MarketplaceTransactionRecoveryAction.KeepNew(ConsumerPersistedFile.INTENT),
+                    MarketplaceTransactionRecoveryAction.RemoveTarget(ConsumerPersistedFile.LOCK),
+                ),
+            ),
+            journal.recovery(
+                observations(
+                    intent = observation(target = null, backup = oldIntent),
+                    lock = observation(target = oldLock, backup = oldLock),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun `journal rejects a partial new pair`() {
+        assertEquals(
+            MarketplaceTransactionJournalMaterialization.Rejected(
+                MarketplaceTransactionJournalRejection.IncompleteNewPair,
+            ),
+            MarketplaceTransactionJournal.materialize(
+                oldIntentSha256 = digest("old-intent"),
+                oldLockSha256 = digest("old-lock"),
+                newIntentSha256 = digest("new-intent"),
+                newLockSha256 = null,
+            ),
+        )
+    }
+
+    @Test
     fun `consumer state classifies every persisted file combination fail closed`() {
         val intent = localIntent()
         val lock = localLock()

@@ -66,6 +66,36 @@ internal object ConsumerStateTransaction {
             return executeRecovery(plan)
         }
     }
+
+    fun execute(plan: ConsumerDeletionPlan): ConsumerDeletionExecution {
+        val lease =
+            when (val acquired = ConsumerMutationLease.acquire(plan.repository)) {
+                is ConsumerMutationLeaseAcquisition.Acquired -> acquired.lease
+                is ConsumerMutationLeaseAcquisition.Rejected -> {
+                    return ConsumerDeletionExecution.Rejected(
+                        ConsumerDeletionRejection.LeaseRejected(acquired.reason),
+                    )
+                }
+            }
+        lease.use {
+            val current =
+                when (val replanned = ConsumerStateRepository.planDeletion(plan.repository)) {
+                    is ConsumerDeletionPlanning.Planned -> replanned.plan
+                    is ConsumerDeletionPlanning.Rejected -> {
+                        return ConsumerDeletionExecution.Rejected(
+                            ConsumerDeletionRejection.PreconditionChanged,
+                        )
+                    }
+                }
+            if (!plan.samePrecondition(current)) {
+                return ConsumerDeletionExecution.Rejected(ConsumerDeletionRejection.PreconditionChanged)
+            }
+            if (!plan.changed) {
+                return ConsumerDeletionExecution.Unchanged
+            }
+            return writeDeletion(plan)
+        }
+    }
 }
 
 private fun writeCommit(plan: ConsumerCommitPlan): ConsumerCommitExecution {
@@ -181,6 +211,12 @@ private fun executeRecovery(plan: ConsumerRecoveryPlan): ConsumerRecoveryExecuti
                     return recoveryFileSystemFailure(ConsumerTransactionOperation.PROMOTE_STAGED, target)
                 }
             }
+            is MarketplaceTransactionRecoveryAction.RemoveTarget -> {
+                val target = plan.repository.resolve(record.file.targetPath)
+                if (!deleteRegularFile(target)) {
+                    return recoveryFileSystemFailure(ConsumerTransactionOperation.REMOVE_NEW, target)
+                }
+            }
             is MarketplaceTransactionRecoveryAction.RestoreBackup -> {
                 val backup = plan.repository.resolve(record.backupPath.render())
                 val target = plan.repository.resolve(record.file.targetPath)
@@ -240,10 +276,93 @@ private fun executeRecovery(plan: ConsumerRecoveryPlan): ConsumerRecoveryExecuti
     return ConsumerRecoveryExecution.Recovered(outcome, actions)
 }
 
+private fun writeDeletion(plan: ConsumerDeletionPlan): ConsumerDeletionExecution {
+    val journal =
+        when (
+            val materialized =
+                MarketplaceTransactionJournal.materialize(
+                    oldIntentSha256 = plan.oldBytes(ConsumerPersistedFile.INTENT)?.let(Sha256Digest::compute),
+                    oldLockSha256 = plan.oldBytes(ConsumerPersistedFile.LOCK)?.let(Sha256Digest::compute),
+                    newIntentSha256 = null,
+                    newLockSha256 = null,
+                )
+        ) {
+            is MarketplaceTransactionJournalMaterialization.Materialized -> materialized.journal
+            is MarketplaceTransactionJournalMaterialization.Rejected -> {
+                return ConsumerDeletionExecution.Rejected(
+                    ConsumerDeletionRejection.JournalRejected(materialized.reason),
+                )
+            }
+        }
+    val transactionRoot = plan.repository.resolve(CONSUMER_TRANSACTION_ROOT_PATH)
+    if (!ensureDirectory(transactionRoot)) {
+        return deletionFileSystemFailure(
+            ConsumerTransactionOperation.PREPARE_TRANSACTION_ROOT,
+            transactionRoot,
+        )
+    }
+    val journalPath = plan.repository.resolve(CONSUMER_TRANSACTION_JOURNAL_PATH)
+    if (!publishForcedFile(journalPath, journal.canonicalBytes())) {
+        return deletionFileSystemFailure(ConsumerTransactionOperation.WRITE_JOURNAL, journalPath)
+    }
+    val transactionDirectory = plan.repository.resolve(journal.records.first().backupPath.render()).parent
+    if (!createNewDirectory(transactionDirectory)) {
+        return deletionFileSystemFailure(
+            ConsumerTransactionOperation.CREATE_TRANSACTION_DIRECTORY,
+            transactionDirectory,
+        )
+    }
+    journal.records.forEach { record ->
+        val oldBytes = plan.oldBytes(record.file)
+        if (oldBytes != null) {
+            val backup = plan.repository.resolve(record.backupPath.render())
+            if (!writeForcedNewFile(backup, oldBytes)) {
+                return deletionFileSystemFailure(ConsumerTransactionOperation.WRITE_BACKUP, backup)
+            }
+        }
+    }
+    if (!forceDirectory(transactionDirectory) || !forceDirectory(transactionRoot)) {
+        return deletionFileSystemFailure(
+            ConsumerTransactionOperation.FLUSH_DIRECTORY,
+            transactionDirectory,
+        )
+    }
+    journal.records.forEach { record ->
+        val target = plan.repository.resolve(record.file.targetPath)
+        if (!deleteRegularFile(target)) {
+            return deletionFileSystemFailure(ConsumerTransactionOperation.REMOVE_NEW, target)
+        }
+    }
+    val stateDirectory = plan.repository.resolve(CONSUMER_STATE_DIRECTORY)
+    if (!forceDirectory(stateDirectory)) {
+        return deletionFileSystemFailure(ConsumerTransactionOperation.FLUSH_DIRECTORY, stateDirectory)
+    }
+    journal.records.forEach { record ->
+        val target = plan.repository.resolve(record.file.targetPath)
+        if (!targetMatches(target, record.file.maximumBytes(), null)) {
+            return deletionFileSystemFailure(ConsumerTransactionOperation.VERIFY_TARGET, target)
+        }
+    }
+    if (!cleanupTransactionFiles(plan.repository, journal)) {
+        return deletionFileSystemFailure(
+            ConsumerTransactionOperation.CLEAN_TRANSACTION,
+            transactionDirectory,
+        )
+    }
+    if (!deleteRegularFile(journalPath)) {
+        return deletionFileSystemFailure(ConsumerTransactionOperation.REMOVE_JOURNAL, journalPath)
+    }
+    if (!forceDirectory(stateDirectory)) {
+        return deletionFileSystemFailure(ConsumerTransactionOperation.FLUSH_DIRECTORY, stateDirectory)
+    }
+    return ConsumerDeletionExecution.Deleted
+}
+
 private fun MarketplaceTransactionRecoveryAction.file(): ConsumerPersistedFile =
     when (this) {
         is MarketplaceTransactionRecoveryAction.KeepNew -> file
         is MarketplaceTransactionRecoveryAction.PromoteStaged -> file
+        is MarketplaceTransactionRecoveryAction.RemoveTarget -> file
         is MarketplaceTransactionRecoveryAction.KeepOld -> file
         is MarketplaceTransactionRecoveryAction.RestoreBackup -> file
         is MarketplaceTransactionRecoveryAction.RemoveNew -> file
@@ -453,6 +572,12 @@ private fun recoveryFileSystemFailure(
     path: Path,
 ): ConsumerRecoveryExecution.Rejected =
     ConsumerRecoveryExecution.Rejected(ConsumerRecoveryRejection.FileSystemFailure(operation, path))
+
+private fun deletionFileSystemFailure(
+    operation: ConsumerTransactionOperation,
+    path: Path,
+): ConsumerDeletionExecution.Rejected =
+    ConsumerDeletionExecution.Rejected(ConsumerDeletionRejection.FileSystemFailure(operation, path))
 
 private const val CONSUMER_JOURNAL_STAGING_PREFIX = ".marketplace-journal-"
 private const val CONSUMER_JOURNAL_STAGING_SUFFIX = ".tmp"

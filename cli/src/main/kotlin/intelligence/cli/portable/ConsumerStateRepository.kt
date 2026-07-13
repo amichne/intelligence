@@ -174,10 +174,53 @@ internal object ConsumerStateRepository {
         )
     }
 
+    fun planDeletion(repository: Path): ConsumerDeletionPlanning {
+        val snapshot =
+            when (val read = readConsumerSnapshot(repository)) {
+                is ConsumerSnapshotReading.Read -> read.snapshot
+                is ConsumerSnapshotReading.Rejected -> {
+                    return ConsumerDeletionPlanning.Rejected(
+                        ConsumerDeletionRejection.ReadRejected(read.reason),
+                    )
+                }
+            }
+        when (val state = snapshot.state) {
+            is ConsumerState.Recovering -> {
+                return ConsumerDeletionPlanning.Rejected(
+                    ConsumerDeletionRejection.RecoveryRequired(state.journal.transactionId),
+                )
+            }
+            is ConsumerState.Invalid -> {
+                return ConsumerDeletionPlanning.Rejected(
+                    ConsumerDeletionRejection.InvalidState(state.reason),
+                )
+            }
+            is ConsumerState.Orphaned -> {
+                return ConsumerDeletionPlanning.Rejected(ConsumerDeletionRejection.OrphanedState)
+            }
+            ConsumerState.Uninitialized,
+            is ConsumerState.Unresolved,
+            is ConsumerState.Stale,
+            is ConsumerState.Resolved,
+            -> Unit
+        }
+        return ConsumerDeletionPlanning.Planned(
+            ConsumerDeletionPlan(
+                repository = snapshot.repository,
+                before = snapshot.state,
+                oldIntentBytes = snapshot.intentBytesCopy(),
+                oldLockBytes = snapshot.lockBytesCopy(),
+            ),
+        )
+    }
+
     fun execute(plan: ConsumerCommitPlan): ConsumerCommitExecution =
         ConsumerStateTransaction.execute(plan)
 
     fun execute(plan: ConsumerRecoveryPlan): ConsumerRecoveryExecution =
+        ConsumerStateTransaction.execute(plan)
+
+    fun execute(plan: ConsumerDeletionPlan): ConsumerDeletionExecution =
         ConsumerStateTransaction.execute(plan)
 }
 
@@ -233,6 +276,29 @@ internal class ConsumerRecoveryPlan internal constructor(
         journalBytes.contentEquals(other.journalBytes) && observations == other.observations && recovery == other.recovery
 }
 
+internal class ConsumerDeletionPlan internal constructor(
+    val repository: Path,
+    val before: ConsumerState,
+    oldIntentBytes: ByteArray?,
+    oldLockBytes: ByteArray?,
+) {
+    private val oldIntentBytes = oldIntentBytes?.copyOf()
+    private val oldLockBytes = oldLockBytes?.copyOf()
+
+    val after: ConsumerState = ConsumerState.Uninitialized
+    val changed: Boolean = this.oldIntentBytes != null || this.oldLockBytes != null
+
+    internal fun oldBytes(file: ConsumerPersistedFile): ByteArray? =
+        when (file) {
+            ConsumerPersistedFile.INTENT -> oldIntentBytes?.copyOf()
+            ConsumerPersistedFile.LOCK -> oldLockBytes?.copyOf()
+        }
+
+    internal fun samePrecondition(other: ConsumerDeletionPlan): Boolean =
+        sameOptionalBytes(oldIntentBytes, other.oldIntentBytes) &&
+            sameOptionalBytes(oldLockBytes, other.oldLockBytes)
+}
+
 internal sealed interface ConsumerStateReading {
     data class Read(val state: ConsumerState) : ConsumerStateReading
 
@@ -270,6 +336,20 @@ internal sealed interface ConsumerRecoveryExecution {
     data class NotRequired(val state: ConsumerState) : ConsumerRecoveryExecution
 
     data class Rejected(val reason: ConsumerRecoveryRejection) : ConsumerRecoveryExecution
+}
+
+internal sealed interface ConsumerDeletionPlanning {
+    data class Planned(val plan: ConsumerDeletionPlan) : ConsumerDeletionPlanning
+
+    data class Rejected(val reason: ConsumerDeletionRejection) : ConsumerDeletionPlanning
+}
+
+internal sealed interface ConsumerDeletionExecution {
+    data object Deleted : ConsumerDeletionExecution
+
+    data object Unchanged : ConsumerDeletionExecution
+
+    data class Rejected(val reason: ConsumerDeletionRejection) : ConsumerDeletionExecution
 }
 
 internal enum class ConsumerRecoveryOutcome {
@@ -340,6 +420,29 @@ internal sealed interface ConsumerRecoveryRejection {
         val operation: ConsumerTransactionOperation,
         val path: Path,
     ) : ConsumerRecoveryRejection
+}
+
+internal sealed interface ConsumerDeletionRejection {
+    data class ReadRejected(val reason: ConsumerStateReadRejection) : ConsumerDeletionRejection
+
+    data class RecoveryRequired(val transactionId: MarketplaceTransactionId) : ConsumerDeletionRejection
+
+    data class InvalidState(val reason: ConsumerStateInvalidity) : ConsumerDeletionRejection
+
+    data object OrphanedState : ConsumerDeletionRejection
+
+    data class LeaseRejected(val reason: ConsumerMutationLeaseRejection) : ConsumerDeletionRejection
+
+    data object PreconditionChanged : ConsumerDeletionRejection
+
+    data class JournalRejected(
+        val reason: MarketplaceTransactionJournalRejection,
+    ) : ConsumerDeletionRejection
+
+    data class FileSystemFailure(
+        val operation: ConsumerTransactionOperation,
+        val path: Path,
+    ) : ConsumerDeletionRejection
 }
 
 internal enum class ConsumerRecoveryObservation {

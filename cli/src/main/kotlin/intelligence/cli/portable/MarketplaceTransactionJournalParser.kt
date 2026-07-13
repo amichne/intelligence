@@ -111,7 +111,7 @@ private object MarketplaceTransactionJournalDecoder {
         val file = ConsumerPersistedFile.entries.singleOrNull { candidate -> candidate.targetPath == targetPath }
             ?: transactionReject(MarketplaceTransactionJournalRejection.InvalidTargetPath(index, targetPath))
         val oldDigest = source.requiredNullableDigest("$path.oldSha256")
-        val newDigest = source.requiredDigest("$path.newSha256")
+        val newDigest = source.requiredNullableDigest("$path.newSha256")
         val staged =
             when (val parsed = MarketplaceTransactionPath.parse(source.requiredTransactionString(path, "stagedPath"))) {
                 is MarketplaceTransactionPathParsing.Parsed -> parsed.path

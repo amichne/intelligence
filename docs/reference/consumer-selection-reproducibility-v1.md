@@ -268,6 +268,12 @@ requires exactly the intent record followed by the lock record and recomputes
 every derived value. Recovery refuses an observed target digest that is
 neither the recorded old value nor the recorded new value.
 
+Removing the final marketplace returns the repository to the uninitialized
+state by journaling both new targets as absent. A partially absent new pair is
+not representable: the parser accepts either two new digests or two nulls.
+Recovery may therefore complete a partial deletion or restore the prior pair
+without inventing an empty sentinel intent or exposing a non-atomic shortcut.
+
 The content cache is outside the repository transaction. Verified immutable
 blobs may remain unreferenced after a failed state commit, but no mutable cache
 metadata or consumer pointer refers to them. This is safe because blob identity
