@@ -14,34 +14,6 @@ internal enum class PortableProvider(
     }
 }
 
-internal class ProviderArchiveArtifact private constructor(
-    val provider: PortableProvider,
-    val assetName: ReleaseAssetName,
-    private val content: ByteArray,
-) {
-    val byteSize: Int
-        get() = content.size
-
-    val sha256: Sha256Digest = Sha256Digest.compute(content)
-
-    fun bytes(): ByteArray = content.copyOf()
-
-    internal fun evidence(): SnapshotAssetEvidence =
-        SnapshotAssetEvidence(assetName, byteSize, sha256)
-
-    companion object {
-        fun fromCanonicalArchive(
-            provider: PortableProvider,
-            archive: CanonicalZipArchive,
-        ): ProviderArchiveArtifact =
-            ProviderArchiveArtifact(
-                provider = provider,
-                assetName = ReleaseAssetName.providerArchive(provider),
-                content = archive.bytes(),
-            )
-    }
-}
-
 internal data class SnapshotAssetEvidence(
     val name: ReleaseAssetName,
     val byteSize: Int,
@@ -85,7 +57,7 @@ internal class MarketplaceSnapshotIndex private constructor(
             snapshotId: SnapshotId,
             defaultPackage: PackageName,
             packages: List<PackageArchive>,
-            projections: List<ProviderArchiveArtifact>,
+            projections: List<ProviderMarketplaceArchive>,
         ): MarketplaceSnapshotIndexMaterialization {
             if (packages.isEmpty()) {
                 return MarketplaceSnapshotIndexMaterialization.Rejected(
@@ -138,6 +110,54 @@ internal class MarketplaceSnapshotIndex private constructor(
                     MarketplaceSnapshotIndexRejection.MissingProvider(missing),
                 )
             }
+            val expectedPackageEvidence =
+                orderedPackages.map { archive ->
+                    ProviderMarketplacePackageEvidence(archive.packageName, archive.sha256)
+                }
+            projections.forEach { projection ->
+                if (projection.marketplaceId != marketplaceId) {
+                    return MarketplaceSnapshotIndexMaterialization.Rejected(
+                        MarketplaceSnapshotIndexRejection.ProjectionMarketplaceMismatch(
+                            provider = projection.provider,
+                            expected = marketplaceId,
+                            actual = projection.marketplaceId,
+                        ),
+                    )
+                }
+                if (projection.snapshotId != snapshotId) {
+                    return MarketplaceSnapshotIndexMaterialization.Rejected(
+                        MarketplaceSnapshotIndexRejection.ProjectionSnapshotMismatch(
+                            provider = projection.provider,
+                            expected = snapshotId,
+                            actual = projection.snapshotId,
+                        ),
+                    )
+                }
+                val actualPackageEvidence = projection.packageEvidence()
+                val expectedNames = expectedPackageEvidence.map(ProviderMarketplacePackageEvidence::packageName)
+                val actualNames = actualPackageEvidence.map(ProviderMarketplacePackageEvidence::packageName)
+                if (actualNames != expectedNames) {
+                    return MarketplaceSnapshotIndexMaterialization.Rejected(
+                        MarketplaceSnapshotIndexRejection.ProjectionPackageSetMismatch(
+                            provider = projection.provider,
+                            expected = expectedNames,
+                            actual = actualNames,
+                        ),
+                    )
+                }
+                expectedPackageEvidence.zip(actualPackageEvidence).forEach { (expected, actual) ->
+                    if (actual.packageArchiveSha256 != expected.packageArchiveSha256) {
+                        return MarketplaceSnapshotIndexMaterialization.Rejected(
+                            MarketplaceSnapshotIndexRejection.ProjectionPackageDigestMismatch(
+                                provider = projection.provider,
+                                packageName = expected.packageName,
+                                expected = expected.packageArchiveSha256,
+                                actual = actual.packageArchiveSha256,
+                            ),
+                        )
+                    }
+                }
+            }
             val orderedProjections = projections.sortedBy { projection -> projection.provider.render() }
 
             val packageRecords =
@@ -155,8 +175,8 @@ internal class MarketplaceSnapshotIndex private constructor(
                     )
                 }
             val projectionRecords =
-                orderedProjections.map { artifact ->
-                    SnapshotProjectionRecord(artifact.provider, artifact.evidence())
+                orderedProjections.map { archive ->
+                    SnapshotProjectionRecord(archive.provider, archive.evidence())
                 }
             validateDistinctAssets(packageRecords, projectionRecords)?.let { rejection ->
                 return MarketplaceSnapshotIndexMaterialization.Rejected(rejection)
@@ -326,6 +346,31 @@ internal sealed interface MarketplaceSnapshotIndexRejection {
     data class DuplicateProvider(val provider: PortableProvider) : MarketplaceSnapshotIndexRejection
 
     data class MissingProvider(val provider: PortableProvider) : MarketplaceSnapshotIndexRejection
+
+    data class ProjectionMarketplaceMismatch(
+        val provider: PortableProvider,
+        val expected: MarketplaceId,
+        val actual: MarketplaceId,
+    ) : MarketplaceSnapshotIndexRejection
+
+    data class ProjectionSnapshotMismatch(
+        val provider: PortableProvider,
+        val expected: SnapshotId,
+        val actual: SnapshotId,
+    ) : MarketplaceSnapshotIndexRejection
+
+    data class ProjectionPackageSetMismatch(
+        val provider: PortableProvider,
+        val expected: List<PackageName>,
+        val actual: List<PackageName>,
+    ) : MarketplaceSnapshotIndexRejection
+
+    data class ProjectionPackageDigestMismatch(
+        val provider: PortableProvider,
+        val packageName: PackageName,
+        val expected: Sha256Digest,
+        val actual: Sha256Digest,
+    ) : MarketplaceSnapshotIndexRejection
 
     data object ProjectionsNotCanonical : MarketplaceSnapshotIndexRejection
 

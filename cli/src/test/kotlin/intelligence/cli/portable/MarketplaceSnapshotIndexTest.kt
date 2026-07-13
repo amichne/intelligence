@@ -10,11 +10,11 @@ class MarketplaceSnapshotIndexTest {
     fun `shuffled package and projection inputs produce one canonical snapshot index`() {
         val alpha = packageArchive("alpha", "Alpha package")
         val zeta = packageArchive("zeta", "Zeta package")
-        val codex = providerArchive(PortableProvider.CODEX)
-        val copilot = providerArchive(PortableProvider.GITHUB_COPILOT)
         val marketplace = marketplaceId("example-marketplace")
         val snapshot = snapshotId("snapshot-one")
         val defaultPackage = packageName("alpha")
+        val codex = providerArchive(PortableProvider.CODEX, listOf(alpha, zeta), marketplace, snapshot)
+        val copilot = providerArchive(PortableProvider.GITHUB_COPILOT, listOf(alpha, zeta), marketplace, snapshot)
 
         val forward = materializedIndex(
             marketplace,
@@ -33,7 +33,7 @@ class MarketplaceSnapshotIndexTest {
 
         assertContentEquals(forward.canonicalBytes(), reversed.canonicalBytes())
         assertEquals(forward.sha256(), reversed.sha256())
-        assertEquals("74f4738c2a61ee977980b8ae2f55778fa649e70d7c6ea6bd83e3a39832bb8760", forward.sha256().render())
+        assertEquals("c45b5ca9a2279649c32cc3d0e25bd2596981b90a87a3e24ea9a01eadea0d2a5a", forward.sha256().render())
         assertEquals(expectedIndex(forward), forward.canonicalBytes().decodeToString())
         assertEquals(listOf("alpha", "zeta"), forward.packages.map { it.name.render() })
         assertEquals(
@@ -136,7 +136,7 @@ class MarketplaceSnapshotIndexTest {
         val snapshot = snapshotId("snapshot-one")
         val defaultPackage = packageName("alpha")
         val packages = listOf(packageArchive("alpha", "Alpha package"))
-        val codex = providerArchive(PortableProvider.CODEX)
+        val codex = providerArchive(PortableProvider.CODEX, packages, marketplace, snapshot)
 
         assertEquals(
             MarketplaceSnapshotIndexMaterialization.Rejected(
@@ -159,7 +159,111 @@ class MarketplaceSnapshotIndexTest {
                 snapshot,
                 defaultPackage,
                 packages,
-                projections = listOf(codex, codex, providerArchive(PortableProvider.GITHUB_COPILOT)),
+                projections =
+                    listOf(
+                        codex,
+                        codex,
+                        providerArchive(PortableProvider.GITHUB_COPILOT, packages, marketplace, snapshot),
+                    ),
+            ),
+        )
+    }
+
+    @Test
+    fun `snapshot index requires projections for the exact snapshot package closure`() {
+        val marketplace = marketplaceId("example-marketplace")
+        val snapshot = snapshotId("snapshot-one")
+        val alpha = packageArchive("alpha", "Alpha package")
+        val packages = listOf(alpha)
+        val copilot = providerArchive(PortableProvider.GITHUB_COPILOT, packages, marketplace, snapshot)
+
+        val foreignMarketplace = marketplaceId("foreign-marketplace")
+        assertEquals(
+            MarketplaceSnapshotIndexMaterialization.Rejected(
+                MarketplaceSnapshotIndexRejection.ProjectionMarketplaceMismatch(
+                    provider = PortableProvider.CODEX,
+                    expected = marketplace,
+                    actual = foreignMarketplace,
+                ),
+            ),
+            MarketplaceSnapshotIndex.materialize(
+                marketplace,
+                snapshot,
+                alpha.packageName,
+                packages,
+                listOf(
+                    providerArchive(
+                        PortableProvider.CODEX,
+                        listOf(packageArchive("alpha", "Alpha package", foreignMarketplace)),
+                        foreignMarketplace,
+                        snapshot,
+                    ),
+                    copilot,
+                ),
+            ),
+        )
+
+        val otherSnapshot = snapshotId("snapshot-two")
+        assertEquals(
+            MarketplaceSnapshotIndexMaterialization.Rejected(
+                MarketplaceSnapshotIndexRejection.ProjectionSnapshotMismatch(
+                    provider = PortableProvider.CODEX,
+                    expected = snapshot,
+                    actual = otherSnapshot,
+                ),
+            ),
+            MarketplaceSnapshotIndex.materialize(
+                marketplace,
+                snapshot,
+                alpha.packageName,
+                packages,
+                listOf(
+                    providerArchive(PortableProvider.CODEX, packages, marketplace, otherSnapshot),
+                    copilot,
+                ),
+            ),
+        )
+
+        val zeta = packageArchive("zeta", "Zeta package")
+        assertEquals(
+            MarketplaceSnapshotIndexMaterialization.Rejected(
+                MarketplaceSnapshotIndexRejection.ProjectionPackageSetMismatch(
+                    provider = PortableProvider.CODEX,
+                    expected = listOf(packageName("alpha")),
+                    actual = listOf(packageName("zeta")),
+                ),
+            ),
+            MarketplaceSnapshotIndex.materialize(
+                marketplace,
+                snapshot,
+                alpha.packageName,
+                packages,
+                listOf(
+                    providerArchive(PortableProvider.CODEX, listOf(zeta), marketplace, snapshot),
+                    copilot,
+                ),
+            ),
+        )
+
+        val changedAlpha = packageArchive("alpha", "Changed package")
+        assertEquals(
+            MarketplaceSnapshotIndexMaterialization.Rejected(
+                MarketplaceSnapshotIndexRejection.ProjectionPackageDigestMismatch(
+                    provider = PortableProvider.CODEX,
+                    packageName = alpha.packageName,
+                    expected = alpha.sha256,
+                    actual = changedAlpha.sha256,
+                ),
+            ),
+            MarketplaceSnapshotIndex.materialize(
+                marketplace,
+                snapshot,
+                alpha.packageName,
+                packages,
+                listOf(
+                    providerArchive(PortableProvider.CODEX, listOf(changedAlpha), marketplace, snapshot),
+                    copilot,
+                ),
             ),
         )
     }
@@ -278,7 +382,7 @@ class MarketplaceSnapshotIndexTest {
                 snapshotId("snapshot-one"),
                 packageName("alpha"),
                 packages = listOf(alpha, zeta),
-                projections = allProviderArchives(),
+                projections = allProviderArchives(listOf(alpha, zeta)),
             )
         val valid = index.canonicalBytes().decodeToString()
         val first = index.packages[0]
@@ -331,11 +435,11 @@ class MarketplaceSnapshotIndexTest {
         mutableIndexBytes.fill(0)
         assertContentEquals(expectedIndexBytes, index.canonicalBytes())
 
-        val artifact = providerArchive(PortableProvider.CODEX)
-        val expectedArchiveBytes = artifact.bytes()
-        val mutableArchiveBytes = artifact.bytes()
+        val archive = providerArchive(PortableProvider.CODEX)
+        val expectedArchiveBytes = archive.bytes()
+        val mutableArchiveBytes = archive.bytes()
         mutableArchiveBytes.fill(0)
-        assertContentEquals(expectedArchiveBytes, artifact.bytes())
+        assertContentEquals(expectedArchiveBytes, archive.bytes())
     }
 
     private fun canonicalIndex(): MarketplaceSnapshotIndex =
@@ -404,21 +508,24 @@ class MarketplaceSnapshotIndexTest {
         ).archive
     }
 
-    private fun providerArchive(provider: PortableProvider): ProviderArchiveArtifact {
-        val path = path("${provider.render()}.txt")
-        val entry = assertIs<CanonicalZipEntryCreation.Accepted>(
-            CanonicalZipEntry.create(path, provider.render().encodeToByteArray(), CanonicalZipEntryMode.REGULAR),
-        ).entry
-        val archive = assertIs<CanonicalZipCreation.Created>(
-            CanonicalZipArchive.create(listOf(entry)),
+    private fun providerArchive(
+        provider: PortableProvider,
+        packages: List<PackageArchive> = listOf(packageArchive("alpha", "Alpha package")),
+        marketplace: MarketplaceId = marketplaceId("example-marketplace"),
+        snapshot: SnapshotId = snapshotId("snapshot-one"),
+    ): ProviderMarketplaceArchive =
+        assertIs<ProviderMarketplaceArchiveMaterialization.Materialized>(
+            ProviderMarketplaceArchive.materialize(marketplace, snapshot, packages, provider),
         ).archive
-        return ProviderArchiveArtifact.fromCanonicalArchive(provider, archive)
-    }
 
-    private fun allProviderArchives(): List<ProviderArchiveArtifact> =
+    private fun allProviderArchives(
+        packages: List<PackageArchive> = listOf(packageArchive("alpha", "Alpha package")),
+        marketplace: MarketplaceId = marketplaceId("example-marketplace"),
+        snapshot: SnapshotId = snapshotId("snapshot-one"),
+    ): List<ProviderMarketplaceArchive> =
         listOf(
-            providerArchive(PortableProvider.CODEX),
-            providerArchive(PortableProvider.GITHUB_COPILOT),
+            providerArchive(PortableProvider.CODEX, packages, marketplace, snapshot),
+            providerArchive(PortableProvider.GITHUB_COPILOT, packages, marketplace, snapshot),
         )
 
     private fun sourceFile(
@@ -447,7 +554,7 @@ class MarketplaceSnapshotIndexTest {
         snapshotId: SnapshotId,
         defaultPackage: PackageName,
         packages: List<PackageArchive>,
-        projections: List<ProviderArchiveArtifact>,
+        projections: List<ProviderMarketplaceArchive>,
     ): MarketplaceSnapshotIndex =
         assertIs<MarketplaceSnapshotIndexMaterialization.Materialized>(
             MarketplaceSnapshotIndex.materialize(

@@ -165,10 +165,28 @@ entries use fixed V1 policy values `AVAILABLE` and `ON_INSTALL` and the fixed
 category `Productivity`. Provider adapter versions are the package-derived
 `0.0.0-intelligence.sha<package-sha256>` values.
 
+Codex also requires top-level presentation metadata, so V1 emits only
+`interface.displayName`, deterministically equal to the marketplace ID.
+Copilot requires an owner object, so V1 emits only `owner.name`, also equal to
+the marketplace ID. Neither field creates a second portable identity or an
+author-controlled presentation surface. The strict owning schemas are
+`schemas/adapters/codex/marketplace-v1.schema.json` and
+`schemas/adapters/github-copilot/marketplace-v1.schema.json`.
+
 The archive-level projection receipt accounts for every package plugin and
 records the snapshot identity and provider. Its checksum file covers every
 regular archive entry except itself. Per-plugin receipts remain inside each
 plugin and prove the package-level mapping.
+
+The receipt has exact type
+`INTELLIGENCE_PROVIDER_MARKETPLACE_PROJECTION`, schema version `1`, generator
+`intelligence-kotlin-v1`, marketplace, snapshot, and provider identities, and
+one package-name-sorted record per package. Each record contains the
+digest-derived adapter version, canonical package archive name, digest and
+size, exact `plugins/<package-name>` path, and digest of the complete
+package-level projection checksum manifest. The owning schema is
+`schemas/core/provider-marketplace-projection-receipt-v1.schema.json`; unknown
+fields and partial package accounting are invalid.
 
 The exact provider archive path set is the union of its catalog, archive-level
 projection receipt, archive checksum file, and the complete canonical plugin
