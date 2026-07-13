@@ -8,43 +8,49 @@ import java.nio.file.LinkOption
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
 
+internal enum class DigestCacheWritePolicy {
+    STORE,
+    VERIFY_ONLY,
+}
+
+internal sealed interface LocalSnapshotInspection {
+    class Inspected internal constructor(
+        val index: MarketplaceSnapshotIndex,
+        internal val directory: Path,
+        internal val indexAsset: LocalSnapshotAsset,
+        internal val checksumAsset: LocalSnapshotAsset,
+    ) : LocalSnapshotInspection
+
+    data class Rejected(val reason: MarketplaceResolutionRejection) : LocalSnapshotInspection
+}
+
 internal object LocalSnapshotResolver {
-    fun resolve(
+    fun inspect(
         consumerRoot: Path,
-        selection: MarketplaceIntentSelection,
-        cache: DigestAddressedCache,
-    ): MarketplaceResolution {
-        val source =
-            when (val selectedSource = selection.source) {
-                is MarketplaceIntentSource.LocalSnapshot -> selectedSource
-                is MarketplaceIntentSource.GitHubRelease -> {
-                    return MarketplaceResolution.Rejected(
-                        MarketplaceResolutionRejection.LocalSourceRequired(selection.marketplaceId),
-                    )
-                }
-            }
+        marketplaceId: MarketplaceId,
+        source: MarketplaceIntentSource.LocalSnapshot,
+    ): LocalSnapshotInspection {
         val directory =
             when (val opened = openLocalSnapshotDirectory(consumerRoot, source.directory)) {
                 is LocalSnapshotDirectoryOpening.Opened -> opened.path
                 is LocalSnapshotDirectoryOpening.Rejected -> {
-                    return MarketplaceResolution.Rejected(
+                    return LocalSnapshotInspection.Rejected(
                         MarketplaceResolutionRejection.LocalDirectoryRejected(source.directory, opened.reason),
                     )
                 }
             }
-
         val indexName = ReleaseAssetName.snapshotIndex()
         val indexAsset =
             when (val read = readLocalAsset(directory, indexName, expected = null)) {
                 is LocalSnapshotAssetRead.Read -> read.asset
                 is LocalSnapshotAssetRead.Rejected -> {
-                    return MarketplaceResolution.Rejected(
+                    return LocalSnapshotInspection.Rejected(
                         MarketplaceResolutionRejection.SourceAssetRejected(indexName, read.reason),
                     )
                 }
             }
         if (indexAsset.expectation.sha256 != source.indexSha256) {
-            return MarketplaceResolution.Rejected(
+            return LocalSnapshotInspection.Rejected(
                 MarketplaceResolutionRejection.IndexDigestMismatch(
                     expected = source.indexSha256,
                     actual = indexAsset.expectation.sha256,
@@ -55,40 +61,74 @@ internal object LocalSnapshotResolver {
             when (val parsed = MarketplaceSnapshotIndex.parse(indexAsset.bytes)) {
                 is MarketplaceSnapshotIndexParsing.Parsed -> parsed.index
                 is MarketplaceSnapshotIndexParsing.Rejected -> {
-                    return MarketplaceResolution.Rejected(
+                    return LocalSnapshotInspection.Rejected(
                         MarketplaceResolutionRejection.IndexRejected(parsed.reason),
                     )
                 }
             }
-        if (index.marketplaceId != selection.marketplaceId) {
-            return MarketplaceResolution.Rejected(
+        if (index.marketplaceId != marketplaceId) {
+            return LocalSnapshotInspection.Rejected(
                 MarketplaceResolutionRejection.MarketplaceMismatch(
-                    expected = selection.marketplaceId,
+                    expected = marketplaceId,
                     actual = index.marketplaceId,
                 ),
             )
         }
+        val checksumAsset =
+            when (val read = readLocalAsset(directory, index.checksumAsset, expected = null)) {
+                is LocalSnapshotAssetRead.Read -> read.asset
+                is LocalSnapshotAssetRead.Rejected -> {
+                    return LocalSnapshotInspection.Rejected(
+                        MarketplaceResolutionRejection.SourceAssetRejected(index.checksumAsset, read.reason),
+                    )
+                }
+            }
+        if (!releaseChecksumMatches(index, indexAsset.bytes, checksumAsset.bytes)) {
+            return LocalSnapshotInspection.Rejected(MarketplaceResolutionRejection.ChecksumMismatch)
+        }
+        return LocalSnapshotInspection.Inspected(index, directory, indexAsset, checksumAsset)
+    }
+
+    fun resolve(
+        consumerRoot: Path,
+        selection: MarketplaceIntentSelection,
+        cache: DigestAddressedCache,
+        cacheWritePolicy: DigestCacheWritePolicy = DigestCacheWritePolicy.STORE,
+    ): MarketplaceResolution {
+        val source =
+            when (val selectedSource = selection.source) {
+                is MarketplaceIntentSource.LocalSnapshot -> selectedSource
+                is MarketplaceIntentSource.GitHubRelease -> {
+                    return MarketplaceResolution.Rejected(
+                        MarketplaceResolutionRejection.LocalSourceRequired(selection.marketplaceId),
+                    )
+                }
+            }
+        val inspection =
+            when (val inspected = inspect(consumerRoot, selection.marketplaceId, source)) {
+                is LocalSnapshotInspection.Inspected -> inspected
+                is LocalSnapshotInspection.Rejected -> {
+                    return MarketplaceResolution.Rejected(inspected.reason)
+                }
+            }
+        val directory = inspection.directory
+        val indexName = ReleaseAssetName.snapshotIndex()
+        val indexAsset = inspection.indexAsset
+        val index = inspection.index
         val recordsByName = index.packages.associateBy(SnapshotPackageRecord::name)
         selection.packages.firstOrNull { packageName -> packageName !in recordsByName }?.let { missing ->
             return MarketplaceResolution.Rejected(MarketplaceResolutionRejection.MissingPackage(missing))
         }
 
         val checksumName = index.checksumAsset
-        val checksumAsset =
-            when (val read = readLocalAsset(directory, checksumName, expected = null)) {
-                is LocalSnapshotAssetRead.Read -> read.asset
-                is LocalSnapshotAssetRead.Rejected -> {
-                    return MarketplaceResolution.Rejected(
-                        MarketplaceResolutionRejection.SourceAssetRejected(checksumName, read.reason),
-                    )
-                }
-            }
-        if (!releaseChecksumMatches(index, indexAsset.bytes, checksumAsset.bytes)) {
-            return MarketplaceResolution.Rejected(MarketplaceResolutionRejection.ChecksumMismatch)
-        }
+        val checksumAsset = inspection.checksumAsset
 
-        cacheAsset(cache, indexName, indexAsset)?.let { return MarketplaceResolution.Rejected(it) }
-        cacheAsset(cache, checksumName, checksumAsset)?.let { return MarketplaceResolution.Rejected(it) }
+        cacheAsset(cache, indexName, indexAsset, cacheWritePolicy)?.let {
+            return MarketplaceResolution.Rejected(it)
+        }
+        cacheAsset(cache, checksumName, checksumAsset, cacheWritePolicy)?.let {
+            return MarketplaceResolution.Rejected(it)
+        }
 
         val lockedPackages = mutableListOf<LockedPackage>()
         val packageArchives = mutableListOf<PackageArchive>()
@@ -119,7 +159,7 @@ internal object LocalSnapshotResolver {
             validatePackageIdentity(index.marketplaceId, packageName, archive)?.let { reason ->
                 return MarketplaceResolution.Rejected(reason)
             }
-            cacheAsset(cache, record.archive.name, sourceAsset)?.let { reason ->
+            cacheAsset(cache, record.archive.name, sourceAsset, cacheWritePolicy)?.let { reason ->
                 return MarketplaceResolution.Rejected(reason)
             }
             lockedPackages +=
@@ -165,6 +205,7 @@ internal object LocalSnapshotResolver {
         consumerRoot: Path,
         lockEntry: MarketplaceLockEntry,
         cache: DigestAddressedCache,
+        cacheWritePolicy: DigestCacheWritePolicy = DigestCacheWritePolicy.STORE,
     ): MarketplaceResolution {
         val source =
             when (val lockedSource = lockEntry.source) {
@@ -185,14 +226,14 @@ internal object LocalSnapshotResolver {
                 }
             }
         val indexBytes =
-            when (val acquisition = acquireLockedAsset(directory, lockEntry.index, cache)) {
+            when (val acquisition = acquireLockedAsset(directory, lockEntry.index, cache, cacheWritePolicy)) {
                 is LockedAssetAcquisition.Acquired -> acquisition.bytes
                 is LockedAssetAcquisition.Rejected -> {
                     return MarketplaceResolution.Rejected(acquisition.reason)
                 }
             }
         val checksumBytes =
-            when (val acquisition = acquireLockedAsset(directory, lockEntry.checksum, cache)) {
+            when (val acquisition = acquireLockedAsset(directory, lockEntry.checksum, cache, cacheWritePolicy)) {
                 is LockedAssetAcquisition.Acquired -> acquisition.bytes
                 is LockedAssetAcquisition.Rejected -> {
                     return MarketplaceResolution.Rejected(acquisition.reason)
@@ -200,7 +241,7 @@ internal object LocalSnapshotResolver {
             }
         val packageBytes = linkedMapOf<PackageName, ByteArray>()
         lockEntry.packages.forEach { locked ->
-            when (val acquisition = acquireLockedAsset(directory, locked.archive, cache)) {
+            when (val acquisition = acquireLockedAsset(directory, locked.archive, cache, cacheWritePolicy)) {
                 is LockedAssetAcquisition.Acquired -> packageBytes[locked.name] = acquisition.bytes
                 is LockedAssetAcquisition.Rejected -> {
                     return MarketplaceResolution.Rejected(acquisition.reason)
@@ -264,7 +305,7 @@ internal object OfflineMarketplaceReconstructor {
     }
 }
 
-private data class LocalSnapshotAsset(
+internal data class LocalSnapshotAsset(
     val expectation: CacheBlobExpectation,
     val bytes: ByteArray,
 )
@@ -367,19 +408,32 @@ private fun cacheAsset(
     cache: DigestAddressedCache,
     name: ReleaseAssetName,
     asset: LocalSnapshotAsset,
+    policy: DigestCacheWritePolicy,
 ): MarketplaceResolutionRejection.CacheRejected? =
-    when (val inserted = cache.insert(asset.expectation, asset.bytes)) {
-        is DigestCacheInsertion.Stored,
-        is DigestCacheInsertion.AlreadyPresent,
-        -> null
-        is DigestCacheInsertion.Rejected ->
-            MarketplaceResolutionRejection.CacheRejected(name, inserted.reason)
+    when (policy) {
+        DigestCacheWritePolicy.STORE ->
+            when (val inserted = cache.insert(asset.expectation, asset.bytes)) {
+                is DigestCacheInsertion.Stored,
+                is DigestCacheInsertion.AlreadyPresent,
+                -> null
+                is DigestCacheInsertion.Rejected ->
+                    MarketplaceResolutionRejection.CacheRejected(name, inserted.reason)
+            }
+        DigestCacheWritePolicy.VERIFY_ONLY ->
+            when (val existing = cache.read(asset.expectation)) {
+                is DigestCacheRead.Hit,
+                DigestCacheRead.Miss,
+                -> null
+                is DigestCacheRead.Rejected ->
+                    MarketplaceResolutionRejection.CacheRejected(name, existing.reason)
+            }
     }
 
 private fun acquireLockedAsset(
     directory: Path,
     asset: LockedAsset,
     cache: DigestAddressedCache,
+    policy: DigestCacheWritePolicy,
 ): LockedAssetAcquisition =
     when (val cached = cache.read(asset.expectation())) {
         is DigestCacheRead.Hit -> LockedAssetAcquisition.Acquired(cached.blob.bytes())
@@ -394,14 +448,20 @@ private fun acquireLockedAsset(
                         MarketplaceResolutionRejection.SourceAssetRejected(asset.name, read.reason),
                     )
                 is LocalSnapshotAssetRead.Read -> {
-                    when (val inserted = cache.insert(read.asset.expectation, read.asset.bytes)) {
-                        is DigestCacheInsertion.Stored,
-                        is DigestCacheInsertion.AlreadyPresent,
-                        -> LockedAssetAcquisition.Acquired(read.asset.bytes)
-                        is DigestCacheInsertion.Rejected ->
-                            LockedAssetAcquisition.Rejected(
-                                MarketplaceResolutionRejection.CacheRejected(asset.name, inserted.reason),
-                            )
+                    when (policy) {
+                        DigestCacheWritePolicy.VERIFY_ONLY ->
+                            LockedAssetAcquisition.Acquired(read.asset.bytes)
+                        DigestCacheWritePolicy.STORE -> {
+                            when (val inserted = cache.insert(read.asset.expectation, read.asset.bytes)) {
+                                is DigestCacheInsertion.Stored,
+                                is DigestCacheInsertion.AlreadyPresent,
+                                -> LockedAssetAcquisition.Acquired(read.asset.bytes)
+                                is DigestCacheInsertion.Rejected ->
+                                    LockedAssetAcquisition.Rejected(
+                                        MarketplaceResolutionRejection.CacheRejected(asset.name, inserted.reason),
+                                    )
+                            }
+                        }
                     }
                 }
             }
