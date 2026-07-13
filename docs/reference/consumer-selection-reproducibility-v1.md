@@ -240,11 +240,13 @@ lock are separate files. Every mutating command:
 1. acquires an exclusive repository mutation lock;
 2. validates or recovers the existing state;
 3. resolves and verifies all remote or local inputs;
-4. stages complete new intent and lock files on the consumer filesystem;
-5. validates the staged pair and all referenced cached content;
-6. records a typed transaction journal containing old and new file digests;
-7. atomically replaces both files using journaled rename operations; and
-8. flushes the directory and removes the journal only after the new pair
+4. validates the complete new intent and lock pair and all referenced cached
+   content;
+5. records a typed transaction journal containing old and new file digests
+   before either persisted target can change;
+6. writes forced backup and staged files at paths derived by that journal;
+7. atomically replaces both targets using journaled rename operations; and
+8. flushes each affected directory and removes the journal only after the pair
    validates from disk.
 
 The exclusive lock is `.intelligence/.marketplace-mutation.lock`. The typed
