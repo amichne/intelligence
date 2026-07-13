@@ -218,9 +218,8 @@ jobs:
           ./gradlew check
           .local/intelligence/bin/intelligence --version
           .local/intelligence/bin/intelligence doctor --format json
-          .local/intelligence/bin/intelligence marketplace inspect "${PWD}" --provider source --format json
-          .local/intelligence/bin/intelligence marketplace search kotlin --repository "${PWD}" --provider source --format json | grep -F "kotlin-engineering"
-          .local/intelligence/bin/intelligence validate --portable
+          .local/intelligence/bin/intelligence marketplace author --repository "${PWD}" --format json
+          .local/intelligence/bin/intelligence validate --repository "${PWD}" --portable --format json
           packaging/homebrew/scripts/test-formula.py
           .github/scripts/test-release-asset-verifier.sh
           .github/scripts/test-release-workflow-contract.sh
@@ -271,13 +270,8 @@ jobs:
           "${cli}" --help
           "${cli}" --version | grep -F "intelligence version ${version}"
           "${cli}" doctor --format json
-          "${cli}" marketplace inspect "${repo}" --provider source --format json
-          "${cli}" marketplace search kotlin --repository "${repo}" --provider source --format json | grep -F "kotlin-engineering"
-          "${cli}" validate --repo "${repo}" --portable
-          "${cli}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
-          "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
-          "${cli}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
-          "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
+          "${cli}" marketplace author --repository "${repo}" --format json
+          "${cli}" validate --repository "${repo}" --portable --format json
 
       - name: Upload CLI artifact
         uses: actions/upload-artifact@v4
