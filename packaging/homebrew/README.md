@@ -20,9 +20,9 @@ brew tap amichne/intelligence
 brew install intelligence
 ```
 
-`intelligence` installs the platform-specific GraalVM native executable and the
-`intelligence-tui` Ratatui marketplace browser from `amichne/intelligence`. It
-does not install or require a Homebrew-managed JVM.
+`intelligence` installs the platform-neutral Kotlin/JVM command-line
+distribution from `amichne/intelligence`. The formula uses Homebrew's OpenJDK 21
+dependency to run the Gradle-generated launcher.
 
 ## Enterprise Mirrors
 
@@ -38,7 +38,7 @@ brew install amichne/intelligence/intelligence
 The shared mirror root must expose the same repository-shaped paths:
 
 ```text
-${HOMEBREW_INTELLIGENCE_ARTIFACT_ROOT}/intelligence/releases/download/v0.0.0/intelligence-v0.0.0-macos-arm64.tar.gz
+${HOMEBREW_INTELLIGENCE_ARTIFACT_ROOT}/intelligence/releases/download/v0.0.0/intelligence-v0.0.0.tar.gz
 ```
 
 If your artifact layout points directly at the release directories, set the
@@ -54,5 +54,5 @@ byte-for-byte copies of the published release assets.
 
 The tap tracks the current published release in `release-state.json`. The
 formula and release state are rendered atomically by the
-`amichne/intelligence` release workflow after the native CLI assets are
+`amichne/intelligence` release workflow after the JVM CLI asset is
 published from the same tag.

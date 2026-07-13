@@ -151,24 +151,21 @@ for raw_line in checksum_path.read_text(encoding="utf-8").splitlines():
         checksums[parts[1]] = parts[0]
 
 pattern = re.compile(
-    r'url "#\{cli_release_root\}/#\{release_tag\}/'
-    r'intelligence-#\{release_tag\}-(?P<target>[^"]+)\.tar\.gz"\s+'
+    r'url "#\{cli_release_root\}/#\{release_tag\}/intelligence-#\{release_tag\}\.tar\.gz"\s+'
     r'sha256 "(?P<sha>[0-9a-f]{64})"',
     re.MULTILINE,
 )
-formula_entries = {match.group("target"): match.group("sha") for match in pattern.finditer(formula)}
-expected_targets = {"linux-arm64", "linux-x64", "macos-arm64", "macos-x64"}
-if set(formula_entries) != expected_targets:
-    fail(f"Formula/intelligence.rb references targets {sorted(formula_entries)}, expected {sorted(expected_targets)}")
+formula_entries = list(pattern.finditer(formula))
+if len(formula_entries) != 1:
+    fail(f"Formula/intelligence.rb has {len(formula_entries)} JVM release entries, expected 1")
 
-for target in expected_targets:
-    asset_name = f"intelligence-{tag}-{target}.tar.gz"
-    expected_sha = checksums.get(asset_name)
-    if expected_sha is None:
-        fail(f"SHA256SUMS is missing {asset_name}")
-    actual_sha = formula_entries[target]
-    if actual_sha != expected_sha:
-        fail(f"Formula/intelligence.rb sha256 for {asset_name} is {actual_sha}, expected {expected_sha}")
+asset_name = f"intelligence-{tag}.tar.gz"
+expected_sha = checksums.get(asset_name)
+if expected_sha is None:
+    fail(f"SHA256SUMS is missing {asset_name}")
+actual_sha = formula_entries[0].group("sha")
+if actual_sha != expected_sha:
+    fail(f"Formula/intelligence.rb sha256 for {asset_name} is {actual_sha}, expected {expected_sha}")
 PY
 fi
 

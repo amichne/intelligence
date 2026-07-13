@@ -1,50 +1,46 @@
 # amichne-intelligence
 
-`amichne-intelligence` is the CLI and schema contract layer for portable AI
-tooling marketplaces. The reusable personal marketplace source now lives in
-[`amichne/slopsentral`](https://github.com/amichne/slopsentral).
+`amichne-intelligence` is a Kotlin/JVM CLI and schema layer for reproducible,
+package-level AI tooling marketplaces. It resolves only exact immutable
+snapshots, selects whole packages, records canonical intent and lock evidence,
+and projects the same verified packages to Codex or GitHub Copilot.
 
 ```mermaid
 flowchart LR
-  Source[Marketplace repo]
-  CLI[intelligence CLI]
-  Codex[Codex payload]
-  Github[GitHub Copilot payload]
-  Consumer[Consumer repo state]
-
-  Source --> CLI
-  CLI --> Codex
-  CLI --> Github
-  CLI --> Consumer
+  Source["Closed package source"] --> Release["Immutable snapshot"]
+  Release --> Intent["Consumer intent and lock"]
+  Intent --> Codex["Codex package plugins"]
+  Intent --> Copilot["GitHub Copilot package plugins"]
 ```
 
 ## Start Here
 
-Start with shell discovery from the repository that should receive marketplace
-intent. The CLI reports GitHub host configuration, searches repositories through
-the active `gh` host, inspects marketplace offerings, and keeps install/update
-commands copyable.
+Every source is explicit and exact. Discovery is read-only and untrusted until
+an exact snapshot is inspected.
 
 ```sh
 intelligence doctor
-intelligence marketplace search kotlin
-intelligence marketplace inspect amichne/slopsentral
+intelligence marketplace discover --github amichne/slopsentral
+intelligence marketplace inspect \
+  --github amichne/slopsentral \
+  --snapshot SNAPSHOT_ID
 ```
 
-Use JSON when scripting, composing with another program, or checking this CLI
-repository itself.
+Use JSON for automation and portable validation for repository proof.
 
 ```sh
-intelligence marketplace inspect amichne/slopsentral --format json
+intelligence marketplace inspect \
+  --github amichne/slopsentral \
+  --snapshot SNAPSHOT_ID \
+  --format json
 intelligence validate --portable
 ```
 
 ## What You Can Do
 
-| Job | Entry Point | Result |
+| Job | Entry point | Result |
 |---|---|---|
-| Discover from the shell | [Marketplace](getting-started/marketplace.md) | CLI-first search, inspect, import, install, update, pin, and validate workflows. |
-| Use the marketplace browser | [Terminal UI](getting-started/tui.md) | Optional full-screen browser over the same RPC boundary. |
-| Inspect marketplace offerings | [What is available](available/index.md) | A pointer to the `slopsentral` plugin and primitive catalog. |
-| Validate changes | [Validation](how-it-works/validation.md) | CLI, source, and hydrated-output checks before release. |
-| Cut a native release | [Publication](reference/publication.md) | Preflight, tag, release asset, and Homebrew verification steps. |
+| Discover, inspect, and select exact packages | [Marketplace](getting-started/marketplace.md) | Reproducible intent and lock evidence without version or dependency inference. |
+| Understand the package boundary | [What is available](available/index.md) | Whole packages with private supporting assets. |
+| Validate changes | [Validation](how-it-works/validation.md) | Source, consumer-state, schema, and distribution checks. |
+| Publish the JVM CLI | [Publication](reference/publication.md) | Reproducible Kotlin distribution and release verification. |

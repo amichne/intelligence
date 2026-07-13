@@ -1,0 +1,49 @@
+{
+  "$id": "https://schemas.amichne.dev/intelligence/core/marketplace-catalog-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "candidates": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "advertisedName": {
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "repository": {
+            "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?/[A-Za-z0-9._-]+$",
+            "type": "string"
+          },
+          "snapshotId": {
+            "pattern": "^(?!latest$)[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "advertisedName",
+          "repository",
+          "snapshotId"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "type": {
+      "const": "INTELLIGENCE_MARKETPLACE_CATALOG"
+    }
+  },
+  "required": [
+    "candidates",
+    "schemaVersion",
+    "type"
+  ],
+  "title": "Intelligence marketplace discovery catalog V1",
+  "type": "object"
+}

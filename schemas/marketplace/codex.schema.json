@@ -50,7 +50,7 @@
             "name": "browser",
             "source": {
               "source": "local",
-              "path": "./.agents/plugins/plugins/browser"
+              "path": "./.agents/plugins/browser"
             },
             "policy": {
               "installation": "AVAILABLE",
@@ -110,7 +110,7 @@
           "name": "browser",
           "source": {
             "source": "local",
-            "path": "./.agents/plugins/plugins/browser"
+            "path": "./.agents/plugins/browser"
           },
           "policy": {
             "installation": "AVAILABLE",
@@ -139,11 +139,11 @@
           ]
         },
         "path": {
-          "description": "Path relative to the marketplace root. Generated Codex marketplace branches keep payloads under `.agents/plugins/plugins/`.",
+          "description": "Repository-relative path to the local plugin payload. Generated Codex marketplace branches keep payloads under `.agents/plugins/<plugin>/` beside `marketplace.json`.",
           "type": "string",
-          "pattern": "^\\./\\.agents/plugins/plugins/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
+          "pattern": "^\\./\\.agents/plugins/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
           "examples": [
-            "./.agents/plugins/plugins/browser"
+            "./.agents/plugins/browser"
           ]
         }
       },
@@ -151,7 +151,7 @@
       "examples": [
         {
           "source": "local",
-          "path": "./.agents/plugins/plugins/browser"
+          "path": "./.agents/plugins/browser"
         }
       ]
     },
@@ -222,7 +222,7 @@
           "name": "browser",
           "source": {
             "source": "local",
-            "path": "./.agents/plugins/plugins/browser"
+            "path": "./.agents/plugins/browser"
           },
           "policy": {
             "installation": "AVAILABLE",

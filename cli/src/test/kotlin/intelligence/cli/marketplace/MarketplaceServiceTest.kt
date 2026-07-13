@@ -4,6 +4,8 @@ import intelligence.cli.io.arrayValue
 import intelligence.cli.io.FileSystem
 import intelligence.cli.io.JsonFiles
 import intelligence.cli.io.objectValue
+import intelligence.cli.io.ProcessCapture
+import intelligence.cli.io.ProcessCaptureRunner
 import intelligence.cli.io.stringValue
 import intelligence.cli.validation.ValidationOptions
 import intelligence.cli.validation.ValidationService
@@ -46,21 +48,27 @@ class MarketplaceServiceTest {
                 it.jsonObject.stringValue("name") == "kotlin-engineering"
             }.jsonObject
         assertEquals(
-            "./.agents/plugins/plugins/kotlin-engineering",
+            "./.agents/plugins/kotlin-engineering",
             kotlinEngineeringEntry.objectValue("source")!!.stringValue("path"),
         )
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
-                .resolve("plugins")
                 .resolve("kotlin-engineering")
                 .exists()
         )
         assertTrue(output.resolve(".github").resolve("plugin").resolve("marketplace.json").exists())
+        val githubMarketplace =
+            JsonFiles.readObject(output.resolve(".github").resolve("plugin").resolve("marketplace.json"))
+        assertEquals(".github/plugin", githubMarketplace.objectValue("metadata")!!.stringValue("pluginRoot"))
+        val githubKotlinEngineeringEntry =
+            githubMarketplace.arrayValue("plugins").single {
+                it.jsonObject.stringValue("name") == "kotlin-engineering"
+            }.jsonObject
+        assertEquals("kotlin-engineering", githubKotlinEngineeringEntry.stringValue("source"))
         assertTrue(
             output.resolve(".github")
                 .resolve("plugin")
-                .resolve("plugins")
                 .resolve("kotlin-engineering")
                 .resolve("AGENTS.md")
                 .exists()
@@ -121,7 +129,12 @@ class MarketplaceServiceTest {
               "schemaVersion": 1,
               "name": "core-plugin",
               "version": "0.1.0",
-              "description": "Core plugin."
+              "description": "Core plugin.",
+              "interface": {
+                "websiteURL": "https://github.com/amichne/slopsentral",
+                "privacyPolicyURL": "https://github.com/amichne/slopsentral",
+                "termsOfServiceURL": "https://github.com/amichne/slopsentral"
+              }
             }
             """.trimIndent(),
         )
@@ -136,23 +149,33 @@ class MarketplaceServiceTest {
                 it.jsonObject.stringValue("name") == "core-plugin"
             }.jsonObject
         assertEquals(
-            "./.agents/plugins/plugins/core-plugin",
+            "./.agents/plugins/core-plugin",
             corePluginEntry.objectValue("source")!!.stringValue("path"),
         )
         assertTrue(
             repository.resolve(".agents")
-                .resolve("plugins")
                 .resolve("plugins")
                 .resolve("core-plugin")
                 .resolve(".codex-plugin")
                 .resolve("plugin.json")
                 .exists()
         )
+        val codexPluginManifest =
+            JsonFiles.readObject(
+                repository.resolve(".agents")
+                    .resolve("plugins")
+                    .resolve("core-plugin")
+                    .resolve(".codex-plugin")
+                    .resolve("plugin.json")
+            )
+        val codexInterface = codexPluginManifest.objectValue("interface")!!
+        assertEquals("https://github.com/amichne/slopsentral", codexInterface.stringValue("websiteURL"))
+        assertEquals("https://github.com/amichne/slopsentral", codexInterface.stringValue("privacyPolicyURL"))
+        assertEquals("https://github.com/amichne/slopsentral", codexInterface.stringValue("termsOfServiceURL"))
         assertTrue(repository.resolve(".github").resolve("plugin").resolve("marketplace.json").exists())
         assertTrue(
             repository.resolve(".github")
                 .resolve("plugin")
-                .resolve("plugins")
                 .resolve("core-plugin")
                 .exists()
         )
@@ -170,7 +193,66 @@ class MarketplaceServiceTest {
     }
 
     @Test
-    fun `hydrated codex validation rejects stale root plugin source paths`() {
+    fun `source validation rejects non https plugin interface URLs`() {
+        val repository = Files.createTempDirectory("intelligence-marketplace-interface-validation-")
+        repository.resolve("schemas").createDirectories()
+        writeJson(
+            repository.resolve("source").resolve("adaptable.marketplace.json"),
+            """
+            {
+              "type": "MARKETPLACE",
+              "schemaVersion": 1,
+              "name": "fixture-marketplace",
+              "owner": {
+                "name": "Fixture Owner"
+              },
+              "plugins": [
+                {
+                  "name": "core-plugin",
+                  "plugin": {
+                    "source": {
+                      "type": "LOCAL_SOURCE",
+                      "path": "plugins/core-plugin"
+                    },
+                    "version": "0.1.0"
+                  }
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            repository.resolve("source")
+                .resolve("plugins")
+                .resolve("core-plugin")
+                .resolve("plugin.json"),
+            """
+            {
+              "type": "PLUGIN",
+              "schemaVersion": 1,
+              "name": "core-plugin",
+              "version": "0.1.0",
+              "description": "Core plugin.",
+              "interface": {
+                "websiteURL": "http://example.invalid"
+              }
+            }
+            """.trimIndent(),
+        )
+
+        val result = ValidationService(output = {}).validate(
+            ValidationOptions(
+                repo = repository,
+                portable = true,
+                hydrated = null,
+            ),
+        )
+
+        assertTrue(result != 0)
+    }
+
+    @Test
+    fun `hydrated codex validation rejects nested plugin source paths`() {
         val repository = Files.createTempDirectory("intelligence-marketplace-stale-codex-path-")
         writeJson(
             repository.resolve(".agents").resolve("plugins").resolve("marketplace.json"),
@@ -182,7 +264,7 @@ class MarketplaceServiceTest {
                   "name": "core-plugin",
                   "source": {
                     "source": "local",
-                    "path": "./plugins/core-plugin"
+                    "path": "./.agents/plugins/plugins/core-plugin"
                   },
                   "policy": {
                     "installation": "AVAILABLE",
@@ -219,6 +301,133 @@ class MarketplaceServiceTest {
         )
 
         assertTrue(result != 0)
+    }
+
+    @Test
+    fun `hydrated github validation rejects nested plugin root`() {
+        val repository = Files.createTempDirectory("intelligence-marketplace-stale-github-path-")
+        writeJson(
+            repository.resolve(".github").resolve("plugin").resolve("marketplace.json"),
+            """
+            {
+              "name": "fixture-marketplace",
+              "owner": {
+                "name": "Fixture Owner"
+              },
+              "metadata": {
+                "pluginRoot": ".github/plugin/plugins"
+              },
+              "plugins": [
+                {
+                  "name": "core-plugin",
+                  "source": "core-plugin"
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            repository.resolve(".github")
+                .resolve("plugin")
+                .resolve("plugins")
+                .resolve("core-plugin")
+                .resolve("AGENTS.md"),
+            "# Core Plugin\n",
+        )
+
+        val result = ValidationService(output = {}).validate(
+            ValidationOptions(
+                repo = repository,
+                portable = true,
+                hydrated = repository,
+            ),
+        )
+
+        assertTrue(result != 0)
+    }
+
+    @Test
+    fun `non portable hydrated validation installs provider plugins through native CLIs`() {
+        val repository = Files.createTempDirectory("intelligence-marketplace-native-validation-")
+        repository.resolve("schemas").createDirectories()
+        writeJson(
+            repository.resolve("source").resolve("adaptable.marketplace.json"),
+            """
+            {
+              "type": "MARKETPLACE",
+              "schemaVersion": 1,
+              "name": "fixture-marketplace",
+              "owner": {
+                "name": "Fixture Owner"
+              },
+              "plugins": [
+                {
+                  "name": "core-plugin",
+                  "plugin": {
+                    "source": {
+                      "type": "LOCAL_SOURCE",
+                      "path": "plugins/core-plugin"
+                    },
+                    "version": "0.1.0"
+                  },
+                  "tags": [
+                    "kotlin"
+                  ]
+                }
+              ]
+            }
+            """.trimIndent(),
+        )
+        writeJson(
+            repository.resolve("source")
+                .resolve("plugins")
+                .resolve("core-plugin")
+                .resolve("plugin.json"),
+            """
+            {
+              "type": "PLUGIN",
+              "schemaVersion": 1,
+              "name": "core-plugin",
+              "version": "0.1.0",
+              "description": "Core plugin."
+            }
+            """.trimIndent(),
+        )
+        MarketplaceService(output = {}).publishDefault(repository)
+        val runner = RecordingProcessCaptureRunner()
+        val lines = mutableListOf<String>()
+
+        val result = ValidationService(output = lines::add, processRunner = runner).validate(
+            ValidationOptions(
+                repo = repository,
+                portable = false,
+                hydrated = repository,
+            ),
+        )
+
+        assertEquals(0, result)
+        assertTrue(lines.any { it.contains("OK native Codex provider validation") })
+        assertTrue(lines.any { it.contains("OK native GitHub Copilot provider validation") })
+        assertTrue(
+            runner.commands.any {
+                it == listOf("codex", "plugin", "marketplace", "add", repository.toString(), "--json")
+            }
+        )
+        assertTrue(
+            runner.commands.any {
+                it == listOf("codex", "plugin", "add", "core-plugin@fixture-marketplace", "--json")
+            }
+        )
+        assertTrue(
+            runner.commands.any {
+                it == listOf("gh", "copilot", "--", "plugin", "marketplace", "add", repository.toString())
+            }
+        )
+        assertTrue(
+            runner.commands.any {
+                it == listOf("gh", "copilot", "--", "plugin", "install", "core-plugin@fixture-marketplace")
+            }
+        )
     }
 
     @Test
@@ -264,7 +473,6 @@ class MarketplaceServiceTest {
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
-                .resolve("plugins")
                 .resolve("review-stack")
                 .resolve(".codex-plugin")
                 .resolve("plugin.json")
@@ -298,7 +506,6 @@ class MarketplaceServiceTest {
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
-                .resolve("plugins")
                 .resolve("review-stack")
                 .resolve(".codex-plugin")
                 .resolve("plugin.json")
@@ -306,7 +513,6 @@ class MarketplaceServiceTest {
         )
         assertTrue(
             output.resolve(".agents")
-                .resolve("plugins")
                 .resolve("plugins")
                 .resolve("review-stack")
                 .resolve("skills")
@@ -434,7 +640,6 @@ class MarketplaceServiceTest {
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
-                .resolve("plugins")
                 .resolve("review-stack")
                 .resolve(".codex-plugin")
                 .resolve("plugin.json")
@@ -475,7 +680,6 @@ class MarketplaceServiceTest {
         assertTrue(
             output.resolve(".agents")
                 .resolve("plugins")
-                .resolve("plugins")
                 .resolve("review-stack")
                 .resolve(".codex-plugin")
                 .resolve("plugin.json")
@@ -515,7 +719,6 @@ class MarketplaceServiceTest {
         assertEquals("review-stack", lock.arrayValue("entries").single().jsonObject.objectValue("target")!!.stringValue("name"))
         assertTrue(
             output.resolve(".agents")
-                .resolve("plugins")
                 .resolve("plugins")
                 .resolve("review-stack")
                 .resolve(".codex-plugin")
@@ -840,5 +1043,14 @@ class MarketplaceServiceTest {
             .redirectError(ProcessBuilder.Redirect.DISCARD)
             .start()
         assertEquals(0, process.waitFor(), "git ${args.joinToString(" ")} failed in $cwd")
+    }
+
+    private class RecordingProcessCaptureRunner : ProcessCaptureRunner {
+        val commands = mutableListOf<List<String>>()
+
+        override fun run(command: List<String>, cwd: Path, environment: Map<String, String>): ProcessCapture {
+            commands += command
+            return ProcessCapture(exitCode = 0, stdout = "{}", stderr = "")
+        }
     }
 }

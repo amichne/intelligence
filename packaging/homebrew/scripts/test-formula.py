@@ -30,11 +30,12 @@ state = json.loads(release_state.read_text(encoding="utf-8"))
 require('class Intelligence < Formula' in formula_content, "formula class must be Intelligence")
 require('desc "Operate portable AI tooling marketplaces"' in formula_content, "formula must describe the CLI marketplace operator")
 require(".tar.gz" in formula_content, "formula must install release tarball assets")
-require("disable!" in formula_content, "formula template must be disabled until a native release renders real assets")
-require('bin.install "intelligence"' in formula_content, "formula must install intelligence")
-require('bin.install "intelligence-tui"' in formula_content, "formula must install intelligence-tui")
+require("disable!" in formula_content, "formula template must be disabled until a JVM release renders real assets")
+require('depends_on "openjdk@21"' in formula_content, "formula must declare its Java runtime")
+require('libexec.install "bin", "lib"' in formula_content, "formula must install the Gradle distribution")
+require("intelligence-tui" not in formula_content, "formula must not install the removed TUI")
 require("intelligence --version" in formula_content, "formula test must verify intelligence --version")
-require(formula_content.count('sha256 "0000000000000000000000000000000000000000000000000000000000000000"') == 4, "formula template must contain four placeholder checksums")
+require(formula_content.count('sha256 "0000000000000000000000000000000000000000000000000000000000000000"') == 1, "formula template must contain one placeholder checksum")
 require("brew install amichne/intelligence/intelligence" in readme_content, "README must document direct tap installation")
 require("brew tap amichne/intelligence" in readme_content, "README must document manual tap installation")
 require(state.get("schema_version") == 1, "release-state.json schema_version must be 1")
@@ -51,10 +52,7 @@ with tempfile.TemporaryDirectory(prefix="intelligence-homebrew-test-") as temp:
     env = {
         "INTELLIGENCE_TAP_ROOT": str(tap_root),
         "VERSION": "v9.8.7",
-        "SHA256_MACOS_X64": "1" * 64,
-        "SHA256_MACOS_ARM64": "2" * 64,
-        "SHA256_LINUX_X64": "3" * 64,
-        "SHA256_LINUX_ARM64": "4" * 64,
+        "SHA256_JVM": "1" * 64,
     }
     subprocess.run([str(updater)], check=True, env=env)
 
@@ -65,13 +63,12 @@ with tempfile.TemporaryDirectory(prefix="intelligence-homebrew-test-") as temp:
     require('ARTIFACT_VERSION = "9.8.7"' in updated_formula, "updater must set the formula version")
     require("disable!" not in updated_formula, "updater must enable rendered release formulas")
     require(updated_state["current_release"] == "v9.8.7", "updater must set release-state current_release")
-    require("/v9.8.7/intelligence-v9.8.7-macos-arm64.tar.gz" in updated_readme, "updater must refresh README mirror example")
-    for digest in ("1" * 64, "2" * 64, "3" * 64, "4" * 64):
-        require(f'sha256 "{digest}"' in updated_formula, f"updater must set checksum {digest}")
+    require("/v9.8.7/intelligence-v9.8.7.tar.gz" in updated_readme, "updater must refresh README mirror example")
+    require('sha256 "' + "1" * 64 + '"' in updated_formula, "updater must set the JVM checksum")
 
     subprocess.run(["ruby", "-c", str(tap_root / "Formula" / "intelligence.rb")], check=True, stdout=subprocess.DEVNULL)
 
     rendered_urls = re.findall(r'url "#\{cli_release_root\}/#\{release_tag\}/(.*?)"', updated_formula)
-    require(len(rendered_urls) == 4, "formula must keep one URL per supported Homebrew platform")
+    require(len(rendered_urls) == 1, "formula must keep exactly one platform-neutral URL")
 
 print("OK Homebrew formula")

@@ -3,10 +3,11 @@
 The canonical plugin list is authored in `amichne/slopsentral`.
 
 ```sh
-intelligence marketplace browse amichne/slopsentral
+intelligence marketplace discover --github amichne/slopsentral
 ```
 
-At the time of migration, the exposed plugin families are:
+The source repository currently authors these workflow families. A V1 release
+may expose them only through package-level snapshot records:
 
 | Plugin | What It Provides |
 |---|---|

@@ -33,7 +33,7 @@
         },
         "pluginRoot": {
           "$ref": "#/$defs/relativePath",
-          "description": "Directory that contains local plugin payload directories. String plugin sources are resolved relative to this root by the GitHub Copilot CLI."
+          "description": "Directory that contains local plugin payload directories. Generated marketplaces use `.github/plugin` so string plugin sources resolve to `.github/plugin/<plugin>`."
         }
       },
       "additionalProperties": false
@@ -114,7 +114,7 @@
         },
         "source": {
           "$ref": "#/$defs/pluginSource",
-          "description": "Plugin payload location. For this repository's generated marketplace, this is the plugin directory name relative to metadata.pluginRoot."
+          "description": "Plugin payload location. For this repository's generated marketplace, this is the plugin directory name relative to `.github/plugin`."
         },
         "description": {
           "type": "string",

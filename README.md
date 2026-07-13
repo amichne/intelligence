@@ -1,8 +1,8 @@
 # amichne-intelligence
 
-`amichne-intelligence` is the Kotlin CLI, Ratatui marketplace browser, and
-schema contract repo for portable marketplace browsing, import, validation,
-materialization, and publishing.
+`amichne-intelligence` is the Kotlin CLI and schema contract repository for
+portable marketplace browsing, import, validation, materialization, and
+publishing.
 
 Reusable personal skills and plugin families now live in
 [`amichne/slopsentral`](https://github.com/amichne/slopsentral). This repository
@@ -23,8 +23,6 @@ target repo.
 - `schemas/` owns the public JSON contracts for source and provider payloads.
 - `cli/` owns browsing, validation, RPC dispatch, marketplace import,
   materialization, and publication.
-- `tui/` owns the optional Ratatui marketplace browser launched explicitly with
-  `intelligence marketplace ui`.
 - `.intelligence/adaptable.marketplace.json` records install-only adaptable
   marketplace state for consumer repos.
 - `.intelligence/marketplace-lock.json` records imported marketplace references
@@ -59,13 +57,6 @@ intelligence doctor --format json
 intelligence marketplace search kotlin --format json
 intelligence marketplace inspect amichne/slopsentral --format json
 intelligence marketplace installed list --format json
-```
-
-Open the Ratatui browser explicitly when a full-screen marketplace view is more
-useful than shell output.
-
-```sh
-intelligence marketplace ui
 ```
 
 The JSON-RPC boundary remains available for custom clients.
@@ -132,7 +123,6 @@ does not mutate local Codex, Copilot, or other harness user configuration.
 
 ```sh
 ./gradlew :cli:test installDevelopmentCli
-cargo test --manifest-path tui/Cargo.toml
 intelligence validate --portable
 ```
 
@@ -145,6 +135,9 @@ intelligence marketplace materialize --repo /path/to/slopsentral
 Materialization defaults to all providers and writes to
 `build/intelligence/marketplace` under the target repository. Use `--provider`
 or `--out` only when a script needs a single provider or a custom output root.
+Portable hydrated validation checks each provider's generated manifest and
+payload shape. Omit `--portable` when you also want installed provider CLIs to
+smoke-install the hydrated Codex and GitHub Copilot plugins in temporary homes.
 
 ## Publication
 
@@ -162,22 +155,22 @@ intelligence marketplace publish --repo /path/to/slopsentral --codex --no-push
 intelligence marketplace publish --repo /path/to/slopsentral --github --no-push
 ```
 
-Build the self-contained native CLI executable with:
+Build the platform-neutral Kotlin/JVM distribution with:
 
 ```sh
-./gradlew :cli:nativeCompile
-cargo build --release --manifest-path tui/Cargo.toml
+./gradlew :cli:distTar
 ```
 
-The release workflow publishes one archive per supported platform/architecture
-target containing `intelligence` and `intelligence-tui`, plus `SHA256SUMS`. It
-does not publish JVM application archives.
+The release workflow publishes one Gradle application archive containing the
+shell and Windows launchers plus runtime JARs, together with `SHA256SUMS`.
+Release verification rejects native libraries and Python or Rust runtime files.
 
 Use the release checklist in
 [`docs/reference/publication.md`](docs/reference/publication.md) before cutting
-the first stable native CLI release.
+the first stable Kotlin/JVM CLI release.
 
-After a stable native release, install the CLI with Homebrew:
+After a stable release, install the CLI and its OpenJDK 21 runtime with
+Homebrew:
 
 ```sh
 brew install amichne/intelligence/intelligence

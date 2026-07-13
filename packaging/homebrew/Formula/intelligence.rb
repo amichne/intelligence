@@ -16,59 +16,29 @@ class Intelligence < Formula
     "v#{ARTIFACT_VERSION}"
   end
 
-  def self.artifact_target
-    if OS.mac?
-      Hardware::CPU.arm? ? "macos-arm64" : "macos-x64"
-    elsif OS.linux?
-      Hardware::CPU.arm? ? "linux-arm64" : "linux-x64"
-    else
-      odie "Unsupported platform"
-    end
-  end
-
   desc "Operate portable AI tooling marketplaces"
   homepage "https://github.com/amichne/intelligence"
+  url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}.tar.gz"
   version ARTIFACT_VERSION
+  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   license "Apache-2.0"
-  disable! date: "2026-06-08", because: "native release assets have not been published yet"
 
   livecheck do
     url :stable
     strategy :github_releases
   end
 
-  on_macos do
-    on_intel do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-macos-x64.tar.gz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
-    end
+  disable! date: "2026-06-08", because: "JVM release assets have not been published yet"
 
-    on_arm do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-macos-arm64.tar.gz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
-    end
-  end
-
-  on_linux do
-    on_intel do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-linux-x64.tar.gz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
-    end
-
-    on_arm do
-      url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}-linux-arm64.tar.gz"
-      sha256 "0000000000000000000000000000000000000000000000000000000000000000"
-    end
-  end
+  depends_on "openjdk@21"
 
   def install
-    bin.install "intelligence"
-    bin.install "intelligence-tui"
+    libexec.install "bin", "lib"
+    bin.write_env_script libexec/"bin/intelligence", JAVA_HOME: formula_opt_prefix("openjdk@21")
   end
 
   test do
     assert_match "portable plugin marketplaces", shell_output("#{bin}/intelligence --help")
     assert_match "intelligence version", shell_output("#{bin}/intelligence --version")
-    assert_match "Usage: intelligence-tui", shell_output("#{bin}/intelligence-tui --help")
   end
 end
