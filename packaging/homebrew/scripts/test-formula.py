@@ -17,11 +17,13 @@ formula = root / "Formula" / "intelligence.rb"
 readme = root / "README.md"
 release_state = root / "release-state.json"
 updater = root / "scripts" / "update-formula.py"
+rendered_verifier = root / "scripts" / "verify-rendered-formula.py"
 
 require(formula.is_file(), "Formula/intelligence.rb is missing")
 require(readme.is_file(), "README.md is missing")
 require(release_state.is_file(), "release-state.json is missing")
 require(updater.is_file(), "scripts/update-formula.py is missing")
+require(rendered_verifier.is_file(), "scripts/verify-rendered-formula.py is missing")
 
 formula_content = formula.read_text(encoding="utf-8")
 readme_content = readme.read_text(encoding="utf-8")
@@ -65,6 +67,21 @@ with tempfile.TemporaryDirectory(prefix="intelligence-homebrew-test-") as temp:
     require(updated_state["current_release"] == "v9.8.7", "updater must set release-state current_release")
     require("/v9.8.7/intelligence-v9.8.7.tar.gz" in updated_readme, "updater must refresh README mirror example")
     require('sha256 "' + "1" * 64 + '"' in updated_formula, "updater must set the JVM checksum")
+
+    sha256s = tap_root / "SHA256SUMS"
+    sha256s.write_text(f"{'1' * 64}  intelligence-v9.8.7.tar.gz\n", encoding="utf-8")
+    subprocess.run(
+        [
+            str(rendered_verifier),
+            "--tag",
+            "v9.8.7",
+            "--sha256s",
+            str(sha256s),
+            "--tap-root",
+            str(tap_root),
+        ],
+        check=True,
+    )
 
     subprocess.run(["ruby", "-c", str(tap_root / "Formula" / "intelligence.rb")], check=True, stdout=subprocess.DEVNULL)
 
