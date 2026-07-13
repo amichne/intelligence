@@ -101,13 +101,24 @@ tool dependencies.
 
 `.intelligence/projection.json` is strict, schema-owned evidence with:
 
-- the projection contract version and provider identifier `codex`;
-- marketplace, snapshot, and package identities;
-- the exact provider-neutral package digest and size;
-- the generated plugin name and adapter version;
-- one mapping record for every source primitive;
-- every source-asset path, digest, and generated relative path; and
-- the deterministic generator identity.
+- `type: "INTELLIGENCE_PACKAGE_PROJECTION"` and `schemaVersion: 1`;
+- `provider: "codex"` and `generator: "intelligence-kotlin-v1"`;
+- `marketplaceId`, `snapshotId`, and `packageName` identities;
+- `adapterVersion`, derived exactly from the complete package digest;
+- `packageArchive`, containing the canonical archive `name`, `sha256`, and
+  `size`;
+- `skills`, containing the exact `name`, `sourcePath`, and `generatedPath` for
+  every skill; and
+- `files`, containing the exact `sourcePath`, `generatedPath`, `sha256`,
+  `size`, and `executable` mode for every projected source file.
+
+The owning contracts are
+[`package-projection-receipt-v1.schema.json`](../../schemas/core/package-projection-receipt-v1.schema.json)
+and the minimal Codex
+[`plugin-v1.schema.json`](../../schemas/adapters/codex/plugin-v1.schema.json).
+Both reject unknown fields. Package identity is the sole selection and exposure
+unit; the receipt accounts for skills and private assets but does not make them
+independently installable or selectable.
 
 Because the source contract admits only supported V1 kinds, every mapping
 record is successful. Missing, duplicate, or extra mapping records invalidate

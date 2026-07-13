@@ -6,14 +6,20 @@ internal class PackageArchive private constructor(
     val description: PortableDescription,
     val tags: List<PackageTag>,
     val assetName: ReleaseAssetName,
+    internal val manifest: PackageManifest,
+    sourceFiles: List<PackageSourceFile>,
     private val content: ByteArray,
 ) {
+    private val sourceFiles: List<PackageSourceFile> = sourceFiles.toList()
+
     val byteSize: Int
         get() = content.size
 
     val sha256: Sha256Digest = Sha256Digest.compute(content)
 
     fun bytes(): ByteArray = content.copyOf()
+
+    internal fun sourceFiles(): List<PackageSourceFile> = sourceFiles.toList()
 
     companion object {
         fun parse(bytes: ByteArray): PackageArchiveParsing = PackageArchiveParser.parse(bytes)
@@ -161,6 +167,8 @@ internal class PackageArchive private constructor(
                     description = manifest.description,
                     tags = manifest.tags.toList(),
                     assetName = ReleaseAssetName.packageArchive(manifest.name),
+                    manifest = manifest,
+                    sourceFiles = declaredFiles.map { evidence -> checkNotNull(sourceByPath[evidence.path]) },
                     content = archive.bytes(),
                 ),
             )

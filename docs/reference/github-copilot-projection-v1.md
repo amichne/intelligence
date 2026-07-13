@@ -101,13 +101,24 @@ collisions, and two inputs mapping to one output path fail validation.
 
 `.intelligence/projection.json` is strict schema-owned evidence containing:
 
-- projection contract version and provider identifier `github-copilot`;
-- marketplace, snapshot, and package identities;
-- exact provider-neutral package digest and size;
-- generated plugin name and digest-derived adapter version;
-- one successful mapping record for every source skill;
-- every source-asset path, digest, and generated relative path; and
-- deterministic generator identity.
+- `type: "INTELLIGENCE_PACKAGE_PROJECTION"` and `schemaVersion: 1`;
+- `provider: "github-copilot"` and `generator: "intelligence-kotlin-v1"`;
+- `marketplaceId`, `snapshotId`, and `packageName` identities;
+- `adapterVersion`, derived exactly from the complete package digest;
+- `packageArchive`, containing the canonical archive `name`, `sha256`, and
+  `size`;
+- `skills`, containing the exact `name`, `sourcePath`, and `generatedPath` for
+  every skill; and
+- `files`, containing the exact `sourcePath`, `generatedPath`, `sha256`,
+  `size`, and `executable` mode for every projected source file.
+
+The owning contracts are
+[`package-projection-receipt-v1.schema.json`](../../schemas/core/package-projection-receipt-v1.schema.json)
+and the minimal Copilot
+[`plugin-v1.schema.json`](../../schemas/adapters/github-copilot/plugin-v1.schema.json).
+Both reject unknown fields. Package identity is the sole selection and exposure
+unit; the receipt accounts for skills and private assets but does not make them
+independently installable or selectable.
 
 The receipt is complete accounting, not a place to record partial output.
 Missing, duplicate, or extra mapping records invalidate the projection.
