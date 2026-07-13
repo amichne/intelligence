@@ -114,9 +114,13 @@ hook protocols differ in event, matcher, output, failure, trust, shell, and
 cloud-execution semantics. Treating those surfaces as portable would either
 make some valid packages unprojectable or silently change behavior.
 
-The skill directory name and frontmatter name are identical. Skill descriptions
-are non-empty and at most 1,024 characters. These are the strict common provider
-boundaries; projection never sanitizes or truncates identity.
+The skill directory name and frontmatter name are identical. Packaged skills
+use the canonical two-field frontmatter defined by the [immutable snapshot
+publication contract](immutable-snapshot-publication-v1.md#canonical-package-archives):
+exact `name`, exact `description`, LF delimiters, one blank separator, and a
+non-empty Markdown body. Skill descriptions are non-empty and at most 1,024
+characters. These are the strict common provider boundaries; projection never
+sanitizes or truncates identity and never carries provider-only metadata.
 
 ## Reproducibility Rules
 

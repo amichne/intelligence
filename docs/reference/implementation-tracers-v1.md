@@ -21,9 +21,9 @@ starts only when its listed blockers are complete.
 | `T01` | Kotlin/JVM-only Gradle distribution and release pipeline | None | Distribution inspection, launcher smoke test, reproducible archive. **Complete:** `daa3ecc`. |
 | `T02` | Typed marketplace, snapshot, package, skill, and safe-entry-path identities | `T01` | Boundary and adversarial parser tests. **Complete:** `8d07bf1`. |
 | `T03` | Canonical ZIP bytes with closed file modes and trust-boundary limits | `T02` | Golden digest, raw metadata, immutability, limit, collision, and interoperability tests. **Complete:** `9b1642d`. |
-| `T04` | Canonical JSON bytes, SHA-256 values, and typed size/count limits | `T02` | Property tests for key order, integer/string rules, forbidden values, and stable digests. |
-| `T05` | Strict skill-package and exact-source parsers | `T03`, `T04` | Valid minimal fixture plus unknown-field, path, asset-closure, duplicate, and limit failures. |
-| `T06` | Deterministic package archive and marketplace-index materializer | `T05` | Two shuffled source trees produce identical complete release-neutral package bytes and index. |
+| `T04` | Canonical JSON bytes, SHA-256 values, and typed size/count limits | `T02` | Property tests for key order, integer/string rules, forbidden values, and stable digests. **Complete:** `e2bb039`. |
+| `T05` | Strict skill-package and exact-source parsers | `T03`, `T04` | Valid minimal fixture plus unknown-field, path, asset-closure, duplicate, and limit failures. **Complete:** `e422d13`. |
+| `T06` | Deterministic package archive and marketplace-index materializer | `T05` | Two shuffled source trees produce identical complete release-neutral package bytes and index. **In progress:** canonical package archive complete; marketplace index pending. |
 | `T07` | Complete Codex and GitHub Copilot projections with receipts | `T06` | One fixture projects to both providers; coverage, path, digest, and regeneration checks pass. |
 | `T08` | Canonical all-provider local release directory transaction | `T07` | Full asset set, checksums, replacement atomicity, and repeat materialization equality. |
 | `T09` | Typed consumer intent, lock, journal, and recovery state machine | `T05` | Legal transition tests; invalid, missing-package, stale-lock, interrupted-transaction, and concurrency outcomes are sealed failures. |

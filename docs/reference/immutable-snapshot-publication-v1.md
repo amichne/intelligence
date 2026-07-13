@@ -114,6 +114,26 @@ enforces canonical array order, portable path byte length, exact skill
 ownership, ASCII case-folding collisions, aggregate entry and expanded-byte
 limits, and canonical RFC 8785 bytes.
 
+Every packaged `SKILL.md` has one canonical portable form:
+
+```yaml
+---
+name: review
+description: "Review code"
+---
+
+Review the supplied code and report evidence.
+```
+
+The metadata contains exactly `name` followed by `description`. The description
+value is an RFC 8785 canonical JSON string token, which is also a YAML
+double-quoted scalar. The opening and closing delimiters, one blank line before
+the non-empty Markdown body, and LF line endings are exact. NUL bytes, carriage
+returns, extra metadata, non-canonical string escapes, an identity mismatch, or
+an empty body fail package materialization. This intentionally excludes
+provider-only skill metadata from the portable V1 archive instead of assigning
+it new cross-provider semantics.
+
 ## Canonical Provider Archives
 
 The Codex archive contains:

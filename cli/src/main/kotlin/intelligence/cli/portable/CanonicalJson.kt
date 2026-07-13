@@ -13,6 +13,23 @@ internal data class CanonicalJsonBoolean(
 internal class CanonicalJsonString private constructor(
     internal val value: String,
 ) : CanonicalJsonValue {
+    internal fun canonicalToken(): CanonicalJsonStringTokenRendering {
+        val writer = BoundedCanonicalJsonWriter(MAX_CANONICAL_JSON_DOCUMENT_BYTES)
+        writer.write(this)
+        return if (writer.byteCount > MAX_CANONICAL_JSON_DOCUMENT_BYTES) {
+            CanonicalJsonStringTokenRendering.Rejected(
+                CanonicalJsonDocumentRejection.SizeExceeded(
+                    actualBytes = writer.byteCount,
+                    maximumBytes = MAX_CANONICAL_JSON_DOCUMENT_BYTES,
+                ),
+            )
+        } else {
+            CanonicalJsonStringTokenRendering.Rendered(
+                CanonicalJsonStringToken(writer.completedBytes().decodeToString()),
+            )
+        }
+    }
+
     companion object {
         fun create(candidate: String): CanonicalJsonStringCreation {
             val unpairedSurrogate = candidate.firstUnpairedSurrogateIndex()
@@ -25,6 +42,19 @@ internal class CanonicalJsonString private constructor(
             }
         }
     }
+}
+
+@JvmInline
+internal value class CanonicalJsonStringToken internal constructor(
+    private val text: String,
+) {
+    fun render(): String = text
+}
+
+internal sealed interface CanonicalJsonStringTokenRendering {
+    data class Rendered(val token: CanonicalJsonStringToken) : CanonicalJsonStringTokenRendering
+
+    data class Rejected(val reason: CanonicalJsonDocumentRejection.SizeExceeded) : CanonicalJsonStringTokenRendering
 }
 
 internal sealed interface CanonicalJsonStringCreation {
