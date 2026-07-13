@@ -255,6 +255,14 @@ crash, recovery completes the new pair only when both staged files and their
 digests remain valid; otherwise it restores the old pair. A reader never treats
 one file from each generation as resolved state.
 
+The journal transaction ID is derived from the old-or-absent and new digests
+for the intent and lock pair. Target, staged, and backup paths are fixed by that
+identity rather than accepted from a caller. The owning runtime schema is
+`schemas/core/marketplace-transaction-v1.schema.json`; the typed parser also
+requires exactly the intent record followed by the lock record and recomputes
+every derived value. Recovery refuses an observed target digest that is
+neither the recorded old value nor the recorded new value.
+
 The content cache is outside the repository transaction. Verified immutable
 blobs may remain unreferenced after a failed state commit, but no mutable cache
 metadata or consumer pointer refers to them. This is safe because blob identity
