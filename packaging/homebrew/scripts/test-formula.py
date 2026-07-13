@@ -35,6 +35,11 @@ require(".tar.gz" in formula_content, "formula must install release tarball asse
 require("disable!" in formula_content, "formula template must be disabled until a JVM release renders real assets")
 require('depends_on "openjdk@21"' in formula_content, "formula must declare its Java runtime")
 require('libexec.install "bin", "lib"' in formula_content, "formula must install the Gradle distribution")
+require(
+    '(bin/"intelligence").write_env_script' in formula_content,
+    "formula must write the environment wrapper to bin/intelligence",
+)
+require("\n    bin.write_env_script" not in formula_content, "formula must not replace the bin directory with a wrapper file")
 require("intelligence-tui" not in formula_content, "formula must not install the removed TUI")
 require("intelligence --version" in formula_content, "formula test must verify intelligence --version")
 require(formula_content.count('sha256 "0000000000000000000000000000000000000000000000000000000000000000"') == 1, "formula template must contain one placeholder checksum")
