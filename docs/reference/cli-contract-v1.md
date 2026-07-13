@@ -69,7 +69,7 @@ contract-version change to evolve incompatibly.
 | `intelligence marketplace resolve [MARKETPLACE_ID]` | Explicitly create or replace lock evidence for valid unresolved or stale intent without changing its source or package selections. |
 | `intelligence marketplace recover` | Explicitly complete or restore one interrupted repository transaction from its typed journal before any other stateful operation. |
 | `intelligence marketplace reconstruct [MARKETPLACE_ID]` | Re-populate missing digest-addressed cache objects only from exact lock evidence, or prove the cache complete offline. It does not project provider output. |
-| `intelligence marketplace project MARKETPLACE_ID --provider codex|github-copilot --out DIRECTORY` | Replace one explicit output directory with one canonical package-plugin tree per selected package for exactly one marketplace and provider. It emits no marketplace catalog and never composes marketplaces. |
+| `intelligence marketplace project MARKETPLACE_ID --provider codex|github-copilot --out DIRECTORY` | Atomically publish one canonical package-plugin tree per selected package for exactly one marketplace and provider to an absent output path, or accept an identical existing tree. It emits no marketplace catalog, never composes marketplaces, and rejects changed existing output unchanged. |
 | `intelligence marketplace materialize --source DIRECTORY --snapshot SNAPSHOT_ID --out DIRECTORY` | Build the complete canonical local release directory, including both required provider projections, in one transaction. |
 | `intelligence marketplace publish --release-dir DIRECTORY --github OWNER/REPOSITORY --commit COMMIT_SHA` | Preflight and publish one already-materialized immutable GitHub release. |
 | `intelligence marketplace verify-publication --github OWNER/REPOSITORY --snapshot SNAPSHOT_ID` | Re-read and verify immutable remote release evidence without mutation. |
@@ -87,9 +87,12 @@ source form and all normal verification.
 
 Projection output is the sorted union of the selected packages' canonical
 provider plugin trees at `<out>/<package-name>/`. Package names are unique
-within one marketplace. Requiring one marketplace and one empty-or-replaceable
+within one marketplace. Requiring one marketplace and one absent-or-identical
 output root per invocation prevents cross-marketplace composition and name
-collision policy from entering V1.
+collision policy from entering V1. V1 deliberately refuses an in-place changed
+directory replacement because the portable JVM filesystem API has no atomic
+directory-exchange primitive; introducing a backup swap would add a crash state
+that is not closed by the consumer journal.
 
 ## Dry-Run and Offline Semantics
 
