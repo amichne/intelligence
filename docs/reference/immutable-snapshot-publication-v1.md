@@ -344,6 +344,13 @@ no-op. Any missing, changed, or additional output path fails with
 output. Temporary roots are removed after failure and are never eligible for
 publication.
 
+The output parent must already exist as a real directory; V1 does not infer or
+create missing parents. Directory inspection never follows symbolic links, and
+every release entry must be a direct regular file with a valid release asset
+name. A symlink, nested directory, device, or other non-regular entry makes an
+existing target non-identical and therefore returns `OUTPUT_EXISTS` without
+mutation.
+
 ## Publication Inputs
 
 Publication requires only:
