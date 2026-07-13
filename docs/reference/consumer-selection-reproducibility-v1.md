@@ -126,6 +126,15 @@ The lock contains no package versions, constraints, dependency edges,
 selection aliases, timestamps, cache paths, or generated-provider paths. The
 same verified inputs therefore produce byte-identical lock JSON.
 
+The owning public schema is
+`schemas/core/marketplace-lock-v1.schema.json`. A GitHub lock entry is itself
+proof that immutable-release validation passed: its source has fixed
+`immutable: true`, positive safe-integer release ID, exact tag and lowercase
+tag commit SHA, and every asset has a positive stable asset ID. Callers cannot
+construct a trusted GitHub lock variant with `immutable: false`. Local entries
+omit remote IDs entirely. Mixing local and GitHub asset evidence in one entry
+is invalid.
+
 Intent and lock files never contain credentials, authorization headers,
 temporary download URLs, or signed URLs. Authentication is execution-time
 input. Locks retain stable repository, release, asset, size, and digest
