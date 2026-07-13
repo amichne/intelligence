@@ -133,7 +133,7 @@ supporting asset owned by exactly one primitive. Missing, unreferenced, multiply
 owned, or out-of-root files fail validation.
 
 Primitive identities are unique by package, kind, and name. The kind must be
-one of `skill` or `hook`.
+`skill`.
 
 All primitive definitions use their owning kind-specific schema and the common
 rules below:
@@ -146,10 +146,9 @@ rules below:
   source.
 
 Skill definitions require non-empty UTF-8 Markdown without NUL characters.
-Hook primitives require the strict provider-neutral hook schema;
-provider-specific event support is checked by the requested projection gate.
-Markdown, schemas, scripts, and other files consumed by a skill or hook are
-validated as private supporting assets, not standalone primitives.
+Their name and description satisfy the strict common provider limits. Markdown,
+schemas, scripts, hooks, and other files consumed by a skill are validated as
+private supporting assets, not standalone primitives.
 
 ## Package Bundle and Snapshot Index
 

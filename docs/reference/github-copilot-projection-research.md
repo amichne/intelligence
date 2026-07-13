@@ -45,10 +45,10 @@ These requirements come from the current official GitHub documentation.
 | Validation mode | Marketplace entry `strict` defaults to `true`; portable output must preserve strict validation rather than opting into relaxed legacy handling. |
 
 Plugin metadata such as description, semantic version, author, repository,
-license, keywords, category, and tags is optional to Copilot. The portable
-contract nevertheless requires the independently versioned package identity,
-so its Copilot manifest and marketplace entry should always emit the exact
-package version.
+license, keywords, category, and tags is optional to Copilot. V1 has no
+portable package versions. A projection may emit a digest-derived semantic
+version solely as provider adapter identity; exact content identity remains the
+package digest.
 
 ## Documented Plugin Components
 
@@ -172,7 +172,7 @@ A hydrated Copilot payload is eligible for use or publication only when
 validation proves:
 
 - the canonical plugin manifest exists and contains the exact portable package
-  name and semantic version;
+  name and digest-derived adapter version;
 - every declared component path resolves inside the plugin root and contains
   only the expected file kind;
 - every agent, skill, hook, MCP, and LSP artifact passes its own structural and
@@ -184,8 +184,8 @@ validation proves:
   reported rather than hidden;
 - every portable primitive has exactly one recorded supported mapping or one
   explicit unsupported result; and
-- output is deterministic for the same validated source and carries a source
-  version, digest, projection receipt, and checksums.
+- output is deterministic for the same validated source and carries the source
+  digest, projection receipt, and checksums.
 
 The final two requirements belong to `intelligence`, not the Copilot manifest.
 GitHub's plugin contract does not define a generated-output marker or a
@@ -200,7 +200,7 @@ provider-neutral model.
 | Classification | Contents |
 |---|---|
 | Required by Copilot | Valid plugin and marketplace manifests, valid declared component formats, strict marketplace validation, and source paths that resolve to the intended plugin. |
-| Required by `intelligence` | Exact package version and digest evidence, complete primitive coverage accounting, deterministic output, a reversible projection receipt, checksums, fail-closed unsupported mappings, and hydrated-payload validation. |
+| Required by `intelligence` | Exact package digest evidence, complete primitive coverage accounting, deterministic output, a reversible projection receipt, checksums, fail-closed unsupported mappings, and hydrated-payload validation. |
 | Optional Copilot convention | Alternate manifest locations, omitted default component paths, descriptive metadata, compatibility directories, commands, extensions, and LSP support. |
 | Downstream consumer state | Marketplace registration, `enabledPlugins`, local installation cache, enablement, permissions, secrets, MCP policy, and enterprise allowlists. The materializer must not mutate these. |
 

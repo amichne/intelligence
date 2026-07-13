@@ -37,6 +37,7 @@ nav = [
     { "Codex projection research" = "reference/codex-projection-research.md" },
     { "Codex projection V1" = "reference/codex-projection-v1.md" },
     { "GitHub Copilot projection research" = "reference/github-copilot-projection-research.md" },
+    { "GitHub Copilot projection V1" = "reference/github-copilot-projection-v1.md" },
     { "GitHub release mechanics research" = "reference/github-release-mechanics-research.md" },
     { "Portable package marketplace V1" = "reference/portable-package-marketplace-v1.md" },
     { "Consumer selection and reproducibility V1" = "reference/consumer-selection-reproducibility-v1.md" },

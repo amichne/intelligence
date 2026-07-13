@@ -126,7 +126,7 @@ publication. At minimum it must prove:
 - every portable primitive has exactly one recorded supported mapping or one
   explicit unsupported result; and
 - generated files are deterministic for the same validated source and carry
-  the source package version and digest in projection evidence.
+  the source package digest in projection evidence.
 
 The last two checks are `intelligence` requirements, not Codex manifest fields.
 Official Codex documentation does not define a generated-output marker or a

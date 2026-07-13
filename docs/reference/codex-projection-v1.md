@@ -3,7 +3,7 @@ type: Decision Record
 title: Codex projection V1 contract
 description: Minimal deterministic projection from a portable package to an installable Codex plugin.
 resource: https://github.com/amichne/intelligence/issues/35
-tags: [codex, projection, plugins, skills, hooks, v1]
+tags: [codex, projection, plugins, skills, v1]
 timestamp: 2026-07-12T23:58:00-04:00
 ---
 
@@ -16,10 +16,10 @@ produce byte-identical output.
 
 ## Decision
 
-One portable package projects to one Codex plugin. V1 projects only `skill` and
-`hook` primitives because those are the provider-native primitive kinds shared
-by the two required providers. Other content may travel only as a private
-supporting asset owned by one of those primitives.
+One portable package projects to one Codex plugin. V1 projects only `skill`
+primitives because Agent Skills are the stable provider-native component shared
+by both required providers. Other content may travel only as a private
+supporting asset owned by a skill.
 
 This narrows the earlier exploratory eight-kind domain. It is the smallest
 contract that can satisfy all three V1 requirements simultaneously:
@@ -28,7 +28,7 @@ contract that can satisfy all three V1 requirements simultaneously:
 - every valid package projects to both required providers; and
 - projection never edits provider or repository configuration.
 
-An agent, instruction, prompt, concept, schema, or document presented as a
+An agent, hook, instruction, prompt, concept, schema, or document presented as a
 public primitive fails source validation with `UNSUPPORTED_PRIMITIVE_KIND`.
 The projector never reclassifies one as a skill, copies one into an ignored
 directory, or claims that an unconsumed file is a successful projection.
@@ -44,13 +44,9 @@ The output root is generated content and is never authoring source.
 ├── .intelligence/
 │   ├── projection.json
 │   └── checksums.sha256
-├── skills/
-│   └── <skill-name>/
-│       ├── SKILL.md
-│       └── <private supporting assets>
-└── hooks/
-    ├── hooks.json
-    └── <hook-name>/
+└── skills/
+    └── <skill-name>/
+        ├── SKILL.md
         └── <private supporting assets>
 ```
 
@@ -70,10 +66,9 @@ that cannot be represented fails validation before any output is written.
 component pointers plus deterministic descriptive metadata:
 
 - `name` is the exact portable package name;
-- `version` is `0.0.0-intelligence.<package-sha256>`;
-- `description` is the package description;
-- `skills` is `./skills/` when at least one skill exists; and
-- `hooks` is `./hooks/hooks.json` when at least one hook exists.
+- `version` is `0.0.0-intelligence.sha<package-sha256>`;
+- `description` is the package description; and
+- `skills` is `./skills/`.
 
 The generated prerelease version is an adapter identity required by Codex. It
 is not a portable package version, does not participate in resolution, and is
@@ -102,35 +97,6 @@ Provider-only skill metadata is absent in V1. In particular, the projection
 does not synthesize `agents/openai.yaml`, invocation policy, UI metadata, or
 tool dependencies.
 
-## Hook Mapping
-
-Every `hook` contributes one or more matcher groups to the single canonical
-`hooks/hooks.json`. The portable event, matcher, command, timeout, and status
-message fields map directly to the same Codex command-hook fields. The
-projector accepts only event and field combinations documented as executable
-by the supported Codex release contract. Parsed-but-skipped handler kinds or
-fields are unsupported.
-
-V1 therefore requires:
-
-- handler type `command`;
-- a supported lifecycle event;
-- a non-empty command;
-- an optional matcher only for an event that honors matchers;
-- an optional positive timeout; and
-- an optional non-empty status message.
-
-Hook groups are sorted by event, hook name, matcher, and source declaration
-order. Private hook assets are copied to `hooks/<hook-name>/`. Portable command
-arguments address owned files through a logical plugin-root placeholder; the
-Codex adapter renders it as `${PLUGIN_ROOT}`. Raw absolute paths and traversal
-segments fail validation.
-
-Projection does not execute hooks or prove that an external command exists on
-the consumer machine. It does prove that every referenced owned file is
-present and covered by package integrity evidence. Installing or enabling a
-plugin never implies hook trust; Codex retains its separate hash-based review.
-
 ## Projection Receipt
 
 `.intelligence/projection.json` is strict, schema-owned evidence with:
@@ -150,7 +116,7 @@ receipt entries that normalize an unusable artifact.
 
 `.intelligence/checksums.sha256` lists every generated regular file except
 itself, sorted by UTF-8 relative path. It includes `projection.json`, the plugin
-manifest, all skills, the hook configuration, and all private assets. Each line
+manifest, all skills, and all private assets. Each line
 uses lowercase SHA-256, two spaces, and a slash-separated relative path.
 
 ## Transaction Boundary
@@ -176,7 +142,7 @@ A Codex projection is valid only when:
 - the manifest identity and adapter version match the source package evidence;
 - every manifest path is `./`-relative, exists, has the expected file kind,
   and remains inside the plugin root;
-- every skill and hook passes its provider-specific structural checks;
+- every skill passes its provider-specific structural checks;
 - source-to-output primitive and asset coverage is exact;
 - the receipt is strict and agrees with hydrated content;
 - every checksum recomputes exactly; and
@@ -204,24 +170,24 @@ may distribute the validated tree, but distribution is not installation.
 
 ## Deferred Beyond V1
 
-V1 does not project custom agents, repository instructions, prompts, concepts,
-schemas, documents, MCP servers, apps, connectors, LSP servers, UI assets, or
-provider capabilities. It also does not define compatibility gates for Codex
-versions. A later contract may add a component only after both required
-providers have stable installable semantics or after the product explicitly
-permits provider-specific packages.
+V1 does not project custom agents, lifecycle hooks, repository instructions,
+prompts, concepts, schemas, documents, MCP servers, apps, connectors, LSP
+servers, UI assets, or provider capabilities. It also does not define
+compatibility gates for Codex versions. A later contract may add a component
+only after both required providers have stable installable semantics or after
+the product explicitly permits provider-specific packages.
 
 ## Decision History
 
 | Choice | V1 disposition |
 |---|---|
 | One package becomes one plugin. | Accepted. |
-| Skills and hooks are the public portable intersection. | Accepted. |
+| Skills are the sole public portable primitive. | Accepted after Copilot comparison; hook protocols are not semantics-compatible. |
 | Other document-like material travels only as private owned content. | Accepted. |
 | Generated provider versions are derived from the package digest. | Accepted; this is adapter identity, not package versioning. |
 | Public primitive lowering into a different provider kind. | Rejected as lossy and difficult to reverse. |
 | Custom-agent files under consumer `.codex/agents`. | Rejected because projection cannot mutate provider configuration. |
-| Installation, enablement, and hook trust. | Deferred to explicit provider-owned workflows outside V1. |
+| Lifecycle hooks, installation, enablement, and hook trust. | Deferred beyond V1. |
 
 ## Sources And Validation
 

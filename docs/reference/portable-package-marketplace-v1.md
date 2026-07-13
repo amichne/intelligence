@@ -73,6 +73,9 @@ contains:
 - a closed collection of typed primitive definitions; and
 - every supporting asset referenced by those primitives.
 
+The package description is non-empty and at most 1,024 characters so it can be
+copied to both provider manifests without truncation.
+
 One digest covers the canonical provider-neutral bundle in full. Changing the
 manifest, a primitive definition, or a supporting asset produces different
 package content and therefore a different digest in a new marketplace
@@ -85,26 +88,30 @@ conflicts, and cross-package reach-through from the first implementation.
 
 ## Primitive Contract
 
-The closed V1 primitive-kind set is:
+The sole V1 primitive kind is `skill`.
 
-- `skill`; and
-- `hook`.
-
-Unknown primitive kinds fail validation. Primitive names are unique within a
-package and kind, so different kinds may share the same name. Every declared
-primitive is public, discoverable, and included when its package is selected.
-There are no per-primitive visibility, selection, or version controls.
+Unknown primitive kinds fail validation. Skill names are unique within a
+package. Every declared skill is public, discoverable, and included when its
+package is selected. There are no per-skill visibility, selection, or version
+controls.
 
 Supporting assets are not primitives. They have no public name, version,
 dependency coordinate, or exposure lifecycle. They are immutable package
 content and are accessible only through a primitive definition.
 
-Agent profiles, instructions, prompts, concepts, schemas, and documents may be
-private supporting files owned and consumed by a skill or hook. They are not
-standalone V1 primitives. This is deliberate: Codex and GitHub Copilot do not
-share semantics-preserving installable plugin components for those kinds.
-Treating them as public would either make some valid packages unprojectable or
-require a lossy lowering that silently changes behavior.
+Agent profiles, hooks, instructions, prompts, concepts, schemas, documents,
+scripts, and other resources may be private supporting files owned and consumed
+by a skill. They are not standalone V1 primitives. This is deliberate: Codex
+and GitHub Copilot share the Agent Skills package shape, while their lifecycle
+hook protocols differ in event, matcher, output, failure, trust, shell, and
+cloud-execution semantics. Treating those surfaces as portable would either
+make some valid packages unprojectable or silently change behavior.
+
+Package and skill names are lowercase kebab-case identifiers containing only
+ASCII letters, digits, and hyphens, with a maximum length of 64 characters.
+The skill directory name and frontmatter name are identical. Skill descriptions
+are non-empty and at most 1,024 characters. These are the strict common
+provider boundaries; projection never sanitizes or truncates identity.
 
 ## Reproducibility Rules
 
@@ -147,6 +154,7 @@ The following behavior is intentionally absent from V1:
   substitution;
 - workflow primitives, workflow graphs, conditions, loops, retries, dataflow,
   or execution semantics;
+- public lifecycle hooks or provider-specific executable plugin components;
 - per-primitive selection, visibility, dependencies, or independent versions;
   and
 - provider-specific installation or runtime-configuration mutation.
@@ -164,7 +172,7 @@ rows intentionally supersede earlier exploratory decisions.
 |---|---|
 | Package is the sole public selection and exposure unit. | Accepted. |
 | Primitive identity includes package, kind, and name. | Accepted. |
-| Primitive kinds form a closed contract-versioned set. | Accepted; narrowed to skill and hook after provider research established the native portable intersection. |
+| Primitive kinds form a closed contract-versioned set. | Accepted; narrowed to skill after provider comparison exposed incompatible lifecycle-hook semantics. |
 | Tags are discovery metadata only. | Accepted. |
 | Exactly one default package exists per marketplace snapshot. | Accepted. |
 | Supporting assets remain private package content. | Accepted. |
