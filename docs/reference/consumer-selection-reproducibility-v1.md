@@ -204,10 +204,13 @@ The cache stores the exact marketplace index, checksum manifest, and selected
 provider-neutral package bundles. It stores raw bytes only; source locators,
 filenames, selections, and trust decisions remain in the lock.
 
-A cache insertion writes to a temporary sibling, verifies size and digest,
-flushes it, and atomically renames it to the digest path. Existing blobs are
-re-verified before use. A mismatched existing blob is corruption and causes a
-fail-closed error; ordinary selection does not silently repair or overwrite it.
+A cache insertion writes to a temporary sibling, verifies size and digest, and
+flushes it. It then atomically publishes a no-replace hard link at the digest
+path and removes the temporary name. This avoids the platform-defined target
+replacement behavior of Java atomic moves: concurrent writers converge on the
+first exact blob, while an existing mismatched target remains corruption.
+Existing blobs are re-verified before use; ordinary selection does not silently
+repair or overwrite one.
 
 V1 has no cache catalog, mutable access metadata, background eviction, or
 retention promise. Users and operating systems may remove blobs. Missing cache
