@@ -34,7 +34,7 @@ class Intelligence < Formula
 
   def install
     libexec.install "bin", "lib"
-    bin.write_env_script libexec/"bin/intelligence", JAVA_HOME: formula_opt_prefix("openjdk@21")
+    (bin/"intelligence").write_env_script libexec/"bin/intelligence", JAVA_HOME: formula_opt_prefix("openjdk@21")
   end
 
   test do
