@@ -39,6 +39,7 @@ nav = [
     { "GitHub Copilot projection research" = "reference/github-copilot-projection-research.md" },
     { "GitHub Copilot projection V1" = "reference/github-copilot-projection-v1.md" },
     { "GitHub release mechanics research" = "reference/github-release-mechanics-research.md" },
+    { "Immutable snapshot publication V1" = "reference/immutable-snapshot-publication-v1.md" },
     { "Portable package marketplace V1" = "reference/portable-package-marketplace-v1.md" },
     { "Consumer selection and reproducibility V1" = "reference/consumer-selection-reproducibility-v1.md" },
     { "Validation trust boundary V1" = "reference/validation-trust-boundary-v1.md" },

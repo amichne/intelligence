@@ -80,7 +80,7 @@ Release and asset responses expose stable release and asset IDs, tag name,
 asset name, size, state, content type, download URL, and a digest in
 `sha256:<hex>` form. The transport contract should consume the digest and size
 from the API, while the provider-neutral manifest remains the semantic source
-of package identities and dependencies.
+of package identities and skill content.
 
 The upload API can rename unsafe filenames. Duplicate asset names fail with
 `422`. An upstream `502` can leave an empty asset in `starter` state. A draft
@@ -95,12 +95,12 @@ cover these roles:
 
 | Asset role | Required contents |
 |---|---|
-| Marketplace index | Persisted contract version, marketplace release identity, exact package versions, package content digests, dependencies, default package, and asset references. |
-| Provider-neutral package artifacts | One deterministic archive per selected package version, or one deterministic aggregate archive with an indexed file map. |
+| Marketplace index | Persisted contract version, marketplace and snapshot identities, package content digests, default package, and exact asset references. |
+| Provider-neutral package artifacts | One deterministic archive per package. |
 | Codex payloads | Hydrated, validated Codex plugin artifacts and projection receipts. |
 | GitHub Copilot payloads | Hydrated, validated Copilot plugin artifacts and projection receipts. |
 | Checksums | A deterministic checksum manifest covering every uploaded semantic asset by exact filename, size, and SHA-256 digest. |
-| Publication receipt | Repository identity, release ID, immutable tag, tag commit SHA, publication timestamp, and validation evidence. |
+| Publication result | Returned after publication with repository identity, release ID, immutable tag, tag commit SHA, publication timestamp, asset evidence, and validation outcome; it need not be a release asset. |
 
 GitHub's asset `digest` field and release attestation provide independent
 server-side integrity evidence. The checksum asset remains necessary because a
@@ -124,7 +124,7 @@ For each marketplace release, lock evidence should include:
 - release ID and exact immutable tag;
 - tag commit SHA from verified release or attestation evidence;
 - marketplace index asset ID, filename, size, and SHA-256 digest;
-- every selected package version and content digest;
+- every selected package identity and content digest;
 - each required package or provider asset ID, filename, size, and SHA-256
   digest; and
 - the persisted contract versions used to parse the index and lock.
@@ -142,7 +142,7 @@ Read and write operations have intentionally different authority.
 | Read public release or asset | No authentication required, subject to unauthenticated limits. |
 | Read private release or asset | Contents read using a supported GitHub App, installation, or fine-grained personal token. |
 | Check immutable-release policy | Repository Administration read. |
-| Create, update, or publish release | Repository Contents write; some cases may also require Workflows write. |
+| Create, update, or publish release | Repository Contents write. |
 | Upload, rename, or delete draft assets | Repository Contents write. |
 | Enable or disable immutable releases | Repository Administration write. |
 
@@ -172,8 +172,8 @@ The publication boundary consists of a small ordered mutation set.
 Creating releases triggers notifications and counts as content generation.
 Update and delete endpoints exist, but they are not normal maintenance tools
 for immutable marketplace releases. Once published, the portable contract must
-model the release as terminal. A correction is a new semantic marketplace
-release, not an edit, deletion, tag move, or asset overwrite.
+model the release as terminal. A correction is a new marketplace snapshot, not
+an edit, deletion, tag move, or asset overwrite.
 
 ## Attestations And Checksums
 
@@ -213,8 +213,8 @@ cached “latest” answer must not be presented as current remote state.
 The later specification should encode these non-negotiable rules:
 
 - immutable-release policy is a precondition, verified before creating a draft;
-- the release tag selects one immutable marketplace release, while package
-  versions remain independently versioned inside its index;
+- the release tag is the exact opaque snapshot ID; packages have no independent
+  versions in V1;
 - every publication uses a draft-upload-verify-publish lifecycle;
 - all package and provider artifacts are explicit release assets, never
   generated source archives;

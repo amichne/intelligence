@@ -43,6 +43,11 @@ contract, not filesystem paths or generated-provider directories.
 Transport coordinates locate an entity but never define it. Moving or
 mirroring a marketplace therefore cannot silently change package identity.
 
+Marketplace, snapshot, package, and skill IDs match
+`[a-z0-9]+(?:-[a-z0-9]+)*` and are at most 64 characters. A GitHub publication
+uses the snapshot ID as its exact release tag. The identifier is opaque: it has
+no ordering or semantic-version meaning.
+
 ## Marketplace Snapshot
 
 Each marketplace release publishes one complete immutable snapshot. Its index
@@ -71,14 +76,16 @@ contains:
 - package ID and descriptive metadata;
 - discovery-only tags;
 - a closed collection of typed primitive definitions; and
-- every supporting asset referenced by those primitives.
+- every supporting asset referenced by those primitives, including its relative
+  path, byte size, SHA-256 digest, and executable bit.
 
 The package description is non-empty and at most 1,024 characters so it can be
 copied to both provider manifests without truncation.
 
-One digest covers the canonical provider-neutral bundle in full. Changing the
-manifest, a primitive definition, or a supporting asset produces different
-package content and therefore a different digest in a new marketplace
+The SHA-256 digest of the complete canonical provider-neutral ZIP bytes is the
+package digest. This includes ZIP metadata as well as file content. Changing the
+manifest, a primitive definition, a supporting asset, or canonical archive
+metadata therefore produces a different package digest in a new marketplace
 snapshot.
 
 V1 packages do not declare dependencies. A package cannot reference primitives
@@ -107,11 +114,9 @@ hook protocols differ in event, matcher, output, failure, trust, shell, and
 cloud-execution semantics. Treating those surfaces as portable would either
 make some valid packages unprojectable or silently change behavior.
 
-Package and skill names are lowercase kebab-case identifiers containing only
-ASCII letters, digits, and hyphens, with a maximum length of 64 characters.
 The skill directory name and frontmatter name are identical. Skill descriptions
-are non-empty and at most 1,024 characters. These are the strict common
-provider boundaries; projection never sanitizes or truncates identity.
+are non-empty and at most 1,024 characters. These are the strict common provider
+boundaries; projection never sanitizes or truncates identity.
 
 ## Reproducibility Rules
 

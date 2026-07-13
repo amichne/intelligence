@@ -78,7 +78,9 @@ All V1 JSON contracts require:
 - unknown fields rejected;
 - duplicate keys rejected before object construction;
 - finite, bounded integers and strings; and
-- deterministic serialization with stable key and array ordering.
+- canonical serialization using RFC 8785 JSON Canonicalization Scheme bytes,
+  followed by exactly one newline; arrays use their owning contract's declared
+  ordering.
 
 Repository-owned JSON Schemas use the JSON Schema 2020-12 dialect and validate
 against its official meta-schema. Schema primitives must declare
@@ -138,9 +140,10 @@ Primitive identities are unique by package, kind, and name. The kind must be
 All primitive definitions use their owning kind-specific schema and the common
 rules below:
 
-- the name is non-empty, normalized, and safe as a logical identifier;
+- the name matches `[a-z0-9]+(?:-[a-z0-9]+)*` and is at most 64 characters;
 - primary and supporting paths are relative, normalized, and package-contained;
-- declared sizes and SHA-256 digests match the referenced bytes;
+- declared sizes, SHA-256 digests, and executable bits match the referenced
+  bytes and authored metadata;
 - no symlink, hard link, device, socket, or named pipe is accepted; and
 - no provider directory or provider-specific generated path is authoring
   source.
@@ -155,9 +158,9 @@ private supporting assets, not standalone primitives.
 Bundle validation happens before extraction into a destination directory. It
 rejects:
 
-- absolute paths, parent traversal, backslashes, empty path segments, or
-  non-normalized Unicode;
-- duplicate paths or collisions after Unicode normalization or case folding;
+- absolute paths, parent traversal, backslashes, empty path segments, or a path
+  segment outside `[A-Za-z0-9._-]+`;
+- `.` or `..` segments, duplicate paths, or collisions after ASCII lowercasing;
 - symlinks, hard links, devices, sockets, pipes, or nested extraction;
 - entries, expanded bytes, or path lengths above the V1 limits; and
 - archive entries not declared by the package manifest.
