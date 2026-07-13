@@ -1,11 +1,7 @@
 package intelligence.cli.portable
 
-import java.nio.charset.CharacterCodingException
-import kotlinx.serialization.SerializationException
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.booleanOrNull
@@ -13,33 +9,19 @@ import kotlinx.serialization.json.longOrNull
 
 internal object PackageManifestParser {
     fun parse(bytes: ByteArray): PackageManifestParsing {
-        if (bytes.size > MAX_PACKAGE_JSON_BYTES) {
-            return PackageManifestParsing.Rejected(
-                PackageManifestRejection.JsonDocumentTooLarge(bytes.size, MAX_PACKAGE_JSON_BYTES),
-            )
-        }
-        val text =
-            try {
-                bytes.decodeToString(throwOnInvalidSequence = true)
-            } catch (_: CharacterCodingException) {
-                return PackageManifestParsing.Rejected(PackageManifestRejection.InvalidUtf8)
+        val root =
+            when (
+                val parsed =
+                    StrictCanonicalJson.parseObject(
+                        bytes = bytes,
+                        maximumBytes = MAX_PACKAGE_JSON_BYTES,
+                    )
+            ) {
+                is StrictCanonicalJsonObjectParsing.Parsed -> parsed.root
+                is StrictCanonicalJsonObjectParsing.Rejected -> {
+                    return PackageManifestParsing.Rejected(parsed.reason.toPackageManifestRejection())
+                }
             }
-        val element =
-            try {
-                strictJson.parseToJsonElement(text)
-            } catch (_: SerializationException) {
-                return PackageManifestParsing.Rejected(PackageManifestRejection.MalformedJson)
-            } catch (_: IllegalArgumentException) {
-                return PackageManifestParsing.Rejected(PackageManifestRejection.MalformedJson)
-            }
-        val root = element as? JsonObject
-            ?: return PackageManifestParsing.Rejected(PackageManifestRejection.RootMustBeObject)
-
-        val genericCanonical = canonicalDocument(root)
-            ?: return PackageManifestParsing.Rejected(PackageManifestRejection.NonCanonicalJson)
-        if (!bytes.contentEquals(genericCanonical.bytes())) {
-            return PackageManifestParsing.Rejected(PackageManifestRejection.NonCanonicalJson)
-        }
 
         val decoded =
             try {
@@ -303,55 +285,17 @@ private fun JsonObject.requiredObject(
 private fun JsonElement.requiredObject(path: String): JsonObject =
     this as? JsonObject ?: reject(PackageManifestRejection.WrongFieldType(path, "object"))
 
-private fun canonicalDocument(root: JsonObject): CanonicalJsonDocument? {
-    val canonicalRoot = canonicalValue(root) as? CanonicalJsonObject ?: return null
-    return when (val created = CanonicalJsonDocument.create(canonicalRoot)) {
-        is CanonicalJsonDocumentCreation.Created -> created.document
-        is CanonicalJsonDocumentCreation.Rejected -> null
-    }
-}
-
-private fun canonicalValue(value: JsonElement): CanonicalJsonValue? =
-    when (value) {
-        JsonNull -> CanonicalJsonNull
-        is JsonObject -> {
-            val members =
-                value.map { (key, memberValue) ->
-                    val canonicalKey =
-                        when (val created = CanonicalJsonString.create(key)) {
-                            is CanonicalJsonStringCreation.Created -> created.value
-                            is CanonicalJsonStringCreation.Rejected -> return null
-                        }
-                    val canonicalMemberValue = canonicalValue(memberValue) ?: return null
-                    CanonicalJsonMember(canonicalKey, canonicalMemberValue)
-                }
-            when (val created = CanonicalJsonObject.create(members)) {
-                is CanonicalJsonObjectCreation.Created -> created.value
-                is CanonicalJsonObjectCreation.Rejected -> null
-            }
-        }
-        is JsonArray -> {
-            val values = value.map { element -> canonicalValue(element) ?: return null }
-            CanonicalJsonArray(values)
-        }
-        is JsonPrimitive -> {
-            when {
-                value.isString -> {
-                    when (val created = CanonicalJsonString.create(value.content)) {
-                        is CanonicalJsonStringCreation.Created -> created.value
-                        is CanonicalJsonStringCreation.Rejected -> null
-                    }
-                }
-                value.booleanOrNull != null -> CanonicalJsonBoolean(value.booleanOrNull!!)
-                value.longOrNull != null -> {
-                    when (val created = CanonicalJsonInteger.create(value.longOrNull!!)) {
-                        is CanonicalJsonIntegerCreation.Created -> created.value
-                        is CanonicalJsonIntegerCreation.Rejected -> null
-                    }
-                }
-                else -> null
-            }
-        }
+private fun StrictCanonicalJsonRejection.toPackageManifestRejection(): PackageManifestRejection =
+    when (this) {
+        is StrictCanonicalJsonRejection.DocumentTooLarge ->
+            PackageManifestRejection.JsonDocumentTooLarge(
+                actualBytes = actualBytes,
+                maximumBytes = maximumBytes,
+            )
+        StrictCanonicalJsonRejection.InvalidUtf8 -> PackageManifestRejection.InvalidUtf8
+        StrictCanonicalJsonRejection.MalformedJson -> PackageManifestRejection.MalformedJson
+        StrictCanonicalJsonRejection.RootMustBeObject -> PackageManifestRejection.RootMustBeObject
+        StrictCanonicalJsonRejection.NonCanonicalJson -> PackageManifestRejection.NonCanonicalJson
     }
 
 private fun String.asciiLowercase(): String =
@@ -360,11 +304,6 @@ private fun String.asciiLowercase(): String =
             append(if (character in 'A'..'Z') character + ('a' - 'A') else character)
         }
     }
-
-private val strictJson = Json {
-    isLenient = false
-    allowTrailingComma = false
-}
 
 private val ROOT_FIELDS =
     listOf("description", "marketplaceId", "name", "schemaVersion", "skills", "tags", "type")

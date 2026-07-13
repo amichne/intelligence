@@ -18,6 +18,11 @@ internal value class ReleaseAssetName private constructor(
 
         internal fun packageArchive(packageName: PackageName): ReleaseAssetName =
             ReleaseAssetName("package-${packageName.render()}.zip")
+
+        internal fun providerArchive(provider: PortableProvider): ReleaseAssetName =
+            ReleaseAssetName("${provider.render()}-marketplace.zip")
+
+        internal fun checksumManifest(): ReleaseAssetName = ReleaseAssetName("SHA256SUMS")
     }
 }
 

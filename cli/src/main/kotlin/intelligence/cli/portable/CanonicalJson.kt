@@ -177,6 +177,29 @@ internal sealed interface CanonicalJsonDocumentRejection {
     ) : CanonicalJsonDocumentRejection
 }
 
+internal fun canonicalJsonString(value: String): CanonicalJsonString =
+    when (val created = CanonicalJsonString.create(value)) {
+        is CanonicalJsonStringCreation.Created -> created.value
+        is CanonicalJsonStringCreation.Rejected -> error("Trusted value is not valid I-JSON")
+    }
+
+internal fun canonicalJsonInteger(value: Long): CanonicalJsonInteger =
+    when (val created = CanonicalJsonInteger.create(value)) {
+        is CanonicalJsonIntegerCreation.Created -> created.value
+        is CanonicalJsonIntegerCreation.Rejected -> error("Trusted integer is outside the I-JSON safe range")
+    }
+
+internal fun canonicalJsonObject(vararg members: Pair<String, CanonicalJsonValue>): CanonicalJsonObject =
+    when (
+        val created =
+            CanonicalJsonObject.create(
+                members.map { (key, value) -> CanonicalJsonMember(canonicalJsonString(key), value) },
+            )
+    ) {
+        is CanonicalJsonObjectCreation.Created -> created.value
+        is CanonicalJsonObjectCreation.Rejected -> error("Generated canonical JSON object contains duplicate keys")
+    }
+
 private class BoundedCanonicalJsonWriter(
     private val maximumBytes: Int,
 ) {

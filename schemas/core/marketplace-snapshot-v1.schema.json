@@ -1,0 +1,137 @@
+{
+  "$defs": {
+    "archive": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "size": {
+          "maximum": 268435456,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "sha256",
+        "size"
+      ],
+      "type": "object"
+    },
+    "description": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "type": "string"
+    },
+    "identifier": {
+      "maxLength": 64,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "package": {
+      "additionalProperties": false,
+      "properties": {
+        "archive": {
+          "$ref": "#/$defs/archive"
+        },
+        "description": {
+          "$ref": "#/$defs/description"
+        },
+        "name": {
+          "$ref": "#/$defs/identifier"
+        },
+        "tags": {
+          "items": {
+            "$ref": "#/$defs/identifier"
+          },
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "archive",
+        "description",
+        "name",
+        "tags"
+      ],
+      "type": "object"
+    },
+    "projection": {
+      "additionalProperties": false,
+      "properties": {
+        "archive": {
+          "$ref": "#/$defs/archive"
+        },
+        "provider": {
+          "enum": [
+            "codex",
+            "github-copilot"
+          ]
+        }
+      },
+      "required": [
+        "archive",
+        "provider"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://github.com/amichne/intelligence/schemas/core/marketplace-snapshot-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checksumAsset": {
+      "const": "SHA256SUMS"
+    },
+    "defaultPackage": {
+      "$ref": "#/$defs/identifier"
+    },
+    "marketplaceId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "packages": {
+      "items": {
+        "$ref": "#/$defs/package"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "type": "array"
+    },
+    "projections": {
+      "items": {
+        "$ref": "#/$defs/projection"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "snapshotId": {
+      "$ref": "#/$defs/identifier"
+    },
+    "type": {
+      "const": "INTELLIGENCE_MARKETPLACE_SNAPSHOT"
+    }
+  },
+  "required": [
+    "checksumAsset",
+    "defaultPackage",
+    "marketplaceId",
+    "packages",
+    "projections",
+    "schemaVersion",
+    "snapshotId",
+    "type"
+  ],
+  "title": "Portable Intelligence marketplace snapshot V1",
+  "type": "object"
+}

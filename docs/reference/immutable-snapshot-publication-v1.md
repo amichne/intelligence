@@ -230,6 +230,58 @@ strict JSON with:
   and lowercase SHA-256 digest; and
 - the fixed checksum asset name `SHA256SUMS`.
 
+The closed V1 shape is:
+
+```json
+{
+  "checksumAsset": "SHA256SUMS",
+  "defaultPackage": "review-tools",
+  "marketplaceId": "example-marketplace",
+  "packages": [
+    {
+      "archive": {
+        "name": "package-review-tools.zip",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 1024
+      },
+      "description": "A review package",
+      "name": "review-tools",
+      "tags": ["kotlin", "review"]
+    }
+  ],
+  "projections": [
+    {
+      "archive": {
+        "name": "codex-marketplace.zip",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size": 2048
+      },
+      "provider": "codex"
+    },
+    {
+      "archive": {
+        "name": "github-copilot-marketplace.zip",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "size": 2048
+      },
+      "provider": "github-copilot"
+    }
+  ],
+  "schemaVersion": 1,
+  "snapshotId": "snapshot-one",
+  "type": "INTELLIGENCE_MARKETPLACE_SNAPSHOT"
+}
+```
+
+Packages are ordered by name. Projection evidence is exactly Codex followed by
+GitHub Copilot. Package and projection archive names are derived from their
+typed identities rather than supplied independently. Archive names and digests
+are unique across the index, every archive size is positive and at most 256
+MiB, and a snapshot exposes at most 512 packages. The owning public schema is
+`schemas/core/marketplace-snapshot-v1.schema.json`; the typed parser additionally
+enforces canonical order, identity-derived archive names, the default-package
+reference, the exact provider set, and cross-record uniqueness.
+
 The index does not contain its own digest or the checksum file's digest. Doing
 so would create a recursive content definition. The release API and consumer
 lock record those two remote asset digests after publication.

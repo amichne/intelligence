@@ -99,14 +99,14 @@ internal class PackageManifest private constructor(
                 when (
                     val created =
                         CanonicalJsonDocument.create(
-                            canonicalObject(
-                                "description" to canonicalString(description.render()),
-                                "marketplaceId" to canonicalString(marketplaceId.render()),
-                                "name" to canonicalString(name.render()),
-                                "schemaVersion" to canonicalInteger(PACKAGE_SCHEMA_VERSION.toLong()),
+                            canonicalJsonObject(
+                                "description" to canonicalJsonString(description.render()),
+                                "marketplaceId" to canonicalJsonString(marketplaceId.render()),
+                                "name" to canonicalJsonString(name.render()),
+                                "schemaVersion" to canonicalJsonInteger(PACKAGE_SCHEMA_VERSION.toLong()),
                                 "skills" to CanonicalJsonArray(skills.map(PortableSkillManifest::canonicalValue)),
-                                "tags" to CanonicalJsonArray(tags.map { tag -> canonicalString(tag.render()) }),
-                                "type" to canonicalString(PACKAGE_MANIFEST_TYPE),
+                                "tags" to CanonicalJsonArray(tags.map { tag -> canonicalJsonString(tag.render()) }),
+                                "type" to canonicalJsonString(PACKAGE_MANIFEST_TYPE),
                             ),
                         )
                 ) {
@@ -270,43 +270,20 @@ internal sealed interface PackageManifestRejection {
 }
 
 private fun PortableSkillManifest.canonicalValue(): CanonicalJsonValue =
-    canonicalObject(
+    canonicalJsonObject(
         "assets" to CanonicalJsonArray(assets.map(PackageFileEvidence::canonicalValue)),
-        "description" to canonicalString(description.render()),
-        "name" to canonicalString(name.render()),
+        "description" to canonicalJsonString(description.render()),
+        "name" to canonicalJsonString(name.render()),
         "primary" to primary.canonicalValue(),
     )
 
 private fun PackageFileEvidence.canonicalValue(): CanonicalJsonValue =
-    canonicalObject(
+    canonicalJsonObject(
         "executable" to CanonicalJsonBoolean(executable),
-        "path" to canonicalString(path.render()),
-        "sha256" to canonicalString(sha256.render()),
-        "size" to canonicalInteger(byteSize.toLong()),
+        "path" to canonicalJsonString(path.render()),
+        "sha256" to canonicalJsonString(sha256.render()),
+        "size" to canonicalJsonInteger(byteSize.toLong()),
     )
-
-private fun canonicalString(value: String): CanonicalJsonString =
-    when (val created = CanonicalJsonString.create(value)) {
-        is CanonicalJsonStringCreation.Created -> created.value
-        is CanonicalJsonStringCreation.Rejected -> error("Trusted package value is not valid I-JSON")
-    }
-
-private fun canonicalInteger(value: Long): CanonicalJsonInteger =
-    when (val created = CanonicalJsonInteger.create(value)) {
-        is CanonicalJsonIntegerCreation.Created -> created.value
-        is CanonicalJsonIntegerCreation.Rejected -> error("Trusted package integer is outside I-JSON range")
-    }
-
-private fun canonicalObject(vararg members: Pair<String, CanonicalJsonValue>): CanonicalJsonObject =
-    when (
-        val created =
-            CanonicalJsonObject.create(
-                members.map { (key, value) -> CanonicalJsonMember(canonicalString(key), value) },
-            )
-    ) {
-        is CanonicalJsonObjectCreation.Created -> created.value
-        is CanonicalJsonObjectCreation.Rejected -> error("Generated package object contains duplicate keys")
-    }
 
 internal const val PACKAGE_SCHEMA_VERSION = 1
 internal const val PACKAGE_MANIFEST_TYPE = "INTELLIGENCE_PACKAGE"

@@ -1,7 +1,10 @@
 package intelligence.cli.portable
 
 internal class PackageArchive private constructor(
+    val marketplaceId: MarketplaceId,
     val packageName: PackageName,
+    val description: PortableDescription,
+    val tags: List<PackageTag>,
     val assetName: ReleaseAssetName,
     private val content: ByteArray,
 ) {
@@ -151,7 +154,10 @@ internal class PackageArchive private constructor(
                 }
             return PackageArchiveMaterialization.Materialized(
                 PackageArchive(
+                    marketplaceId = manifest.marketplaceId,
                     packageName = manifest.name,
+                    description = manifest.description,
+                    tags = manifest.tags.toList(),
                     assetName = ReleaseAssetName.packageArchive(manifest.name),
                     content = archive.bytes(),
                 ),
