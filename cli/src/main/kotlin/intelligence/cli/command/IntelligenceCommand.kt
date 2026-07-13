@@ -4,6 +4,7 @@ import intelligence.cli.BuildInfo
 import intelligence.cli.github.GitHubCli
 import intelligence.cli.io.ProcessRunner
 import intelligence.cli.rpc.RpcDispatcher
+import java.nio.file.Path
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.context
@@ -13,6 +14,7 @@ import com.github.ajalt.clikt.parameters.options.versionOption
 internal class IntelligenceCommand(
     processRunner: ProcessRunner = ProcessRunner.system(),
     github: GitHubCli = GitHubCli(),
+    portableCacheRoot: Path? = null,
 ) : CliktCommand(
     name = "intelligence",
 ) {
@@ -28,7 +30,7 @@ internal class IntelligenceCommand(
             DoctorCommand(github),
             SetupCommand(dispatcher, github),
             ValidateCommand(dispatcher),
-            MarketplaceCommand(dispatcher, github),
+            MarketplaceCommand(dispatcher, github, PortableCommandEnvironment(portableCacheRoot)),
             RpcCommand(dispatcher),
         )
     }

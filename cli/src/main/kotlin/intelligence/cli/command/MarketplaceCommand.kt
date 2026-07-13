@@ -42,6 +42,7 @@ import kotlinx.serialization.json.putJsonObject
 internal class MarketplaceCommand(
     dispatcher: RpcDispatcher,
     github: GitHubCli,
+    portableEnvironment: PortableCommandEnvironment = PortableCommandEnvironment(),
 ) : CliktCommand(
     name = "marketplace",
 ) {
@@ -55,12 +56,12 @@ internal class MarketplaceCommand(
             RemoteMarketplaceCommand(dispatcher, github),
             ImportMarketplaceCommand(dispatcher, github),
             InstallMarketplaceCommand(dispatcher, github),
-            UpdateMarketplaceCommand(dispatcher),
             PinMarketplaceCommand(dispatcher),
             UnpinMarketplaceCommand(dispatcher),
             MaterializeMarketplaceCommand(dispatcher),
             PublishMarketplaceCommand(dispatcher),
             PublishMarketplaceBranchCommand(dispatcher),
+            *localMarketplaceConsumerCommands(portableEnvironment).toTypedArray(),
         )
     }
 

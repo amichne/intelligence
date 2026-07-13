@@ -13,14 +13,14 @@ import java.nio.file.attribute.PosixFilePermissions
 import java.util.Comparator
 
 internal object ProviderProjectionDirectory {
-    fun materialize(
+    fun prepare(
         output: Path,
         snapshotId: SnapshotId,
         packages: List<PackageArchive>,
         provider: PortableProvider,
-    ): ProviderProjectionDirectoryMaterialization {
+    ): ProviderProjectionDirectoryPreparation {
         if (packages.isEmpty()) {
-            return ProviderProjectionDirectoryMaterialization.Rejected(
+            return ProviderProjectionDirectoryPreparation.Rejected(
                 ProviderProjectionDirectoryRejection.NoPackages,
             )
         }
@@ -29,46 +29,69 @@ internal object ProviderProjectionDirectory {
             .firstOrNull { (left, right) -> left.packageName == right.packageName }
             ?.first
         if (duplicate != null) {
-            return ProviderProjectionDirectoryMaterialization.Rejected(
+            return ProviderProjectionDirectoryPreparation.Rejected(
                 ProviderProjectionDirectoryRejection.DuplicatePackage(duplicate.packageName),
             )
         }
-        val tree =
-            ProjectionTree(
-                orderedPackages.flatMap { archive ->
-                    val projection = ProviderPackageProjection.project(snapshotId, archive, provider)
-                    projection.files().map { file ->
-                        ProjectionTreeFile(
-                            relativePath = "${archive.packageName.render()}/${file.path.render()}",
-                            file = file,
-                        )
-                    }
-                },
-            )
+        val tree = projectionTree(snapshotId, orderedPackages, provider)
         val normalizedOutput = output.toAbsolutePath().normalize()
         val parent = normalizedOutput.parent
-            ?: return ProviderProjectionDirectoryMaterialization.Rejected(
+            ?: return ProviderProjectionDirectoryPreparation.Rejected(
                 ProviderProjectionDirectoryRejection.ParentUnavailable(normalizedOutput),
             )
         if (!Files.isDirectory(parent, LinkOption.NOFOLLOW_LINKS)) {
-            return ProviderProjectionDirectoryMaterialization.Rejected(
+            return ProviderProjectionDirectoryPreparation.Rejected(
                 ProviderProjectionDirectoryRejection.ParentUnavailable(parent),
             )
         }
+        val packageNames = orderedPackages.map(PackageArchive::packageName)
         if (Files.exists(normalizedOutput, LinkOption.NOFOLLOW_LINKS)) {
             return if (tree.verify(normalizedOutput)) {
-                ProviderProjectionDirectoryMaterialization.Unchanged(
+                ProviderProjectionDirectoryPreparation.Unchanged(
                     normalizedOutput,
                     provider,
-                    orderedPackages.map(PackageArchive::packageName),
+                    packageNames,
                     tree.digest,
                 )
             } else {
-                ProviderProjectionDirectoryMaterialization.Rejected(
+                ProviderProjectionDirectoryPreparation.Rejected(
                     ProviderProjectionDirectoryRejection.OutputExists(normalizedOutput),
                 )
             }
         }
+        return ProviderProjectionDirectoryPreparation.Ready(
+            normalizedOutput,
+            provider,
+            packageNames,
+            tree.digest,
+        )
+    }
+
+    fun materialize(
+        output: Path,
+        snapshotId: SnapshotId,
+        packages: List<PackageArchive>,
+        provider: PortableProvider,
+    ): ProviderProjectionDirectoryMaterialization {
+        val preparation = prepare(output, snapshotId, packages, provider)
+        when (preparation) {
+            is ProviderProjectionDirectoryPreparation.Unchanged -> {
+                return ProviderProjectionDirectoryMaterialization.Unchanged(
+                    preparation.output,
+                    preparation.provider,
+                    preparation.packages,
+                    preparation.treeDigest,
+                )
+            }
+            is ProviderProjectionDirectoryPreparation.Rejected -> {
+                return ProviderProjectionDirectoryMaterialization.Rejected(preparation.reason)
+            }
+            is ProviderProjectionDirectoryPreparation.Ready -> Unit
+        }
+        val orderedPackages = packages.sortedBy { archive -> archive.packageName.render() }
+        val tree = projectionTree(snapshotId, orderedPackages, provider)
+        val normalizedOutput = preparation.output
+        val parent = checkNotNull(normalizedOutput.parent)
 
         val staging =
             try {
@@ -144,6 +167,26 @@ internal object ProviderProjectionDirectory {
     }
 }
 
+internal sealed interface ProviderProjectionDirectoryPreparation {
+    data class Ready(
+        val output: Path,
+        val provider: PortableProvider,
+        val packages: List<PackageName>,
+        val treeDigest: Sha256Digest,
+    ) : ProviderProjectionDirectoryPreparation
+
+    data class Unchanged(
+        val output: Path,
+        val provider: PortableProvider,
+        val packages: List<PackageName>,
+        val treeDigest: Sha256Digest,
+    ) : ProviderProjectionDirectoryPreparation
+
+    data class Rejected(
+        val reason: ProviderProjectionDirectoryRejection,
+    ) : ProviderProjectionDirectoryPreparation
+}
+
 internal sealed interface ProviderProjectionDirectoryMaterialization {
     data class Written(
         val output: Path,
@@ -190,6 +233,23 @@ private data class ProjectionTreeFile(
     val relativePath: String,
     val file: ProjectedFile,
 )
+
+private fun projectionTree(
+    snapshotId: SnapshotId,
+    packages: List<PackageArchive>,
+    provider: PortableProvider,
+): ProjectionTree =
+    ProjectionTree(
+        packages.flatMap { archive ->
+            val projection = ProviderPackageProjection.project(snapshotId, archive, provider)
+            projection.files().map { file ->
+                ProjectionTreeFile(
+                    relativePath = "${archive.packageName.render()}/${file.path.render()}",
+                    file = file,
+                )
+            }
+        },
+    )
 
 private class ProjectionTree(files: List<ProjectionTreeFile>) {
     val files: List<ProjectionTreeFile> = files.sortedBy(ProjectionTreeFile::relativePath)

@@ -17,6 +17,25 @@ class ProviderProjectionDirectoryTest {
     lateinit var temporaryDirectory: Path
 
     @Test
+    fun `preparation proves an absent output without writing it`() {
+        val output = temporaryDirectory.resolve("dry-run")
+        val archive = packageArchive("alpha-tools", "alpha")
+
+        val ready = assertIs<ProviderProjectionDirectoryPreparation.Ready>(
+            ProviderProjectionDirectory.prepare(
+                output,
+                snapshotId("snapshot-one"),
+                listOf(archive),
+                PortableProvider.CODEX,
+            ),
+        )
+
+        assertEquals(output.toAbsolutePath().normalize(), ready.output)
+        assertEquals(listOf("alpha-tools"), ready.packages.map(PackageName::render))
+        assertFalse(Files.exists(output))
+    }
+
+    @Test
     fun `selected packages materialize one exact package directory each and repeat unchanged`() {
         val output = temporaryDirectory.resolve("codex-output")
         val alpha = packageArchive("alpha-tools", "alpha")

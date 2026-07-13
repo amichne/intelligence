@@ -124,6 +124,17 @@ class IntelligenceCommandTest {
     }
 
     @Test
+    fun `marketplace help exposes package only local consumer operations`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace --help")
+
+        assertEquals(0, result.statusCode)
+        listOf("select", "remove", "update", "resolve", "recover", "reconstruct", "project").forEach { command ->
+            assertTrue(result.stdout.lineSequence().any { line -> line.trimStart().startsWith("$command ") })
+        }
+        assertFalse(result.stdout.contains("primitive"))
+    }
+
+    @Test
     fun `marketplace browse help explains repository based discovery`() {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace browse --help")
 
@@ -259,14 +270,16 @@ class IntelligenceCommandTest {
     }
 
     @Test
-    fun `marketplace update help exposes plugin or all update mode`() {
+    fun `marketplace update help exposes exact package preserving snapshot move`() {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace update --help")
 
         assertEquals(0, result.statusCode)
         assertTrue(result.stdout.contains("Usage: intelligence marketplace update"))
-        assertTrue(result.stdout.contains("imported plugin"))
-        assertTrue(result.stdout.contains("--all"))
-        assertTrue(result.stdout.contains("--no-validate"))
+        assertTrue(result.stdout.contains("preserving package names"))
+        assertTrue(result.stdout.contains("--local-snapshot"))
+        assertTrue(result.stdout.contains("--index-sha256"))
+        assertTrue(result.stdout.contains("--dry-run"))
+        assertFalse(result.stdout.contains("--all"))
     }
 
     @Test
