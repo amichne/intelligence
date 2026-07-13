@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm") version "2.4.0"
     application
-    id("org.graalvm.buildtools.native") version "0.10.2"
 }
 
 application {
@@ -46,7 +45,10 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.github.ajalt.clikt:clikt:5.1.0")
+    implementation("com.github.ajalt.clikt:clikt:5.1.0") {
+        exclude(group = "com.github.ajalt.mordant", module = "mordant")
+    }
+    implementation("com.github.ajalt.mordant:mordant-core:3.0.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     testImplementation(kotlin("test"))
@@ -63,20 +65,11 @@ tasks.named("compileKotlin") {
 tasks.withType<AbstractArchiveTask>().configureEach {
     archiveBaseName.set("intelligence")
     archiveVersion.set("")
+    isPreserveFileTimestamps = false
+    isReproducibleFileOrder = true
 }
 
 tasks.named<Tar>("distTar") {
     compression = Compression.GZIP
     archiveExtension.set("tar.gz")
-}
-
-graalvmNative {
-    binaries {
-        named("main") {
-            imageName.set("intelligence")
-            mainClass.set("intelligence.cli.MainKt")
-            fallback.set(false)
-            buildArgs.addAll(listOf("-O2", "-march=compatibility"))
-        }
-    }
 }

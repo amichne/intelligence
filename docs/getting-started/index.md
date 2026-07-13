@@ -1,8 +1,7 @@
 # Getting Started
 
 Use `intelligence` as a CLI-first marketplace operator. Start with discovery
-commands, switch to JSON when composing with automation, and open the terminal
-UI only when a full-screen browser is useful.
+commands and switch to JSON when composing with automation.
 
 ## Common Tasks
 
@@ -29,8 +28,7 @@ Use JSON when the result needs to be scripted or captured.
 ## Next Pages
 
 Start with the [Marketplace](marketplace.md) page for discovery and exact
-command forms. Use the [Terminal UI](tui.md) page for the optional interactive
-browser.
+command forms.
 
 Install the docs toolchain only if `zensical` is not already available.
 

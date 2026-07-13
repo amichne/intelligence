@@ -28,25 +28,17 @@ compute_sha256() {
 write_asset() {
   local release_dir="$1"
   local tag="$2"
-  local target="$3"
-  local asset_path="${release_dir}/intelligence-${tag}-${target}.tar.gz"
-  local bundle_dir="${scratch_dir}/bundle-${target}"
+  local asset_path="${release_dir}/intelligence-${tag}.tar.gz"
+  local bundle_dir="${scratch_dir}/bundle"
 
   rm -rf "$bundle_dir"
-  mkdir -p "$bundle_dir"
-  printf '#!/usr/bin/env sh\nprintf "intelligence %s\\n"\n' "$target" > "${bundle_dir}/intelligence"
-  printf '#!/usr/bin/env sh\nprintf "intelligence-tui %s\\n"\n' "$target" > "${bundle_dir}/intelligence-tui"
-  chmod 0755 "${bundle_dir}/intelligence" "${bundle_dir}/intelligence-tui"
-  tar -C "$bundle_dir" -czf "$asset_path" intelligence intelligence-tui
-}
-
-write_expected_assets() {
-  local release_dir="$1"
-  local tag="$2"
-  local target
-  for target in linux-x64 linux-arm64 macos-x64 macos-arm64; do
-    write_asset "$release_dir" "$tag" "$target"
-  done
+  mkdir -p "${bundle_dir}/intelligence/bin" "${bundle_dir}/intelligence/lib" "${bundle_dir}/jar-content"
+  printf '#!/usr/bin/env sh\nprintf "intelligence JVM\\n"\n' > "${bundle_dir}/intelligence/bin/intelligence"
+  printf '@echo off\r\necho intelligence JVM\r\n' > "${bundle_dir}/intelligence/bin/intelligence.bat"
+  printf 'fixture\n' > "${bundle_dir}/jar-content/fixture.txt"
+  jar --create --file "${bundle_dir}/intelligence/lib/intelligence.jar" -C "${bundle_dir}/jar-content" fixture.txt
+  chmod 0755 "${bundle_dir}/intelligence/bin/intelligence"
+  COPYFILE_DISABLE=1 tar -C "$bundle_dir" -czf "$asset_path" intelligence
 }
 
 write_sha256sums() {
@@ -72,26 +64,24 @@ tag="v9.8.7"
 release_dir="${scratch_dir}/release"
 mkdir -p "$release_dir"
 
-write_expected_assets "$release_dir" "$tag"
+write_asset "$release_dir" "$tag"
 write_sha256sums "$release_dir"
 "$verifier" --release-dir "$release_dir" --tag "$tag"
 
 rm -rf "$release_dir"
 mkdir -p "$release_dir"
-write_expected_assets "$release_dir" "$tag"
-rm -f "${release_dir}/intelligence-${tag}-linux-arm64.tar.gz"
-write_sha256sums "$release_dir"
+: > "${release_dir}/SHA256SUMS"
 if "$verifier" --release-dir "$release_dir" --tag "$tag" >/dev/null 2>"${scratch_dir}/missing.err"; then
-  die "release without linux-arm64 unexpectedly verified"
+  die "release without JVM archive unexpectedly verified"
 fi
 grep -Fq "missing release asset" "${scratch_dir}/missing.err" \
   || die "missing asset failure did not mention missing release asset"
 
 rm -rf "$release_dir"
 mkdir -p "$release_dir"
-write_expected_assets "$release_dir" "$tag"
+write_asset "$release_dir" "$tag"
 write_sha256sums "$release_dir"
-printf 'tampered\n' >> "${release_dir}/intelligence-${tag}-linux-x64.tar.gz"
+printf 'tampered\n' >> "${release_dir}/intelligence-${tag}.tar.gz"
 if "$verifier" --release-dir "$release_dir" --tag "$tag" >/dev/null 2>"${scratch_dir}/checksum.err"; then
   die "tampered asset unexpectedly verified"
 fi
@@ -100,9 +90,9 @@ grep -Fq "checksum mismatch" "${scratch_dir}/checksum.err" \
 
 rm -rf "$release_dir"
 mkdir -p "$release_dir"
-write_expected_assets "$release_dir" "$tag"
+write_asset "$release_dir" "$tag"
 write_sha256sums "$release_dir"
-cp "${release_dir}/intelligence-${tag}-linux-x64.tar.gz" "${release_dir}/intelligence-${tag}-debug.tar.gz"
+cp "${release_dir}/intelligence-${tag}.tar.gz" "${release_dir}/intelligence-${tag}-debug.tar.gz"
 printf '%s  %s\n' \
   "$(compute_sha256 "${release_dir}/intelligence-${tag}-debug.tar.gz")" \
   "intelligence-${tag}-debug.tar.gz" \
@@ -112,5 +102,26 @@ if "$verifier" --release-dir "$release_dir" --tag "$tag" >/dev/null 2>"${scratch
 fi
 grep -Fq "unexpected release asset" "${scratch_dir}/extra.err" \
   || die "extra asset failure did not mention unexpected release asset"
+
+rm -rf "$release_dir"
+mkdir -p "$release_dir"
+write_asset "$release_dir" "$tag"
+rm -rf "${scratch_dir}/forbidden"
+mkdir -p "${scratch_dir}/forbidden"
+COPYFILE_DISABLE=1 tar -xzf "${release_dir}/intelligence-${tag}.tar.gz" -C "${scratch_dir}/forbidden"
+printf 'native fixture\n' > "${scratch_dir}/forbidden/native.so"
+jar --update \
+  --file "${scratch_dir}/forbidden/intelligence/lib/intelligence.jar" \
+  -C "${scratch_dir}/forbidden" native.so
+COPYFILE_DISABLE=1 tar \
+  -C "${scratch_dir}/forbidden" \
+  -czf "${release_dir}/intelligence-${tag}.tar.gz" \
+  intelligence
+write_sha256sums "$release_dir"
+if "$verifier" --release-dir "$release_dir" --tag "$tag" >/dev/null 2>"${scratch_dir}/native.err"; then
+  die "archive with native JAR entry unexpectedly verified"
+fi
+grep -Fq "contains forbidden entries" "${scratch_dir}/native.err" \
+  || die "native JAR failure did not mention forbidden entries"
 
 printf 'OK release asset verifier\n'

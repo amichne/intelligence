@@ -1,8 +1,8 @@
 # Marketplace
 
-The marketplace is the portable distribution surface for project-agnostic plugin
-families. Most users should operate it through CLI discovery first, then open
-the [Terminal UI](tui.md) only when they want a full-screen browser.
+The marketplace is the portable distribution surface for project-agnostic
+plugin families. Users operate it through explicit CLI commands and can select
+JSON output for automation.
 
 ## CLI First
 
@@ -59,9 +59,8 @@ explicit marketplace imports.
 
 ## Referential Imports
 
-Import plugins by reference instead of copying provider payloads. In the TUI,
-`:import` imports the selected offering and `:install all` installs the loaded
-marketplace. The command equivalents are useful for automation and docs.
+Import plugins by reference instead of copying provider payloads. Explicit
+commands keep the source, target, and operation visible to users and automation.
 
 The CLI writes a portable `MARKETPLACE_SOURCE` plugin entry into the existing
 authored marketplace or `.intelligence/adaptable.marketplace.json`, then records
@@ -115,7 +114,6 @@ proof target.
 | `.intelligence/marketplace-lock.json` | Consumer repo | Resolved imported marketplace references and integrity evidence. |
 | `schemas/` | This repo | Provider-neutral and adapter JSON Schema definitions. |
 | `cli/` | This repo | Marketplace browsing, import, validation, materialization, and publication. |
-| `tui/` | This repo | Ratatui marketplace browsing, search, install, update, and pin workflows. |
 
 ## Publication
 

@@ -44,7 +44,6 @@ intelligence validate --portable
 | Job | Entry Point | Result |
 |---|---|---|
 | Discover from the shell | [Marketplace](getting-started/marketplace.md) | CLI-first search, inspect, import, install, update, pin, and validate workflows. |
-| Use the marketplace browser | [Terminal UI](getting-started/tui.md) | Optional full-screen browser over the same RPC boundary. |
 | Inspect marketplace offerings | [What is available](available/index.md) | A pointer to the `slopsentral` plugin and primitive catalog. |
 | Validate changes | [Validation](how-it-works/validation.md) | CLI, source, and hydrated-output checks before release. |
-| Cut a native release | [Publication](reference/publication.md) | Preflight, tag, release asset, and Homebrew verification steps. |
+| Cut a JVM release | [Publication](reference/publication.md) | Preflight, tag, release asset, and Homebrew verification steps. |

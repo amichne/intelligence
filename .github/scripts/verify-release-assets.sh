@@ -11,7 +11,7 @@ usage() {
 Usage: .github/scripts/verify-release-assets.sh --release-dir <dir> --tag <vX.Y.Z>
 
 Verify a downloaded Intelligence release directory. The directory must contain
-the four native CLI/TUI archives and SHA256SUMS.
+one platform-neutral Kotlin/JVM CLI archive and SHA256SUMS.
 USAGE
 }
 
@@ -47,18 +47,18 @@ python3 - "$release_dir" "$tag" <<'PY'
 import hashlib
 import tarfile
 import sys
+import zipfile
 from pathlib import Path
 
 release_dir = Path(sys.argv[1])
 tag = sys.argv[2]
 
-targets = [
-    "linux-x64",
-    "linux-arm64",
-    "macos-x64",
-    "macos-arm64",
-]
-expected_assets = {f"intelligence-{tag}-{target}.tar.gz" for target in targets}
+expected_assets = {f"intelligence-{tag}.tar.gz"}
+required_members = {
+    "intelligence/bin/intelligence",
+    "intelligence/bin/intelligence.bat",
+}
+forbidden_runtime_suffixes = (".py", ".pyc", ".pyo", ".rs", ".so", ".dylib", ".jnilib", ".dll", ".exe")
 
 
 def fail(message: str) -> None:
@@ -106,8 +106,41 @@ for asset_name in sorted(expected_assets):
         fail(f"checksum mismatch for {asset_name}: expected {expected_digest}, got {actual_digest}")
 
     with tarfile.open(asset_path, "r:gz") as archive:
-        names = set(archive.getnames())
-    missing_members = sorted({"intelligence", "intelligence-tui"} - names)
+        members = archive.getmembers()
+        names = {member.name.removesuffix("/") for member in members}
+        unsafe_members = sorted(
+            member.name
+            for member in members
+            if member.name.startswith("/") or ".." in Path(member.name).parts or not (member.isfile() or member.isdir())
+        )
+        if unsafe_members:
+            fail(f"{asset_name} contains unsafe archive member: {unsafe_members}")
+
+        regular_files = {member.name for member in members if member.isfile()}
+        unexpected_members = sorted(
+            name
+            for name in regular_files
+            if name not in required_members and not (name.startswith("intelligence/lib/") and name.endswith(".jar"))
+        )
+        if unexpected_members:
+            fail(f"{asset_name} contains unexpected runtime member: {unexpected_members}")
+
+        jar_members = sorted(name for name in regular_files if name.startswith("intelligence/lib/") and name.endswith(".jar"))
+        if not jar_members:
+            fail(f"{asset_name} is missing runtime JARs under intelligence/lib/")
+
+        for jar_member in jar_members:
+            extracted = archive.extractfile(jar_member)
+            if extracted is None:
+                fail(f"{asset_name} could not read runtime JAR {jar_member}")
+            with zipfile.ZipFile(extracted) as jar:
+                forbidden_entries = sorted(
+                    entry for entry in jar.namelist() if entry.lower().endswith(forbidden_runtime_suffixes)
+                )
+            if forbidden_entries:
+                fail(f"{asset_name} runtime JAR {jar_member} contains forbidden entries: {forbidden_entries}")
+
+    missing_members = sorted(required_members - names)
     if missing_members:
         fail(f"{asset_name} is missing archive member: {missing_members}")
 

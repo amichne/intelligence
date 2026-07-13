@@ -13,7 +13,6 @@ import com.github.ajalt.clikt.parameters.options.versionOption
 internal class IntelligenceCommand(
     processRunner: ProcessRunner = ProcessRunner.system(),
     github: GitHubCli = GitHubCli(),
-    private val terminalUiLauncher: TerminalUiLauncher = TerminalUiLauncher(processRunner),
 ) : CliktCommand(
     name = "intelligence",
 ) {
@@ -29,7 +28,7 @@ internal class IntelligenceCommand(
             DoctorCommand(github),
             SetupCommand(dispatcher, github),
             ValidateCommand(dispatcher),
-            MarketplaceCommand(dispatcher, terminalUiLauncher, github),
+            MarketplaceCommand(dispatcher, github),
             RpcCommand(dispatcher),
         )
     }

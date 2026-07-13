@@ -6,7 +6,6 @@
 | `.intelligence/adaptable.marketplace.json` | Install-only adaptable marketplace intent for consumer repositories. |
 | `.intelligence/marketplace-lock.json` | Source-controlled lock evidence for imported marketplace references. |
 | `cli/` | Kotlin Clikt command-line application. |
-| `tui/` | Optional Ratatui marketplace browser launched with `intelligence marketplace ui`. |
 | `schemas/` | Public provider-neutral and adapter schema contracts. |
 | `packaging/` | Homebrew formula and packaging checks for the CLI. |
 | `docs/` | Hand-authored Zensical documentation source. |

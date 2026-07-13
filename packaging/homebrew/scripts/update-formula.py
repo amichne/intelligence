@@ -71,8 +71,8 @@ def update_readme(root: Path, version: str) -> None:
 
     content = readme.read_text(encoding="utf-8")
     content, count = re.subn(
-        r"/v\d+\.\d+\.\d+/intelligence-v\d+\.\d+\.\d+-macos-arm64(?:\.tar\.gz)?",
-        f"/v{version}/intelligence-v{version}-macos-arm64.tar.gz",
+        r"/v\d+\.\d+\.\d+/intelligence-v\d+\.\d+\.\d+(?:\.tar\.gz)?",
+        f"/v{version}/intelligence-v{version}.tar.gz",
         content,
     )
     require(count == 1, "README.md must contain exactly one CLI mirror example")
@@ -89,12 +89,7 @@ def main() -> None:
     content = replace_version(formula.read_text(encoding="utf-8"), version, "Formula/intelligence.rb")
     content = replace_sha256s(
         content,
-        [
-            required_sha("SHA256_MACOS_X64"),
-            required_sha("SHA256_MACOS_ARM64"),
-            required_sha("SHA256_LINUX_X64"),
-            required_sha("SHA256_LINUX_ARM64"),
-        ],
+        [required_sha("SHA256_JVM")],
         "Formula/intelligence.rb",
     )
     formula.write_text(content, encoding="utf-8")

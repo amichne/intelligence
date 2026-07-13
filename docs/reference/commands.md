@@ -1,10 +1,9 @@
 # Commands
 
 This catalog describes the portable marketplace operator surface by job. The
-CLI is the primary human and automation workflow. The terminal UI remains an
-explicit full-screen client over the same marketplace and validation semantics.
-Use `intelligence --help` for the top-level command list, and add `--help`
-after any command group or command for focused usage.
+The CLI is the human and automation workflow. Use `intelligence --help` for the
+top-level command list, and add `--help` after any command group or command for
+focused usage.
 
 ## Doctor
 
@@ -66,62 +65,6 @@ evidence.
 | Check installed versions | `intelligence marketplace versions kotlin-engineering` | You want installed and remote-current version evidence. |
 | Check update state while listing | `intelligence marketplace installed list --check-updates` | You want remote current versions resolved when possible. |
 
-## Terminal UI
-
-Open the full-screen browser when you are deciding what to install, update, pin,
-or validate in a repository and prefer an interactive view.
-
-| Operation | Command Or Key | Use When |
-|---|---|---|
-| Open browser explicitly | `intelligence marketplace ui` | A script, alias, or docs snippet should name the UI command. |
-| Select target repository | `intelligence marketplace ui --repo /path/to/repo` | You want the TUI to write install intent somewhere other than the current directory. |
-| Resolve imports from a ref | `intelligence marketplace ui --ref main` | Direct imports selected in the UI should use a branch, tag, or SHA. |
-| Search loaded resources | `/` | You want to filter the current marketplace catalog, locally installed plugins, and guided flow rows. |
-| Change search type | `Tab` while searching | You want to search by all fields, repository, user, plugin, primitive, or installed state. |
-| Move panes | `Tab` / `Shift-Tab` | You want to move focus through context, resources, details, and actions panes. |
-| Show shortcuts | `?` | You want the keyboard reference without leaving the TUI. |
-| Stage selected action | `i` | You want to inspect an install, import, or update before confirming it. |
-| Stage install all | `a` | You want to stage installation of every exposed plugin from the loaded marketplace. |
-| Confirm pending action | `y` / `Enter` | You want to run the pending install, import, update, pin, unpin, or validation operation. |
-| Cancel pending action | `Esc` / `n` | You want to leave the pending operation untouched. |
-| Preview repository search | `r` | You want to preview the repository in the search box using the configured default Git host. |
-| Validate target | `v` | You want portable validation for the selected install target. |
-| Open command palette | `:` | You want to browse another repository, set host/target/search scope, import, install, update, pin, validate, inspect author/edit guidance, inspect output guidance, or quit. |
-
-The bottom mode bar shows the active mode, status or prompt, ranked command
-suggestions, search match counts, confirmation provenance, and contextual keys.
-Repository-scoped search names the repository that `Enter` will preview.
-Single selected actions confirm inline; batch actions keep the modal with raw
-RPC method and params for inspection.
-The Context, Resources, Details, and Actions panes keep the source, operation,
-and target split visible while browsing.
-
-The command palette accepts these operation names.
-Suggestions are context-ranked by the current selection, staged state, and
-installed/update state, then grouped by flow: discover, add, installed, author,
-edit, and outputs. Unavailable commands remain visible but dimmed so the
-available command surface does not disappear while browsing.
-
-| Palette Command | Result |
-|---|---|
-| `browse amichne/slopsentral` | Preview another repository marketplace. |
-| `preview amichne/slopsentral` | Preview a repository using the host-aware repository rules. |
-| `host github.enterprise.example` | Set the default host for `owner/repo` repository previews. |
-| `target /path/to/repo` | Select where install intent and validation should be applied. |
-| `scope plugin` | Switch the active search scope. |
-| `search installed kotlin` | Set both search scope and query from the palette. |
-| `stage` / `stage all` | Stage the selected action or full marketplace install. |
-| `run staged` / `clear staged` | Open the selected staged confirmation or clear staged actions. |
-| `import` or `install` | Import the selected offering. |
-| `install all` | Install every exposed plugin from the loaded marketplace. |
-| `update` / `update all` | Update selected or all imported plugins. |
-| `pin 1.2.3` / `unpin` | Manage the selected installed plugin pin. |
-| `remote list` | Inspect configured external marketplaces. |
-| `validate` | Run portable validation for the target repository. |
-| `author` / `create skill` | Show where reusable resources should be authored. |
-| `edit` / `open source` | Show where existing resources should be edited. |
-| `outputs` | Show provider-output generation guidance. |
-
 ## Validate
 
 Validate before trusting source changes or generated provider output.
@@ -168,8 +111,7 @@ only when automation already runs validation separately.
 
 ## Maintain
 
-Update and pin installed marketplace references directly when the TUI is not
-available.
+Update and pin installed marketplace references directly.
 
 | Operation | Command | Use When |
 |---|---|---|
@@ -218,9 +160,6 @@ printf '%s\n' '{"jsonrpc":"2.0","id":"browse","method":"marketplace.browse","par
   | intelligence rpc
 ```
 
-The Ratatui TUI uses this boundary instead of reimplementing marketplace
-normalization or referential resolution.
-
 ## Build
 
 Build commands are for repository development and release work, not normal
@@ -229,12 +168,11 @@ marketplace browsing.
 | Operation | Command | Use When |
 |---|---|---|
 | Run CLI tests and install dev binary | `./gradlew :cli:test installDevelopmentCli` | You changed Kotlin CLI code. |
-| Run TUI tests | `cargo test --manifest-path tui/Cargo.toml` | You changed the Ratatui browser. |
-| Build native executable | `./gradlew :cli:nativeCompile` | You need the self-contained GraalVM binary. |
+| Build JVM distribution | `./gradlew :cli:distTar` | You need the platform-neutral release archive. |
 | Install released CLI | `brew install amichne/intelligence/intelligence` | You want the stable installed `intelligence` command. |
 
 Use [Publication](publication.md) for the full release checklist, including tag
-source, native asset verification, JVM linkage checks, and Homebrew proof.
+source, JVM asset verification, reproducibility checks, and Homebrew proof.
 
 ## Help
 
@@ -257,7 +195,6 @@ intelligence marketplace remote --help
 intelligence marketplace update --help
 intelligence marketplace pin --help
 intelligence marketplace unpin --help
-intelligence marketplace ui --help
 intelligence rpc --help
 intelligence validate --help
 ```

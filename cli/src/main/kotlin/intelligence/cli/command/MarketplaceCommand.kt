@@ -41,7 +41,6 @@ import kotlinx.serialization.json.putJsonObject
 
 internal class MarketplaceCommand(
     dispatcher: RpcDispatcher,
-    terminalUiLauncher: TerminalUiLauncher,
     github: GitHubCli,
 ) : CliktCommand(
     name = "marketplace",
@@ -59,7 +58,6 @@ internal class MarketplaceCommand(
             UpdateMarketplaceCommand(dispatcher),
             PinMarketplaceCommand(dispatcher),
             UnpinMarketplaceCommand(dispatcher),
-            MarketplaceUiCommand(terminalUiLauncher),
             MaterializeMarketplaceCommand(dispatcher),
             PublishMarketplaceCommand(dispatcher),
             PublishMarketplaceBranchCommand(dispatcher),
@@ -610,26 +608,6 @@ private class VersionsMarketplaceCommand(
             failureMessage = "marketplace versions failed",
         )
         echo(renderJsonOrText(result, format, ::renderVersions))
-    }
-}
-
-private class MarketplaceUiCommand(
-    private val terminalUiLauncher: TerminalUiLauncher,
-) : CliktCommand(
-    name = "ui",
-) {
-    private val repo by repoOption()
-
-    private val ref by option("--ref", help = "Branch, tag, or SHA for direct imports selected in the UI. Defaults to main.")
-
-    override fun help(context: Context): String =
-        "Open the full-screen marketplace browser."
-
-    override fun run() {
-        val exitCode = terminalUiLauncher.launch(repoRoot = repo, ref = ref)
-        if (exitCode != 0) {
-            throw CliktError("terminal UI exited with status $exitCode", statusCode = exitCode)
-        }
     }
 }
 

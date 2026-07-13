@@ -206,57 +206,32 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
-          distribution: graalvm
+          distribution: temurin
           java-version: 21
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
       - name: Validate CLI source
         run: |
           set -euo pipefail
-          ./gradlew :cli:test installDevelopmentCli
-          cargo test --manifest-path tui/Cargo.toml
+          ./gradlew check
           .local/intelligence/bin/intelligence --version
           .local/intelligence/bin/intelligence doctor --format json
           .local/intelligence/bin/intelligence marketplace inspect "${PWD}" --provider source --format json
           .local/intelligence/bin/intelligence marketplace search kotlin --repository "${PWD}" --provider source --format json | grep -F "kotlin-engineering"
           .local/intelligence/bin/intelligence validate --portable
-          .local/intelligence/bin/intelligence-tui --help
           packaging/homebrew/scripts/test-formula.py
           .github/scripts/test-release-asset-verifier.sh
           .github/scripts/test-release-workflow-contract.sh
 
-  native:
-    name: Build native CLI (${{ matrix.target }})
+  jvm-distribution:
+    name: Build JVM CLI distribution
     needs:
       - prepare-release
       - validate
     if: always() && needs.prepare-release.result == 'success' && needs.validate.result == 'success'
-    runs-on: ${{ matrix.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: linux-x64
-            runner: ubuntu-24.04
-            executable: intelligence
-            extension: ".tar.gz"
-          - target: linux-arm64
-            runner: ubuntu-24.04-arm
-            executable: intelligence
-            extension: ".tar.gz"
-          - target: macos-x64
-            runner: macos-15-intel
-            executable: intelligence
-            extension: ".tar.gz"
-          - target: macos-arm64
-            runner: macos-15
-            executable: intelligence
-            extension: ".tar.gz"
+    runs-on: ubuntu-latest
     steps:
       - name: Check out source
         uses: actions/checkout@v5
@@ -266,87 +241,48 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
-          distribution: graalvm
+          distribution: temurin
           java-version: 21
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Build native executable
+      - name: Build JVM distribution
         run: |
           set -euo pipefail
           version="${{ needs.prepare-release.outputs.release_tag }}"
-          target="${{ matrix.target }}"
-          asset="dist/intelligence-${version}-${target}${{ matrix.extension }}"
-          ./gradlew :cli:nativeCompile --no-daemon -PintelligenceVersion="${version}"
-          cargo build --release --manifest-path tui/Cargo.toml
+          asset="dist/intelligence-${version}.tar.gz"
+          ./gradlew :cli:distTar --no-daemon -PintelligenceVersion="${version}"
           mkdir -p dist
-          bundle="${RUNNER_TEMP:-/tmp}/intelligence-${version}-${target}"
-          rm -rf "${bundle}"
-          mkdir -p "${bundle}"
-          cp "cli/build/native/nativeCompile/${{ matrix.executable }}" "${bundle}/intelligence"
-          cp "target/release/intelligence-tui" "${bundle}/intelligence-tui"
-          if [[ "${RUNNER_OS}" != "Windows" ]]; then
-            strip "${bundle}/intelligence" || true
-            strip "${bundle}/intelligence-tui" || true
-          fi
-          chmod 0755 "${bundle}/intelligence" "${bundle}/intelligence-tui" || true
-          tar -C "${bundle}" -czf "${asset}" intelligence intelligence-tui
+          cp cli/build/distributions/intelligence.tar.gz "${asset}"
           echo "asset=${asset}" >> "${GITHUB_ENV}"
 
-      - name: Verify native executable
+      - name: Verify JVM distribution
         run: |
           set -euo pipefail
-          target="${{ matrix.target }}"
           repo="${PWD}"
-          smoke_root="${RUNNER_TEMP:-/tmp}/intelligence-smoke-${target}"
-          if command -v cygpath >/dev/null 2>&1; then
-            repo="$(cygpath -m "${PWD}")"
-            smoke_root="$(cygpath -m "${smoke_root}")"
-          fi
+          smoke_root="${RUNNER_TEMP:-/tmp}/intelligence-smoke"
           rm -rf "${smoke_root}"
           mkdir -p "${smoke_root}"
           tar -xzf "${asset}" -C "${smoke_root}"
-          cli="${smoke_root}/intelligence"
-          tui="${smoke_root}/intelligence-tui"
+          cli="${smoke_root}/intelligence/bin/intelligence"
           version="${{ needs.prepare-release.outputs.release_tag }}"
 
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" --help
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" --version | grep -F "intelligence version ${version}"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" doctor --format json
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace inspect "${repo}" --provider source --format json
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace search kotlin --repository "${repo}" --provider source --format json | grep -F "kotlin-engineering"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
-          env -u JAVA_HOME -u JDK_HOME -u GRAALVM_HOME "${tui}" --help
-
-      - name: Verify no JVM linkage
-        if: runner.os != 'Windows'
-        run: |
-          set -euo pipefail
-          linkage="${RUNNER_TEMP:-/tmp}/intelligence-linkage.txt"
-          if [[ "${RUNNER_OS}" == "macOS" ]]; then
-            otool -L "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence" | tee "${linkage}"
-            otool -L "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence-tui" | tee -a "${linkage}"
-          else
-            ldd "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence" | tee "${linkage}" || true
-            ldd "${RUNNER_TEMP:-/tmp}/intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}/intelligence-tui" | tee -a "${linkage}" || true
-          fi
-          if grep -Eiq 'libjvm|libjli|JavaVirtualMachines|/java/' "${linkage}"; then
-            echo "::error::native executable links against a JVM runtime"
-            exit 1
-          fi
+          "${cli}" --help
+          "${cli}" --version | grep -F "intelligence version ${version}"
+          "${cli}" doctor --format json
+          "${cli}" marketplace inspect "${repo}" --provider source --format json
+          "${cli}" marketplace search kotlin --repository "${repo}" --provider source --format json | grep -F "kotlin-engineering"
+          "${cli}" validate --repo "${repo}" --portable
+          "${cli}" marketplace materialize --repo "${repo}" --provider codex --out "${smoke_root}/codex-marketplace"
+          "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/codex-marketplace"
+          "${cli}" marketplace materialize --repo "${repo}" --provider github --out "${smoke_root}/github-marketplace"
+          "${cli}" validate --repo "${repo}" --portable --hydrated "${smoke_root}/github-marketplace"
 
       - name: Upload CLI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: intelligence-${{ needs.prepare-release.outputs.release_tag }}-${{ matrix.target }}
+          name: intelligence-${{ needs.prepare-release.outputs.release_tag }}
           path: ${{ env.asset }}
           if-no-files-found: error
 
@@ -354,8 +290,8 @@ jobs:
     name: Publish release
     needs:
       - prepare-release
-      - native
-    if: always() && needs.prepare-release.result == 'success' && needs.native.result == 'success'
+      - jvm-distribution
+    if: always() && needs.prepare-release.result == 'success' && needs.jvm-distribution.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -368,9 +304,8 @@ jobs:
       - name: Download CLI artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: intelligence-${{ needs.prepare-release.outputs.release_tag }}-*
+          name: intelligence-${{ needs.prepare-release.outputs.release_tag }}
           path: dist
-          merge-multiple: true
 
       - name: Generate and verify SHA256SUMS
         run: |
@@ -427,13 +362,8 @@ jobs:
             awk -v name="$asset" '$2 == name { print $1 }' dist/SHA256SUMS
           }
 
-          sha_linux_x64="$(sha_for "intelligence-${tag}-linux-x64.tar.gz")"
-          sha_linux_arm64="$(sha_for "intelligence-${tag}-linux-arm64.tar.gz")"
-          sha_macos_x64="$(sha_for "intelligence-${tag}-macos-x64.tar.gz")"
-          sha_macos_arm64="$(sha_for "intelligence-${tag}-macos-arm64.tar.gz")"
-          for value in "$sha_linux_x64" "$sha_linux_arm64" "$sha_macos_x64" "$sha_macos_arm64"; do
-            [[ -n "$value" ]] || { echo "::error::Missing Homebrew checksum input"; exit 1; }
-          done
+          sha_jvm="$(sha_for "intelligence-${tag}.tar.gz")"
+          [[ -n "$sha_jvm" ]] || { echo "::error::Missing Homebrew checksum input"; exit 1; }
 
           gh repo clone amichne/homebrew-intelligence homebrew-tap -- --depth 1
           git -C homebrew-tap remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/amichne/homebrew-intelligence.git"
@@ -444,10 +374,7 @@ jobs:
 
           INTELLIGENCE_TAP_ROOT=homebrew-tap \
           VERSION="$tag" \
-          SHA256_MACOS_X64="$sha_macos_x64" \
-          SHA256_MACOS_ARM64="$sha_macos_arm64" \
-          SHA256_LINUX_X64="$sha_linux_x64" \
-          SHA256_LINUX_ARM64="$sha_linux_arm64" \
+          SHA256_JVM="$sha_jvm" \
           packaging/homebrew/scripts/update-formula.py
 
           ruby -c homebrew-tap/Formula/intelligence.rb

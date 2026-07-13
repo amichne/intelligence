@@ -45,18 +45,6 @@ class IntelligenceCommandTest {
     }
 
     @Test
-    fun `bare command does not launch terminal ui`() {
-        val runner = RecordingProcessRunner()
-        val result = IntelligenceCommand(
-            processRunner = runner,
-            terminalUiLauncher = testUiLauncher(runner),
-        ).test("")
-
-        assertEquals(0, result.statusCode)
-        assertEquals(null, runner.command)
-    }
-
-    @Test
     fun `version option prints packaged version`() {
         val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("--version")
 
@@ -129,7 +117,7 @@ class IntelligenceCommandTest {
         assertTrue(result.stdout.contains("update"))
         assertTrue(result.stdout.contains("pin"))
         assertTrue(result.stdout.contains("unpin"))
-        assertTrue(result.stdout.contains("ui"))
+        assertFalse(result.stdout.lineSequence().any { line -> line.trimStart().startsWith("ui ") })
         assertTrue(result.stdout.contains("materialize"))
         assertTrue(result.stdout.contains("publish"))
         assertFalse(result.stdout.contains("publish-branch"))
@@ -293,44 +281,12 @@ class IntelligenceCommandTest {
     }
 
     @Test
-    fun `marketplace ui help exposes interactive flow`() {
-        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace ui --help")
+    fun `marketplace help omits terminal ui flow`() {
+        val result = IntelligenceCommand(processRunner = RecordingProcessRunner()).test("marketplace --help")
 
         assertEquals(0, result.statusCode)
-        assertTrue(result.stdout.contains("full-screen marketplace browser"))
-        assertTrue(result.stdout.contains("--ref"))
-    }
-
-    @Test
-    fun `marketplace ui delegates to terminal ui launcher`() {
-        val runner = RecordingProcessRunner()
-        val result = IntelligenceCommand(
-            processRunner = runner,
-            terminalUiLauncher = testUiLauncher(runner),
-        ).test(
-            listOf(
-                "marketplace",
-                "ui",
-                "--repo",
-                repoRoot().toString(),
-                "--ref",
-                "main",
-            )
-        )
-
-        assertEquals(0, result.statusCode)
-        assertEquals(
-            listOf(
-                "intelligence-tui-test",
-                "--repo",
-                repoRoot().toString(),
-                "--intelligence-bin",
-                "intelligence-test",
-                "--ref",
-                "main",
-            ),
-            runner.command,
-        )
+        assertFalse(result.stdout.lineSequence().any { line -> line.trimStart().startsWith("ui ") })
+        assertFalse(result.stdout.contains("full-screen marketplace browser"))
     }
 
     @Test
@@ -516,13 +472,6 @@ class IntelligenceCommandTest {
         assertTrue(secondIndex >= 0, "missing `$second` in help output")
         assertTrue(firstIndex < secondIndex, "`$first` should appear before `$second`")
     }
-
-    private fun testUiLauncher(runner: RecordingProcessRunner): TerminalUiLauncher =
-        TerminalUiLauncher(
-            processRunner = runner,
-            executableResolver = { "intelligence-tui-test" },
-            intelligenceResolver = { _ -> "intelligence-test" },
-        )
 
     @Test
     fun `invalid marketplace provider fails before materialization`() {

@@ -18,7 +18,6 @@ nav = [
   { "Why it matters" = "why-it-matters.md" },
   { "Getting started" = [
     { "Overview" = "getting-started/index.md" },
-    { "Terminal UI" = "getting-started/tui.md" },
     { "Marketplace" = "getting-started/marketplace.md" },
   ]},
   { "What is available" = [
