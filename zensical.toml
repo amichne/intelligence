@@ -35,6 +35,7 @@ nav = [
     { "Commands" = "reference/commands.md" },
     { "Publication" = "reference/publication.md" },
     { "Codex projection research" = "reference/codex-projection-research.md" },
+    { "GitHub Copilot projection research" = "reference/github-copilot-projection-research.md" },
     { "Documentation site" = "reference/documentation-site.md" },
     { "Glossary" = "reference/glossary.md" },
   ]},
