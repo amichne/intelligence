@@ -16,6 +16,8 @@ internal class PackageArchive private constructor(
     fun bytes(): ByteArray = content.copyOf()
 
     companion object {
+        fun parse(bytes: ByteArray): PackageArchiveParsing = PackageArchiveParser.parse(bytes)
+
         fun materialize(
             manifest: PackageManifest,
             sourceFiles: List<PackageSourceFile>,

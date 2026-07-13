@@ -245,6 +245,108 @@ class PackageArchiveTest {
         )
     }
 
+    @Test
+    fun `materialized package reparses solely from canonical archive bytes`() {
+        val fixture = fixture()
+        val materialized = materialized(fixture.manifest, fixture.files)
+
+        val reparsed = assertIs<PackageArchiveParsing.Parsed>(
+            PackageArchive.parse(materialized.bytes()),
+        ).archive
+
+        assertContentEquals(materialized.bytes(), reparsed.bytes())
+        assertEquals(materialized.sha256, reparsed.sha256)
+        assertEquals(materialized.packageName, reparsed.packageName)
+        assertEquals(materialized.marketplaceId, reparsed.marketplaceId)
+    }
+
+    @Test
+    fun `package parser requires one regular strict package manifest`() {
+        val fixture = fixture()
+        val missingManifest = canonicalZip(
+            fixture.files.map { file ->
+                zipEntry(
+                    file.path,
+                    file.bytes(),
+                    if (file.executable) CanonicalZipEntryMode.EXECUTABLE else CanonicalZipEntryMode.REGULAR,
+                )
+            },
+        )
+        assertEquals(
+            PackageArchiveParsing.Rejected(PackageArchiveParseRejection.MissingManifest),
+            PackageArchive.parse(missingManifest.bytes()),
+        )
+
+        val malformedManifest = canonicalZip(
+            listOf(zipEntry(path("package.json"), "{}\n".encodeToByteArray(), CanonicalZipEntryMode.REGULAR)),
+        )
+        assertEquals(
+            PackageArchiveParsing.Rejected(
+                PackageArchiveParseRejection.InvalidManifest(
+                    PackageManifestRejection.MissingField(path = "$", field = "description"),
+                ),
+            ),
+            PackageArchive.parse(malformedManifest.bytes()),
+        )
+
+        val executableManifest = canonicalZip(
+            listOf(
+                zipEntry(
+                    path("package.json"),
+                    fixture.manifest.canonicalBytes(),
+                    CanonicalZipEntryMode.EXECUTABLE,
+                ),
+            ) + fixture.files.map { file ->
+                zipEntry(
+                    file.path,
+                    file.bytes(),
+                    if (file.executable) CanonicalZipEntryMode.EXECUTABLE else CanonicalZipEntryMode.REGULAR,
+                )
+            },
+        )
+        assertEquals(
+            PackageArchiveParsing.Rejected(PackageArchiveParseRejection.ExecutableManifest),
+            PackageArchive.parse(executableManifest.bytes()),
+        )
+    }
+
+    @Test
+    fun `package parser rejects invalid file closure and non-canonical outer ZIP`() {
+        val fixture = fixture()
+        val unexpectedPath = path("skills/review/notes.txt")
+        val withUnexpectedFile = canonicalZip(
+            listOf(
+                zipEntry(
+                    path("package.json"),
+                    fixture.manifest.canonicalBytes(),
+                    CanonicalZipEntryMode.REGULAR,
+                ),
+            ) + fixture.files.map { file ->
+                zipEntry(
+                    file.path,
+                    file.bytes(),
+                    if (file.executable) CanonicalZipEntryMode.EXECUTABLE else CanonicalZipEntryMode.REGULAR,
+                )
+            } + zipEntry(unexpectedPath, "notes".encodeToByteArray(), CanonicalZipEntryMode.REGULAR),
+        )
+        assertEquals(
+            PackageArchiveParsing.Rejected(
+                PackageArchiveParseRejection.InvalidContent(
+                    PackageArchiveRejection.UnexpectedFile(unexpectedPath),
+                ),
+            ),
+            PackageArchive.parse(withUnexpectedFile.bytes()),
+        )
+
+        val valid = materialized(fixture.manifest, fixture.files).bytes()
+        assertEquals(
+            PackageArchiveParsing.Rejected(
+                PackageArchiveParseRejection.InvalidZip(CanonicalZipParseRejection.InvalidEndRecord),
+            ),
+            PackageArchive.parse(valid + byteArrayOf(0)),
+        )
+    }
+
     private fun fixture(): Fixture {
         val skillBytes = skillDocument()
         val scriptBytes = "#!/bin/sh\nexit 0\n".encodeToByteArray()
@@ -312,6 +414,18 @@ class PackageArchiveTest {
         assertIs<PackageArchiveMaterialization.Materialized>(
             PackageArchive.materialize(manifest, files),
         ).archive
+
+    private fun zipEntry(
+        path: PackageEntryPath,
+        bytes: ByteArray,
+        mode: CanonicalZipEntryMode,
+    ): CanonicalZipEntry =
+        assertIs<CanonicalZipEntryCreation.Accepted>(
+            CanonicalZipEntry.create(path, bytes, mode),
+        ).entry
+
+    private fun canonicalZip(entries: List<CanonicalZipEntry>): CanonicalZipArchive =
+        assertIs<CanonicalZipCreation.Created>(CanonicalZipArchive.create(entries)).archive
 
     private fun zipEntries(bytes: ByteArray): List<Pair<String, ByteArray>> =
         buildList {

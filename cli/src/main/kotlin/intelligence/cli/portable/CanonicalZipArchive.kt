@@ -58,6 +58,8 @@ internal class CanonicalZipArchive private constructor(
     fun bytes(): ByteArray = content.copyOf()
 
     companion object {
+        fun parse(bytes: ByteArray): CanonicalZipParsing = CanonicalZipArchiveParser.parse(bytes)
+
         fun create(entries: List<CanonicalZipEntry>): CanonicalZipCreation {
             if (entries.isEmpty()) {
                 return CanonicalZipCreation.Rejected(CanonicalZipRejection.EmptyArchive)
@@ -243,21 +245,25 @@ private fun ByteArrayOutputStream.writeUInt32(value: Long) {
     }
 }
 
-private const val MAX_ZIP_ENTRY_BYTES = 16 * 1024 * 1024
-private const val MAX_ZIP_ENTRIES = 4_096
-private const val MAX_ZIP_EXPANDED_BYTES = 128L * 1024 * 1024
+internal const val MAX_ZIP_ENTRY_BYTES = 16 * 1024 * 1024
+internal const val MAX_ZIP_ENTRIES = 4_096
+internal const val MAX_ZIP_EXPANDED_BYTES = 128L * 1024 * 1024
+internal const val MAX_ZIP_ARCHIVE_BYTES = 132 * 1024 * 1024
 
-private const val LOCAL_FILE_HEADER_SIGNATURE = 0x04034b50L
-private const val CENTRAL_DIRECTORY_SIGNATURE = 0x02014b50L
-private const val END_OF_CENTRAL_DIRECTORY_SIGNATURE = 0x06054b50L
-private const val VERSION_NEEDED = 10
-private const val VERSION_MADE_BY_UNIX = 0x0314
-private const val UTF8_FLAG = 0x0800
-private const val STORED_METHOD = 0
-private const val FIXED_DOS_TIME = 0
-private const val FIXED_DOS_DATE = 0x21
-private const val NO_EXTRA_FIELDS = 0
-private const val NO_COMMENT = 0
-private const val THIS_DISK = 0
-private const val CENTRAL_DIRECTORY_DISK = 0
-private const val NO_INTERNAL_ATTRIBUTES = 0
+internal const val LOCAL_FILE_HEADER_SIGNATURE = 0x04034b50L
+internal const val CENTRAL_DIRECTORY_SIGNATURE = 0x02014b50L
+internal const val END_OF_CENTRAL_DIRECTORY_SIGNATURE = 0x06054b50L
+internal const val VERSION_NEEDED = 10
+internal const val VERSION_MADE_BY_UNIX = 0x0314
+internal const val UTF8_FLAG = 0x0800
+internal const val STORED_METHOD = 0
+internal const val FIXED_DOS_TIME = 0
+internal const val FIXED_DOS_DATE = 0x21
+internal const val NO_EXTRA_FIELDS = 0
+internal const val NO_COMMENT = 0
+internal const val THIS_DISK = 0
+internal const val CENTRAL_DIRECTORY_DISK = 0
+internal const val NO_INTERNAL_ATTRIBUTES = 0
+internal const val LOCAL_FILE_HEADER_BYTES = 30
+internal const val CENTRAL_DIRECTORY_HEADER_BYTES = 46
+internal const val END_OF_CENTRAL_DIRECTORY_BYTES = 22
