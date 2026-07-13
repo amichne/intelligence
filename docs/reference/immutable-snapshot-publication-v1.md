@@ -71,6 +71,49 @@ The package archive is self-contained. No file may refer to another package or
 require an earlier snapshot. Extracting and validating one archive requires no
 network access and no other release asset.
 
+`package.json` has the closed V1 shape below. `skills` is the primitive-kind
+boundary; V1 has no generic primitive bag or `kind` value that could admit a
+second public primitive accidentally. Each `primary` path is exactly
+`skills/<skill-name>/SKILL.md`. `assets` contains only private files owned by
+that skill and is ordered by path.
+
+```json
+{
+  "description": "A review package",
+  "marketplaceId": "example-marketplace",
+  "name": "review-tools",
+  "schemaVersion": 1,
+  "skills": [
+    {
+      "assets": [
+        {
+          "executable": true,
+          "path": "skills/review/scripts/check.sh",
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "size": 12
+        }
+      ],
+      "description": "Review code",
+      "name": "review",
+      "primary": {
+        "executable": false,
+        "path": "skills/review/SKILL.md",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size": 24
+      }
+    }
+  ],
+  "tags": ["kotlin", "review"],
+  "type": "INTELLIGENCE_PACKAGE"
+}
+```
+
+The owning public schema is
+`schemas/core/portable-package-v1.schema.json`. The typed parser additionally
+enforces canonical array order, portable path byte length, exact skill
+ownership, ASCII case-folding collisions, aggregate entry and expanded-byte
+limits, and canonical RFC 8785 bytes.
+
 ## Canonical Provider Archives
 
 The Codex archive contains:
