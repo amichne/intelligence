@@ -1,24 +1,15 @@
 # What Is Available
 
-Reusable plugin families and standalone primitives are available from
-[`amichne/slopsentral`](https://github.com/amichne/slopsentral).
+V1 discovers immutable snapshots and exposes whole packages. A candidate is
+untrusted until exact inspection verifies its release evidence.
 
 ```sh
-intelligence
+intelligence marketplace discover --github amichne/slopsentral
+intelligence marketplace inspect \
+  --github amichne/slopsentral \
+  --snapshot SNAPSHOT_ID \
+  --format json
 ```
 
-Inside the TUI, run:
-
-```text
-:browse amichne/slopsentral
-/
-```
-
-Use direct commands when you need script-readable output.
-
-```sh
-intelligence marketplace browse amichne/slopsentral --provider source --format json
-```
-
-This repository keeps schemas, CLI source, packaging, and documentation for the
-`intelligence` command.
+The inspection result lists package identities and digests. It does not expose
+the package's supporting assets or offer per-skill selection.

@@ -1,111 +1,82 @@
 package intelligence.cli.command
 
 import intelligence.cli.github.GitHubCli
-import intelligence.cli.io.JsonFiles
-import intelligence.cli.io.objectValue
-import intelligence.cli.io.stringValue
-import intelligence.cli.io.toCliPath
-import java.nio.file.Path
-import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
-import com.github.ajalt.clikt.parameters.options.convert
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
 
 internal class DoctorCommand(
     private val github: GitHubCli,
-) : CliktCommand(
-    name = "doctor",
-) {
-    private val repo by option("--repo", help = "Repository root to inspect.")
-        .convert("PATH") { it.toCliPath() }
-        .default(Path.of(".").toAbsolutePath().normalize())
-
-    private val format by outputFormatOption()
+    private val environment: PortableCommandEnvironment,
+) : PortableConsumerCommand("doctor", "doctor") {
 
     override fun help(context: Context): String =
-        "Check CLI discovery dependencies, GitHub host configuration, and local repository context."
+        "Report runtime, repository, cache, and GitHub readiness without mutation."
 
-    override fun run() {
+    override fun execute(invocation: PortableInvocation): PortableCommandOutcome {
         val status = github.status()
+        val githubJson = buildJsonObject {
+            put("available", status.available)
+            status.defaultHost?.let { put("defaultHost", it.value) }
+            putJsonArray("hosts") {
+                status.hosts.forEach { account ->
+                    add(
+                        buildJsonObject {
+                            put("host", account.host.value)
+                            account.login?.let { put("login", it) }
+                            put("active", account.active)
+                            put("authenticated", account.authenticated)
+                            account.gitProtocol?.let { put("gitProtocol", it) }
+                        },
+                    )
+                }
+            }
+        }
+        val checks = listOf(
+            DoctorCheck("runtime", Runtime.version().feature() >= 21, "JDK ${Runtime.version().feature()}"),
+            DoctorCheck("repository", java.nio.file.Files.isDirectory(invocation.repository), invocation.repository.toString()),
+            DoctorCheck(
+                "cache",
+                environment.cache() is PortableCacheOpening.Opened,
+                "digest-addressed cache root",
+            ),
+            DoctorCheck("github", githubJson.booleanValue("available"), "GitHub CLI and host authentication"),
+        )
         val result = buildJsonObject {
-            put("repoRoot", repo.toString())
-            put("github", status.toJson())
-        }
-        echo(
-            when (format) {
-                CommandOutputFormat.Text -> renderDoctor(result)
-                CommandOutputFormat.Json -> JsonFiles.json.encodeToString(JsonElement.serializer(), result)
-            }
-        )
-    }
-
-    private fun renderDoctor(result: JsonObject): String {
-        val github = result.objectValue("github") ?: JsonObject(emptyMap())
-        val available = github.booleanValue("available")
-        val defaultHost = github.stringValue("defaultHost")
-        val lines = mutableListOf(
-            "Intelligence doctor",
-            "Repository: ${result.stringValue("repoRoot").orEmpty()}",
-            "GitHub CLI: ${if (available) "available" else "unavailable"}",
-        )
-        defaultHost?.let { lines += "Default GitHub host: $it" }
-        val hosts = github["hosts"] as? JsonArray
-        if (hosts.isNullOrEmpty()) {
-            lines += "GitHub hosts: none reported"
-        } else {
-            lines += "GitHub hosts:"
-            hosts.forEach { host ->
-                val account = host as JsonObject
-                val name = account.stringValue("host").orEmpty()
-                val login = account.stringValue("login")
-                val active = account.booleanValue("active")
-                val authenticated = account.booleanValue("authenticated")
-                val protocol = account.stringValue("gitProtocol")
-                val markers = listOfNotNull(
-                    "active".takeIf { active },
-                    "authenticated".takeIf { authenticated },
-                    protocol,
-                    login?.let { "login=$it" },
-                )
-                lines += "- $name${markers.takeIf { it.isNotEmpty() }?.joinToString(prefix = " (", postfix = ")").orEmpty()}"
+            put("status", if (checks.all(DoctorCheck::ready)) "READY" else "DEGRADED")
+            put("repository", invocation.repository.toString())
+            put("github", githubJson)
+            putJsonArray("checks") {
+                checks.forEach { check ->
+                    add(
+                        buildJsonObject {
+                            put("name", check.name)
+                            put("outcome", if (check.ready) "READY" else "UNAVAILABLE")
+                            put("message", check.message)
+                        },
+                    )
+                }
             }
         }
-        return lines.joinToString("\n")
+        return PortableCommandOutcome.Success(
+            result,
+            buildString {
+                appendLine("doctor: ${if (checks.all(DoctorCheck::ready)) "READY" else "DEGRADED"}")
+                checks.forEach { check -> appendLine("${check.name}: ${if (check.ready) "READY" else "UNAVAILABLE"}") }
+            }.trimEnd(),
+        )
     }
 }
+
+private data class DoctorCheck(
+    val name: String,
+    val ready: Boolean,
+    val message: String,
+)
 
 private fun JsonObject.booleanValue(key: String): Boolean =
     (this[key] as? JsonPrimitive)?.content == "true"
-
-internal enum class CommandOutputFormat(
-    val cliName: String,
-) {
-    Text("text"),
-    Json("json");
-
-    companion object {
-        fun parse(value: String): CommandOutputFormat =
-            entries.firstOrNull { it.cliName == value.lowercase() }
-                ?: throw IllegalArgumentException(
-                    "format must be one of: ${entries.joinToString(", ") { it.cliName }}"
-                )
-    }
-}
-
-internal fun CliktCommand.outputFormatOption(default: CommandOutputFormat = CommandOutputFormat.Text) =
-    option("--format", help = "Output format: text or json.")
-        .convert("FORMAT") {
-            try {
-                CommandOutputFormat.parse(it)
-            } catch (error: IllegalArgumentException) {
-                fail(error.message ?: "invalid format")
-            }
-        }
-        .default(default)

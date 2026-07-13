@@ -10,17 +10,29 @@ application {
 
 val intelligenceVersion = providers.gradleProperty("intelligenceVersion")
     .orElse("dev")
+val defaultMarketplaceGitHub = providers.gradleProperty("intelligenceDefaultMarketplaceGitHub")
+    .orElse("")
+val defaultMarketplaceSnapshot = providers.gradleProperty("intelligenceDefaultMarketplaceSnapshot")
+    .orElse("")
+val defaultMarketplaceIndexSha256 = providers.gradleProperty("intelligenceDefaultMarketplaceIndexSha256")
+    .orElse("")
 
 val generatedBuildInfoDir = layout.buildDirectory.dir("generated/sources/build-info/kotlin")
 
 val generateBuildInfo by tasks.registering {
     inputs.property("intelligenceVersion", intelligenceVersion)
+    inputs.property("defaultMarketplaceGitHub", defaultMarketplaceGitHub)
+    inputs.property("defaultMarketplaceSnapshot", defaultMarketplaceSnapshot)
+    inputs.property("defaultMarketplaceIndexSha256", defaultMarketplaceIndexSha256)
     outputs.dir(generatedBuildInfoDir)
 
     doLast {
         val escapedVersion = intelligenceVersion.get()
             .replace("\\", "\\\\")
             .replace("\"", "\\\"")
+        val escapedDefaultGitHub = defaultMarketplaceGitHub.get().replace("\\", "\\\\").replace("\"", "\\\"")
+        val escapedDefaultSnapshot = defaultMarketplaceSnapshot.get().replace("\\", "\\\\").replace("\"", "\\\"")
+        val escapedDefaultDigest = defaultMarketplaceIndexSha256.get().replace("\\", "\\\\").replace("\"", "\\\"")
         val output = generatedBuildInfoDir.get()
             .file("intelligence/cli/BuildInfo.kt")
             .asFile
@@ -31,6 +43,9 @@ val generateBuildInfo by tasks.registering {
 
             internal object BuildInfo {
                 const val VERSION: String = "$escapedVersion"
+                const val DEFAULT_MARKETPLACE_GITHUB: String = "$escapedDefaultGitHub"
+                const val DEFAULT_MARKETPLACE_SNAPSHOT: String = "$escapedDefaultSnapshot"
+                const val DEFAULT_MARKETPLACE_INDEX_SHA256: String = "$escapedDefaultDigest"
             }
             """.trimIndent() + "\n",
         )
@@ -56,6 +71,11 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    dependsOn(tasks.installDist)
+    systemProperty(
+        "intelligence.installDir",
+        layout.buildDirectory.dir("install/intelligence").get().asFile.absolutePath,
+    )
 }
 
 tasks.named("compileKotlin") {

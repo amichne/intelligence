@@ -94,6 +94,16 @@ directory replacement because the portable JVM filesystem API has no atomic
 directory-exchange primitive; introducing a backup swap would add a crash state
 that is not closed by the consumer journal.
 
+The materialization source is one closed provider-neutral tree. Its root has
+exactly `default-package` and `packages/`. `default-package` is one canonical
+package name followed by LF. Each `packages/<package-name>/` has exactly its
+canonical `package.json` plus the skill and supporting files declared by that
+manifest. Package directories, manifest identities, file digests, sizes,
+executable evidence, marketplace identities, and the default package must all
+agree. Undeclared files, symlinks, empty extra directories, and missing declared
+content fail before output staging. This reuses the canonical package contract
+instead of introducing a second authoring manifest.
+
 ## Dry-Run and Offline Semantics
 
 `--dry-run` performs the same parsing, reads, resolution, digest verification,

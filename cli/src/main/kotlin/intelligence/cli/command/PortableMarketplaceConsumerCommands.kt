@@ -1,5 +1,7 @@
 package intelligence.cli.command
 
+import intelligence.cli.github.GhGitHubReadTransport
+import intelligence.cli.github.GhGitHubPublicationTransport
 import intelligence.cli.io.JsonFiles
 import intelligence.cli.portable.ConsumerOperationExecution
 import intelligence.cli.portable.ConsumerOperationPlanning
@@ -16,6 +18,12 @@ import intelligence.cli.portable.DigestCacheRoot
 import intelligence.cli.portable.DigestCacheRootResolution
 import intelligence.cli.portable.DigestCacheWritePolicy
 import intelligence.cli.portable.IdentifierParse
+import intelligence.cli.portable.GitHubReadTransport
+import intelligence.cli.portable.GitHubPublicationTransport
+import intelligence.cli.portable.GitHubRepository
+import intelligence.cli.portable.GitHubRepositoryParsing
+import intelligence.cli.portable.GitHubRepositoryUrl
+import intelligence.cli.portable.GitHubRepositoryUrlParsing
 import intelligence.cli.portable.LocalConsumerOperations
 import intelligence.cli.portable.MarketplaceId
 import intelligence.cli.portable.MarketplaceIntentSelection
@@ -31,6 +39,7 @@ import intelligence.cli.portable.ProviderProjectionDirectoryPreparation
 import intelligence.cli.portable.ProviderProjectionDirectoryRejection
 import intelligence.cli.portable.Sha256Digest
 import intelligence.cli.portable.Sha256DigestParsing
+import intelligence.cli.portable.SnapshotId
 import intelligence.cli.portable.ConsumerRelativeDirectory
 import intelligence.cli.portable.ConsumerRelativeDirectoryParsing
 import java.nio.file.InvalidPathException
@@ -60,6 +69,8 @@ internal class PortableCommandEnvironment(
     private val cacheRootOverride: Path? = null,
     private val xdgCacheHome: () -> String? = { System.getenv("XDG_CACHE_HOME") },
     private val userHome: () -> String? = { System.getProperty("user.home") },
+    internal val githubReadTransport: GitHubReadTransport = GhGitHubReadTransport(),
+    internal val githubPublicationTransport: GitHubPublicationTransport = GhGitHubPublicationTransport(),
 ) {
     fun cache(): PortableCacheOpening =
         if (cacheRootOverride != null) {
@@ -93,7 +104,7 @@ internal fun localMarketplaceConsumerCommands(
         ProjectPortableMarketplaceCommand(environment),
     )
 
-private enum class PortableOutputFormat {
+internal enum class PortableOutputFormat {
     HUMAN,
     JSON,
     ;
@@ -104,40 +115,48 @@ private enum class PortableOutputFormat {
     }
 }
 
-private enum class PortableErrorCode(
+internal enum class PortableErrorCode(
     val exitCode: Int,
 ) {
     USAGE_ERROR(2),
     CONTRACT_VIOLATION(3),
+    VALIDATION_FAILED(3),
     EXTERNAL_UNAVAILABLE(4),
+    AUTHENTICATION_FAILED(4),
     OFFLINE_CACHE_MISS(4),
     STATE_CONFLICT(5),
+    REMOTE_PRECONDITION_FAILED(5),
+    REMOTE_STATE_UNKNOWN(6),
+    PUBLISHED_UNVERIFIED(6),
     INTERNAL_ERROR(70),
 }
 
-private data class PortableCommandError(
+internal data class PortableCommandError(
     val code: PortableErrorCode,
     val message: String,
     val details: JsonObject = JsonObject(emptyMap()),
 )
 
-private sealed interface PortableCommandOutcome {
+internal sealed interface PortableCommandOutcome {
     data class Success(
         val result: JsonObject,
         val human: String,
     ) : PortableCommandOutcome
 
-    data class Failure(val error: PortableCommandError) : PortableCommandOutcome
+    data class Failure(
+        val error: PortableCommandError,
+        val diagnostics: JsonArray = JsonArray(emptyList()),
+    ) : PortableCommandOutcome
 }
 
-private data class PortableInvocation(
+internal data class PortableInvocation(
     val repository: Path,
     val format: PortableOutputFormat,
     val dryRun: Boolean,
     val offline: Boolean,
 )
 
-private abstract class PortableConsumerCommand(
+internal abstract class PortableConsumerCommand(
     name: String,
     private val commandId: String,
 ) : CliktCommand(name = name) {
@@ -236,7 +255,13 @@ private abstract class PortableConsumerCommand(
                                 }
                             }
                         }
-                        put("diagnostics", JsonArray(emptyList()))
+                        put(
+                            "diagnostics",
+                            when (outcome) {
+                                is PortableCommandOutcome.Success -> JsonArray(emptyList())
+                                is PortableCommandOutcome.Failure -> outcome.diagnostics
+                            },
+                        )
                     }
                 echo(JsonFiles.compactJson.encodeToString(JsonElement.serializer(), envelope))
             }
@@ -274,20 +299,35 @@ private abstract class LocalSourcePortableCommand(
         help = "Exact immutable GitHub snapshot identifier.",
     )
 
-    protected fun localSource(): BoundaryParsing<MarketplaceIntentSource.LocalSnapshot> {
+    protected fun exactSource(): BoundaryParsing<MarketplaceIntentSource> {
         val localValues = listOf(localSnapshotRaw, indexSha256Raw)
         val githubValues = listOf(githubRaw, snapshotRaw)
         if (githubValues.any { value -> value != null }) {
-            return if (githubValues.all { value -> value != null } && localValues.all { value -> value == null }) {
-                BoundaryParsing.Failed(
-                    PortableCommandError(
-                        PortableErrorCode.EXTERNAL_UNAVAILABLE,
-                        "GitHub snapshot resolution is not available in this local-source operation",
-                    ),
-                )
-            } else {
-                BoundaryParsing.Failed(sourceShapeError())
+            if (!githubValues.all { value -> value != null } || localValues.any { value -> value != null }) {
+                return BoundaryParsing.Failed(sourceShapeError())
             }
+            val repository =
+                when (val parsed = GitHubRepository.parse(checkNotNull(githubRaw))) {
+                    is GitHubRepositoryParsing.Parsed -> parsed.repository
+                    is GitHubRepositoryParsing.Rejected ->
+                        return BoundaryParsing.Failed(contractError("--github must be OWNER/REPOSITORY", parsed.reason))
+                }
+            val repositoryUrl =
+                when (val parsed = GitHubRepositoryUrl.parse("https://github.com/${repository.render()}")) {
+                    is GitHubRepositoryUrlParsing.Parsed -> parsed.url
+                    is GitHubRepositoryUrlParsing.Rejected ->
+                        return BoundaryParsing.Failed(contractError("--github must be canonical lowercase GitHub coordinates", parsed.reason))
+                }
+            val snapshot =
+                when (val parsed = SnapshotId.parse(checkNotNull(snapshotRaw))) {
+                    is IdentifierParse.Accepted -> parsed.value
+                    is IdentifierParse.Rejected ->
+                        return BoundaryParsing.Failed(contractError("--snapshot must be an immutable snapshot ID", parsed.reason))
+                }
+            if (snapshot.render() == "latest") {
+                return BoundaryParsing.Failed(contractError("--snapshot must not be the moving latest selector", snapshot.render()))
+            }
+            return BoundaryParsing.Parsed(MarketplaceIntentSource.GitHubRelease(repositoryUrl, snapshot))
         }
         if (localValues.any { value -> value == null }) {
             return BoundaryParsing.Failed(sourceShapeError())
@@ -327,8 +367,13 @@ private class SelectPortableMarketplaceCommand(
     override fun execute(invocation: PortableInvocation): PortableCommandOutcome {
         val parsedMarketplace = parseMarketplaceId(marketplaceRaw)
         val marketplaceId = parsedMarketplace.valueOr { failure -> return failure }
-        val parsedSource = localSource()
+        val parsedSource = exactSource()
         val source = parsedSource.valueOr { failure -> return failure }
+        if (invocation.offline && source is MarketplaceIntentSource.GitHubRelease) {
+            return PortableCommandOutcome.Failure(
+                PortableCommandError(PortableErrorCode.EXTERNAL_UNAVAILABLE, "Remote selection is unavailable offline"),
+            )
+        }
         val parsedRequest = selectionRequest(packageNamesRaw, all)
         val request = parsedRequest.valueOr { failure -> return failure }
         val opened = environment.cache()
@@ -341,6 +386,7 @@ private class SelectPortableMarketplaceCommand(
                 request,
                 cache,
                 invocation.cachePolicy(),
+                environment.githubReadTransport,
             )
         return completeMutation(invocation, planning)
     }
@@ -378,8 +424,13 @@ private class UpdatePortableMarketplaceCommand(
     override fun execute(invocation: PortableInvocation): PortableCommandOutcome {
         val marketplace = parseMarketplaceId(marketplaceRaw)
         val marketplaceId = marketplace.valueOr { failure -> return failure }
-        val parsedSource = localSource()
+        val parsedSource = exactSource()
         val source = parsedSource.valueOr { failure -> return failure }
+        if (invocation.offline && source is MarketplaceIntentSource.GitHubRelease) {
+            return PortableCommandOutcome.Failure(
+                PortableCommandError(PortableErrorCode.EXTERNAL_UNAVAILABLE, "Remote update is unavailable offline"),
+            )
+        }
         val opened = environment.cache()
         val cache = opened.valueOr { failure -> return failure }
         return completeMutation(
@@ -390,6 +441,7 @@ private class UpdatePortableMarketplaceCommand(
                 source,
                 cache,
                 invocation.cachePolicy(),
+                environment.githubReadTransport,
             ),
         )
     }
@@ -415,6 +467,7 @@ private class ResolvePortableMarketplaceCommand(
                 marketplaceId,
                 cache,
                 invocation.cachePolicy(),
+                if (invocation.offline) null else environment.githubReadTransport,
             ),
         )
     }
@@ -486,6 +539,7 @@ private class ReconstructPortableMarketplaceCommand(
                     cache,
                     invocation.offline,
                     invocation.cachePolicy(),
+                    if (invocation.offline) null else environment.githubReadTransport,
                 )
         ) {
             is ConsumerReconstruction.Rejected -> rejectionFailure(reconstruction.reason)
@@ -534,6 +588,7 @@ private class ProjectPortableMarketplaceCommand(
                 cache,
                 invocation.offline,
                 invocation.cachePolicy(),
+                if (invocation.offline) null else environment.githubReadTransport,
             )
         val resolved =
             when (reconstructed) {
@@ -598,7 +653,7 @@ private fun ProviderProjectionDirectoryPreparation.Unchanged.projectionEvidence(
 private fun PortableInvocation.cachePolicy(): DigestCacheWritePolicy =
     if (dryRun) DigestCacheWritePolicy.VERIFY_ONLY else DigestCacheWritePolicy.STORE
 
-private fun completeMutation(
+internal fun completeMutation(
     invocation: PortableInvocation,
     planning: ConsumerOperationPlanning,
 ): PortableCommandOutcome =
@@ -878,9 +933,11 @@ private fun rejectionFailure(reason: Any): PortableCommandOutcome.Failure {
             is ConsumerOperationRejection.SourceChangeRequiresUpdate,
             is ConsumerOperationRejection.MarketplaceNotSelected,
             is ConsumerOperationRejection.PackageNotSelected,
+            is ConsumerOperationRejection.MarketplaceRequiresResolution,
             is ConsumerOperationRejection.CommitRejected,
             is ConsumerOperationRejection.DeletionRejected,
             -> PortableErrorCode.STATE_CONFLICT
+            is ConsumerOperationRejection.GitHubResolutionRequired -> PortableErrorCode.EXTERNAL_UNAVAILABLE
             else -> PortableErrorCode.CONTRACT_VIOLATION
         }
     return PortableCommandOutcome.Failure(
@@ -894,6 +951,20 @@ private fun resolutionErrorCode(reason: MarketplaceResolutionRejection): Portabl
         is MarketplaceResolutionRejection.LocalDirectoryRejected,
         is MarketplaceResolutionRejection.SourceAssetRejected,
         -> PortableErrorCode.EXTERNAL_UNAVAILABLE
+        is MarketplaceResolutionRejection.GitHubRejected ->
+            when (val github = reason.reason) {
+                is intelligence.cli.portable.GitHubSnapshotRejection.TransportRejected ->
+                    when (github.reason) {
+                        intelligence.cli.portable.GitHubReadTransportRejection.AuthenticationFailed ->
+                            PortableErrorCode.AUTHENTICATION_FAILED
+                        intelligence.cli.portable.GitHubReadTransportRejection.Unavailable,
+                        intelligence.cli.portable.GitHubReadTransportRejection.NotFound,
+                        -> PortableErrorCode.EXTERNAL_UNAVAILABLE
+                        intelligence.cli.portable.GitHubReadTransportRejection.InvalidResponse ->
+                            PortableErrorCode.CONTRACT_VIOLATION
+                    }
+                else -> PortableErrorCode.CONTRACT_VIOLATION
+            }
         else -> PortableErrorCode.CONTRACT_VIOLATION
     }
 

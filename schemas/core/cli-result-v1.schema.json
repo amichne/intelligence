@@ -1,0 +1,727 @@
+{
+  "$defs": {
+    "diagnostic": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "message": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "gate": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "pointer": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "INFO",
+            "ERROR"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "message",
+        "severity"
+      ],
+      "type": "object"
+    },
+    "error": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "USAGE_ERROR",
+            "CONTRACT_VIOLATION",
+            "VALIDATION_FAILED",
+            "EXTERNAL_UNAVAILABLE",
+            "AUTHENTICATION_FAILED",
+            "OFFLINE_CACHE_MISS",
+            "STATE_CONFLICT",
+            "REMOTE_PRECONDITION_FAILED",
+            "REMOTE_STATE_UNKNOWN",
+            "PUBLISHED_UNVERIFIED",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "details": {
+          "type": "object"
+        },
+        "message": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "details",
+        "message"
+      ],
+      "type": "object"
+    },
+    "authorResult": {
+      "additionalProperties": false,
+      "properties": {
+        "documents": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "documents"
+      ],
+      "type": "object"
+    },
+    "discoverResult": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "type": "array"
+        }
+      },
+      "required": [
+        "candidates"
+      ],
+      "type": "object"
+    },
+    "doctorResult": {
+      "additionalProperties": false,
+      "properties": {
+        "checks": {
+          "type": "array"
+        },
+        "github": {
+          "type": "object"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "READY",
+            "DEGRADED"
+          ]
+        }
+      },
+      "required": [
+        "checks",
+        "github",
+        "repository",
+        "status"
+      ],
+      "type": "object"
+    },
+    "inspectResult": {
+      "additionalProperties": false,
+      "properties": {
+        "defaultPackage": {
+          "type": "string"
+        },
+        "indexSha256": {
+          "type": "string"
+        },
+        "marketplaceId": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array"
+        },
+        "snapshotId": {
+          "type": "string"
+        },
+        "source": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "defaultPackage",
+        "indexSha256",
+        "marketplaceId",
+        "packages",
+        "snapshotId",
+        "source"
+      ],
+      "type": "object"
+    },
+    "materializeResult": {
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "type": "array"
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "marketplaceId": {
+          "type": "string"
+        },
+        "output": {
+          "type": "string"
+        },
+        "snapshotId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "assets",
+        "dryRun",
+        "marketplaceId",
+        "output",
+        "snapshotId"
+      ],
+      "type": "object"
+    },
+    "mutationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "changes": {
+          "type": "array"
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "lockSha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "operation": {
+          "type": "string"
+        },
+        "recoveryOutcome": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "selections": {
+          "type": "array"
+        },
+        "stateAfter": {
+          "type": "object"
+        },
+        "stateBefore": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "changes",
+        "dryRun",
+        "lockSha256",
+        "operation",
+        "repository",
+        "selections",
+        "stateAfter",
+        "stateBefore"
+      ],
+      "type": "object"
+    },
+    "projectResult": {
+      "additionalProperties": false,
+      "properties": {
+        "dryRun": {
+          "type": "boolean"
+        },
+        "marketplaceId": {
+          "type": "string"
+        },
+        "output": {
+          "type": "string"
+        },
+        "packages": {
+          "type": "array"
+        },
+        "provider": {
+          "type": "string"
+        },
+        "snapshotId": {
+          "type": "string"
+        },
+        "treeSha256": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "dryRun",
+        "marketplaceId",
+        "output",
+        "packages",
+        "provider",
+        "snapshotId",
+        "treeSha256"
+      ],
+      "type": "object"
+    },
+    "publicationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "assets": {
+          "type": "array"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "completedGates": {
+          "type": "array"
+        },
+        "immutable": {
+          "type": "boolean"
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "publishedAt": {
+          "type": "string"
+        },
+        "releaseId": {
+          "type": "integer"
+        },
+        "releaseUrl": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "repositoryId": {
+          "type": "integer"
+        },
+        "snapshotId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "assets",
+        "commit",
+        "completedGates",
+        "immutable",
+        "repository",
+        "repositoryId",
+        "snapshotId"
+      ],
+      "type": "object"
+    },
+    "reconstructResult": {
+      "additionalProperties": false,
+      "properties": {
+        "cacheHits": {
+          "type": "integer"
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "fetched": {
+          "type": "integer"
+        },
+        "marketplaceIds": {
+          "type": "array"
+        },
+        "requiredObjects": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cacheHits",
+        "dryRun",
+        "fetched",
+        "marketplaceIds",
+        "requiredObjects"
+      ],
+      "type": "object"
+    },
+    "validateResult": {
+      "additionalProperties": false,
+      "properties": {
+        "diagnostics": {
+          "type": "array"
+        },
+        "gates": {
+          "type": "array"
+        },
+        "outcome": {
+          "enum": [
+            "PASS",
+            "FAIL"
+          ]
+        },
+        "portable": {
+          "type": "boolean"
+        },
+        "subject": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "diagnostics",
+        "gates",
+        "outcome",
+        "portable",
+        "subject"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://schemas.amichne.dev/intelligence/core/cli-result-v1.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "doctor"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/doctorResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "enum": [
+              "setup",
+              "marketplace.select",
+              "marketplace.remove",
+              "marketplace.update",
+              "marketplace.resolve",
+              "marketplace.recover"
+            ]
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/mutationResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "validate"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/validateResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "marketplace.discover"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/discoverResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "marketplace.inspect"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/inspectResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "marketplace.reconstruct"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/reconstructResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "marketplace.project"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/projectResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "marketplace.materialize"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/materializeResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "enum": [
+              "marketplace.publish",
+              "marketplace.verify-publication"
+            ]
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/publicationResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "command": {
+            "const": "marketplace.author"
+          },
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "command",
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "result": {
+            "$ref": "#/$defs/authorResult"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ok": {
+            "const": true
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "type": "null"
+          },
+          "result": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ok": {
+            "const": false
+          }
+        },
+        "required": [
+          "ok"
+        ]
+      },
+      "then": {
+        "properties": {
+          "error": {
+            "$ref": "#/$defs/error"
+          },
+          "result": {
+            "type": "null"
+          }
+        }
+      }
+    }
+  ],
+  "properties": {
+    "command": {
+      "enum": [
+        "doctor",
+        "setup",
+        "validate",
+        "marketplace.discover",
+        "marketplace.inspect",
+        "marketplace.select",
+        "marketplace.remove",
+        "marketplace.update",
+        "marketplace.resolve",
+        "marketplace.recover",
+        "marketplace.reconstruct",
+        "marketplace.project",
+        "marketplace.materialize",
+        "marketplace.publish",
+        "marketplace.verify-publication",
+        "marketplace.author"
+      ]
+    },
+    "diagnostics": {
+      "items": {
+        "$ref": "#/$defs/diagnostic"
+      },
+      "type": "array"
+    },
+    "error": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/error"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "result": {
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schemaVersion": {
+      "const": 1
+    }
+  },
+  "required": [
+    "command",
+    "diagnostics",
+    "error",
+    "ok",
+    "result",
+    "schemaVersion"
+  ],
+  "title": "Intelligence CLI result envelope V1",
+  "type": "object"
+}

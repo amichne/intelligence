@@ -1,126 +1,85 @@
 # Marketplace
 
-The marketplace is the portable distribution surface for project-agnostic
-plugin families. Users operate it through explicit CLI commands and can select
-JSON output for automation.
+V1 exposes immutable marketplace snapshots and whole packages only. Package
+supporting files are verified content, not independently discoverable assets.
 
-## CLI First
+## Discover and Inspect
 
-Check local dependencies and GitHub host configuration before exploring remote
-repositories. Owner/repo shorthand uses the active host reported by
-`gh auth status --json hosts`; pass `--host` to target a specific configured
-GitHub or GitHub Enterprise host.
+Discovery reads one explicit GitHub repository or one typed local catalog. It
+never performs global search and never makes a candidate trusted by itself.
 
 ```sh
-intelligence doctor
-intelligence doctor --format json
-intelligence marketplace search kotlin
-intelligence marketplace search kotlin --host github.enterprise.example
+intelligence marketplace discover --github amichne/slopsentral
+intelligence marketplace discover --catalog ./marketplaces.json --query kotlin
+
+intelligence marketplace inspect \
+  --github amichne/slopsentral \
+  --snapshot SNAPSHOT_ID
 ```
 
-Inspect a marketplace before importing from it. Use JSON when the output should
-be parsed by a script or another agent.
+## Set Up and Select
+
+Release builds may package one exact default GitHub coordinate, snapshot, and
+index digest. Otherwise, provide one complete exact source form.
 
 ```sh
-intelligence marketplace inspect amichne/slopsentral
-intelligence marketplace search kotlin --repository amichne/slopsentral
-intelligence marketplace inspect amichne/slopsentral --format json
+intelligence setup \
+  --local-snapshot snapshots/initial \
+  --index-sha256 SHA256
+
+intelligence marketplace select slopsentral \
+  --github amichne/slopsentral \
+  --snapshot SNAPSHOT_ID \
+  --package kotlin-engineering
 ```
 
-Useful read-only commands are:
-
-| Goal | Command |
-|---|---|
-| Check host and auth state | `intelligence doctor` |
-| Search repositories through `gh` | `intelligence marketplace search kotlin` |
-| Inspect one marketplace | `intelligence marketplace inspect amichne/slopsentral` |
-| Search one marketplace catalog | `intelligence marketplace search kotlin --repository amichne/slopsentral` |
-| List installed plugins | `intelligence marketplace installed list` |
-| Check versions for an import | `intelligence marketplace versions kotlin-engineering` |
-| Browse legacy script output | `intelligence marketplace browse amichne/slopsentral --format json` |
-
-## Setup
-
-Use `setup` for a new consumer repository that wants the default locked
-Intelligence workflow. The command imports `kotlin-engineering` from
-`amichne/slopsentral`, writes `.intelligence/adaptable.marketplace.json`, records
-the resolved plugin version and source integrity in
-`.intelligence/marketplace-lock.json`, and runs portable validation.
+Use `--all` only when every package in that exact snapshot should be selected.
+Update always names the replacement snapshot and preserves existing package
+names. Remove always names whole packages.
 
 ```sh
-intelligence setup
-intelligence setup --repo /path/to/repo
+intelligence marketplace update slopsentral \
+  --github amichne/slopsentral \
+  --snapshot REPLACEMENT_SNAPSHOT
+intelligence marketplace remove slopsentral --package kotlin-engineering
 ```
 
-Pass `--marketplace`, `--plugin`, `--version`, or `--ref` when the first import
-should use a different source repository, plugin, exact plugin version, or Git
-ref. Generated JSON uses the same canonical writer and validation path as
-explicit marketplace imports.
-
-## Referential Imports
-
-Import plugins by reference instead of copying provider payloads. Explicit
-commands keep the source, target, and operation visible to users and automation.
-
-The CLI writes a portable `MARKETPLACE_SOURCE` plugin entry into the existing
-authored marketplace or `.intelligence/adaptable.marketplace.json`, then records
-exact reconstruction evidence in `.intelligence/marketplace-lock.json`.
+## Resolve, Recover, Reconstruct, and Project
 
 ```sh
-intelligence setup
-intelligence marketplace import amichne/slopsentral/kotlin-engineering
-intelligence marketplace import amichne/slopsentral/kotlin-engineering --ref main
-intelligence marketplace install amichne/slopsentral
+intelligence marketplace resolve
+intelligence marketplace recover --dry-run
+intelligence marketplace recover
+intelligence marketplace reconstruct --offline
+intelligence marketplace project slopsentral --provider codex --out /tmp/codex
+intelligence marketplace project slopsentral --provider github-copilot --out /tmp/copilot
 ```
 
-These commands validate the target repository after they write marketplace
-state. Use `--no-validate` only when a surrounding script runs validation
-separately.
+Projection writes one marketplace and one provider to an absent-or-identical
+output root. It never installs provider state or composes unrelated
+marketplaces.
 
-The CLI leaves Codex or GitHub Copilot installation as a provider-specific next
-step.
+## Materialize and Publish
 
-## Advanced Aliases
-
-Direct imports add external marketplace metadata automatically. Name external
-marketplaces explicitly when a project wants stable local aliases.
+An authored source contains exactly `default-package` and
+`packages/<name>/package.json` plus the files declared by each package manifest.
 
 ```sh
-intelligence marketplace remote add slopsentral amichne/slopsentral
-intelligence marketplace remote list
-intelligence marketplace import slopsentral/kotlin-engineering
+intelligence marketplace materialize \
+  --source /path/to/marketplace-source \
+  --snapshot SNAPSHOT_ID \
+  --out /tmp/release
+
+intelligence marketplace publish \
+  --release-dir /tmp/release \
+  --github OWNER/REPOSITORY \
+  --commit COMMIT_SHA
+
+intelligence marketplace verify-publication \
+  --github OWNER/REPOSITORY \
+  --snapshot SNAPSHOT_ID
 ```
 
-## Projection Preview
-
-Preview provider payloads locally when changing marketplace projection logic or
-validating a marketplace repository.
-
-```sh
-intelligence marketplace materialize --repo /path/to/slopsentral
-```
-
-The default materializes all provider payloads into
-`build/intelligence/marketplace`. Add `--provider` or `--out` only for a custom
-proof target.
-
-## Published Shape
-
-| Surface | Owner | Purpose |
-|---|---|---|
-| `source/adaptable.marketplace.json` | Marketplace repo | Provider-neutral catalog. |
-| `source/plugins/*/plugin.json` | Marketplace repo | Plugin composition over source primitives. |
-| `.intelligence/adaptable.marketplace.json` | Consumer repo | Install-only marketplace intent. |
-| `.intelligence/marketplace-lock.json` | Consumer repo | Resolved imported marketplace references and integrity evidence. |
-| `schemas/` | This repo | Provider-neutral and adapter JSON Schema definitions. |
-| `cli/` | This repo | Marketplace browsing, import, validation, materialization, and publication. |
-
-## Publication
-
-Publish generated payloads from the marketplace repository.
-
-```sh
-intelligence marketplace publish --repo /path/to/slopsentral --check
-intelligence marketplace publish --repo /path/to/slopsentral --codex --no-push
-intelligence marketplace publish --repo /path/to/slopsentral --github --no-push
-```
+See [Commands](../reference/commands.md) for the complete stable grammar and
+[Immutable snapshot publication](../reference/immutable-snapshot-publication-v1.md)
+for the one-way publication protocol.

@@ -1,41 +1,37 @@
 # Validation
 
-Validation checks marketplace source documents, hydrated provider output, and
-the CLI repo's own schema contracts.
+Validation is the trust boundary for authored package source, canonical
+snapshots, consumer intent and lock state, provider projections, publication
+evidence, and the Kotlin distribution.
 
-## CLI Repository
-
-Run these checks when changing the Kotlin CLI, schemas, packaging, or docs.
+## Repository Gate
 
 ```sh
-./gradlew :cli:test installDevelopmentCli
+./gradlew :cli:test installDevelopmentCli verifyKotlinOnlyDevelopmentCli
 .local/intelligence/bin/intelligence validate --portable
 zensical build --clean
+git diff --check
 ```
 
-## Marketplace Repository
+`--portable` forbids host-local and network assumptions. Unknown structured
+data, malformed canonical JSON, undeclared source files, digest mismatches, and
+incomplete consumer state fail explicitly.
 
-Run these checks when changing `slopsentral`.
+## Author Proof
+
+Materialize into an absent proof root, inspect the exact result, and publish
+only that already-complete directory.
 
 ```sh
-intelligence validate --repo /path/to/slopsentral --portable
-intelligence marketplace materialize --repo /path/to/slopsentral
-intelligence validate --repo /path/to/slopsentral --portable --hydrated /path/to/slopsentral/build/intelligence/marketplace
+intelligence marketplace materialize \
+  --source /path/to/marketplace-source \
+  --snapshot SNAPSHOT_ID \
+  --out /tmp/marketplace-release
+
+intelligence marketplace inspect \
+  --local-snapshot /tmp/marketplace-release \
+  --index-sha256 SHA256
 ```
 
-`--portable` keeps the check structural and host-independent. Without
-`--portable`, hydrated validation also runs provider-native install smoke checks
-through the installed Codex CLI and GitHub Copilot CLI using temporary homes.
-
-## Publish Proof Path
-
-For publish flows, let the CLI validate source, materialize provider output into
-a temporary proof root, verify hydration, and publish only after those checks
-pass.
-
-```sh
-intelligence marketplace publish --repo /path/to/slopsentral --check
-```
-
-If a provider check fails, repair projection logic or schema boundaries, then
-regenerate outputs instead of patching generated payloads by hand.
+Regenerate source-owned output after a failure; do not patch release assets or
+consumer locks by hand.

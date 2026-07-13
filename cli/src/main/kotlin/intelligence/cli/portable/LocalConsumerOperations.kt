@@ -42,10 +42,11 @@ internal object LocalConsumerOperations {
     fun planSelect(
         repository: Path,
         marketplaceId: MarketplaceId,
-        source: MarketplaceIntentSource.LocalSnapshot,
+        source: MarketplaceIntentSource,
         request: PackageSelectionRequest,
         cache: DigestAddressedCache,
         cacheWritePolicy: DigestCacheWritePolicy,
+        githubTransport: GitHubReadTransport? = null,
     ): ConsumerOperationPlanning {
         val context =
             when (val loaded = loadSelectionContext(repository, allowUninitialized = true)) {
@@ -62,13 +63,37 @@ internal object LocalConsumerOperations {
             when (request) {
                 is PackageSelectionRequest.Explicit -> request.packages
                 PackageSelectionRequest.All -> {
-                    when (val inspected = LocalSnapshotResolver.inspect(repository, marketplaceId, source)) {
-                        is LocalSnapshotInspection.Inspected ->
-                            inspected.index.packages.map(SnapshotPackageRecord::name)
-                        is LocalSnapshotInspection.Rejected -> {
-                            return ConsumerOperationPlanning.Rejected(
-                                ConsumerOperationRejection.ResolutionRejected(inspected.reason),
-                            )
+                    when (source) {
+                        is MarketplaceIntentSource.LocalSnapshot ->
+                            when (val inspected = LocalSnapshotResolver.inspect(repository, marketplaceId, source)) {
+                                is LocalSnapshotInspection.Inspected ->
+                                    inspected.index.packages.map(SnapshotPackageRecord::name)
+                                is LocalSnapshotInspection.Rejected -> {
+                                    return ConsumerOperationPlanning.Rejected(
+                                        ConsumerOperationRejection.ResolutionRejected(inspected.reason),
+                                    )
+                                }
+                            }
+                        is MarketplaceIntentSource.GitHubRelease -> {
+                            val transport = githubTransport
+                                ?: return ConsumerOperationPlanning.Rejected(
+                                    ConsumerOperationRejection.GitHubResolutionRequired(marketplaceId),
+                                )
+                            val repositoryCoordinate = source.repository.toCoordinate()
+                                ?: return ConsumerOperationPlanning.Rejected(
+                                    ConsumerOperationRejection.GitHubResolutionRequired(marketplaceId),
+                                )
+                            when (val inspected = GitHubSnapshotResolver.inspect(repositoryCoordinate, source.tag, transport)) {
+                                is GitHubSnapshotInspection.Inspected ->
+                                    inspected.index.packages.map(SnapshotPackageRecord::name)
+                                is GitHubSnapshotInspection.Rejected -> {
+                                    return ConsumerOperationPlanning.Rejected(
+                                        ConsumerOperationRejection.ResolutionRejected(
+                                            MarketplaceResolutionRejection.GitHubRejected(inspected.reason),
+                                        ),
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -87,7 +112,7 @@ internal object LocalConsumerOperations {
                 }
             }
         val resolved =
-            when (val resolution = LocalSnapshotResolver.resolve(repository, selection, cache, cacheWritePolicy)) {
+            when (val resolution = resolveSelection(repository, selection, cache, cacheWritePolicy, githubTransport)) {
                 is MarketplaceResolution.Resolved -> resolution.marketplace
                 is MarketplaceResolution.Rejected -> {
                     return ConsumerOperationPlanning.Rejected(
@@ -199,9 +224,10 @@ internal object LocalConsumerOperations {
     fun planUpdate(
         repository: Path,
         marketplaceId: MarketplaceId,
-        source: MarketplaceIntentSource.LocalSnapshot,
+        source: MarketplaceIntentSource,
         cache: DigestAddressedCache,
         cacheWritePolicy: DigestCacheWritePolicy,
+        githubTransport: GitHubReadTransport? = null,
     ): ConsumerOperationPlanning {
         val context =
             when (val loaded = loadSelectionContext(repository, allowUninitialized = false)) {
@@ -222,7 +248,7 @@ internal object LocalConsumerOperations {
                 }
             }
         val resolved =
-            when (val resolution = LocalSnapshotResolver.resolve(repository, selection, cache, cacheWritePolicy)) {
+            when (val resolution = resolveSelection(repository, selection, cache, cacheWritePolicy, githubTransport)) {
                 is MarketplaceResolution.Resolved -> resolution.marketplace
                 is MarketplaceResolution.Rejected -> {
                     return ConsumerOperationPlanning.Rejected(
@@ -245,6 +271,7 @@ internal object LocalConsumerOperations {
         marketplaceId: MarketplaceId?,
         cache: DigestAddressedCache,
         cacheWritePolicy: DigestCacheWritePolicy,
+        githubTransport: GitHubReadTransport? = null,
     ): ConsumerOperationPlanning {
         val state =
             when (val read = ConsumerStateRepository.read(repository)) {
@@ -297,16 +324,15 @@ internal object LocalConsumerOperations {
         intent.selections.forEach { selection ->
             val targeted = marketplaceId == null || selection.marketplaceId == marketplaceId
             if (targeted) {
-                val source =
-                    when (val candidate = selection.source) {
-                        is MarketplaceIntentSource.LocalSnapshot -> candidate
-                        is MarketplaceIntentSource.GitHubRelease -> {
-                            return ConsumerOperationPlanning.Rejected(
-                                ConsumerOperationRejection.GitHubResolutionRequired(selection.marketplaceId),
-                            )
-                        }
-                    }
-                when (val resolution = LocalSnapshotResolver.resolve(repository, selection, cache, cacheWritePolicy)) {
+                if (selection.source is MarketplaceIntentSource.GitHubRelease && githubTransport == null) {
+                    return ConsumerOperationPlanning.Rejected(
+                        ConsumerOperationRejection.GitHubResolutionRequired(selection.marketplaceId),
+                    )
+                }
+                when (
+                    val resolution =
+                        resolveSelection(repository, selection, cache, cacheWritePolicy, githubTransport)
+                ) {
                     is MarketplaceResolution.Resolved -> {
                         entries += resolution.marketplace.lockEntry
                         affectedPackages += selection.packages
@@ -343,6 +369,7 @@ internal object LocalConsumerOperations {
         cache: DigestAddressedCache,
         offline: Boolean,
         cacheWritePolicy: DigestCacheWritePolicy,
+        githubTransport: GitHubReadTransport? = null,
     ): ConsumerReconstruction {
         val state =
             when (val read = ConsumerStateRepository.read(repository)) {
@@ -413,11 +440,12 @@ internal object LocalConsumerOperations {
                     when (entry.source) {
                         is MarketplaceLockSource.LocalSnapshot ->
                             LocalSnapshotResolver.reconstruct(repository, entry, cache, cacheWritePolicy)
-                        is MarketplaceLockSource.GitHubRelease -> {
-                            return ConsumerReconstruction.Rejected(
+                        is MarketplaceLockSource.GitHubRelease ->
+                            githubTransport?.let { transport ->
+                                GitHubSnapshotResolver.reconstruct(entry, cache, transport, cacheWritePolicy)
+                            } ?: return ConsumerReconstruction.Rejected(
                                 ConsumerOperationRejection.GitHubResolutionRequired(entry.marketplaceId),
                             )
-                        }
                     }
                 }
             when (result) {
@@ -459,6 +487,34 @@ internal object LocalConsumerOperations {
                         )
                 }
         }
+}
+
+private fun resolveSelection(
+    repository: Path,
+    selection: MarketplaceIntentSelection,
+    cache: DigestAddressedCache,
+    cacheWritePolicy: DigestCacheWritePolicy,
+    githubTransport: GitHubReadTransport?,
+): MarketplaceResolution =
+    when (selection.source) {
+        is MarketplaceIntentSource.LocalSnapshot ->
+            LocalSnapshotResolver.resolve(repository, selection, cache, cacheWritePolicy)
+        is MarketplaceIntentSource.GitHubRelease ->
+            githubTransport?.let { transport ->
+                GitHubSnapshotResolver.resolve(selection, cache, transport, cacheWritePolicy)
+            } ?: MarketplaceResolution.Rejected(
+                MarketplaceResolutionRejection.GitHubRejected(GitHubSnapshotRejection.TransportRejected(
+                    GitHubReadTransportRejection.Unavailable,
+                )),
+            )
+    }
+
+private fun GitHubRepositoryUrl.toCoordinate(): GitHubRepository? {
+    val candidate = render().removePrefix("https://github.com/")
+    return when (val parsed = GitHubRepository.parse(candidate)) {
+        is GitHubRepositoryParsing.Parsed -> parsed.repository
+        is GitHubRepositoryParsing.Rejected -> null
+    }
 }
 
 internal sealed interface ConsumerMutationPlan {

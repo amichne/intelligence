@@ -116,6 +116,22 @@ Materialization always produces the complete provider-neutral snapshot and both
 required provider projections. Publication accepts only that already-complete
 release directory.
 
+The source directory is deliberately small and closed:
+
+```text
+marketplace-source/
+├── default-package
+└── packages/
+    └── package-name/
+        ├── package.json
+        └── skills/...
+```
+
+`default-package` contains one package name and a final LF. `package.json` is
+the canonical portable package manifest; it declares every included skill and
+supporting asset with exact size, digest, and executable evidence. Nothing else
+is accepted in the source tree.
+
 ```sh
 intelligence marketplace materialize \
   --source /path/to/marketplace-source \
@@ -132,6 +148,13 @@ intelligence marketplace verify-publication \
   --github amichne/slopsentral \
   --snapshot initial-kotlin-marketplace
 ```
+
+Release builds package the optional source-less `setup` default through the
+Gradle properties `intelligenceDefaultMarketplaceGitHub`,
+`intelligenceDefaultMarketplaceSnapshot`, and
+`intelligenceDefaultMarketplaceIndexSha256`. All three must name one exact
+published snapshot. A development build without those values fails source-less
+setup explicitly and still accepts either exact source form.
 
 ## Author Guidance and Help
 

@@ -9,6 +9,28 @@ import intelligence.cli.io.objectValue
 import intelligence.cli.io.stringList
 import intelligence.cli.io.stringValue
 import intelligence.cli.marketplace.PrimitiveKind
+import intelligence.cli.portable.ConsumerState
+import intelligence.cli.portable.ConsumerStateReading
+import intelligence.cli.portable.ConsumerStateRepository
+import intelligence.cli.portable.AuthoredMarketplace
+import intelligence.cli.portable.AuthoredMarketplaceInspection
+import intelligence.cli.portable.MARKETPLACE_INTENT_TYPE
+import intelligence.cli.portable.MARKETPLACE_LOCK_TYPE
+import intelligence.cli.portable.MARKETPLACE_SNAPSHOT_TYPE
+import intelligence.cli.portable.MARKETPLACE_TRANSACTION_TYPE
+import intelligence.cli.portable.PACKAGE_MANIFEST_TYPE
+import intelligence.cli.portable.MarketplaceIntent
+import intelligence.cli.portable.MarketplaceIntentParsing
+import intelligence.cli.portable.MarketplaceLock
+import intelligence.cli.portable.MarketplaceLockParsing
+import intelligence.cli.portable.MarketplaceReleaseDirectory
+import intelligence.cli.portable.MarketplaceReleaseDirectoryInspection
+import intelligence.cli.portable.MarketplaceSnapshotIndex
+import intelligence.cli.portable.MarketplaceSnapshotIndexParsing
+import intelligence.cli.portable.MarketplaceTransactionJournal
+import intelligence.cli.portable.MarketplaceTransactionJournalParsing
+import intelligence.cli.portable.PackageManifest
+import intelligence.cli.portable.PackageManifestParsing
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -34,11 +56,20 @@ internal class ValidationService(
 
         val issues = mutableListOf<String>()
         val notes = mutableListOf<String>()
-        validateRetiredRootPaths(repository, issues)
-        validateOptionalJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
-        validateOptionalJsonSyntax(repository.resolve(SCHEMAS_ROOT), issues)
-        validateOptionalJsonSyntax(repository.resolve(INTELLIGENCE_ROOT), issues)
-        validateMarketplaceSource(repository, issues)
+        when {
+            repository.resolve(AUTHORED_DEFAULT_PACKAGE).exists() ||
+                repository.resolve(AUTHORED_PACKAGES).exists() -> validateAuthoredMarketplace(repository, issues)
+            repository.resolve(RELEASE_INDEX).exists() -> validateReleaseDirectory(repository, issues)
+            else -> {
+                validateRetiredRootPaths(repository, issues)
+                validateOptionalJsonSyntax(repository.resolve(SOURCE_ROOT), issues)
+                validateOptionalJsonSyntax(repository.resolve(SCHEMAS_ROOT), issues)
+                validateOptionalJsonSyntax(repository.resolve(INTELLIGENCE_ROOT), issues)
+                validateMarketplaceSource(repository, issues)
+                validatePortableConsumerStateIfPresent(repository, issues)
+            }
+        }
+        validateStructuredDataCoverage(repository, issues)
 
         val hydratedProviders = options.hydrated
             ?.let { hydrated -> validateHydratedOutput(hydrated.toAbsolutePath().normalize(), issues) }
@@ -59,6 +90,28 @@ internal class ValidationService(
         } else {
             issues.forEach { issue -> output("FAIL $issue") }
             1
+        }
+    }
+
+    private fun validateAuthoredMarketplace(
+        repository: Path,
+        issues: MutableList<String>,
+    ) {
+        when (val inspected = AuthoredMarketplace.inspect(repository)) {
+            is AuthoredMarketplaceInspection.Inspected -> Unit
+            is AuthoredMarketplaceInspection.Rejected ->
+                issues += "authored marketplace source rejected (${inspected.reason::class.simpleName})"
+        }
+    }
+
+    private fun validateReleaseDirectory(
+        repository: Path,
+        issues: MutableList<String>,
+    ) {
+        when (val inspected = MarketplaceReleaseDirectory.inspect(repository)) {
+            is MarketplaceReleaseDirectoryInspection.Inspected -> Unit
+            is MarketplaceReleaseDirectoryInspection.Rejected ->
+                issues += "canonical release directory rejected (${inspected.reason::class.simpleName})"
         }
     }
 
@@ -92,6 +145,76 @@ internal class ValidationService(
         }
     }
 
+    private fun validateStructuredDataCoverage(
+        repository: Path,
+        issues: MutableList<String>,
+    ) {
+        walkRegularFiles(repository)
+            .filter { path -> path.name.endsWith(".json") }
+            .forEach { path ->
+                val relative = path.relativeToUnix(repository)
+                if (relative.startsWith(".github/plugin/")) return@forEach
+                val bytes =
+                    runCatching { Files.readAllBytes(path) }.getOrNull()
+                        ?: run {
+                            issues += "$relative: JSON file could not be read"
+                            return@forEach
+                        }
+                val payload =
+                    runCatching {
+                        JsonFiles.json.parseToJsonElement(
+                            bytes.decodeToString(throwOnInvalidSequence = true),
+                        ) as? JsonObject
+                    }
+                        .getOrNull()
+                        ?: run {
+                            issues += "$relative: JSON file must contain one object"
+                            return@forEach
+                        }
+                if (relative.startsWith("schemas/") && relative.endsWith(".schema.json")) {
+                    if (payload.stringValue("\$schema") == null || payload.stringValue("\$id") == null) {
+                        issues += "$relative: JSON Schema must declare \$schema and \$id"
+                    }
+                    return@forEach
+                }
+                if (relative in EXPLICIT_JSON_BOUNDARIES ||
+                    relative.startsWith("schemas/marketplace/fixtures/")
+                ) {
+                    return@forEach
+                }
+                when (val type = payload.stringValue("type")) {
+                    PACKAGE_MANIFEST_TYPE ->
+                        if (PackageManifest.parse(bytes) !is PackageManifestParsing.Parsed) {
+                            issues += "$relative: portable package manifest was rejected"
+                        }
+                    MARKETPLACE_SNAPSHOT_TYPE ->
+                        if (MarketplaceSnapshotIndex.parse(bytes) !is MarketplaceSnapshotIndexParsing.Parsed) {
+                            issues += "$relative: marketplace snapshot index was rejected"
+                        }
+                    MARKETPLACE_INTENT_TYPE ->
+                        if (MarketplaceIntent.parse(bytes) !is MarketplaceIntentParsing.Parsed) {
+                            issues += "$relative: marketplace intent was rejected"
+                        }
+                    MARKETPLACE_LOCK_TYPE ->
+                        if (MarketplaceLock.parse(bytes) !is MarketplaceLockParsing.Parsed) {
+                            issues += "$relative: marketplace lock was rejected"
+                        }
+                    MARKETPLACE_TRANSACTION_TYPE ->
+                        if (MarketplaceTransactionJournal.parse(bytes) !is MarketplaceTransactionJournalParsing.Parsed) {
+                            issues += "$relative: marketplace transaction journal was rejected"
+                        }
+                    "INTELLIGENCE_MARKETPLACE_CATALOG" -> Unit
+                    in LEGACY_STRUCTURED_TYPES -> Unit
+                    else -> issues +=
+                        if (type == null) {
+                            "$relative: JSON file has no typed or schema-owned boundary"
+                        } else {
+                            "$relative: unsupported structured-data type `$type`"
+                        }
+                }
+            }
+    }
+
     private fun validateMarketplaceSource(repo: Path, issues: MutableList<String>) {
         val marketplacePath = existingMarketplacePath(repo)
             ?: run {
@@ -100,6 +223,12 @@ internal class ValidationService(
             }
         val sourceRoot = marketplaceContentRoot(repo, marketplacePath)
         val marketplace = readObject(marketplacePath, repo, issues) ?: return
+
+        if (marketplacePath == repo.resolve(INSTALLED_MARKETPLACE_PATH) &&
+            marketplace.stringValue("type") == MARKETPLACE_INTENT_TYPE
+        ) {
+            return
+        }
 
         requireValue(marketplace.stringValue("type") == "MARKETPLACE", marketplacePath, repo, "type must be MARKETPLACE", issues)
         requireValue(marketplace["schemaVersion"]?.primitiveContent() == "1", marketplacePath, repo, "schemaVersion must be 1", issues)
@@ -187,6 +316,48 @@ internal class ValidationService(
                     .filter { it !in referencedPlugins }
                     .forEach { name -> issues += "source/plugins/$name is not listed in source/adaptable.marketplace.json" }
             }
+        }
+    }
+
+    private fun validatePortableConsumerStateIfPresent(
+        repo: Path,
+        issues: MutableList<String>,
+    ) {
+        val intentPath = repo.resolve(INSTALLED_MARKETPLACE_PATH)
+        if (!intentPath.isRegularFile()) return
+        val intent = runCatching { JsonFiles.readObject(intentPath) }.getOrNull() ?: return
+        if (intent.stringValue("type") == MARKETPLACE_INTENT_TYPE) {
+            validatePortableConsumerState(repo, issues)
+        }
+    }
+
+    private fun validatePortableConsumerState(
+        repo: Path,
+        issues: MutableList<String>,
+    ) {
+        when (val reading = ConsumerStateRepository.read(repo)) {
+            is ConsumerStateReading.Rejected ->
+                issues +=
+                    "$INSTALLED_MARKETPLACE_PATH: typed consumer state was rejected " +
+                    "(${reading.reason::class.simpleName})"
+            is ConsumerStateReading.Read ->
+                when (val state = reading.state) {
+                    is ConsumerState.Resolved -> Unit
+                    is ConsumerState.Unresolved ->
+                        issues += "$MARKETPLACE_LOCK_PATH: exact lock evidence is missing"
+                    is ConsumerState.Stale ->
+                        issues += "$MARKETPLACE_LOCK_PATH: lock evidence does not agree with consumer intent"
+                    is ConsumerState.Orphaned ->
+                        issues += "$INSTALLED_MARKETPLACE_PATH: consumer intent is missing"
+                    is ConsumerState.Recovering ->
+                        issues += "$INTELLIGENCE_ROOT: interrupted transaction requires marketplace recover"
+                    is ConsumerState.Invalid ->
+                        issues +=
+                            "$INTELLIGENCE_ROOT: typed consumer state is invalid " +
+                            "(${state.reason::class.simpleName})"
+                    ConsumerState.Uninitialized ->
+                        issues += "$INTELLIGENCE_ROOT: consumer state is uninitialized"
+                }
         }
     }
 
@@ -842,6 +1013,9 @@ internal class ValidationService(
         val INTELLIGENCE_ROOT: Path = Path.of(".intelligence")
         val INSTALLED_MARKETPLACE_PATH: Path = INTELLIGENCE_ROOT.resolve("adaptable.marketplace.json")
         val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
+        val AUTHORED_DEFAULT_PACKAGE: Path = Path.of("default-package")
+        val AUTHORED_PACKAGES: Path = Path.of("packages")
+        val RELEASE_INDEX: Path = Path.of("marketplace.json")
         val CODEX_PROVIDER_ROOT: Path = Path.of(".agents").resolve("plugins")
         val GITHUB_PROVIDER_ROOT: Path = Path.of(".github").resolve("plugin")
         val CODEX_PLUGIN_INTERFACE_URL_FIELDS: Set<String> = setOf(
@@ -859,9 +1033,30 @@ internal class ValidationService(
             ".idea",
             ".kotlin",
             ".local",
+            ".agent-turn",
+            ".agents",
+            ".kast",
             ".cache",
             "build",
             "site",
+            "target",
+        )
+        val EXPLICIT_JSON_BOUNDARIES: Set<String> = setOf(
+            ".intelligence/marketplace-lock.json",
+            ".skill-lock.json",
+            "packaging/homebrew/release-state.json",
+            "skills-lock.json",
+            "source/adaptable.marketplace.json",
+        )
+        val LEGACY_STRUCTURED_TYPES: Set<String> = setOf(
+            "AGENT",
+            "HOOK",
+            "INSTRUCTION",
+            "LOCKFILE",
+            "MARKETPLACE",
+            "PLUGIN",
+            "SKILL",
+            "WORKFLOW_PROFILE",
         )
     }
 }

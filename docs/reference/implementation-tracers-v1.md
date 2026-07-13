@@ -30,7 +30,7 @@ starts only when its listed blockers are complete.
 | `T10` | Digest-addressed cache and exact local/offline resolver | `T06`, `T09` | Cache hit, miss, corruption, reconstruction, and no-source-checkout tests. **Complete:** `ab8c617`. |
 | `T11` | Atomic local-source consumer commands and explicit provider projection | `T07`, `T10` | Local `select`, `remove`, `update`, `resolve`, `recover`, `reconstruct`, and `project` prove dry-run/write parity, idempotence, rollback, and JSON/exit behavior. **Complete:** projection transaction `0f3baa5`; public command boundary `cf62a93`. |
 | `T12` | Read-only GitHub discovery and exact immutable-release resolver | `T06`, `T09` | Recorded protocol fixtures prove no discovery mutation, exact identity, checksums, auth, and immutable-state failures. **Complete:** `8f9077e`. |
-| `T13` | Immutable GitHub publisher and remote verifier | `T08`, `T12` | Preflight-before-write, ordered draft protocol, conflict, cleanup, uncertain-state, and live disposable-repository proof. |
+| `T13` | Immutable GitHub publisher and remote verifier | `T08`, `T12` | Preflight-before-write, ordered draft protocol, conflict, cleanup, and uncertain-state proof. **Complete:** `ee1a250`. Live disposable-repository proof remains a release gate. |
 | `T14` | Complete public CLI and remote consumer integration | `T08`, `T11`, `T12`, `T13` | Doctor, default setup, discovery, inspect, validation, author guidance, every exact GitHub consumer path, help snapshots, JSON schema, secret redaction, and exit mapping. |
 | `T15` | Installed-distribution black-box acceptance suite | `T14` | All [V1 acceptance scenarios](acceptance-scenarios-v1.md) pass from the Gradle archive. |
 

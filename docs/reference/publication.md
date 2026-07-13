@@ -12,8 +12,7 @@ Run the same local gates the pull request and release workflow depend on.
 ./gradlew check
 .local/intelligence/bin/intelligence --version
 .local/intelligence/bin/intelligence doctor --format json
-.local/intelligence/bin/intelligence marketplace inspect "${PWD}" --provider source --format json
-.local/intelligence/bin/intelligence marketplace search kotlin --repository "${PWD}" --provider source --format json
+.local/intelligence/bin/intelligence marketplace author --format json
 .local/intelligence/bin/intelligence validate --portable
 packaging/homebrew/scripts/test-formula.py
 .github/scripts/test-release-asset-verifier.sh
@@ -92,7 +91,7 @@ tar -xzf "${verify_root}/intelligence-${release_tag}.tar.gz" -C "${verify_root}"
 
 "${verify_root}/intelligence/bin/intelligence" --version
 "${verify_root}/intelligence/bin/intelligence" doctor --format json
-"${verify_root}/intelligence/bin/intelligence" validate --repo "${PWD}" --portable
+"${verify_root}/intelligence/bin/intelligence" validate --repository "${PWD}" --portable
 ```
 
 ## Verify Homebrew
@@ -108,7 +107,7 @@ brew reinstall amichne/intelligence/intelligence
 brew test amichne/intelligence/intelligence
 intelligence --version
 intelligence doctor
-intelligence validate --repo "${PWD}" --portable
+intelligence validate --repository "${PWD}" --portable
 ```
 
 The checked-in template formula stays disabled until the release workflow

@@ -43,6 +43,33 @@ class PortableMarketplaceConsumerCommandTest {
     lateinit var temporaryDirectory: Path
 
     @Test
+    fun `setup defaults to one snapshot package and is dry run safe and idempotent`() {
+        val fixture = fixture()
+        val arguments =
+            "setup --repository ${fixture.repository} ${sourceArguments(fixture.firstSource)} --format json"
+
+        val dryRun = command(fixture).test("$arguments --dry-run")
+        assertEquals(0, dryRun.statusCode)
+        assertFalse(Files.exists(fixture.repository.resolve(".intelligence")))
+        assertFalse(Files.exists(fixture.cache))
+
+        val first = command(fixture).test(arguments)
+        assertEquals(0, first.statusCode)
+        assertEnvelope(first.stdout, "setup", expectedOk = true)
+        val beforeIntent = Files.readAllBytes(fixture.repository.resolve(ConsumerPersistedFile.INTENT.targetPath))
+        val beforeLock = Files.readAllBytes(fixture.repository.resolve(ConsumerPersistedFile.LOCK.targetPath))
+        assertEquals(
+            listOf("alpha-tools"),
+            resolvedState(fixture.repository).intent.selections.single().packages.map(PackageName::render),
+        )
+
+        val second = command(fixture).test(arguments)
+        assertEquals(0, second.statusCode)
+        assertTrue(beforeIntent.contentEquals(Files.readAllBytes(fixture.repository.resolve(ConsumerPersistedFile.INTENT.targetPath))))
+        assertTrue(beforeLock.contentEquals(Files.readAllBytes(fixture.repository.resolve(ConsumerPersistedFile.LOCK.targetPath))))
+    }
+
+    @Test
     fun `local commands preserve dry run parity and package only state`() {
         val fixture = fixture()
         val dryRun = command(fixture).test(
