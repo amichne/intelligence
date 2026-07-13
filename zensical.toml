@@ -39,6 +39,7 @@ nav = [
     { "GitHub release mechanics research" = "reference/github-release-mechanics-research.md" },
     { "Portable package marketplace V1" = "reference/portable-package-marketplace-v1.md" },
     { "Consumer selection and reproducibility V1" = "reference/consumer-selection-reproducibility-v1.md" },
+    { "Validation trust boundary V1" = "reference/validation-trust-boundary-v1.md" },
     { "Documentation site" = "reference/documentation-site.md" },
     { "Glossary" = "reference/glossary.md" },
   ]},
