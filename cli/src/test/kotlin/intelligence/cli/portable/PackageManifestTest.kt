@@ -52,14 +52,21 @@ class PackageManifestTest {
                 "\"name\":\"review-tools\"",
                 "\"name\":\"review-tools\",\"name\":\"review-tools\"",
             )
-        assertEquals(PackageManifestRejection.NonCanonicalJson, assertRejected(duplicate))
+        assertEquals(PackageManifestRejection.MalformedJson, assertRejected(duplicate))
 
         val conflictingDuplicate =
             validManifest().replace(
                 "\"name\":\"review-tools\"",
                 "\"name\":\"review-tools\",\"name\":\"INVALID\"",
             )
-        assertEquals(PackageManifestRejection.NonCanonicalJson, assertRejected(conflictingDuplicate))
+        assertEquals(PackageManifestRejection.MalformedJson, assertRejected(conflictingDuplicate))
+
+        val escapedDuplicate =
+            validManifest().replace(
+                "\"name\":\"review-tools\"",
+                "\"name\":\"review-tools\",\"\\u006eame\":\"review-tools\"",
+            )
+        assertEquals(PackageManifestRejection.MalformedJson, assertRejected(escapedDuplicate))
     }
 
     @Test

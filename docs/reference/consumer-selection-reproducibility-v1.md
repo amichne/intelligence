@@ -79,7 +79,7 @@ An illustrative intent has this semantic shape:
   "schemaVersion": 1,
   "selections": [
     {
-      "marketplaceId": "f17245a4-2951-4d78-b463-5f59478db1b9",
+      "marketplaceId": "example-marketplace",
       "source": {
         "type": "GITHUB_RELEASE",
         "repository": "https://github.com/example/marketplace",
@@ -94,6 +94,13 @@ An illustrative intent has this semantic shape:
 Marketplace selections are sorted by marketplace ID and unique by marketplace
 ID. Package names are local to that marketplace. The CLI writes deterministic
 JSON and rejects duplicate object keys and unknown fields.
+
+The owning public schema is
+`schemas/core/marketplace-intent-v1.schema.json`. Persisted GitHub repository
+URLs use lowercase canonical `https://github.com/<owner>/<repository>` form
+without `.git`, query, fragment, or trailing slash variants. Local directories
+use normalized forward-slash repository-relative paths; absolute paths,
+backslashes, empty segments, and dot segments are invalid.
 
 ## Lock Contract
 
