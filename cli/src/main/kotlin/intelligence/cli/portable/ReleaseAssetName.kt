@@ -22,6 +22,8 @@ internal value class ReleaseAssetName private constructor(
         internal fun providerArchive(provider: PortableProvider): ReleaseAssetName =
             ReleaseAssetName("${provider.render()}-marketplace.zip")
 
+        internal fun snapshotIndex(): ReleaseAssetName = ReleaseAssetName("marketplace.json")
+
         internal fun checksumManifest(): ReleaseAssetName = ReleaseAssetName("SHA256SUMS")
     }
 }
