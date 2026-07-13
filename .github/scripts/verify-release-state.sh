@@ -118,55 +118,10 @@ if [[ "$stable_release" == "true" ]]; then
   rm -rf "$tap_dir"
   gh repo clone "$homebrew_repo" "$tap_dir" -- --depth 1 >/dev/null
   ruby -c "${tap_dir}/Formula/intelligence.rb" >/dev/null
-  python3 - "$tag" "${release_dir}/SHA256SUMS" "$tap_dir" <<'PY'
-import json
-import re
-import sys
-from pathlib import Path
-
-tag = sys.argv[1]
-checksum_path = Path(sys.argv[2])
-tap_dir = Path(sys.argv[3])
-version = tag.removeprefix("v")
-
-
-def fail(message: str) -> None:
-    raise SystemExit(message)
-
-
-state = json.loads((tap_dir / "release-state.json").read_text(encoding="utf-8"))
-if state.get("current_release") != tag:
-    fail(f"homebrew release-state.json current_release is {state.get('current_release')!r}, expected {tag!r}")
-
-formula = (tap_dir / "Formula" / "intelligence.rb").read_text(encoding="utf-8")
-if f'ARTIFACT_VERSION = "{version}"' not in formula:
-    fail("Formula/intelligence.rb does not name the release version")
-if "disable!" in formula:
-    fail("Formula/intelligence.rb is still disabled")
-
-checksums: dict[str, str] = {}
-for raw_line in checksum_path.read_text(encoding="utf-8").splitlines():
-    parts = raw_line.split()
-    if len(parts) == 2:
-        checksums[parts[1]] = parts[0]
-
-pattern = re.compile(
-    r'url "#\{cli_release_root\}/#\{release_tag\}/intelligence-#\{release_tag\}\.tar\.gz"\s+'
-    r'sha256 "(?P<sha>[0-9a-f]{64})"',
-    re.MULTILINE,
-)
-formula_entries = list(pattern.finditer(formula))
-if len(formula_entries) != 1:
-    fail(f"Formula/intelligence.rb has {len(formula_entries)} JVM release entries, expected 1")
-
-asset_name = f"intelligence-{tag}.tar.gz"
-expected_sha = checksums.get(asset_name)
-if expected_sha is None:
-    fail(f"SHA256SUMS is missing {asset_name}")
-actual_sha = formula_entries[0].group("sha")
-if actual_sha != expected_sha:
-    fail(f"Formula/intelligence.rb sha256 for {asset_name} is {actual_sha}, expected {expected_sha}")
-PY
+  python3 "${repo_root}/packaging/homebrew/scripts/verify-rendered-formula.py" \
+    --tag "$tag" \
+    --sha256s "${release_dir}/SHA256SUMS" \
+    --tap-root "$tap_dir"
 fi
 
 printf 'Verified published release state for %s\n' "$tag"
