@@ -187,7 +187,7 @@
           "minItems": 1,
           "examples": [
             [
-              ".local/intelligence/bin/intelligence validate"
+              "./gradlew check"
             ]
           ]
         }
@@ -224,7 +224,7 @@
       "validation": {
         "type": "WORKFLOW_VALIDATION",
         "commands": [
-          ".local/intelligence/bin/intelligence validate"
+          "./gradlew check"
         ]
       }
     }

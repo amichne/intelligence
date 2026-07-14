@@ -1,16 +1,16 @@
-# Package Content
+# Primitive Material
 
-Skills and their supporting files are authored in `amichne/slopsentral`, but
-V1 does not expose standalone primitive selection. Every declared skill in a
-selected package is included; scripts, instructions, and other supporting
-assets remain private package content.
+The projector handles the primitive kinds declared by the provider-neutral
+schema.
 
-```sh
-intelligence marketplace inspect \
-  --github amichne/slopsentral \
-  --snapshot SNAPSHOT_ID \
-  --format json
-```
+| Primitive | Projected material |
+|---|---|
+| Skill | `SKILL.md` and owned resources |
+| Agent | Agent Markdown plus harness metadata |
+| Instruction | Markdown guidance referenced by the plugin |
+| Hook | Hook metadata, target adapter JSON, and referenced commands |
+| Other typed material | Files owned by the primitive's schema and source path |
 
-Use this repository for CLI and schema changes. Use `slopsentral` for reusable
-package source authoring.
+Primitives may be exposed directly by a marketplace or composed into plugins.
+Projection preserves that source ownership while rewriting paths for the target
+harness.

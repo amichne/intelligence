@@ -1,21 +1,13 @@
 package intelligence.cli.command
 
 import intelligence.cli.BuildInfo
-import intelligence.cli.github.GitHubCli
-import intelligence.cli.io.ProcessRunner
-import java.nio.file.Path
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.Context
 import com.github.ajalt.clikt.core.context
 import com.github.ajalt.clikt.core.subcommands
 import com.github.ajalt.clikt.parameters.options.versionOption
 
-internal class IntelligenceCommand(
-    @Suppress("UNUSED_PARAMETER") processRunner: ProcessRunner = ProcessRunner.system(),
-    github: GitHubCli = GitHubCli(),
-    portableCacheRoot: Path? = null,
-    portableEnvironmentOverride: PortableCommandEnvironment? = null,
-) : CliktCommand(
+internal class IntelligenceCommand : CliktCommand(
     name = "intelligence",
 ) {
     override val invokeWithoutSubcommand: Boolean = true
@@ -25,17 +17,13 @@ internal class IntelligenceCommand(
             helpFormatter = { IntelligenceHelpFormatter(it) }
         }
         versionOption(BuildInfo.VERSION)
-        val portableEnvironment = portableEnvironmentOverride ?: PortableCommandEnvironment(portableCacheRoot)
         subcommands(
-            DoctorCommand(github, portableEnvironment),
-            SetupCommand(portableEnvironment),
-            ValidateCommand(),
-            MarketplaceCommand(portableEnvironment),
+            ProjectCommand(),
         )
     }
 
     override fun help(context: Context): String =
-        "Operate portable plugin marketplaces across harness projections."
+        "Project provider-neutral agent tooling into harness-native material."
 
     override fun run() {
         if (currentContext.invokedSubcommand != null) {

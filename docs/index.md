@@ -1,46 +1,39 @@
-# amichne-intelligence
+# Intelligence
 
-`amichne-intelligence` is a Kotlin/JVM CLI and schema layer for reproducible,
-package-level AI tooling marketplaces. It resolves only exact immutable
-snapshots, selects whole packages, records canonical intent and lock evidence,
-and projects the same verified packages to Codex or GitHub Copilot.
+Intelligence converts a provider-neutral agent-tooling marketplace into the
+native files expected by one target harness.
 
 ```mermaid
 flowchart LR
-  Source["Closed package source"] --> Release["Immutable snapshot"]
-  Release --> Intent["Consumer intent and lock"]
-  Intent --> Codex["Codex package plugins"]
-  Intent --> Copilot["GitHub Copilot package plugins"]
+  Source["Provider-neutral source"] --> Validate["Validate"]
+  Validate --> Project["Project"]
+  Project --> Codex["Codex payload"]
+  Project --> Copilot["GitHub Copilot payload"]
 ```
 
 ## Start Here
 
-Every source is explicit and exact. Discovery is read-only and untrusted until
-an exact snapshot is inspected.
+Project one source tree to one harness-specific output directory.
 
 ```sh
-intelligence doctor
-intelligence marketplace discover --github amichne/slopsentral
-intelligence marketplace inspect \
-  --github amichne/slopsentral \
-  --snapshot SNAPSHOT_ID
+intelligence project \
+  --source /path/to/slopsentral \
+  --harness codex \
+  --out /tmp/slopsentral-codex
 ```
 
-Use JSON for automation and portable validation for repository proof.
+Choose `github-copilot` instead of `codex` for the other supported target.
 
-```sh
-intelligence marketplace inspect \
-  --github amichne/slopsentral \
-  --snapshot SNAPSHOT_ID \
-  --format json
-intelligence validate --portable
-```
+!!! note
 
-## What You Can Do
+    Projection writes generated files only. Intelligence does not install,
+    register, publish, discover, or configure the generated material.
 
-| Job | Entry point | Result |
-|---|---|---|
-| Discover, inspect, and select exact packages | [Marketplace](getting-started/marketplace.md) | Reproducible intent and lock evidence without version or dependency inference. |
-| Understand the package boundary | [What is available](available/index.md) | Whole packages with private supporting assets. |
-| Validate changes | [Validation](how-it-works/validation.md) | Source, consumer-state, schema, and distribution checks. |
-| Publish the JVM CLI | [Publication](reference/publication.md) | Reproducible Kotlin distribution and release verification. |
+## Reader Paths
+
+| Job | Page |
+|---|---|
+| Run the projector | [Getting started](getting-started/index.md) |
+| Understand source-to-target conversion | [Projection](how-it-works/projection.md) |
+| Look up the exact CLI | [Command reference](reference/commands.md) |
+| Find repository ownership | [Repository map](reference/repository-map.md) |

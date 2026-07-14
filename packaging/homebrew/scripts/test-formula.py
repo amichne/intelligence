@@ -30,7 +30,7 @@ readme_content = readme.read_text(encoding="utf-8")
 state = json.loads(release_state.read_text(encoding="utf-8"))
 
 require('class Intelligence < Formula' in formula_content, "formula class must be Intelligence")
-require('desc "Operate portable AI tooling marketplaces"' in formula_content, "formula must describe the CLI marketplace operator")
+require('desc "Project provider-neutral agent tooling to target harnesses"' in formula_content, "formula must describe the projector")
 require(".tar.gz" in formula_content, "formula must install release tarball assets")
 require("disable!" in formula_content, "formula template must be disabled until a JVM release renders real assets")
 require('depends_on "openjdk@21"' in formula_content, "formula must declare its Java runtime")

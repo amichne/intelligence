@@ -1,15 +1,16 @@
 # What Is Available
 
-V1 discovers immutable snapshots and exposes whole packages. A candidate is
-untrusted until exact inspection verifies its release evidence.
+The provider-neutral source model can describe marketplaces, composed plugins,
+and independently referenced primitives.
 
-```sh
-intelligence marketplace discover --github amichne/slopsentral
-intelligence marketplace inspect \
-  --github amichne/slopsentral \
-  --snapshot SNAPSHOT_ID \
-  --format json
-```
+| Material | Source owner |
+|---|---|
+| Marketplace catalog | `source/adaptable.marketplace.json` |
+| Plugin composition | `source/plugins/<name>/plugin.json` |
+| Skills and agents | Their source directories and manifests |
+| Instructions and concepts | Referenced Markdown source |
+| Hooks | Typed metadata, harness adapter JSON, and support files |
+| Other material | Files explicitly owned by a typed primitive or plugin |
 
-The inspection result lists package identities and digests. It does not expose
-the package's supporting assets or offer per-skill selection.
+Intelligence projects this material. It does not provide a discovery or
+installation catalog.

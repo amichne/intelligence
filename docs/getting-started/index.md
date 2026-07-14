@@ -1,30 +1,38 @@
 # Getting Started
 
-Use `intelligence` as a non-interactive, exact-snapshot marketplace operator.
-No command discovers a moving version or selects a primitive below a package.
+The projector needs three explicit values: a provider-neutral source repository,
+a target harness, and an output directory.
 
-## Common Tasks
+## Project to Codex
 
-| Task | Command |
-|---|---|
-| Check runtime and GitHub readiness | `intelligence doctor --format json` |
-| Discover one repository | `intelligence marketplace discover --github OWNER/REPOSITORY` |
-| Inspect one immutable snapshot | `intelligence marketplace inspect --github OWNER/REPOSITORY --snapshot SNAPSHOT_ID` |
-| Set up from an exact local snapshot | `intelligence setup --local-snapshot snapshots/one --index-sha256 SHA256` |
-| Select one whole package | `intelligence marketplace select MARKETPLACE_ID SOURCE --package NAME` |
-| Reconstruct exact cached evidence | `intelligence marketplace reconstruct --offline` |
-| Validate this repository | `intelligence validate --portable` |
+```sh
+intelligence project \
+  --source /path/to/slopsentral \
+  --harness codex \
+  --out /tmp/slopsentral-codex
+```
 
-All leaf commands accept `--format human|json`. Mutations accept `--dry-run`;
-network-capable consumer operations accept `--offline` and then perform no
-network request.
+A successful command returns compact TOON and writes the Codex marketplace at
+`.agents/plugins/marketplace.json` beneath the output root.
 
-## First Verification
+## Project to GitHub Copilot
+
+```sh
+intelligence project \
+  --source /path/to/slopsentral \
+  --harness github-copilot \
+  --out /tmp/slopsentral-copilot
+```
+
+The GitHub Copilot marketplace is written at
+`.github/plugin/marketplace.json` beneath the output root.
+
+## Verify the Repository Build
 
 ```sh
 ./gradlew :cli:test installDevelopmentCli verifyKotlinOnlyDevelopmentCli
-.local/intelligence/bin/intelligence validate --portable
-zensical build --clean
+.local/intelligence/bin/intelligence --help
 ```
 
-Continue with the exact command forms on the [Marketplace](marketplace.md) page.
+Continue with [How projection works](../how-it-works/projection.md) for the
+source and target ownership model.

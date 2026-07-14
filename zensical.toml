@@ -1,7 +1,7 @@
 [project]
 site_name = "amichne-intelligence"
 site_description = """
-Portable marketplace CLI and schema contracts for reusable AI tooling.
+Provider-neutral agent-tooling projection for target harnesses.
 """
 site_author = "amichne"
 site_url = "https://github.com/amichne/intelligence"
@@ -18,7 +18,7 @@ nav = [
   { "Why it matters" = "why-it-matters.md" },
   { "Getting started" = [
     { "Overview" = "getting-started/index.md" },
-    { "Marketplace" = "getting-started/marketplace.md" },
+    { "Project agent tooling" = "getting-started/project.md" },
   ]},
   { "What is available" = [
     { "Overview" = "available/index.md" },
@@ -26,26 +26,15 @@ nav = [
     { "Primitives" = "available/primitives.md" },
   ]},
   { "How it works" = [
-    { "Marketplace projection" = "how-it-works/package-graph.md" },
+    { "Projection" = "how-it-works/projection.md" },
     { "Validation" = "how-it-works/validation.md" },
   ]},
   { "Reference" = [
     { "Repository map" = "reference/repository-map.md" },
     { "Commands" = "reference/commands.md" },
-    { "Product requirements V1" = "reference/product-requirements-v1.md" },
-    { "Minimal public CLI V1" = "reference/cli-contract-v1.md" },
-    { "Black-box acceptance V1" = "reference/acceptance-scenarios-v1.md" },
-    { "Implementation tracers V1" = "reference/implementation-tracers-v1.md" },
     { "Publication" = "reference/publication.md" },
     { "Codex projection research" = "reference/codex-projection-research.md" },
-    { "Codex projection V1" = "reference/codex-projection-v1.md" },
     { "GitHub Copilot projection research" = "reference/github-copilot-projection-research.md" },
-    { "GitHub Copilot projection V1" = "reference/github-copilot-projection-v1.md" },
-    { "GitHub release mechanics research" = "reference/github-release-mechanics-research.md" },
-    { "Immutable snapshot publication V1" = "reference/immutable-snapshot-publication-v1.md" },
-    { "Portable package marketplace V1" = "reference/portable-package-marketplace-v1.md" },
-    { "Consumer selection and reproducibility V1" = "reference/consumer-selection-reproducibility-v1.md" },
-    { "Validation trust boundary V1" = "reference/validation-trust-boundary-v1.md" },
     { "Documentation site" = "reference/documentation-site.md" },
     { "Glossary" = "reference/glossary.md" },
   ]},
