@@ -67,7 +67,49 @@ jobs:
           .local/intelligence/bin/intelligence project --help
           packaging/homebrew/scripts/test-formula.py
           .github/scripts/test-release-asset-verifier.sh
+          .github/scripts/test-source-projection-action.sh
           .github/scripts/test-release-workflow-contract.sh
+
+  source-projection-action:
+    name: Source projection action (${{ matrix.os }}, ${{ matrix.harness }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            harness: codex
+            manifest: .agents/plugins/marketplace.json
+          - os: macos-latest
+            harness: github-copilot
+            manifest: .github/plugin/marketplace.json
+          - os: windows-latest
+            harness: codex
+            manifest: .agents/plugins/marketplace.json
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Project source
+        id: projection
+        uses: ./
+        with:
+          source: .
+          harness: ${{ matrix.harness }}
+          version: v0.2.7
+
+      - name: Verify action outputs
+        shell: bash
+        env:
+          FILES: ${{ steps.projection.outputs.files }}
+          MANIFEST: ${{ matrix.manifest }}
+          PROJECTION_PATH: ${{ steps.projection.outputs.projection-path }}
+          VERSION: ${{ steps.projection.outputs.version }}
+        run: |
+          set -euo pipefail
+          [[ "$FILES" =~ ^[1-9][0-9]*$ ]]
+          [[ "$VERSION" == "v0.2.7" ]]
+          [[ -f "${PROJECTION_PATH}/${MANIFEST}" ]]
 
   jvm-distribution:
     name: Build JVM CLI distribution

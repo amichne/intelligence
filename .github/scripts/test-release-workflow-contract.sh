@@ -45,6 +45,8 @@ distribution_workflow="${repo_root}/.github/workflows/distribute-intelligence.ym
 release_workflow="${repo_root}/.github/workflows/release.yml"
 release_asset_verifier="${repo_root}/.github/scripts/verify-release-assets.sh"
 release_state_verifier="${repo_root}/.github/scripts/verify-release-state.sh"
+source_projection_action="${repo_root}/action.yml"
+source_projection_action_test="${repo_root}/.github/scripts/test-source-projection-action.sh"
 homebrew_test="${repo_root}/packaging/homebrew/scripts/test-formula.py"
 
 for path in \
@@ -52,6 +54,8 @@ for path in \
   "$release_workflow" \
   "$release_asset_verifier" \
   "$release_state_verifier" \
+  "$source_projection_action" \
+  "$source_projection_action_test" \
   "$homebrew_test"
 do
   [[ -f "$path" ]] || die "Required release file is missing: $path"
@@ -60,6 +64,12 @@ done
 require_contains "$distribution_workflow" "Validate CLI source" "Distribution workflow must keep the PR/main validation gate"
 require_contains "$distribution_workflow" ".github/scripts/test-release-asset-verifier.sh" "Distribution workflow must test the release asset verifier"
 require_contains "$distribution_workflow" ".github/scripts/test-release-workflow-contract.sh" "Distribution workflow must test the release workflow contract"
+require_contains "$distribution_workflow" ".github/scripts/test-source-projection-action.sh" "Distribution workflow must test the source projection action contract"
+require_contains "$distribution_workflow" "source-projection-action:" "Distribution workflow must exercise the local composite action"
+require_contains "$distribution_workflow" "uses: ./" "Distribution workflow must invoke the checked-out action"
+require_contains "$distribution_workflow" "ubuntu-latest" "Action contract must run on Linux"
+require_contains "$distribution_workflow" "macos-latest" "Action contract must run on macOS"
+require_contains "$distribution_workflow" "windows-latest" "Action contract must run on Windows"
 require_contains "$distribution_workflow" ":cli:distTar" "Distribution workflow must build the JVM distribution with Gradle"
 require_contains "$distribution_workflow" "intelligence-\${version}.tar.gz" "Distribution workflow must create one platform-neutral JVM archive"
 require_contains "$distribution_workflow" "project --source" "Distribution workflow must smoke the stable projector surface"
@@ -82,6 +92,7 @@ require_contains "$release_workflow" "Release workflow_dispatch must run from ma
 require_contains "$release_workflow" "Ensure draft release exists" "Release workflow must stage assets into a draft release"
 require_contains "$release_workflow" "Generate and verify SHA256SUMS" "Release workflow must verify checksums before publication"
 require_contains "$release_workflow" ".github/scripts/verify-release-assets.sh" "Release workflow must reuse the asset verifier"
+require_contains "$release_workflow" ".github/scripts/test-source-projection-action.sh" "Release workflow must test the source projection action contract"
 require_contains "$release_workflow" ":cli:distTar" "Release workflow must build the JVM distribution with Gradle"
 require_contains "$release_workflow" "intelligence-\${version}.tar.gz" "Release workflow must create one platform-neutral JVM archive"
 require_contains "$release_workflow" "project --source" "Release workflow must smoke the stable projector surface"

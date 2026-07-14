@@ -14,6 +14,7 @@ Run the same local gates the pull request and release workflow depend on.
 .local/intelligence/bin/intelligence project --help
 packaging/homebrew/scripts/test-formula.py
 .github/scripts/test-release-asset-verifier.sh
+.github/scripts/test-source-projection-action.sh
 .github/scripts/test-release-workflow-contract.sh
 zensical build --clean
 git diff --check

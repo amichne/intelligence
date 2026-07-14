@@ -1,0 +1,59 @@
+name: Intelligence Source Projection
+description: Project one provider-neutral agent-tooling source tree into one harness-native payload.
+author: Amichne
+
+inputs:
+  source:
+    description: Provider-neutral marketplace repository to read, relative to the workspace or absolute.
+    required: false
+    default: .
+  harness:
+    description: Target harness. Must be exactly codex or github-copilot.
+    required: true
+  output:
+    description: Generated payload directory. Defaults to a fresh directory under RUNNER_TEMP.
+    required: false
+    default: ""
+  version:
+    description: Intelligence release tag in vX.Y.Z form, or latest for the newest stable release.
+    required: false
+    default: latest
+
+outputs:
+  projection-path:
+    description: Absolute path to the validated harness-native payload.
+    value: ${{ steps.project.outputs.projection-path }}
+  files:
+    description: Number of files in the validated projection.
+    value: ${{ steps.project.outputs.files }}
+  version:
+    description: Exact Intelligence release tag used for projection.
+    value: ${{ steps.project.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Set up Java
+      uses: actions/setup-java@v5
+      with:
+        distribution: temurin
+        java-version: "21"
+
+    - name: Set up Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.13"
+
+    - name: Project source
+      id: project
+      shell: bash
+      env:
+        INPUT_SOURCE: ${{ inputs.source }}
+        INPUT_HARNESS: ${{ inputs.harness }}
+        INPUT_OUTPUT: ${{ inputs.output }}
+        INPUT_VERSION: ${{ inputs.version }}
+      run: "${GITHUB_ACTION_PATH}/.github/actions/project/run.sh"
+
+branding:
+  icon: layers
+  color: blue

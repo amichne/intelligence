@@ -36,3 +36,37 @@ error:
 ```
 
 No failure path installs or registers generated material.
+
+## GitHub Action
+
+Use the repository action when projection should be a workflow step. The action
+sets up Java, downloads the selected stable release and `SHA256SUMS`, verifies
+the archive, and invokes the same `project` boundary.
+
+```yaml
+- name: Check out source
+  uses: actions/checkout@v5
+
+- name: Project source
+  id: projection
+  uses: amichne/intelligence@main
+  with:
+    source: .
+    harness: github-copilot
+    version: v0.2.7
+
+- name: Upload generated payload
+  uses: actions/upload-artifact@v4
+  with:
+    name: github-copilot-projection
+    path: ${{ steps.projection.outputs.projection-path }}
+```
+
+`source` defaults to the workflow workspace. When `output` is omitted, the
+action creates a fresh directory under `RUNNER_TEMP`. `version` accepts
+`latest` or an exact stable `vX.Y.Z` tag. The action exposes
+`projection-path`, `files`, and `version` as step outputs.
+
+Pin an immutable action ref and exact projector version for reproducible
+workflows. Uploading, committing, installing, or registering the projection is
+outside the action boundary.
