@@ -2,13 +2,16 @@
 
 | Path | Purpose |
 |---|---|
-| `source/adaptable.marketplace.json` | Minimal CLI validation catalog that imports `slopsentral/kotlin-engineering`. |
-| `.intelligence/adaptable.marketplace.json` | Install-only adaptable marketplace intent for consumer repositories. |
-| `.intelligence/marketplace-lock.json` | Source-controlled lock evidence for imported marketplace references. |
-| `cli/` | Kotlin Clikt command-line application. |
-| `schemas/` | Public provider-neutral and adapter schema contracts. |
-| `packaging/` | Homebrew formula and packaging checks for the CLI. |
-| `docs/` | Hand-authored Zensical documentation source. |
-| `zensical.toml` | Documentation navigation, theme, and Markdown feature contract. |
+| `source/adaptable.marketplace.json` | Provider-neutral marketplace fixture and import graph. |
+| `.intelligence/marketplace-lock.json` | Exact source-resolution evidence for imported marketplace material. |
+| `cli/src/main/kotlin/intelligence/cli/command/` | Root CLI and the sole `project` command. |
+| `cli/src/main/kotlin/intelligence/cli/marketplace/` | Source-to-harness projection kernel. |
+| `cli/src/main/kotlin/intelligence/cli/validation/` | Source and generated-output assertions used by projection. |
+| `schemas/core/` | Provider-neutral marketplace, plugin, and primitive contracts. |
+| `schemas/adapters/` and `schemas/marketplace/` | Harness-specific output contracts. |
+| `packaging/` | Distribution packaging for the projector binary. |
+| `docs/` | Hand-authored Zensical documentation. |
+| `zensical.toml` | Site navigation and rendering contract. |
 
-Reusable marketplace primitives live in `amichne/slopsentral`.
+Reusable personal marketplace material lives in
+`/Users/amichne/code/slopsentral/source/`.

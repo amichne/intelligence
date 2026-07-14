@@ -9,9 +9,9 @@ The site is organized around the reader's job instead of the repository tree.
 
 - `docs/index.md` introduces the CLI and points reusable marketplace content to
   `slopsentral`.
-- `docs/getting-started/` covers marketplace consumption and CLI validation.
+- `docs/getting-started/` covers the sole source-to-harness projection command.
 - `docs/available/` points to the canonical `slopsentral` marketplace.
-- `docs/how-it-works/` documents marketplace projection and validation contracts.
+- `docs/how-it-works/` documents projection and its internal validation contracts.
 - `docs/reference/` maps repository paths, commands, docs tooling, and
   terminology.
 

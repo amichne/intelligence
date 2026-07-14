@@ -16,7 +16,7 @@ class Intelligence < Formula
     "v#{ARTIFACT_VERSION}"
   end
 
-  desc "Operate portable AI tooling marketplaces"
+  desc "Project provider-neutral agent tooling to target harnesses"
   homepage "https://github.com/amichne/intelligence"
   url "#{cli_release_root}/#{release_tag}/intelligence-#{release_tag}.tar.gz"
   version ARTIFACT_VERSION
@@ -38,7 +38,7 @@ class Intelligence < Formula
   end
 
   test do
-    assert_match "portable plugin marketplaces", shell_output("#{bin}/intelligence --help")
+    assert_match "Project provider-neutral agent tooling", shell_output("#{bin}/intelligence --help")
     assert_match "intelligence version", shell_output("#{bin}/intelligence --version")
   end
 end

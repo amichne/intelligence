@@ -12,5 +12,5 @@ This file applies to `schemas/`.
   marketplace root contracts in `schemas/marketplace/`, and
   non-marketplace runtime projections under `schemas/adapters/<adapter>/`.
 - Add or update the schema before changing the persisted JSON shape it owns.
-- Run `.local/intelligence/bin/intelligence validate` after changing schemas or
-  JSON data.
+- Run projector tests after changing schemas or JSON data, then project a
+  representative source to each supported harness.

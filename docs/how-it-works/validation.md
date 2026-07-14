@@ -1,37 +1,28 @@
 # Validation
 
-Validation is the trust boundary for authored package source, canonical
-snapshots, consumer intent and lock state, provider projections, publication
-evidence, and the Kotlin distribution.
+Validation is an internal boundary of `intelligence project`, not a separate
+product workflow.
 
-## Repository Gate
+## Source Gate
+
+Before conversion, the projector checks the marketplace document, plugin
+references, primitive paths, external-source policy, exact imported versions,
+JSON syntax, and interface metadata. Invalid source produces no successful
+projection result.
+
+## Target Gate
+
+After conversion, the projector checks the generated Codex or GitHub Copilot
+marketplace entry point and every referenced plugin payload. This validation is
+filesystem- and schema-oriented; it never invokes a provider CLI or installs a
+plugin.
+
+## Development Gate
+
+Repository changes use the executable Kotlin proof:
 
 ```sh
 ./gradlew :cli:test installDevelopmentCli verifyKotlinOnlyDevelopmentCli
-.local/intelligence/bin/intelligence validate --portable
 zensical build --clean
 git diff --check
 ```
-
-`--portable` forbids host-local and network assumptions. Unknown structured
-data, malformed canonical JSON, undeclared source files, digest mismatches, and
-incomplete consumer state fail explicitly.
-
-## Author Proof
-
-Materialize into an absent proof root, inspect the exact result, and publish
-only that already-complete directory.
-
-```sh
-intelligence marketplace materialize \
-  --source /path/to/marketplace-source \
-  --snapshot SNAPSHOT_ID \
-  --out /tmp/marketplace-release
-
-intelligence marketplace inspect \
-  --local-snapshot /tmp/marketplace-release \
-  --index-sha256 SHA256
-```
-
-Regenerate source-owned output after a failure; do not patch release assets or
-consumer locks by hand.

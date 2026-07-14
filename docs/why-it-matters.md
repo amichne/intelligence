@@ -1,16 +1,17 @@
 # Why It Matters
 
-Reusable agent behavior is hard to trust when authoring, provider projection,
-and local runtime installation are mixed together.
+Provider-neutral authoring is useful only when conversion remains separate from
+runtime installation and configuration.
 
-`intelligence` keeps the boundary explicit:
+Intelligence keeps that boundary explicit:
 
-| Problem | Boundary |
+| Concern | Owner |
 |---|---|
-| Reusable skill ownership | Authored in `amichne/slopsentral`. |
-| Provider-specific payload drift | Generated through `intelligence marketplace materialize` and `publish`. |
-| Consumer repo installs | Recorded in `.intelligence/adaptable.marketplace.json` and `.intelligence/marketplace-lock.json`. |
-| Structured data drift | Checked by schemas and `intelligence validate`. |
+| Reusable marketplace source | `amichne/slopsentral/source/` |
+| Source and target contracts | `schemas/` |
+| Deterministic conversion | `intelligence project` |
+| Harness registration and installation | The target harness or its operator |
+| Marketplace publication | External release automation, outside the projector |
 
-The CLI is useful when the same marketplace behavior should survive across
-repositories, machines, runtimes, or release cycles.
+The small boundary makes generated output replaceable. A harness adapter can
+change without turning source authoring into provider-specific configuration.

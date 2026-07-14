@@ -9,7 +9,7 @@ Install directly from the tap:
 ```bash
 brew install amichne/intelligence/intelligence
 intelligence --version
-intelligence doctor
+intelligence project --help
 ```
 
 Homebrew will add the tap automatically. To add the tap first and then install

@@ -64,9 +64,7 @@ jobs:
         run: |
           ./gradlew check
           .local/intelligence/bin/intelligence --version
-          .local/intelligence/bin/intelligence doctor --format json
-          .local/intelligence/bin/intelligence marketplace author --repository "${PWD}" --format json
-          .local/intelligence/bin/intelligence validate --repository "${PWD}" --portable --format json
+          .local/intelligence/bin/intelligence project --help
           packaging/homebrew/scripts/test-formula.py
           .github/scripts/test-release-asset-verifier.sh
           .github/scripts/test-release-workflow-contract.sh
@@ -113,9 +111,8 @@ jobs:
 
           "${cli}" --help
           "${cli}" --version | grep -F "intelligence version ${version}"
-          "${cli}" doctor --format json
-          "${cli}" marketplace author --repository "${repo}" --format json
-          "${cli}" validate --repository "${repo}" --portable --format json
+          "${cli}" project --source "${repo}" --harness codex --out "${smoke_root}/codex"
+          "${cli}" project --source "${repo}" --harness github-copilot --out "${smoke_root}/github-copilot"
 
       - name: Upload CLI artifact
         uses: actions/upload-artifact@v4
