@@ -44,6 +44,38 @@ source: "/path/to/slopsentral"
 output: "/tmp/slopsentral-codex"
 ```
 
+## Project in GitHub Actions
+
+The repository also exposes a composite action that acquires a verified stable
+release and projects one checked-out source tree. Its default output is a fresh
+directory under `RUNNER_TEMP`.
+
+```yaml
+- name: Check out source
+  uses: actions/checkout@v5
+
+- name: Project for Codex
+  id: projection
+  uses: amichne/intelligence@main
+  with:
+    source: .
+    harness: codex
+    version: v0.2.7
+
+- name: Upload projection
+  uses: actions/upload-artifact@v4
+  with:
+    name: codex-projection
+    path: ${{ steps.projection.outputs.projection-path }}
+```
+
+Use `github-copilot` for the other harness. The action returns
+`projection-path`, `files`, and the resolved `version`. Pin an immutable action
+ref and an exact projector version in production workflows.
+
+The action only projects. Uploading, committing, installing, or registering the
+generated payload remains a separate, explicit workflow decision.
+
 ## Repository Shape
 
 - `source/adaptable.marketplace.json` is the provider-neutral marketplace
