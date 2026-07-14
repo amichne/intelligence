@@ -1,0 +1,27 @@
+{
+  "type": "MARKETPLACE",
+  "schemaVersion": 1,
+  "name": "action-fixture",
+  "owner": {
+    "name": "Intelligence"
+  },
+  "plugins": [
+    {
+      "type": "PLUGIN_ENTRY",
+      "name": "fixture-plugin",
+      "plugin": {
+        "type": "PLUGIN_REFERENCE",
+        "name": "fixture-plugin",
+        "source": {
+          "type": "LOCAL_SOURCE",
+          "path": "./plugins/fixture-plugin"
+        },
+        "version": "0.1.0"
+      },
+      "description": "Minimal source projection action fixture.",
+      "tags": [
+        "testing"
+      ]
+    }
+  ]
+}

@@ -63,7 +63,21 @@ internal object FileSystem {
         if (path.isDirectory() && !path.isSymbolicLink()) {
             path.listDirectoryEntries().forEach(::deleteRecursively)
         }
-        path.deleteIfExists()
+
+        var accessFailure: java.nio.file.AccessDeniedException? = null
+        repeat(3) { attempt ->
+            try {
+                path.toFile().setWritable(true)
+                path.deleteIfExists()
+                return
+            } catch (failure: java.nio.file.AccessDeniedException) {
+                accessFailure = failure
+                if (attempt < 2) {
+                    Thread.sleep(50L * (attempt + 1))
+                }
+            }
+        }
+        throw checkNotNull(accessFailure)
     }
 
     fun regularFilesUnder(path: Path): List<Path> {

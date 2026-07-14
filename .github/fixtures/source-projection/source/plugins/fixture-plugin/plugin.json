@@ -1,0 +1,7 @@
+{
+  "type": "PLUGIN",
+  "schemaVersion": 1,
+  "name": "fixture-plugin",
+  "version": "0.1.0",
+  "description": "Minimal source projection action fixture."
+}

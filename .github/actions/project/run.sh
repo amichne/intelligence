@@ -169,7 +169,7 @@ else
   download_cli "$resolved_version" "$runtime_root"
   cli="${runtime_root}/intelligence/bin/intelligence"
   [[ -f "$cli" ]] || die "release launcher is missing: ${cli}"
-  chmod +x -- "$cli"
+  chmod +x "$cli"
   [[ -x "$cli" ]] || die "release launcher is not executable: ${cli}"
 fi
 

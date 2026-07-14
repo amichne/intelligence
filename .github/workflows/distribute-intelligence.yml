@@ -80,12 +80,15 @@ jobs:
           - os: ubuntu-latest
             harness: codex
             manifest: .agents/plugins/marketplace.json
+            source: .
           - os: macos-latest
             harness: github-copilot
             manifest: .github/plugin/marketplace.json
+            source: .github/fixtures/source-projection
           - os: windows-latest
             harness: codex
             manifest: .agents/plugins/marketplace.json
+            source: .github/fixtures/source-projection
     steps:
       - name: Check out source
         uses: actions/checkout@v4
@@ -94,7 +97,7 @@ jobs:
         id: projection
         uses: ./
         with:
-          source: .
+          source: ${{ matrix.source }}
           harness: ${{ matrix.harness }}
           version: v0.2.7
 
@@ -110,6 +113,11 @@ jobs:
           [[ "$FILES" =~ ^[1-9][0-9]*$ ]]
           [[ "$VERSION" == "v0.2.7" ]]
           [[ -f "${PROJECTION_PATH}/${MANIFEST}" ]]
+
+      - name: Verify Windows read-only cleanup
+        if: runner.os == 'Windows'
+        shell: bash
+        run: ./gradlew :cli:test --tests intelligence.cli.io.FileSystemTest --no-daemon
 
   jvm-distribution:
     name: Build JVM CLI distribution
