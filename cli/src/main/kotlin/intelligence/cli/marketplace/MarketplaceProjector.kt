@@ -194,8 +194,14 @@ internal class MarketplaceProjector(
             pluginOut.createDirectories()
 
             val hydrated = hydratePlugin(pluginProjection.repoRoot, pluginOut, pluginProjection.manifest)
+            removeGitHubAgentModelOverrides(pluginOut, hydrated)
+            renderGitHubCopilotHooks(pluginOut, hydrated)
             renderAgentsMdAdapter(pluginOut, pluginProjection.name, pluginProjection.description, hydrated)
-            githubPlugins.add(githubCopilotPluginEntry(pluginProjection, hydrated))
+            JsonFiles.writeObject(
+                pluginOut.resolve("plugin.json"),
+                githubCopilotPluginManifest(pluginProjection, hydrated),
+            )
+            githubPlugins.add(githubCopilotPluginEntry(pluginProjection))
         }
 
         JsonFiles.writeObject(
@@ -330,7 +336,8 @@ internal class MarketplaceProjector(
             metadataTarget,
             rewritePrimitivePathsForHydratedPackage(repoRoot, pluginOut, metadata).jsonObject,
         )
-        FileSystem.copyPath(adapterSource, adapterTarget)
+        val adapter = JsonFiles.readObject(adapterSource)
+        JsonFiles.writeObject(adapterTarget, rewriteHookCommandsForPlugin(adapter).jsonObject)
 
         val relativeAdapter = adapterTarget.relativeToUnix(pluginOut)
         hydrated.addPath(PrimitiveKind.Hook, relativeAdapter)
@@ -344,7 +351,6 @@ internal class MarketplaceProjector(
             )
         )
 
-        val adapter = JsonFiles.readObject(adapterSource)
         hookCommandPaths(adapter).sorted().forEach { commandPath ->
             val commandSource = resolveSourcePath(repoRoot, commandPath)
             if (commandSource.exists()) {
@@ -513,7 +519,6 @@ internal class MarketplaceProjector(
         plugins: List<JsonObject>,
     ): JsonObject =
         buildJsonObject {
-            put("\$schema", "github-marketplace.schema.json")
             put("name", marketplace.requiredString("name"))
             put("owner", personFor(owner, ownerName))
             putJsonObject("metadata") {
@@ -582,9 +587,33 @@ internal class MarketplaceProjector(
             if (hydrated.skills.isNotEmpty()) {
                 put("skills", "./skills/")
             }
+            if (hydrated.hooks.isNotEmpty()) {
+                putStringArray("hooks", hydrated.hooks.sorted().map { path -> "./$path" })
+            }
         }
 
-    private fun githubCopilotPluginEntry(plugin: PluginProjection, hydrated: HydratedPlugin): JsonObject =
+    private fun githubCopilotPluginManifest(plugin: PluginProjection, hydrated: HydratedPlugin): JsonObject =
+        buildJsonObject {
+            put("name", plugin.name)
+            put("description", plugin.description)
+            put("version", plugin.version)
+            put("author", plugin.owner)
+            put("license", "UNLICENSED")
+            putStringArray("keywords", (listOf(plugin.name) + plugin.tags).toSortedSet())
+            put("category", plugin.category)
+            putStringArray("tags", plugin.tags)
+            if (hydrated.agents.isNotEmpty()) {
+                put("agents", "./agents")
+            }
+            if (hydrated.skills.isNotEmpty()) {
+                put("skills", "./skills")
+            }
+            if (hydrated.hooks.isNotEmpty()) {
+                put("hooks", "./hooks.json")
+            }
+        }
+
+    private fun githubCopilotPluginEntry(plugin: PluginProjection): JsonObject =
         buildJsonObject {
             put("name", plugin.name)
             put("source", plugin.name)
@@ -596,16 +625,72 @@ internal class MarketplaceProjector(
             put("category", plugin.category)
             putStringArray("tags", plugin.tags)
             put("strict", true)
-            if (hydrated.agents.isNotEmpty()) {
-                put("agents", "./agents")
+        }
+
+    private fun removeGitHubAgentModelOverrides(pluginOut: Path, hydrated: HydratedPlugin) {
+        hydrated.agents.forEach { relativePath ->
+            val agent = pluginOut.resolve(relativePath)
+            val lines = agent.readText(Charsets.UTF_8).lines()
+            if (lines.firstOrNull() != "---") {
+                return@forEach
             }
-            if (hydrated.skills.isNotEmpty()) {
-                put("skills", "./skills")
-            }
-            if (hydrated.hooks.isNotEmpty()) {
-                put("hooks", "./hooks")
+            val frontmatterEnd = lines.drop(1).indexOf("---").takeIf { it >= 0 }?.plus(1) ?: return@forEach
+            agent.writeText(
+                lines.filterIndexed { index, line ->
+                    index !in 1 until frontmatterEnd || !GITHUB_AGENT_MODEL_FIELD.matches(line)
+                }.joinToString("\n").trimEnd() + "\n",
+                Charsets.UTF_8,
+            )
+        }
+    }
+
+    private fun renderGitHubCopilotHooks(pluginOut: Path, hydrated: HydratedPlugin) {
+        if (hydrated.hooks.isEmpty()) {
+            return
+        }
+
+        val hooksByEvent = linkedMapOf<String, MutableList<JsonElement>>()
+        hydrated.hooks.sorted().forEach { relativePath ->
+            val adapter = JsonFiles.readObject(pluginOut.resolve(relativePath))
+            adapter.requiredObject("hooks").forEach { (event, groupsElement) ->
+                val groups = groupsElement as? JsonArray
+                    ?: throw MarketplaceFailure.InvalidSource("GitHub Copilot hook event `$event` must be an array")
+                groups.forEach { groupElement ->
+                    val group = groupElement as? JsonObject
+                        ?: throw MarketplaceFailure.InvalidSource("GitHub Copilot hook event `$event` contains a non-object group")
+                    val commands = group["hooks"] as? JsonArray
+                        ?: throw MarketplaceFailure.InvalidSource("GitHub Copilot hook event `$event` is missing a hooks array")
+                    commands.forEach { commandElement ->
+                        val command = commandElement as? JsonObject
+                            ?: throw MarketplaceFailure.InvalidSource("GitHub Copilot hook event `$event` contains a non-object hook")
+                        if (command.requiredString("type") != "command") {
+                            throw MarketplaceFailure.InvalidSource("GitHub Copilot projection only supports command hooks")
+                        }
+                        hooksByEvent.getOrPut(event) { mutableListOf() }.add(
+                            buildJsonObject {
+                                put("type", "command")
+                                put("bash", command.requiredString("command"))
+                                putIfNotNull("matcher", command.stringValue("matcher") ?: group.stringValue("matcher"))
+                                command["timeout"]?.let { timeout -> put("timeoutSec", timeout) }
+                            }
+                        )
+                    }
+                }
             }
         }
+
+        JsonFiles.writeObject(
+            pluginOut.resolve("hooks.json"),
+            buildJsonObject {
+                put("version", 1)
+                putJsonObject("hooks") {
+                    hooksByEvent.forEach { (event, hooks) ->
+                        put(event, JsonArray(hooks))
+                    }
+                }
+            },
+        )
+    }
 
     private fun lockEntry(plugin: PluginProjection, codexManifest: JsonObject, hydrated: HydratedPlugin): JsonObject =
         buildJsonObject {
@@ -649,6 +734,25 @@ internal class MarketplaceProjector(
             }
             is JsonArray -> payload.flatMapTo(linkedSetOf(), ::hookCommandPaths)
             else -> emptySet()
+        }
+
+    private fun rewriteHookCommandsForPlugin(payload: JsonElement): JsonElement =
+        when (payload) {
+            is JsonObject -> JsonObject(
+                payload.mapValues { (key, value) ->
+                    if (key == "command" && value is JsonPrimitive && value.isString) {
+                        JsonPrimitive(
+                            value.content.replace(HOOK_COMMAND_PATH_RE) { match ->
+                                "\"${'$'}PLUGIN_ROOT/${match.value}\""
+                            }
+                        )
+                    } else {
+                        rewriteHookCommandsForPlugin(value)
+                    }
+                }
+            )
+            is JsonArray -> JsonArray(payload.map(::rewriteHookCommandsForPlugin))
+            else -> payload
         }
 
     private fun marketplace(repoRoot: Path): JsonObject {
@@ -1183,6 +1287,7 @@ internal class MarketplaceProjector(
         val GITHUB_BRANCH_MARKETPLACE_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH.resolve("marketplace.json")
         val GITHUB_BRANCH_PLUGINS_PATH: Path = GITHUB_COPILOT_PROVIDER_PATH
         const val GITHUB_MARKETPLACE_PLUGIN_ROOT = ".github/plugin"
+        val GITHUB_AGENT_MODEL_FIELD = Regex("^model\\s*:.*$")
         val HOOK_COMMAND_PATH_RE = Regex("\\bhooks/[A-Za-z0-9_.-]+")
         val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
     }

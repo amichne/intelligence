@@ -1,6 +1,8 @@
 package intelligence.cli.command
 
 import intelligence.cli.io.JsonFiles
+import intelligence.cli.io.arrayValue
+import intelligence.cli.io.stringValue
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
@@ -11,6 +13,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import com.github.ajalt.clikt.testing.test
 import org.junit.jupiter.api.io.TempDir
+import kotlinx.serialization.json.jsonObject
 
 class ProjectCommandTest {
     @TempDir
@@ -56,7 +59,15 @@ class ProjectCommandTest {
         assertTrue(result.stdout.contains("status: projected"))
         assertTrue(result.stdout.contains("harness: codex"))
         assertTrue(output.resolve(".agents/plugins/marketplace.json").exists())
-        assertTrue(output.resolve(".agents/plugins/core-plugin/.codex-plugin/plugin.json").exists())
+        val pluginRoot = output.resolve(".agents/plugins/core-plugin")
+        val pluginManifest = pluginRoot.resolve(".codex-plugin/plugin.json")
+        assertTrue(pluginManifest.exists())
+        assertTrue(pluginManifest.toFile().readText().contains("\"./hooks/core-hook.hooks.json\""))
+        assertTrue(
+            pluginRoot.resolve("hooks/core-hook.hooks.json").toFile().readText()
+                .contains("${'$'}PLUGIN_ROOT/hooks/core-hook.py"),
+        )
+        assertTrue(pluginRoot.resolve("hooks/core-hook.py").exists())
         assertFalse(output.resolve(".agents/plugins/unexposed-plugin").exists())
     }
 
@@ -72,8 +83,24 @@ class ProjectCommandTest {
         assertEquals(0, result.statusCode, result.stderr)
         assertTrue(result.stdout.contains("status: projected"))
         assertTrue(result.stdout.contains("harness: github-copilot"))
-        assertTrue(output.resolve(".github/plugin/marketplace.json").exists())
-        assertTrue(output.resolve(".github/plugin/core-plugin/skills/core-skill/SKILL.md").exists())
+        val providerRoot = output.resolve(".github/plugin")
+        val marketplace = JsonFiles.readObject(providerRoot.resolve("marketplace.json"))
+        val pluginEntry = marketplace.arrayValue("plugins").single().jsonObject
+        val pluginRoot = providerRoot.resolve("core-plugin")
+        val pluginManifest = JsonFiles.readObject(pluginRoot.resolve("plugin.json"))
+
+        assertEquals("core-plugin", pluginEntry.stringValue("source"))
+        assertEquals("core-plugin", pluginManifest.stringValue("name"))
+        assertEquals("./agents", pluginManifest.stringValue("agents"))
+        assertEquals("./skills", pluginManifest.stringValue("skills"))
+        assertEquals("./hooks.json", pluginManifest.stringValue("hooks"))
+        assertTrue(pluginRoot.resolve("skills/core-skill/SKILL.md").exists())
+        assertFalse(pluginRoot.resolve("agents/core-agent.agent.md").toFile().readText().contains("\nmodel:"))
+        assertTrue(pluginRoot.resolve("hooks.json").toFile().readText().contains("\"version\": 1"))
+        assertTrue(
+            pluginRoot.resolve("hooks.json").toFile().readText()
+                .contains("\"bash\": \"python3 \\\"${'$'}PLUGIN_ROOT/hooks/core-hook.py\\\" --repo .\""),
+        )
     }
 
     @Test
@@ -159,6 +186,22 @@ class ProjectCommandTest {
                       "path": "skills/core-skill",
                       "name": "core-skill"
                     }
+                  ],
+                  "agents": [
+                    {
+                      "type": "AGENT",
+                      "source": { "type": "LOCAL_SOURCE", "path": "./" },
+                      "path": "agents/core-agent.agent.md",
+                      "name": "core-agent"
+                    }
+                  ],
+                  "hooks": [
+                    {
+                      "type": "HOOK",
+                      "source": { "type": "LOCAL_SOURCE", "path": "./" },
+                      "path": "hooks/core-hook.hook.json",
+                      "name": "core-hook"
+                    }
                   ]
                 }
                 """.trimIndent(),
@@ -186,6 +229,55 @@ class ProjectCommandTest {
                 # Core skill
                 """.trimIndent() + "\n",
             )
+            repository.resolve("source/agents/core-agent.agent.md").toFile().apply {
+                parentFile.mkdirs()
+                writeText(
+                    """
+                    ---
+                    name: core-agent
+                    description: Core fixture agent.
+                    model: sonnet
+                    ---
+
+                    Review the fixture.
+                    """.trimIndent() + "\n",
+                )
+            }
+            writeJson(
+                repository.resolve("source/hooks/core-hook.hook.json"),
+                """
+                {
+                  "type": "HOOK",
+                  "source": { "type": "LOCAL_SOURCE", "path": "./" },
+                  "path": "hooks/codex/core-hook.hooks.json",
+                  "name": "core-hook"
+                }
+                """.trimIndent(),
+            )
+            writeJson(
+                repository.resolve("source/hooks/codex/core-hook.hooks.json"),
+                """
+                {
+                  "hooks": {
+                    "Stop": [
+                      {
+                        "hooks": [
+                          {
+                            "type": "command",
+                            "command": "python3 hooks/core-hook.py --repo .",
+                            "timeout": 10
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+                """.trimIndent(),
+            )
+            repository.resolve("source/hooks/core-hook.py").toFile().apply {
+                parentFile.mkdirs()
+                writeText("#!/usr/bin/env python3\n")
+            }
         }
 
     private fun writeJson(path: Path, content: String) {

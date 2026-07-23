@@ -75,6 +75,14 @@
         "./skills/"
       ]
     },
+    "hooks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relativePath"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
     "apps": {
       "type": "string",
       "enum": [

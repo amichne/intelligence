@@ -59,13 +59,12 @@ class ProjectionPipelineTest {
                 it.jsonObject.stringValue("name") == "kotlin-engineering"
             }.jsonObject
         assertEquals("kotlin-engineering", githubKotlinEngineeringEntry.stringValue("source"))
-        assertTrue(
-            output.resolve(".github")
-                .resolve("plugin")
-                .resolve("kotlin-engineering")
-                .resolve("AGENTS.md")
-                .exists()
-        )
+        val githubPluginRoot = output.resolve(".github/plugin/kotlin-engineering")
+        val githubPlugin = JsonFiles.readObject(githubPluginRoot.resolve("plugin.json"))
+        assertEquals("./agents", githubPlugin.stringValue("agents"))
+        assertEquals("./skills", githubPlugin.stringValue("skills"))
+        assertEquals("./hooks.json", githubPlugin.stringValue("hooks"))
+        assertTrue(githubPluginRoot.resolve("hooks.json").exists())
 
         assertEquals(
             0,
@@ -407,6 +406,60 @@ class ProjectionPipelineTest {
         )
 
         assertTrue(result != 0)
+    }
+
+    @Test
+    fun `hydrated github validation rejects a missing plugin manifest`() {
+        val output = Files.createTempDirectory("intelligence-marketplace-missing-github-plugin-manifest-")
+        MarketplaceProjector(output = {}).materialize(
+            repoRoot = repoRoot(),
+            outRoot = output,
+            provider = MarketplaceProvider.GitHub,
+        )
+        Files.delete(output.resolve(".github/plugin/kotlin-engineering/plugin.json"))
+        val validation = mutableListOf<String>()
+
+        val result = ProjectionValidator(output = validation::add).validate(
+            ProjectionValidationOptions(
+                repo = repoRoot(),
+                hydrated = output,
+            ),
+        )
+
+        assertTrue(result != 0)
+        assertTrue(validation.any { it.contains("missing plugin.json") })
+    }
+
+    @Test
+    fun `hydrated github validation rejects a malformed hook event`() {
+        val output = Files.createTempDirectory("intelligence-marketplace-malformed-github-hooks-")
+        MarketplaceProjector(output = {}).materialize(
+            repoRoot = repoRoot(),
+            outRoot = output,
+            provider = MarketplaceProvider.GitHub,
+        )
+        writeJson(
+            output.resolve(".github/plugin/kotlin-engineering/hooks.json"),
+            """
+            {
+              "version": 1,
+              "hooks": {
+                "Stop": "not-an-array"
+              }
+            }
+            """,
+        )
+        val validation = mutableListOf<String>()
+
+        val result = ProjectionValidator(output = validation::add).validate(
+            ProjectionValidationOptions(
+                repo = repoRoot(),
+                hydrated = output,
+            ),
+        )
+
+        assertTrue(result != 0)
+        assertTrue(validation.any { it.contains("hook event `Stop` must be an array") })
     }
 
     private fun repoRoot(): Path =

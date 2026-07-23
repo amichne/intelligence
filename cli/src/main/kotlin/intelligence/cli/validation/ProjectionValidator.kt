@@ -507,6 +507,13 @@ internal class ProjectionValidator(
     ): GitHubHydratedMarketplace? {
         val marketplace = readObject(marketplacePath, root, issues) ?: return null
         requireString(marketplace, "name", marketplacePath, root, issues)
+        requireValue(
+            marketplace.objectValue("owner") != null,
+            marketplacePath,
+            root,
+            "owner must be an object",
+            issues,
+        )
         val pluginRootValue = marketplace.objectValue("metadata")?.stringValue("pluginRoot")
         val expectedPluginRoot = root.resolve(GITHUB_PROVIDER_ROOT).normalize()
         val expectedPluginRootValue = GITHUB_PROVIDER_ROOT.toUnixString()
@@ -525,6 +532,13 @@ internal class ProjectionValidator(
 
         marketplace.arrayValue("plugins").forEachObject { entry ->
             val name = requireString(entry, "name", marketplacePath, root, issues) ?: return@forEachObject
+            requireValue(
+                entry["strict"]?.primitiveContent() == "true",
+                marketplacePath,
+                root,
+                "GitHub plugin `$name` must enable strict validation",
+                issues,
+            )
             val source = requireString(entry, "source", marketplacePath, root, issues) ?: return@forEachObject
             if (source != name) {
                 issues += "${marketplacePath.relativeToUnix(root)}: GitHub plugin `$name` source must be `$name`"
@@ -536,9 +550,178 @@ internal class ProjectionValidator(
             }
             if (!payload.startsWith(pluginRoot) || !payload.isDirectory()) {
                 issues += "${marketplacePath.relativeToUnix(root)}: missing GitHub plugin payload for `$name`"
+                return@forEachObject
+            }
+
+            val manifestPath = payload.resolve("plugin.json")
+            if (!manifestPath.isRegularFile()) {
+                issues += "${payload.relativeToUnix(root)}: missing plugin.json"
+            } else {
+                readObject(manifestPath, root, issues)?.let { manifest ->
+                    validateHydratedPluginManifest(
+                        root = root,
+                        manifestPath = manifestPath,
+                        manifest = manifest,
+                        expectedName = name,
+                        providerName = "GitHub",
+                        issues = issues,
+                    )
+                    validateGitHubComponentPath(root, payload, manifestPath, manifest, "agents", true, issues)
+                    validateGitHubComponentPath(root, payload, manifestPath, manifest, "skills", true, issues)
+                    validateGitHubComponentPath(root, payload, manifestPath, manifest, "hooks", false, issues)
+                }
             }
         }
         return GitHubHydratedMarketplace(root = root, marketplacePath = marketplacePath, marketplace = marketplace)
+    }
+
+    private fun validateGitHubComponentPath(
+        root: Path,
+        pluginRoot: Path,
+        manifestPath: Path,
+        manifest: JsonObject,
+        field: String,
+        directory: Boolean,
+        issues: MutableList<String>,
+    ) {
+        val element = manifest[field] ?: return
+        val paths =
+            when (element) {
+                is JsonPrimitive ->
+                    if (element.isString && element.content.isNotBlank()) {
+                        listOf(element.content)
+                    } else {
+                        issues += "${manifestPath.relativeToUnix(root)}: `$field` must contain a component path"
+                        return
+                    }
+                is JsonArray -> {
+                    if (element.isEmpty()) {
+                        issues += "${manifestPath.relativeToUnix(root)}: `$field` must contain a component path"
+                        return
+                    }
+                    element.mapIndexed { index, item ->
+                        (item as? JsonPrimitive)
+                            ?.takeIf { it.isString && it.content.isNotBlank() }
+                            ?.content
+                            ?: run {
+                                issues +=
+                                    "${manifestPath.relativeToUnix(root)}: `$field` item $index must be a component path"
+                                return
+                            }
+                    }
+                }
+                is JsonObject ->
+                    if (field == "hooks") {
+                        validateGitHubHookEvents(root, manifestPath, element, issues)
+                        return
+                    } else {
+                        issues +=
+                            "${manifestPath.relativeToUnix(root)}: `$field` must be a component path or array of component paths"
+                        return
+                    }
+            }
+        if (paths.size != paths.distinct().size) {
+            issues += "${manifestPath.relativeToUnix(root)}: `$field` component paths must be unique"
+        }
+
+        paths.forEach { pathValue ->
+            val path = resolveRelative(pluginRoot, pathValue, issues) ?: return@forEach
+            val exists = if (directory) path.isDirectory() else path.isRegularFile()
+            if (!exists) {
+                issues += "${manifestPath.relativeToUnix(root)}: `$field` path `${path.relativeToUnix(pluginRoot)}` does not exist"
+            }
+            if (field == "hooks" && path.isRegularFile()) {
+                readObject(path, root, issues)?.let { hooks ->
+                    validateGitHubHooksDocument(root, path, hooks, issues)
+                }
+            }
+        }
+    }
+
+    private fun validateGitHubHooksDocument(
+        root: Path,
+        path: Path,
+        document: JsonObject,
+        issues: MutableList<String>,
+    ) {
+        val version = document["version"] as? JsonPrimitive
+        requireValue(
+            version != null && !version.isString && version.content == "1",
+            path,
+            root,
+            "GitHub hooks version must be integer 1",
+            issues,
+        )
+        val hooks = document["hooks"] as? JsonObject
+        if (hooks == null) {
+            issues += "${path.relativeToUnix(root)}: GitHub hooks must contain a hooks object"
+            return
+        }
+        validateGitHubHookEvents(root, path, hooks, issues)
+    }
+
+    private fun validateGitHubHookEvents(
+        root: Path,
+        path: Path,
+        hooks: JsonObject,
+        issues: MutableList<String>,
+    ) {
+        if (hooks.isEmpty()) {
+            issues += "${path.relativeToUnix(root)}: GitHub hooks must contain at least one hook event"
+        }
+        hooks.forEach { (event, value) ->
+            if (event !in GITHUB_HOOK_EVENTS) {
+                issues += "${path.relativeToUnix(root)}: unsupported GitHub hook event `$event`"
+            }
+            val entries = value as? JsonArray
+            if (entries == null) {
+                issues += "${path.relativeToUnix(root)}: hook event `$event` must be an array"
+                return@forEach
+            }
+            if (entries.isEmpty()) {
+                issues += "${path.relativeToUnix(root)}: hook event `$event` must contain a hook entry"
+            }
+            entries.forEachIndexed { index, entryValue ->
+                val entry = entryValue as? JsonObject
+                if (entry == null) {
+                    issues += "${path.relativeToUnix(root)}: hook event `$event` item $index must be an object"
+                    return@forEachIndexed
+                }
+                validateGitHubHookEntry(root, path, event, index, entry, issues)
+            }
+        }
+    }
+
+    private fun validateGitHubHookEntry(
+        root: Path,
+        path: Path,
+        event: String,
+        index: Int,
+        entry: JsonObject,
+        issues: MutableList<String>,
+    ) {
+        val location = "hook event `$event` item $index"
+        when (entry.strictStringValue("type")) {
+            "command" ->
+                if (GITHUB_HOOK_COMMAND_FIELDS.none { field -> entry.strictStringValue(field)?.isNotBlank() == true }) {
+                    issues += "${path.relativeToUnix(root)}: $location command requires `bash`, `powershell`, or `command`"
+                }
+            "http" ->
+                if (entry.strictStringValue("url").isNullOrBlank()) {
+                    issues += "${path.relativeToUnix(root)}: $location http hook requires `url`"
+                }
+            "prompt" ->
+                if (entry.strictStringValue("prompt").isNullOrBlank()) {
+                    issues += "${path.relativeToUnix(root)}: $location prompt hook requires `prompt`"
+                }
+            else -> issues += "${path.relativeToUnix(root)}: $location has an unsupported hook type"
+        }
+        entry["timeoutSec"]?.let { timeout ->
+            val primitive = timeout as? JsonPrimitive
+            if (primitive == null || primitive.isString || primitive.content.toDoubleOrNull()?.takeIf { it > 0 } == null) {
+                issues += "${path.relativeToUnix(root)}: $location timeoutSec must be a positive number"
+            }
+        }
     }
 
     private fun validateHydratedPluginManifest(
@@ -623,6 +806,9 @@ internal class ProjectionValidator(
     private fun JsonElement.primitiveContent(): String? =
         (this as? JsonPrimitive)?.content
 
+    private fun JsonObject.strictStringValue(key: String): String? =
+        (this[key] as? JsonPrimitive)?.takeIf { it.isString }?.content
+
     private fun JsonArray.forEachObject(action: (JsonObject) -> Unit) {
         forEach { element ->
             runCatching { element.jsonObject }.getOrNull()?.let(action)
@@ -674,6 +860,35 @@ internal class ProjectionValidator(
         val MARKETPLACE_LOCK_PATH: Path = INTELLIGENCE_ROOT.resolve("marketplace-lock.json")
         val CODEX_PROVIDER_ROOT: Path = Path.of(".agents").resolve("plugins")
         val GITHUB_PROVIDER_ROOT: Path = Path.of(".github").resolve("plugin")
+        val GITHUB_HOOK_COMMAND_FIELDS: Set<String> = setOf("bash", "powershell", "command")
+        val GITHUB_HOOK_EVENTS: Set<String> = setOf(
+            "agentStop",
+            "Stop",
+            "errorOccurred",
+            "ErrorOccurred",
+            "notification",
+            "Notification",
+            "permissionRequest",
+            "PermissionRequest",
+            "postToolUse",
+            "PostToolUse",
+            "postToolUseFailure",
+            "PostToolUseFailure",
+            "preCompact",
+            "PreCompact",
+            "preToolUse",
+            "PreToolUse",
+            "sessionEnd",
+            "SessionEnd",
+            "sessionStart",
+            "SessionStart",
+            "subagentStart",
+            "SubagentStart",
+            "subagentStop",
+            "SubagentStop",
+            "userPromptSubmitted",
+            "UserPromptSubmit",
+        )
         val CODEX_PLUGIN_INTERFACE_URL_FIELDS: Set<String> = setOf(
             "websiteURL",
             "privacyPolicyURL",
